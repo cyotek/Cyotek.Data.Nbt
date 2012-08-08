@@ -334,6 +334,77 @@ namespace Cyotek.Data.Nbt
       return this.GetTag<ITag>(name);
     }
 
+    public ITag Query(string query)
+    {
+      return this.Query<ITag>(query);
+    }
+
+    public T Query<T>(string query) where T : ITag
+    {
+      string[] parts;
+      ITag element;
+
+      parts = query.Split(new char[] { '\\', '/' });
+      element = this;
+
+      // HACK: This is all quickly thrown together
+
+      foreach (string part in parts)
+      {
+        if (part.Contains("["))
+        {
+          string[] subParts;
+          string name;
+          string value;
+          bool matchFound;
+
+          subParts = part.Substring(1, part.Length - 2).Split('=');
+          name = subParts[0];
+          value = subParts[1];
+          matchFound = false;
+
+          foreach (TagCompound tag in ((TagList)element).Value)
+          {
+            if (tag.GetStringValue(name) == value)
+            {
+              element = tag;
+              matchFound = true;
+              break;
+            }
+          }
+
+          if (!matchFound)
+            throw new ArgumentException(string.Format("Could not find element matching pattern '{0}'", part), "query");
+        }
+        else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
+        {
+          // list entry
+          element = ((ICollectionTag)element).Values[Convert.ToInt32(part)];
+        }
+        else
+        {
+          // standard item
+          element = ((TagCompound)element).Value[part];
+        }
+      }
+
+      return (T)element;
+    }
+
+    public T QueryValue<T>(string query)
+    {
+      return this.QueryValue<T>(query, default(T));
+    }
+
+    public T QueryValue<T>(string query, T defaultValue)
+    {
+      ITag tag;
+
+      tag = this.Query<ITag>(query);
+
+      return tag != null ? (T)tag.Value : defaultValue;
+    }
+
     public void WriteToFile(string filename)
     {
       using (FileStream output = File.Open(filename, FileMode.Create))

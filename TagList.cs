@@ -204,7 +204,7 @@ namespace Cyotek.Data.Nbt
     #region  Private Properties
 
     bool ICollectionTag.IsList
-    { get { return false; } }
+    { get { return true; } }
 
     TagType ICollectionTag.LimitToType
     {

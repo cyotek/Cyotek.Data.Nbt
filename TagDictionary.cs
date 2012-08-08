@@ -178,6 +178,11 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
+    public ITag Add(string name, DateTime dateTime)
+    {
+      return this.Add(name, dateTime.ToString("R"));
+    }
+
     public ITag AddIfNotDefault(string name, string value)
     {
       ITag result;

@@ -16,7 +16,5 @@ namespace Cyotek.Data.Nbt
     List = 9,
     Compound = 10,
     IntArray = 11,
-
-
   };
 }

@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
 
-[assembly: InternalsVisibleTo("Cyotek.Data.Nbt.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100a5fe75663d400a40dbb790e3f72c6b009b121fa3bb025c128439a01adbf70379a6a354d21da1380d1bf930b2a3d7435148e5e4995544249427ea2d9942c6c9920f6dc986d3589694cbcef4b723d4b5f5a9070241075ca1c1602a39dcc83c9c7e6068013ad029ca8f071eb8a1b34764fa84b767afa2cf01b221084b9162367bb1")]
+[assembly: InternalsVisibleTo("Cyotek.Data.Nbt.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100f711fe95c698a0533975dc0eabc40db1876c95e7a4b03ef65765b7f10d81b71c0f64d4d2ae7c1026d6426fa2d09c2dc16766acfa397141c1496dad3ee8be06749fb655edd7e4c902ad5a87074f56c0a452bc181a5fa8e3e4a441ecd747921e13d239737f4fdffdeabeb09e5386bbb865d41b560b787dbc9b9d29e3aa0b4b1ac4")]
