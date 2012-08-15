@@ -75,6 +75,11 @@ namespace Cyotek.Data.Nbt
 
     #region  Public Methods
 
+    public ITag Add(string name, DateTime value)
+    {
+      return this.Add(name, value.ToString("u"));
+    }
+
     public ITag Add(string name, string value)
     {
       ITag tag;
@@ -168,6 +173,35 @@ namespace Cyotek.Data.Nbt
       ITag tag;
 
       tag = new TagByteArray(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public void Add(string name, Guid value)
+    {
+      this.Add(name, value.ToByteArray());
+    }
+
+    public ITag Add(TagType tagType)
+    {
+      return this.Add(tagType, string.Empty);
+    }
+
+    public ITag Add(TagType tagType, string name)
+    {
+      return this.Add(tagType, name, TagType.None);
+    }
+
+    public ITag Add(TagType tagType, string name, TagType limitToType)
+    {
+      ITag tag;
+
+      tag = TagFactory.CreateTag(tagType);
+      tag.Name = name;
+      if (tag is ICollectionTag)
+        ((ICollectionTag)tag).LimitToType = limitToType;
 
       this.Add(tag);
 

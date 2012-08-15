@@ -178,9 +178,38 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, DateTime dateTime)
+    public ITag Add(string name, DateTime value)
     {
-      return this.Add(name, dateTime.ToString("R"));
+      return this.Add(name, value.ToString("u"));
+    }
+
+    public void Add(string name, Guid value)
+    {
+      this.Add(name, value.ToByteArray());
+    }
+
+    public ITag Add(TagType tagType)
+    {
+      return this.Add(tagType, string.Empty);
+    }
+
+    public ITag Add(TagType tagType, string name)
+    {
+      return this.Add(tagType, name, TagType.None);
+    }
+
+    public ITag Add(TagType tagType, string name, TagType limitToType)
+    {
+      ITag tag;
+
+      tag = TagFactory.CreateTag(tagType);
+      tag.Name = name;
+      if (tag is ICollectionTag)
+        ((ICollectionTag)tag).LimitToType = limitToType;
+
+      this.Add(tag);
+
+      return tag;
     }
 
     public ITag AddIfNotDefault(string name, string value)

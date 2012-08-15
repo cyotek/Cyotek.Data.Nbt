@@ -209,6 +209,7 @@ namespace Cyotek.Data.Nbt
     TagType ICollectionTag.LimitToType
     {
       get { return this.ListType; }
+      set { this.ListType = value; }
     }
 
     IList<ITag> ICollectionTag.Values

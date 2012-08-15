@@ -168,6 +168,20 @@ namespace Cyotek.Data.Nbt
       return this.GetTag<TagCompound>(name);
     }
 
+    public DateTime GetDateTimeValue(string name)
+    {
+      return this.GetDateTimeValue(name, DateTime.MinValue);
+    }
+
+    public DateTime GetDateTimeValue(string name, DateTime defaultValue)
+    {
+      TagString value;
+
+      value = this.GetTag<TagString>(name);
+
+      return value != null ? DateTime.Parse(value.Value).ToUniversalTime() : defaultValue;
+    }
+
     public TagDouble GetDouble(string name)
     {
       return this.GetTag<TagDouble>(name);
@@ -218,6 +232,15 @@ namespace Cyotek.Data.Nbt
       value = this.GetTag<TagFloat>(name);
 
       return value != null ? value.Value : defaultValue;
+    }
+
+    public Guid GetGuidValue(string name)
+    {
+      TagByteArray tag;
+
+      tag = this.GetByteArray(name);
+
+      return tag != null ? new Guid(tag.Value) : Guid.Empty;
     }
 
     public TagInt GetInt(string name)
@@ -440,7 +463,10 @@ namespace Cyotek.Data.Nbt
     { get { return false; } }
 
     TagType ICollectionTag.LimitToType
-    { get { return TagType.None; } }
+    {
+      get { return TagType.None; }
+      set { }
+    }
 
     IList<ITag> ICollectionTag.Values
     {
