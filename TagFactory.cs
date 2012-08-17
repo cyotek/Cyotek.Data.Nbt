@@ -8,6 +8,16 @@ namespace Cyotek.Data.Nbt
 
     public static ITag CreateTag(TagType tagType)
     {
+      return TagFactory.CreateTag(tagType, null);
+    }
+
+    public static ITag CreateTag(TagType tagType, object defaultValue)
+    {
+      return TagFactory.CreateTag(tagType, null, defaultValue);
+    }
+
+    public static ITag CreateTag(TagType tagType, string name, object defaultValue)
+    {
       ITag result;
 
       switch (tagType)
@@ -48,6 +58,10 @@ namespace Cyotek.Data.Nbt
         default:
           throw new ArgumentException("Invalid tag type.", "tagType");
       }
+
+      result.Name = name;
+      if (defaultValue != null)
+        result.Value = defaultValue;
 
       return result;
     }
