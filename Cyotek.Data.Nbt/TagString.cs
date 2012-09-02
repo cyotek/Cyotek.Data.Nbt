@@ -52,7 +52,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      return string.Format("{0}[string: {1}=\"{2}\"]", indentString, Name, Value);
+      return string.Format("{0}[String: {1}=\"{2}\"]", indentString, Name, Value);
     }
 
     public override void Write(Stream output)

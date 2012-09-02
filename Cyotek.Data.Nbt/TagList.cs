@@ -6,7 +6,7 @@ using System.Text;
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagList : Tag, ICollectionTag
+  public class TagList : Tag, ITagCollection
   {
     private TagType _listType;
 
@@ -38,16 +38,16 @@ namespace Cyotek.Data.Nbt
       this.ListType = listType;
     }
 
-    bool ICollectionTag.IsList
+    bool ITagCollection.IsList
     { get { return true; } }
 
-    TagType ICollectionTag.LimitToType
+    TagType ITagCollection.LimitToType
     {
       get { return this.ListType; }
       set { this.ListType = value; }
     }
 
-    IList<ITag> ICollectionTag.Values
+    IList<ITag> ITagCollection.Values
     {
       get { return this.Value; }
     }

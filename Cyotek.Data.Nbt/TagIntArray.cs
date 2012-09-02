@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
@@ -44,23 +43,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      StringBuilder sb = new StringBuilder();
-
-      if (Value == null || Value.Length == 0)
-      {
-        return string.Format("{0}[Int_Array: {1}]", indentString, Name);
-      }
-
-      sb.AppendLine(string.Format("{0}[Int_Array: {1}", indentString, Name));
-
-      foreach (int item in Value)
-      {
-        sb.AppendLine(string.Format("{0}  {1}", indentString, item));
-      }
-
-      sb.AppendLine(string.Format("{0}]", indentString));
-
-      return sb.ToString();
+      return string.Format("{0}[IntArray: {1}={2} values]", indentString, this.Name, (this.Value != null) ? this.Value.Length : 0);
     }
 
     public override void Write(System.IO.Stream output)

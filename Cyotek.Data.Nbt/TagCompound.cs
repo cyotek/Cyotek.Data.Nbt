@@ -7,7 +7,7 @@ using System.Text;
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagCompound : Tag, ICollectionTag
+  public class TagCompound : Tag, ITagCollection
   {
     public TagCompound()
       : this(string.Empty)
@@ -25,16 +25,16 @@ namespace Cyotek.Data.Nbt
       this.Value = ReadDictionary(this, input);
     }
 
-    bool ICollectionTag.IsList
+    bool ITagCollection.IsList
     { get { return false; } }
 
-    TagType ICollectionTag.LimitToType
+    TagType ITagCollection.LimitToType
     {
       get { return TagType.None; }
       set { }
     }
 
-    IList<ITag> ICollectionTag.Values
+    IList<ITag> ITagCollection.Values
     {
       get { return this.Value; }
     }
@@ -335,10 +335,10 @@ namespace Cyotek.Data.Nbt
           if (!matchFound)
             throw new ArgumentException(string.Format("Could not find element matching pattern '{0}'", part), "query");
         }
-        else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
+        else if (element is ITagCollection && ((ITagCollection)element).IsList)
         {
           // list entry
-          element = ((ICollectionTag)element).Values[Convert.ToInt32(part)];
+          element = ((ITagCollection)element).Values[Convert.ToInt32(part)];
         }
         else
         {

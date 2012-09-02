@@ -46,7 +46,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICollectionTag.cs" />
+    <Compile Include="ITagCollection.cs" />
     <Compile Include="ITag.cs" />
     <Compile Include="ITagEditor.cs" />
     <Compile Include="Tag.cs" />
@@ -60,6 +60,7 @@
     <Compile Include="TagDouble.cs" />
     <Compile Include="TagEditorAttribute.cs" />
     <Compile Include="TagEnd.cs" />
+    <Compile Include="TagException.cs" />
     <Compile Include="TagFactory.cs" />
     <Compile Include="TagFloat.cs" />
     <Compile Include="TagInt.cs" />

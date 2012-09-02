@@ -152,8 +152,8 @@ namespace Cyotek.Data.Nbt
 
       tag = TagFactory.CreateTag(tagType);
       tag.Name = name;
-      if (tag is ICollectionTag)
-        ((ICollectionTag)tag).LimitToType = limitToType;
+      if (tag is ITagCollection)
+        ((ITagCollection)tag).LimitToType = limitToType;
 
       this.Add(tag);
 
@@ -163,7 +163,7 @@ namespace Cyotek.Data.Nbt
     public void WriteList(Stream output)
     {
       if (this.LimitType == TagType.None || this.LimitType == TagType.End)
-        throw new InvalidOperationException("Limit type not set.");
+        throw new TagException("Limit type not set.");
 
       output.WriteByte((byte)this.LimitType);
 

@@ -23,7 +23,7 @@ namespace Cyotek.Data.Nbt
     public event EventHandler ValueChanged;
 
     public virtual bool CanRemove
-    { get { return this.Parent != null && this.Parent is ICollectionTag; } }
+    { get { return this.Parent != null && this.Parent is ITagCollection; } }
 
     public virtual string FullPath
     {
@@ -39,8 +39,8 @@ namespace Cyotek.Data.Nbt
           results.Append(@"\");
         }
 
-        if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).IsList)
-          results.Append(((ICollectionTag)this.Parent).Values.IndexOf(this));
+        if (this.Parent is ITagCollection && ((ITagCollection)this.Parent).IsList)
+          results.Append(((ITagCollection)this.Parent).Values.IndexOf(this));
         else
           results.Append(this.Name);
 
@@ -56,8 +56,8 @@ namespace Cyotek.Data.Nbt
       {
         if (this.Name != value)
         {
-          if (this.Parent != null && this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).Values is TagDictionary)
-            ((TagDictionary)((ICollectionTag)this.Parent).Values).ChangeKey(this, value);
+          if (this.Parent != null && this.Parent is ITagCollection && ((ITagCollection)this.Parent).Values is TagDictionary)
+            ((TagDictionary)((ITagCollection)this.Parent).Values).ChangeKey(this, value);
 
           _name = value;
 
@@ -66,7 +66,7 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    [Category(""), DefaultValue(null), Browsable(false)]
+    [Browsable(false)]
     public virtual ITag Parent
     {
       get { return _parent; }
@@ -100,41 +100,65 @@ namespace Cyotek.Data.Nbt
 
     public static ITag Read(Stream input)
     {
-      int temp = input.ReadByte();
-      if (temp != (temp & 0xFF))
-      {
-        throw new Exception();
-      }
+      int rawType;
+      ITag result;
 
-      switch ((TagType)temp)
+      rawType = input.ReadByte();
+
+      switch ((TagType)rawType)
       {
         case TagType.End:
-          return new TagEnd();
+          result = new TagEnd();
+          break;
+
         case TagType.Byte:
-          return new TagByte(input);
+          result = new TagByte(input);
+          break;
+
         case TagType.Short:
-          return new TagShort(input);
+          result = new TagShort(input);
+          break;
+
         case TagType.Int:
-          return new TagInt(input);
+          result = new TagInt(input);
+          break;
+
         case TagType.IntArray:
-          return new TagIntArray(input);
+          result = new TagIntArray(input);
+          break;
+
         case TagType.Long:
-          return new TagLong(input);
+          result = new TagLong(input);
+          break;
+
         case TagType.Float:
-          return new TagFloat(input);
+          result = new TagFloat(input);
+          break;
+
         case TagType.Double:
-          return new TagDouble(input);
+          result = new TagDouble(input);
+          break;
+
         case TagType.ByteArray:
-          return new TagByteArray(input);
+          result = new TagByteArray(input);
+          break;
+
         case TagType.String:
-          return new TagString(input);
+          result = new TagString(input);
+          break;
+
         case TagType.List:
-          return new TagList(input);
+          result = new TagList(input);
+          break;
+
         case TagType.Compound:
-          return new TagCompound(input);
+          result = new TagCompound(input);
+          break;
         default:
-          throw new NotImplementedException();
+          throw new NotImplementedException(string.Format("Unrecognized tag type: {0}", rawType));
       }
+
+      return result;
     }
 
     public static ITag ReadFromFile(string filename)
@@ -237,9 +261,9 @@ namespace Cyotek.Data.Nbt
     public virtual void Remove()
     {
       if (!this.CanRemove)
-        throw new InvalidOperationException("Cannot remove this tag, parent not set or not supported.");
+        throw new TagException("Cannot remove this tag, parent not set or not supported.");
 
-      ((ICollectionTag)this.Parent).Values.Remove(this);
+      ((ITagCollection)this.Parent).Values.Remove(this);
     }
 
     public override string ToString()
@@ -291,9 +315,9 @@ namespace Cyotek.Data.Nbt
     private void FlattenTag(ITag tag, List<ITag> tags)
     {
       tags.Add(tag);
-      if (tag is ICollectionTag)
+      if (tag is ITagCollection)
       {
-        foreach (ITag childTag in ((ICollectionTag)tag).Values)
+        foreach (ITag childTag in ((ITagCollection)tag).Values)
           this.FlattenTag(childTag, tags);
       }
     }

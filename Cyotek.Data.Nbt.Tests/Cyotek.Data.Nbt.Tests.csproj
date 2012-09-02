@@ -58,6 +58,15 @@
     <Compile Include="AnvilRegionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
+    <Compile Include="TagByteArrayTests.cs" />
+    <Compile Include="TagByteTests.cs" />
+    <Compile Include="TagDoubleTests.cs" />
+    <Compile Include="TagFloatTests.cs" />
+    <Compile Include="TagIntArrayTests.cs" />
+    <Compile Include="TagIntTests.cs" />
+    <Compile Include="TagLongTests.cs" />
+    <Compile Include="TagShortTests.cs" />
+    <Compile Include="TagStringTests.cs" />
     <Compile Include="TagTests.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>

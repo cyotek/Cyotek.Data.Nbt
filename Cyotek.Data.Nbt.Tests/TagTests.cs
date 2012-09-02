@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -8,6 +10,162 @@ namespace Cyotek.Data.Nbt.Tests
   internal class TagTests
     : TestBase
   {
+    [Test]
+    public void CanRemoveTest()
+    {
+      // arrange
+      TagCompound data;
+      bool actual1;
+      bool actual2;
+
+      data = this.GetComplexData();
+
+      // act
+      actual1 = data.Value["listTest (compound)"].CanRemove;
+      actual2 = data.CanRemove;
+
+      // assert
+      Assert.IsTrue(actual1);
+      Assert.IsFalse(actual2);
+    }
+
+    [Test]
+    public void FlattenTest()
+    {
+      // arrange
+      TagCompound target;
+      ITag[] tags;
+      string[] expectedNames;
+      string[] actualNames;
+      int expectedCount;
+      int actualCount;
+
+      target = this.GetComplexData();
+      expectedCount = 29;
+      expectedNames = new string[] { "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest" };
+
+      // act
+      tags = target.Flatten();
+      actualCount = tags.Length;
+      actualNames = tags.Select(t => t.Name).Distinct().ToArray();
+
+      // assert
+      Assert.AreEqual(expectedCount, actualCount);
+      CollectionAssert.AreEqual(expectedNames, actualNames);
+    }
+
+    [Test]
+    public void FullPathTest()
+    {
+      // arrange
+      TagCompound data;
+      ITag target;
+      string expected;
+      string actual;
+
+      data = this.GetComplexData();
+      expected = @"Level\listTest (compound)\0\name";
+      target = data.Query(@"listTest (compound)\0\name");
+
+      // act
+      actual = target.FullPath;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetAncestorsTest()
+    {
+      // arrange
+      TagCompound data;
+      ITag target;
+      ITag[] actual;
+      ITag[] expected;
+
+      data = this.GetComplexData();
+      target = data.Query(@"listTest (compound)\0\name");
+      expected = new ITag[] { data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0") };
+
+      // act
+      actual = target.GetAncestors();
+
+      // assert
+      CollectionAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void NameChangedEventTest()
+    {
+      // arrange
+      Tag target;
+      bool eventRaised;
+
+      eventRaised = false;
+      target = new TagString();
+      target.NameChanged += delegate(object sender, EventArgs e)
+      {
+        eventRaised = true;
+      };
+
+      // act
+      target.Name = "newvalue";
+
+      // assert
+      Assert.IsTrue(eventRaised);
+    }
+
+    [Test]
+    [ExpectedException(ExpectedException = typeof(NotImplementedException), ExpectedMessage = "Unrecognized tag type: 255")]
+    public void ReadExceptionTest()
+    {
+      // arrange
+      MemoryStream stream;
+
+      stream = new MemoryStream();
+      stream.WriteByte(255);
+      stream.Seek(0, SeekOrigin.Begin);
+
+      // act
+      Tag.Read(stream);
+
+      // assert
+    }
+
+    [Test]
+    [ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
+    public void RemoveExceptionTest()
+    {
+      // arrange
+      TagCompound target;
+
+      target = this.GetComplexData();
+
+      // act
+      target.Remove();
+
+      // assert
+    }
+
+    [Test]
+    public void RemoveTest()
+    {
+      // arrange
+      TagCompound data;
+      ITag target;
+      string key;
+
+      data = this.GetComplexData();
+      key = "listTest (compound)";
+      target = data.Value[key];
+
+      // act
+      target.Remove();
+
+      // assert
+      Assert.IsFalse(data.Contains(key));
+    }
+
     [Test]
     public void TestLoadComplexNbt()
     {
@@ -193,6 +351,50 @@ namespace Cyotek.Data.Nbt.Tests
       {
         Assert.AreEqual(buffer[i], buffer2[i]);
       }
+    }
+
+    [Test]
+    public void ToValueStringTest()
+    {
+      // arrange
+      ITag target1;
+      ITag target2;
+      string expected1;
+      string actual1;
+      string actual2;
+
+      target1 = this.GetComplexData().Query(@"nested compound test\ham\name");
+      target2 = new TagString(null, null);
+      expected1 = "Hampus";
+
+      // act
+      actual1 = target1.ToValueString();
+      actual2 = target2.ToValueString();
+
+      // assert
+      Assert.AreEqual(expected1, actual1);
+      Assert.IsEmpty(actual2);
+    }
+
+    [Test]
+    public void ValueChangedEventTest()
+    {
+      // arrange
+      Tag target;
+      bool eventRaised;
+
+      eventRaised = false;
+      target = new TagString();
+      target.ValueChanged += delegate(object sender, EventArgs e)
+      {
+        eventRaised = true;
+      };
+
+      // act
+      target.Value = "newvalue";
+
+      // assert
+      Assert.IsTrue(eventRaised);
     }
   }
 }

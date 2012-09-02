@@ -2,7 +2,7 @@
 
 namespace Cyotek.Data.Nbt
 {
-  public interface ICollectionTag
+  public interface ITagCollection
   {
     bool IsList { get; }
 

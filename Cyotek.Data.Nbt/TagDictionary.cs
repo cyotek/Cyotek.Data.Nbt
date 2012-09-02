@@ -155,8 +155,8 @@ namespace Cyotek.Data.Nbt
 
       tag = TagFactory.CreateTag(tagType);
       tag.Name = name;
-      if (tag is ICollectionTag)
-        ((ICollectionTag)tag).LimitToType = limitToType;
+      if (tag is ITagCollection)
+        ((ITagCollection)tag).LimitToType = limitToType;
 
       this.Add(tag);
 

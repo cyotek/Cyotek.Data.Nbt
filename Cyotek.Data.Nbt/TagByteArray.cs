@@ -43,7 +43,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      return string.Format("{0}[Byte_Array: {1}={2} Bytes", indentString, Name, (Value != null) ? Value.Length : 0);
+      return string.Format("{0}[ByteArray: {1}={2} values]", indentString, this.Name, (this.Value != null) ? this.Value.Length : 0);
     }
 
     public override void Write(Stream output)
