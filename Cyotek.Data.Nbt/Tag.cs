@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.IO.Compression;
 using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public abstract class Tag : ITag
+  public abstract class Tag
+    : ITag
   {
     private string _name;
     private ITag _parent;
@@ -23,7 +22,7 @@ namespace Cyotek.Data.Nbt
     public event EventHandler ValueChanged;
 
     public virtual bool CanRemove
-    { get { return this.Parent != null && this.Parent is ITagCollection; } }
+    { get { return this.Parent != null && this.Parent is ICollectionTag; } }
 
     public virtual string FullPath
     {
@@ -39,8 +38,8 @@ namespace Cyotek.Data.Nbt
           results.Append(@"\");
         }
 
-        if (this.Parent is ITagCollection && ((ITagCollection)this.Parent).IsList)
-          results.Append(((ITagCollection)this.Parent).Values.IndexOf(this));
+        if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).IsList)
+          results.Append(((ICollectionTag)this.Parent).Values.IndexOf(this));
         else
           results.Append(this.Name);
 
@@ -56,8 +55,8 @@ namespace Cyotek.Data.Nbt
       {
         if (this.Name != value)
         {
-          if (this.Parent != null && this.Parent is ITagCollection && ((ITagCollection)this.Parent).Values is TagDictionary)
-            ((TagDictionary)((ITagCollection)this.Parent).Values).ChangeKey(this, value);
+          if (this.Parent != null && this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).Values is TagDictionary)
+            ((TagDictionary)((ICollectionTag)this.Parent).Values).ChangeKey(this, value);
 
           _name = value;
 
@@ -98,135 +97,6 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public static ITag Read(Stream input)
-    {
-      int rawType;
-      ITag result;
-
-      rawType = input.ReadByte();
-
-      switch ((TagType)rawType)
-      {
-        case TagType.End:
-          result = new TagEnd();
-          break;
-
-        case TagType.Byte:
-          result = new TagByte(input);
-          break;
-
-        case TagType.Short:
-          result = new TagShort(input);
-          break;
-
-        case TagType.Int:
-          result = new TagInt(input);
-          break;
-
-        case TagType.IntArray:
-          result = new TagIntArray(input);
-          break;
-
-        case TagType.Long:
-          result = new TagLong(input);
-          break;
-
-        case TagType.Float:
-          result = new TagFloat(input);
-          break;
-
-        case TagType.Double:
-          result = new TagDouble(input);
-          break;
-
-        case TagType.ByteArray:
-          result = new TagByteArray(input);
-          break;
-
-        case TagType.String:
-          result = new TagString(input);
-          break;
-
-        case TagType.List:
-          result = new TagList(input);
-          break;
-
-        case TagType.Compound:
-          result = new TagCompound(input);
-          break;
-        default:
-          throw new NotImplementedException(string.Format("Unrecognized tag type: {0}", rawType));
-      }
-
-      return result;
-    }
-
-    public static ITag ReadFromFile(string filename)
-    {
-      ITag tag = null;
-
-      //Check if gzipped stream
-      try
-      {
-        using (FileStream input = File.OpenRead(filename))
-        {
-          using (GZipStream gzipStream = new GZipStream(input, CompressionMode.Decompress))
-          {
-            tag = Tag.Read(gzipStream);
-          }
-        }
-      }
-      catch (Exception)
-      {
-        tag = null;
-      }
-
-      if (tag != null)
-      {
-        return tag;
-      }
-
-      //Try Deflate stream
-      try
-      {
-        using (FileStream input = File.OpenRead(filename))
-        {
-          using (DeflateStream deflateStream = new DeflateStream(input, CompressionMode.Decompress))
-          {
-            tag = Tag.Read(deflateStream);
-          }
-        }
-      }
-      catch (Exception)
-      {
-        tag = null;
-      }
-
-      if (tag != null)
-      {
-        return tag;
-      }
-
-      //Assume uncompressed stream
-      using (FileStream input = File.OpenRead(filename))
-      {
-        tag = Tag.Read(input);
-      }
-
-      return tag;
-    }
-
-    public static ITag ReadFromGzippedFile(string filename)
-    {
-      using (FileStream input = File.OpenRead(filename))
-      {
-        using (GZipStream gzipStream = new GZipStream(input, CompressionMode.Decompress))
-        {
-          return Tag.Read(gzipStream);
-        }
-      }
-    }
-
     public ITag[] Flatten()
     {
       List<ITag> tags;
@@ -263,12 +133,12 @@ namespace Cyotek.Data.Nbt
       if (!this.CanRemove)
         throw new TagException("Cannot remove this tag, parent not set or not supported.");
 
-      ((ITagCollection)this.Parent).Values.Remove(this);
+      ((ICollectionTag)this.Parent).Values.Remove(this);
     }
 
     public override string ToString()
     {
-      return ToString(string.Empty);
+      return this.ToString(string.Empty);
     }
 
     public abstract string ToString(string indentString);
@@ -277,10 +147,6 @@ namespace Cyotek.Data.Nbt
     {
       return this.Value != null ? this.Value.ToString() : string.Empty;
     }
-
-    public abstract void Write(Stream output);
-
-    public abstract void WriteUnnamed(Stream output);
 
     protected virtual void OnNameChanged(EventArgs e)
     {
@@ -315,9 +181,9 @@ namespace Cyotek.Data.Nbt
     private void FlattenTag(ITag tag, List<ITag> tags)
     {
       tags.Add(tag);
-      if (tag is ITagCollection)
+      if (tag is ICollectionTag)
       {
-        foreach (ITag childTag in ((ITagCollection)tag).Values)
+        foreach (ITag childTag in ((ICollectionTag)tag).Values)
           this.FlattenTag(childTag, tags);
       }
     }

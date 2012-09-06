@@ -44,11 +44,22 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ITagCollection.cs" />
+    <Compile Include="BinaryTagReader.cs" />
+    <Compile Include="BinaryTagWriter.cs" />
+    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="ITagReader.cs" />
+    <Compile Include="ITagWriter.cs" />
+    <Compile Include="NbtDocument.cs" />
+    <Compile Include="TagReader.cs" />
+    <Compile Include="TagWriter.cs" />
+    <Compile Include="NbtFormat.cs" />
+    <Compile Include="ICollectionTag.cs" />
     <Compile Include="ITag.cs" />
     <Compile Include="ITagEditor.cs" />
+    <Compile Include="NbtOptions.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="BitHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +81,8 @@
     <Compile Include="TagShort.cs" />
     <Compile Include="TagString.cs" />
     <Compile Include="TagType.cs" />
+    <Compile Include="XmlTagReader.cs" />
+    <Compile Include="XmlTagWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cyopublic.snk" />

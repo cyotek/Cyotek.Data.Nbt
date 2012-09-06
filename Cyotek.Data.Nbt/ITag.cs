@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
@@ -29,12 +28,10 @@ namespace Cyotek.Data.Nbt
 
     void Remove();
 
+    string ToString();
+
     string ToString(string indent);
 
     string ToValueString();
-
-    void Write(Stream stream);
-
-    void WriteUnnamed(Stream stream);
   }
 }

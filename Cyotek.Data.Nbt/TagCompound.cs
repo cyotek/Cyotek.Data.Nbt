@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagCompound : Tag, ITagCollection
+  public class TagCompound
+    : Tag, ICollectionTag
   {
     public TagCompound()
       : this(string.Empty)
@@ -19,22 +17,16 @@ namespace Cyotek.Data.Nbt
       this.Value = new TagDictionary(this);
     }
 
-    public TagCompound(Stream input)
-    {
-      this.Name = TagString.ReadString(input);
-      this.Value = ReadDictionary(this, input);
-    }
-
-    bool ITagCollection.IsList
+    bool ICollectionTag.IsList
     { get { return false; } }
 
-    TagType ITagCollection.LimitToType
+    TagType ICollectionTag.LimitToType
     {
       get { return TagType.None; }
       set { }
     }
 
-    IList<ITag> ITagCollection.Values
+    IList<ITag> ICollectionTag.Values
     {
       get { return this.Value; }
     }
@@ -53,6 +45,7 @@ namespace Cyotek.Data.Nbt
           throw new ArgumentNullException("value");
 
         base.Value = value;
+        value.Owner = this;
       }
     }
 
@@ -335,10 +328,10 @@ namespace Cyotek.Data.Nbt
           if (!matchFound)
             throw new ArgumentException(string.Format("Could not find element matching pattern '{0}'", part), "query");
         }
-        else if (element is ITagCollection && ((ITagCollection)element).IsList)
+        else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
         {
           // list entry
-          element = ((ITagCollection)element).Values[Convert.ToInt32(part)];
+          element = ((ICollectionTag)element).Values[Convert.ToInt32(part)];
         }
         else
         {
@@ -366,81 +359,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      StringBuilder results;
-
-      results = new StringBuilder();
-
-      if (this.Value.Count == 0)
-        results.AppendFormat("{0}[Compound: {1}]", indentString, this.Name);
-      else
-      {
-        results.AppendLine(string.Format("{0}[Compound: {1}", indentString, this.Name));
-
-        foreach (ITag item in this.Value)
-          results.AppendLine(string.Format("{0}  {1}={2}", indentString, item.Name, item.ToString(indentString + "  ").Trim()));
-
-        results.AppendLine(string.Format("{0}]", indentString));
-      }
-
-      return results.ToString();
-    }
-
-    public override void Write(Stream output)
-    {
-      output.WriteByte((byte)Type);
-      TagString.WriteString(output, Name);
-      TagCompound.WriteCompound(output, this);
-    }
-
-    public void WriteToFile(string filename)
-    {
-      using (FileStream output = File.Open(filename, FileMode.Create))
-      {
-        using (GZipStream gzipStream = new GZipStream(output, CompressionMode.Compress))
-        {
-          Write(gzipStream);
-        }
-      }
-    }
-
-    public override void WriteUnnamed(Stream output)
-    {
-      WriteCompound(output, this);
-    }
-
-    internal static TagDictionary ReadDictionary(TagCompound owner, Stream input)
-    {
-      TagDictionary results;
-      ITag tag;
-
-      results = new TagDictionary(owner);
-
-      tag = Tag.Read(input);
-      while (tag.Type != TagType.End)
-      {
-        results.Add(tag);
-        tag = Tag.Read(input);
-      }
-
-      return results;
-    }
-
-    internal static TagCompound ReadUnnamedTagCompound(Stream input)
-    {
-      TagCompound result;
-
-      result = new TagCompound();
-      result.Value = ReadDictionary(result, input);
-
-      return result;
-    }
-
-    private static void WriteCompound(Stream output, TagCompound tagCompound)
-    {
-      foreach (ITag item in tagCompound.Value)
-        item.Write(output);
-
-      TagEnd.Singleton.Write(output);
+      return string.Format("{0}[Compound: {1}] ({2} entries)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
     }
   }
 }

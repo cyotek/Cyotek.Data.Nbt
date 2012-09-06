@@ -51,7 +51,9 @@ namespace Cyotek.Data.Nbt.Tests
         inputStream = new DeflateStream(new MemoryStream(buffer, 2, buffer.Length - 6), CompressionMode.Decompress);
       }
 
-      TagCompound tag = Tag.Read(inputStream) as TagCompound;
+      BinaryTagReader reader;
+      reader = new BinaryTagReader(inputStream, NbtOptions.Header);
+      TagCompound tag = (TagCompound)reader.Read();
       string strTag = tag.ToString();
 
       Assert.IsNotNull(tag);

@@ -11,7 +11,7 @@ namespace Cyotek.Data.Nbt
 
     public static ITag CreateTag(TagType tagType, object defaultValue)
     {
-      return TagFactory.CreateTag(tagType, null, defaultValue);
+      return TagFactory.CreateTag(tagType, string.Empty, defaultValue);
     }
 
     public static ITag CreateTag(TagType tagType, string name, object defaultValue)
@@ -63,8 +63,13 @@ namespace Cyotek.Data.Nbt
         case TagType.IntArray:
           result = new TagIntArray();
           break;
+
+        case TagType.End:
+          result = new TagEnd();
+          break;
+
         default:
-          throw new ArgumentException("Invalid tag type.", "tagType");
+          throw new ArgumentException(string.Format("Unrecognized tag type: {0}", tagType));
       }
 
       result.Name = name;

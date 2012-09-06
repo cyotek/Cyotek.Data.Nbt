@@ -3,7 +3,8 @@ using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagDictionary : KeyedCollection<string, ITag>
+  public class TagDictionary
+    : KeyedCollection<string, ITag>
   {
     public TagDictionary(ITag owner)
       : this()
@@ -14,10 +15,10 @@ namespace Cyotek.Data.Nbt
       this.Owner = owner;
     }
 
-    protected TagDictionary()
+    public TagDictionary()
     { }
 
-    public ITag Owner { get; protected set; }
+    public ITag Owner { get; set; }
 
     public ITag Add(string name, string value)
     {
@@ -155,8 +156,8 @@ namespace Cyotek.Data.Nbt
 
       tag = TagFactory.CreateTag(tagType);
       tag.Name = name;
-      if (tag is ITagCollection)
-        ((ITagCollection)tag).LimitToType = limitToType;
+      if (tag is ICollectionTag)
+        ((ICollectionTag)tag).LimitToType = limitToType;
 
       this.Add(tag);
 

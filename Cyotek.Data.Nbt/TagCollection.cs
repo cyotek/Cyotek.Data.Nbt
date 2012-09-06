@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagCollection : Collection<ITag>
+  public class TagCollection
+    : Collection<ITag>
   {
     public TagCollection(ITag owner)
       : this(owner, TagType.None)
@@ -13,19 +13,22 @@ namespace Cyotek.Data.Nbt
     public TagCollection(ITag owner, TagType limitType)
       : this()
     {
-      if (owner == null)
-        throw new ArgumentNullException("owner");
-
       this.Owner = owner;
       this.LimitType = limitType;
     }
 
-    protected TagCollection()
+    public TagCollection()
+    {
+      this.LimitType = TagType.None;
+    }
+
+    public TagCollection(TagType limitType)
+      : this(null, limitType)
     { }
 
-    public TagType LimitType { get; protected set; }
+    public TagType LimitType { get; set; }
 
-    public ITag Owner { get; protected set; }
+    public ITag Owner { get; set; }
 
     public ITag Add(string name, DateTime value)
     {
@@ -152,25 +155,12 @@ namespace Cyotek.Data.Nbt
 
       tag = TagFactory.CreateTag(tagType);
       tag.Name = name;
-      if (tag is ITagCollection)
-        ((ITagCollection)tag).LimitToType = limitToType;
+      if (tag is ICollectionTag)
+        ((ICollectionTag)tag).LimitToType = limitToType;
 
       this.Add(tag);
 
       return tag;
-    }
-
-    public void WriteList(Stream output)
-    {
-      if (this.LimitType == TagType.None || this.LimitType == TagType.End)
-        throw new TagException("Limit type not set.");
-
-      output.WriteByte((byte)this.LimitType);
-
-      TagInt.WriteInt(output, this.Count);
-
-      foreach (ITag item in this)
-        item.WriteUnnamed(output);
     }
 
     protected override void ClearItems()

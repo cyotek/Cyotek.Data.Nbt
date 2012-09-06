@@ -116,18 +116,20 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(ExpectedException = typeof(NotImplementedException), ExpectedMessage = "Unrecognized tag type: 255")]
+    [ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
     public void ReadExceptionTest()
     {
       // arrange
       MemoryStream stream;
+      BinaryTagReader reader;
 
       stream = new MemoryStream();
       stream.WriteByte(255);
       stream.Seek(0, SeekOrigin.Begin);
+      reader = new BinaryTagReader(stream, NbtOptions.None);
 
       // act
-      Tag.Read(stream);
+      reader.Read();
 
       // assert
     }
@@ -164,6 +166,37 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsFalse(data.Contains(key));
+    }
+
+    [Test]
+    public void SaveBinaryTest()
+    {
+      // arrange
+      TagCompound target;
+      TagWriter writer;
+      string fileName;
+      byte[] source;
+      byte[] destination;
+
+      fileName = this.ComplexDataFileName;
+      target = new NbtDocument(fileName).DocumentRoot;
+
+      using (FileStream file = File.OpenRead(fileName))
+        source = this.Decompress(file);
+
+      // act
+      using (MemoryStream stream = new MemoryStream())
+      {
+        writer = new BinaryTagWriter(stream, NbtOptions.Header);
+        writer.Write(target);
+        destination = stream.ToArray();
+      }
+      File.WriteAllBytes(this.OutputFileName, destination);
+
+      // assert
+      CollectionAssert.AreEqual(source, destination);
+
+      new NbtDocument(this.OutputFileName);
     }
 
     [Test]
@@ -325,35 +358,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void TestSave()
-    {
-      TagCompound tag;
-
-      tag = this.GetComplexData();
-
-      MemoryStream ms = new MemoryStream();
-      MemoryStream ms2;
-      FileStream fs = File.OpenRead(this.ComplexDataFileName);
-      GZipStream gzStream = new GZipStream(fs, CompressionMode.Decompress);
-
-      tag.Write(ms);
-
-      ms2 = new MemoryStream((int)ms.Length);
-      byte[] buffer = new byte[ms.Length];
-      Assert.AreEqual(ms.Length, gzStream.Read(buffer, 0, (int)ms.Length));
-
-      Assert.AreEqual(-1, gzStream.ReadByte());
-      byte[] buffer2 = ms.GetBuffer();
-
-      FileStream fs2 = File.OpenWrite(this.OutputFileName);
-      fs2.Write(buffer2, 0, (int)ms.Length);
-      for (long i = 0; i < ms.Length; i++)
-      {
-        Assert.AreEqual(buffer[i], buffer2[i]);
-      }
-    }
-
-    [Test]
     public void ToValueStringTest()
     {
       // arrange
@@ -395,6 +399,41 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsTrue(eventRaised);
+    }
+
+    /// <summary>
+    /// Decompresses the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream.</param>
+    /// <returns></returns>
+    private byte[] Decompress(Stream stream)
+    {
+      byte[] result;
+
+      using (GZipStream decompressStream = new GZipStream(stream, CompressionMode.Decompress))
+      {
+        int bufferSize;
+        byte[] buffer;
+
+        bufferSize = 4096;
+        buffer = new byte[bufferSize];
+
+        using (MemoryStream memory = new MemoryStream())
+        {
+          int count = 0;
+          do
+          {
+            count = decompressStream.Read(buffer, 0, bufferSize);
+            if (count > 0)
+              memory.Write(buffer, 0, count);
+          }
+          while (count > 0);
+
+          result = memory.ToArray();
+        }
+      }
+
+      return result;
     }
   }
 }

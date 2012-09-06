@@ -4,9 +4,17 @@ NBT (Named Binary Tag) is a tag based binary format designed to carry large amou
 
 Cyotek.Data.Nbt is a library for reading and writing NBT format files used by Minecraft. However, the format is versatile enough to use for many other applications.
 
-It was originally based on [LibNBT](http://libnbt.codeplex.com/) found on CodePlex, but I've made a lot of changes to it to make it easier to use in real world applications. Or at least easier for me in mine!
+It was originally based on [LibNBT](http://libnbt.codeplex.com/) found on CodePlex, but I've made a lot of changes to it. The API has substantially changed, although it should be easier to use than the original.
 
-> Note: I haven't fully tested this (yet). It works so far from what I'm using it for, but no doubt bugs exist. I need to adapt (and expand) the original tests that were written for the library to ensure I haven't broken anything.
+In addition to support for the native binary NBT format, this library also offers the ability to read and write NBT tags to and from XML... not quite as "binary", but certainly more readable!
+
+### Features
+* Support for all tags in the specification
+* Reads and writes binary files compatible with existing NBT libraries and tools
+* Supports reading and writing to XML based files for human readable output
+* Ability to provide custom readers/writers if required
+* Extended API for working with NBT documents
+* Query support
 
 ### License
 

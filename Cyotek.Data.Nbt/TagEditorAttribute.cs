@@ -3,7 +3,8 @@
 namespace Cyotek.Data.Nbt
 {
   [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-  public sealed class TagEditorAttribute : Attribute
+  public sealed class TagEditorAttribute
+    : Attribute
   {
     private string _editorTypeName;
 
