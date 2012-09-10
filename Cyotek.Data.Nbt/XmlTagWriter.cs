@@ -25,7 +25,19 @@ namespace Cyotek.Data.Nbt
 
     public override void Write(ITag value, NbtOptions options)
     {
-      _writer.WriteStartElement("tag");
+      string name;
+
+      name = value.Name;
+      if (string.IsNullOrEmpty(name))
+        name = "tag";
+
+      if (XmlConvert.EncodeName(name) == name)
+        _writer.WriteStartElement(name);
+      else
+      {
+        _writer.WriteStartElement("tag");
+        _writer.WriteAttributeString("name", name);
+      }
 
       if (options.HasFlag(NbtOptions.Header) && value.Type != TagType.End)
         this.WriteHeader(value);
@@ -202,7 +214,7 @@ namespace Cyotek.Data.Nbt
 
       _settings = new XmlWriterSettings()
       {
-        Indent = !this.Options.HasFlag(NbtOptions.Compress),
+        Indent = true,
         Encoding = Encoding.UTF8
       };
 
@@ -213,7 +225,6 @@ namespace Cyotek.Data.Nbt
     protected void WriteHeader(ITag value)
     {
       _writer.WriteAttributeString("type", value.Type.ToString());
-      _writer.WriteAttributeString("name", value.Name);
     }
   }
 }

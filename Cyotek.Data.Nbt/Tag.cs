@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Text;
 
 namespace Cyotek.Data.Nbt
@@ -126,6 +127,23 @@ namespace Cyotek.Data.Nbt
       }
 
       return tags.ToArray();
+    }
+
+    public virtual byte[] GetValue()
+    {
+      byte[] result;
+
+      using (MemoryStream stream = new MemoryStream())
+      {
+        TagWriter writer;
+
+        writer = new BinaryTagWriter(stream, NbtOptions.Header);
+        writer.Write(this);
+
+        result = stream.ToArray();
+      }
+
+      return result;
     }
 
     public virtual void Remove()

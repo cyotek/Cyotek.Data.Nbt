@@ -142,15 +142,15 @@ namespace Cyotek.Data.Nbt
 
     public ITag Add(TagType tagType)
     {
-      return this.Add(tagType, string.Empty);
+      return this.Add(string.Empty, tagType);
     }
 
-    public ITag Add(TagType tagType, string name)
+    public ITag Add(string name, TagType tagType)
     {
-      return this.Add(tagType, name, TagType.None);
+      return this.Add(name, tagType, TagType.None);
     }
 
-    public ITag Add(TagType tagType, string name, TagType limitToType)
+    public ITag Add(string name, TagType tagType, TagType limitToType)
     {
       ITag tag;
 

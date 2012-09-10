@@ -1,49 +1,41 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 
 namespace Cyotek.Data.Nbt
 {
   public class NbtDocument
   {
+    private NbtFormat _format;
     private Type _readerType;
 
     private Type _writerType;
 
+    static NbtDocument()
+    {
+      NbtDocument.DefaultFormat = NbtFormat.Binary;
+    }
+
     public NbtDocument(Type reader, Type writer)
-      : this()
+      : this(NbtFormat.Custom)
     {
       this.ReaderType = reader;
       this.WriterType = writer;
     }
 
     public NbtDocument(NbtFormat format)
-      : this()
     {
-      switch (format)
-      {
-        case NbtFormat.Binary:
-          this.WriterType = typeof(BinaryTagWriter);
-          this.ReaderType = typeof(BinaryTagReader);
-          break;
-        default:
-          throw new ArgumentException("Unrecognized or unsupported format.", "format");
-      }
+      this.DocumentRoot = new TagCompound();
+      this.Format = format;
     }
 
     public NbtDocument()
-    {
-      this.DocumentRoot = new TagCompound();
-      this.WriterType = typeof(BinaryTagWriter);
-      this.ReaderType = typeof(BinaryTagReader);
-    }
+      : this(NbtDocument.DefaultFormat)
+    { }
 
     public NbtDocument(string fileName)
-      : this()
-    {
-      if (string.IsNullOrEmpty(fileName))
-        throw new ArgumentNullException("fileName");
-
-      this.Load(fileName);
-    }
+      : this(fileName, NbtDocument.GetDocumentFormat(fileName))
+    { }
 
     public NbtDocument(TagCompound document)
       : this()
@@ -54,19 +46,60 @@ namespace Cyotek.Data.Nbt
       this.DocumentRoot = document;
     }
 
+    public NbtDocument(string fileName, NbtFormat format)
+      : this(format)
+    {
+      if (string.IsNullOrEmpty(fileName))
+        throw new ArgumentNullException("fileName");
+
+      this.Load(fileName);
+    }
+
+    public static NbtFormat DefaultFormat { get; set; }
+
     public TagCompound DocumentRoot { get; set; }
 
     public string FileName { get; set; }
+
+    public virtual NbtFormat Format
+    {
+      get { return _format; }
+      set
+      {
+        if (_format != value)
+        {
+          _format = value;
+
+          switch (_format)
+          {
+            case NbtFormat.Binary:
+              this.WriterType = typeof(BinaryTagWriter);
+              this.ReaderType = typeof(BinaryTagReader);
+              break;
+
+            case NbtFormat.XML:
+              this.WriterType = typeof(XmlTagWriter);
+              this.ReaderType = typeof(XmlTagReader);
+              break;
+
+            case NbtFormat.Custom:
+              this.WriterType = null;
+              this.ReaderType = null;
+              break;
+            default:
+              throw new ArgumentException("Invalid format.", "value");
+          }
+        }
+      }
+    }
 
     public virtual Type ReaderType
     {
       get { return _readerType; }
       set
       {
-        if (value == null)
-          throw new ArgumentNullException("value");
-        else if (!typeof(ITagReader).IsAssignableFrom(value))
-          throw new ArgumentException("Cannot assign ITagWriter from specified type.", "value");
+        if (value != null && !typeof(ITagReader).IsAssignableFrom(value))
+          throw new ArgumentException("Cannot assign ITagReader from specified type.", "value");
 
         _readerType = value;
       }
@@ -77,13 +110,44 @@ namespace Cyotek.Data.Nbt
       get { return _writerType; }
       set
       {
-        if (value == null)
-          throw new ArgumentNullException("value");
-        else if (!typeof(ITagWriter).IsAssignableFrom(value))
+        if (value != null && !typeof(ITagWriter).IsAssignableFrom(value))
           throw new ArgumentException("Cannot assign ITagWriter from specified type.", "value");
 
         _writerType = value;
       }
+    }
+
+    public static NbtFormat GetDocumentFormat(string fileName)
+    {
+      if (string.IsNullOrEmpty(fileName))
+        throw new ArgumentNullException("fileName");
+
+      return new NbtDocument(NbtFormat.Custom).GetFormat(fileName);
+    }
+
+    public static NbtDocument LoadDocument(string fileName)
+    {
+      if (string.IsNullOrEmpty(fileName))
+        throw new ArgumentNullException("fileName");
+
+      return new NbtDocument(fileName);
+    }
+
+    public virtual NbtFormat GetFormat(string fileName)
+    {
+      NbtFormat format;
+
+      if (string.IsNullOrEmpty(fileName))
+        throw new ArgumentNullException("fileName");
+
+      if (this.IsGzipDocument(fileName) || this.IsDeflateDocument(fileName) || this.IsRawDocument(fileName))
+        format = NbtFormat.Binary;
+      else if (this.IsXmlDocument(fileName))
+        format = NbtFormat.XML;
+      else
+        format = NbtFormat.Custom;
+
+      return format;
     }
 
     public void Load()
@@ -104,6 +168,16 @@ namespace Cyotek.Data.Nbt
       this.FileName = fileName;
     }
 
+    public ITag Query(string query)
+    {
+      return this.Query<ITag>(query);
+    }
+
+    public T Query<T>(string query) where T : ITag
+    {
+      return this.DocumentRoot.Query<T>(query);
+    }
+
     public void Save(string fileName)
     {
       this.Save(fileName, NbtOptions.Compress | NbtOptions.Header);
@@ -120,6 +194,90 @@ namespace Cyotek.Data.Nbt
 
       writer.Write(this.DocumentRoot, fileName, options);
       this.FileName = fileName;
+    }
+
+    private bool IsDeflateDocument(string fileName)
+    {
+      bool result;
+
+      try
+      {
+        using (Stream stream = File.OpenRead(fileName))
+        {
+          using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
+            result = ((TagType)decompressionStream.ReadByte() == TagType.Compound);
+        }
+      }
+      catch
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    private bool IsGzipDocument(string fileName)
+    {
+      bool result;
+
+      try
+      {
+        using (Stream stream = File.OpenRead(fileName))
+        {
+          using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
+            result = ((TagType)decompressionStream.ReadByte() == TagType.Compound);
+        }
+      }
+      catch
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    private bool IsRawDocument(string fileName)
+    {
+      bool result;
+
+      try
+      {
+        using (Stream stream = File.OpenRead(fileName))
+          result = ((TagType)stream.ReadByte() == TagType.Compound);
+      }
+      catch
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    private bool IsXmlDocument(string fileName)
+    {
+      bool result;
+
+      try
+      {
+        using (Stream stream = File.OpenRead(fileName))
+        {
+          using (StreamReader reader = new StreamReader(stream))
+          {
+            char[] buffer;
+
+            buffer = new char[1];
+            reader.Read(buffer, 0, 1);
+
+            result = buffer[0] == '<';
+          }
+        }
+      }
+      catch
+      {
+        result = false;
+      }
+
+      return result;
     }
   }
 }

@@ -228,9 +228,9 @@ namespace Cyotek.Data.Nbt
 
     protected void WriteCompressed(TagCompound tag, string fileName)
     {
-      using (FileStream fileStream = File.Open(fileName, FileMode.Create))
+      using (Stream fileStream = File.Open(fileName, FileMode.Create))
       {
-        using (GZipStream output = new GZipStream(fileStream, CompressionMode.Compress))
+        using (Stream output = new GZipStream(fileStream, CompressionMode.Compress))
         {
           this.OutputStream = output;
           this.Write(tag);

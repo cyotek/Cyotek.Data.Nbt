@@ -95,6 +95,24 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void GetValueTest()
+    {
+      // arrange
+      TagCompound target;
+      byte[] expected;
+      byte[] actual;
+
+      expected = File.ReadAllBytes(this.UncompressedComplexDataFileName);
+      target = this.GetComplexData();
+
+      // act
+      actual = target.GetValue();
+
+      // assert
+      CollectionAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
     public void NameChangedEventTest()
     {
       // arrange

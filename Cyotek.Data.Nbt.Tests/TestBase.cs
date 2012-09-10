@@ -11,6 +11,9 @@ namespace Cyotek.Data.Nbt.Tests
     protected string AnvilRegionFileName
     { get { return Path.Combine(this.DataPath, "r.0.0.mca"); } }
 
+    protected string BadFileName
+    { get { return Path.Combine(this.DataPath, "badfile.txt"); } }
+
     protected string ComplexDataFileName
     { get { return Path.Combine(this.DataPath, "bigtest.nbt"); } }
 
@@ -19,6 +22,9 @@ namespace Cyotek.Data.Nbt.Tests
 
     protected string DataPath
     { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data"); } }
+
+    protected string DeflateComplexDataFileName
+    { get { return Path.Combine(this.DataPath, "complextest.def"); } }
 
     protected string OutputFileName { get; set; }
 

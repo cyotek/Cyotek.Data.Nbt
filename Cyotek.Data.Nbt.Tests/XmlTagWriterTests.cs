@@ -20,6 +20,7 @@ namespace Cyotek.Data.Nbt.Tests
       writer.Write(target, this.OutputFileName);
 
       // assert
+      FileAssert.AreEqual(this.ComplexXmlDataFileName, this.OutputFileName);
     }
   }
 }

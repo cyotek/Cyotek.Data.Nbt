@@ -26,6 +26,8 @@ namespace Cyotek.Data.Nbt
 
     ITag[] GetAncestors();
 
+    byte[] GetValue();
+
     void Remove();
 
     string ToString();

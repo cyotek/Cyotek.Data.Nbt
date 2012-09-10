@@ -132,15 +132,17 @@ namespace Cyotek.Data.Nbt
     {
       ITag result;
       TagType type;
+      string name;
 
-      if (_reader.Name != "tag")
-        throw new InvalidDataException("Unrecognized element name.");
+      name = _reader.GetAttribute("name");
+      if (string.IsNullOrEmpty(name))
+        name = _reader.Name;
 
       type = defaultTagType != TagType.None ? defaultTagType : (TagType)Enum.Parse(typeof(TagType), _reader.GetAttribute("type"), true);
       result = TagFactory.CreateTag(type);
 
       if (options.HasFlag(NbtOptions.Header))
-        result.Name = _reader.GetAttribute("name");
+        result.Name = name;
 
       switch (type)
       {
