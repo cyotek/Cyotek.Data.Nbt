@@ -139,6 +139,8 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("fileName");
+      else if (!File.Exists(fileName))
+        throw new FileNotFoundException("Cannot find file.", fileName);
 
       if (this.IsGzipDocument(fileName) || this.IsDeflateDocument(fileName) || this.IsRawDocument(fileName))
         format = NbtFormat.Binary;
@@ -158,10 +160,16 @@ namespace Cyotek.Data.Nbt
     public void Load(string fileName)
     {
       ITagReader reader;
+      NbtFormat format;
 
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("fileName");
 
+      format = this.GetFormat(fileName);
+      if (format == NbtFormat.Custom && this.Format != NbtFormat.Custom)
+        throw new ArgumentNullException("Cannot load custom formatted documents when appropriate reader not specified.");
+
+      this.Format = format;
       reader = (ITagReader)Activator.CreateInstance(this.ReaderType);
 
       this.DocumentRoot = reader.Load(fileName, NbtOptions.Header);
