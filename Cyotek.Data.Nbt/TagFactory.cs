@@ -1,9 +1,11 @@
-ï»¿using System;
+using System;
 
 namespace Cyotek.Data.Nbt
 {
   public static class TagFactory
   {
+    #region Public Class Methods
+
     public static ITag CreateTag(TagType tagType)
     {
       return TagFactory.CreateTag(tagType, null);
@@ -78,5 +80,7 @@ namespace Cyotek.Data.Nbt
 
       return result;
     }
+
+    #endregion Public Class Methods
   }
 }

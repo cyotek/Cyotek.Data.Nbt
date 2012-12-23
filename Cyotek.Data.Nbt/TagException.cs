@@ -1,14 +1,27 @@
-ï»¿using System;
+using System;
 
 namespace Cyotek.Data.Nbt
 {
   public class TagException
     : Exception
   {
-    public TagException() : base() { }
+    #region Public Constructors
 
-    public TagException(string message) : base(message) { }
+    public TagException()
+      : base()
+    {
+    }
 
-    public TagException(string message, Exception innerException) : base(message, innerException) { }
+    public TagException(string message)
+      : base(message)
+    {
+    }
+
+    public TagException(string message, Exception innerException)
+      : base(message, innerException)
+    {
+    }
+
+    #endregion Public Constructors
   }
 }

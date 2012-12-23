@@ -1,9 +1,11 @@
-ï»¿namespace Cyotek.Data.Nbt
+namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagIntArrayEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
   public class TagIntArray
     : Tag
   {
+    #region Public Constructors
+
     public TagIntArray()
       : this(string.Empty, new int[0])
     { }
@@ -22,10 +24,27 @@
       this.Value = value;
     }
 
+    #endregion Public Constructors
+
+    #region Overriden Properties
+
     public override TagType Type
     {
       get { return TagType.IntArray; }
     }
+
+    #endregion Overriden Properties
+
+    #region Public Overridden Methods
+
+    public override string ToString(string indentString)
+    {
+      return string.Format("{0}[IntArray: {1}={2} values]", indentString, this.Name, (this.Value != null) ? this.Value.Length : 0);
+    }
+
+    #endregion Public Overridden Methods
+
+    #region Public Properties
 
     public new int[] Value
     {
@@ -33,9 +52,6 @@
       set { base.Value = value; }
     }
 
-    public override string ToString(string indentString)
-    {
-      return string.Format("{0}[IntArray: {1}={2} values]", indentString, this.Name, (this.Value != null) ? this.Value.Length : 0);
-    }
+    #endregion Public Properties
   }
 }

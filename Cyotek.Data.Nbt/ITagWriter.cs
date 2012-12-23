@@ -1,12 +1,18 @@
-ï»¿using System.IO;
+using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
   internal interface ITagWriter
   {
+  #region Private Properties 
+
     NbtOptions Options { get; set; }
 
     Stream OutputStream { get; set; }
+
+  #endregion Private Properties 
+
+  #region Private Methods 
 
     void Write(TagCompound tag, string fileName);
 
@@ -33,5 +39,7 @@ namespace Cyotek.Data.Nbt
     void Write(float value);
 
     void Write(string value);
+
+  #endregion Private Methods 
   }
 }

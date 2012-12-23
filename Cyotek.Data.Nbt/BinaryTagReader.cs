@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -8,6 +8,8 @@ namespace Cyotek.Data.Nbt
   public class BinaryTagReader
     : TagReader
   {
+    #region Public Constructors
+
     public BinaryTagReader()
       : base()
     { }
@@ -15,6 +17,10 @@ namespace Cyotek.Data.Nbt
     public BinaryTagReader(Stream input, NbtOptions options)
       : base(input, options)
     { }
+
+    #endregion Public Constructors
+
+    #region Public Overridden Methods
 
     public override TagCompound Load(string fileName, NbtOptions options)
     {
@@ -244,6 +250,7 @@ namespace Cyotek.Data.Nbt
           case TagType.String:
             tag = TagFactory.CreateTag(TagType.String, this.ReadString());
             break;
+
           default:
             throw new InvalidDataException("Invalid list type.");
         }
@@ -380,5 +387,7 @@ namespace Cyotek.Data.Nbt
 
       return Encoding.UTF8.GetString(data);
     }
+
+    #endregion Public Overridden Methods
   }
 }

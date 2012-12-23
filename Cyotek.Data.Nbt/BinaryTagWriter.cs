@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -8,26 +8,30 @@ namespace Cyotek.Data.Nbt
   public class BinaryTagWriter
     : TagWriter
   {
-    internal static readonly int DoubleSize = 8;
-
-    internal static readonly int FloatSize = 4;
-
-    internal static readonly int IntSize = 4;
-
-    internal static readonly int LongSize = 8;
-
-    internal static readonly int ShortSize = 2;
+    #region Public Constructors
 
     public BinaryTagWriter()
       : base()
+    { }
+
+    public BinaryTagWriter(Stream stream)
+      : this(stream, NbtOptions.Header | NbtOptions.Compress)
     { }
 
     public BinaryTagWriter(Stream stream, NbtOptions options)
       : base(stream, options)
     { }
 
+    #endregion Public Constructors
+
+    #region Overriden Properties
+
     protected override NbtOptions DefaultOptions
     { get { return NbtOptions.Header | NbtOptions.Compress; } }
+
+    #endregion Overriden Properties
+
+    #region Public Overridden Methods
 
     public override void Write(ITag value, NbtOptions options)
     {
@@ -87,19 +91,6 @@ namespace Cyotek.Data.Nbt
         default:
           throw new ArgumentException("Unrecognized or unsupported tag type.", "value");
       }
-    }
-
-    public virtual void Write(TagCollection value)
-    {
-      if (value.LimitType == TagType.None || value.LimitType == TagType.End)
-        throw new TagException("Limit type not set.");
-
-      this.OutputStream.WriteByte((byte)value.LimitType);
-
-      this.Write(value.Count);
-
-      foreach (ITag item in value)
-        this.Write(item, NbtOptions.None);
     }
 
     public override void Write(string value)
@@ -187,14 +178,6 @@ namespace Cyotek.Data.Nbt
       this.OutputStream.WriteByte(value);
     }
 
-    public virtual void Write(TagDictionary value)
-    {
-      foreach (ITag item in value)
-        this.Write(item, NbtOptions.Header);
-
-      this.WriteEnd();
-    }
-
     public override void Write(byte[] value)
     {
       if (value != null && value.Length != 0)
@@ -221,10 +204,39 @@ namespace Cyotek.Data.Nbt
         this.WriteUncompressed(tag, fileName);
     }
 
+    #endregion Public Overridden Methods
+
+    #region Public Methods
+
+    public virtual void Write(TagCollection value)
+    {
+      if (value.LimitType == TagType.None || value.LimitType == TagType.End)
+        throw new TagException("Limit type not set.");
+
+      this.OutputStream.WriteByte((byte)value.LimitType);
+
+      this.Write(value.Count);
+
+      foreach (ITag item in value)
+        this.Write(item, NbtOptions.None);
+    }
+
+    public virtual void Write(TagDictionary value)
+    {
+      foreach (ITag item in value)
+        this.Write(item, NbtOptions.Header);
+
+      this.WriteEnd();
+    }
+
     public virtual void WriteEnd()
     {
       this.OutputStream.WriteByte((byte)TagType.End);
     }
+
+    #endregion Public Methods
+
+    #region Protected Methods
 
     protected void WriteCompressed(TagCompound tag, string fileName)
     {
@@ -252,5 +264,13 @@ namespace Cyotek.Data.Nbt
         this.Write(tag);
       }
     }
+
+    #endregion Protected Methods
+
+    internal static readonly int DoubleSize = 8;
+    internal static readonly int FloatSize = 4;
+    internal static readonly int IntSize = 4;
+    internal static readonly int LongSize = 8;
+    internal static readonly int ShortSize = 2;
   }
 }

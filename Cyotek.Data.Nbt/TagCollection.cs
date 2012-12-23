@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
@@ -6,8 +6,19 @@ namespace Cyotek.Data.Nbt
   public class TagCollection
     : Collection<ITag>
   {
+    #region Public Constructors
+
+    public TagCollection()
+    {
+      this.LimitType = TagType.None;
+    }
+
     public TagCollection(ITag owner)
       : this(owner, TagType.None)
+    { }
+
+    public TagCollection(TagType limitType)
+      : this(null, limitType)
     { }
 
     public TagCollection(ITag owner, TagType limitType)
@@ -17,151 +28,9 @@ namespace Cyotek.Data.Nbt
       this.LimitType = limitType;
     }
 
-    public TagCollection()
-    {
-      this.LimitType = TagType.None;
-    }
+    #endregion Public Constructors
 
-    public TagCollection(TagType limitType)
-      : this(null, limitType)
-    { }
-
-    public TagType LimitType { get; set; }
-
-    public ITag Owner { get; set; }
-
-    public ITag Add(string name, DateTime value)
-    {
-      return this.Add(name, value.ToString("u"));
-    }
-
-    public ITag Add(string name, string value)
-    {
-      ITag tag;
-
-      tag = new TagString(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, float value)
-    {
-      ITag tag;
-
-      tag = new TagFloat(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, double value)
-    {
-      ITag tag;
-
-      tag = new TagDouble(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, long value)
-    {
-      ITag tag;
-
-      tag = new TagLong(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, short value)
-    {
-      ITag tag;
-
-      tag = new TagShort(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, byte value)
-    {
-      ITag tag;
-
-      tag = new TagByte(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, int value)
-    {
-      ITag tag;
-
-      tag = new TagInt(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, int[] value)
-    {
-      ITag tag;
-
-      tag = new TagIntArray(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, byte[] value)
-    {
-      ITag tag;
-
-      tag = new TagByteArray(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public void Add(string name, Guid value)
-    {
-      this.Add(name, value.ToByteArray());
-    }
-
-    public ITag Add(TagType tagType)
-    {
-      return this.Add(string.Empty, tagType);
-    }
-
-    public ITag Add(string name, TagType tagType)
-    {
-      return this.Add(name, tagType, TagType.None);
-    }
-
-    public ITag Add(string name, TagType tagType, TagType limitToType)
-    {
-      ITag tag;
-
-      tag = TagFactory.CreateTag(tagType);
-      tag.Name = name;
-      if (tag is ICollectionTag)
-        ((ICollectionTag)tag).LimitToType = limitToType;
-
-      this.Add(tag);
-
-      return tag;
-    }
+    #region Protected Overridden Methods
 
     protected override void ClearItems()
     {
@@ -200,5 +69,205 @@ namespace Cyotek.Data.Nbt
 
       base.SetItem(index, item);
     }
+
+    #endregion Protected Overridden Methods
+
+    #region Public Methods
+
+    public ITag Add(DateTime value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, DateTime value)
+    {
+      return this.Add(name, value.ToString("u"));
+    }
+
+    public ITag Add(string value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, string value)
+    {
+      ITag tag;
+
+      tag = new TagString(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(float value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, float value)
+    {
+      ITag tag;
+
+      tag = new TagFloat(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(double value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, double value)
+    {
+      ITag tag;
+
+      tag = new TagDouble(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(long value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, long value)
+    {
+      ITag tag;
+
+      tag = new TagLong(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(short value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, short value)
+    {
+      ITag tag;
+
+      tag = new TagShort(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(byte value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, byte value)
+    {
+      ITag tag;
+
+      tag = new TagByte(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(int value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, int value)
+    {
+      ITag tag;
+
+      tag = new TagInt(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(int[] value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, int[] value)
+    {
+      ITag tag;
+
+      tag = new TagIntArray(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public ITag Add(byte[] value)
+    {
+      return this.Add(string.Empty, value);
+    }
+
+    public ITag Add(string name, byte[] value)
+    {
+      ITag tag;
+
+      tag = new TagByteArray(name, value);
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    public void Add(string name, Guid value)
+    {
+      this.Add(name, value.ToByteArray());
+    }
+
+    public ITag Add(TagType tagType)
+    {
+      return this.Add(string.Empty, tagType);
+    }
+
+    public ITag Add(string name, TagType tagType)
+    {
+      return this.Add(name, tagType, TagType.None);
+    }
+
+    public ITag Add(string name, TagType tagType, TagType limitToType)
+    {
+      ITag tag;
+      ICollectionTag collectionTag;
+
+      tag = TagFactory.CreateTag(tagType);
+      tag.Name = name;
+      
+      collectionTag = tag as ICollectionTag;
+      if (collectionTag != null)
+        collectionTag.LimitToType = limitToType;
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+    #endregion Public Methods
+
+    #region Public Properties
+
+    public TagType LimitType { get; set; }
+
+    public ITag Owner { get; set; }
+
+    #endregion Public Properties
   }
 }

@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -8,7 +8,13 @@ namespace Cyotek.Data.Nbt
   public abstract class TagReader
     : ITagReader
   {
+    #region Private Member Declarations
+
     private Stream _inputStream;
+
+    #endregion Private Member Declarations
+
+    #region Protected Constructors
 
     protected TagReader()
     { }
@@ -23,43 +29,21 @@ namespace Cyotek.Data.Nbt
       this.Options = options;
     }
 
+    #endregion Protected Constructors
+
+    #region Events
+
     /// <summary>
     /// Occurs when the InputStream property value changes
     /// </summary>
     [Category("Property Changed")]
     public event EventHandler InputStreamChanged;
 
-    public virtual Stream InputStream
-    {
-      get { return _inputStream; }
-      set
-      {
-        if (this.InputStream != value)
-        {
-          _inputStream = value;
+    #endregion Events
 
-          this.OnInputStreamChanged(EventArgs.Empty);
-        }
-      }
-    }
-
-    public NbtOptions Options { get; set; }
-
-    protected virtual NbtOptions DefaultOptions
-    { get { return NbtOptions.Header; } }
+    #region Public Abstract Methods
 
     public abstract TagCompound Load(string fileName, NbtOptions options);
-
-    public virtual TagCompound Load(string fileName)
-    {
-      return this.Load(fileName, this.DefaultOptions);
-    }
-
-    [DebuggerStepThrough]
-    public virtual ITag Read()
-    {
-      return this.Read(this.Options);
-    }
 
     public abstract ITag Read(NbtOptions options);
 
@@ -85,6 +69,52 @@ namespace Cyotek.Data.Nbt
 
     public abstract string ReadString();
 
+    #endregion Public Abstract Methods
+
+    #region Public Methods
+
+    public virtual TagCompound Load(string fileName)
+    {
+      return this.Load(fileName, this.DefaultOptions);
+    }
+
+    [DebuggerStepThrough]
+    public virtual ITag Read()
+    {
+      return this.Read(this.Options);
+    }
+
+    #endregion Public Methods
+
+    #region Public Properties
+
+    public virtual Stream InputStream
+    {
+      get { return _inputStream; }
+      set
+      {
+        if (this.InputStream != value)
+        {
+          _inputStream = value;
+
+          this.OnInputStreamChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    public NbtOptions Options { get; set; }
+
+    #endregion Public Properties
+
+    #region Protected Properties
+
+    protected virtual NbtOptions DefaultOptions
+    { get { return NbtOptions.Header; } }
+
+    #endregion Protected Properties
+
+    #region Protected Methods
+
     /// <summary>
     /// Raises the <see cref="E:InputStreamChanged" /> event.
     /// </summary>
@@ -98,5 +128,7 @@ namespace Cyotek.Data.Nbt
       if (handler != null)
         handler(this, e);
     }
+
+    #endregion Protected Methods
   }
 }

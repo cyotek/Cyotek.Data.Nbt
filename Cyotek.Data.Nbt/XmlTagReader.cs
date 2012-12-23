@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -8,7 +8,13 @@ namespace Cyotek.Data.Nbt
   public class XmlTagReader
     : TagReader
   {
+    #region Private Member Declarations
+
     private XmlReader _reader;
+
+    #endregion Private Member Declarations
+
+    #region Public Overridden Methods
 
     public override TagCompound Load(string fileName, NbtOptions options)
     {
@@ -71,7 +77,7 @@ namespace Cyotek.Data.Nbt
 
       value = new TagDictionary(owner);
 
-      while (_reader.NodeType != XmlNodeType.EndElement)
+      while (_reader.NodeType != XmlNodeType.EndElement && _reader.NodeType != XmlNodeType.None)
       {
         _reader.Read();
 
@@ -119,6 +125,10 @@ namespace Cyotek.Data.Nbt
       return _reader.ReadElementContentAsString();
     }
 
+    #endregion Public Overridden Methods
+
+    #region Protected Overridden Methods
+
     protected override void OnInputStreamChanged(EventArgs e)
     {
       base.OnInputStreamChanged(e);
@@ -127,6 +137,20 @@ namespace Cyotek.Data.Nbt
 
       this.IncrementReader(_reader);
     }
+
+    #endregion Protected Overridden Methods
+
+    #region Private Methods
+
+    private void IncrementReader(XmlReader reader)
+    {
+      while (!reader.IsStartElement())
+        reader.Read();
+    }
+
+    #endregion Private Methods
+
+    #region Protected Methods
 
     protected ITag Read(NbtOptions options, TagType defaultTagType)
     {
@@ -189,6 +213,7 @@ namespace Cyotek.Data.Nbt
         case TagType.IntArray:
           result.Value = this.ReadIntArray();
           break;
+
         default:
           throw new NotImplementedException(string.Format("Unrecognized tag type: {0}", type));
       }
@@ -196,10 +221,6 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    private void IncrementReader(XmlReader reader)
-    {
-      while (!reader.IsStartElement())
-        reader.Read();
-    }
+    #endregion Protected Methods
   }
 }

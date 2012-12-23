@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -10,6 +10,8 @@ namespace Cyotek.Data.Nbt.Tests
   internal class TagTests
     : TestBase
   {
+    #region  Public Methods
+
     [Test]
     public void CanRemoveTest()
     {
@@ -247,7 +249,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagString stringTest = level.GetString("stringTest");
       Assert.IsNotNull(stringTest);
       Assert.AreEqual("stringTest", stringTest.Name);
-      Assert.AreEqual("HELLO WORLD THIS IS A TEST STRING Ã…Ã„Ã–!", stringTest.Value);
+      Assert.AreEqual("HELLO WORLD THIS IS A TEST STRING ÅÄÖ!", stringTest.Value);
 
       TagInt intTest = level.GetInt("intTest");
       Assert.IsNotNull(intTest);
@@ -419,6 +421,10 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsTrue(eventRaised);
     }
 
+    #endregion  Public Methods
+
+    #region  Private Methods
+
     /// <summary>
     /// Decompresses the specified stream.
     /// </summary>
@@ -453,5 +459,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       return result;
     }
+
+    #endregion  Private Methods
   }
 }

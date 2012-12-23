@@ -1,9 +1,11 @@
-ï»¿using System;
+using System;
 
 namespace Cyotek.Data.Nbt
 {
   internal static class BitHelper
   {
+    #region Internal Class Methods
+
     internal static void SwapBytes(byte[] buffer, int offset, int length)
     {
       if (length < 1)
@@ -51,5 +53,7 @@ namespace Cyotek.Data.Nbt
         }
       }
     }
+
+    #endregion Internal Class Methods
   }
 }

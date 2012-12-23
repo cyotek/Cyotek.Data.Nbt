@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -7,6 +7,8 @@ namespace Cyotek.Data.Nbt.Tests
   internal class QueryTests
     : TestBase
   {
+    #region  Public Methods
+
     [Test]
     public void QueryValueTest()
     {
@@ -93,5 +95,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsAssignableFrom(expectedType, result);
       Assert.AreEqual(expectedValue, (long)result.Value);
     }
+
+    #endregion  Public Methods
   }
 }

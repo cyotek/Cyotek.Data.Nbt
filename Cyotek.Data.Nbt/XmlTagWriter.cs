@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -8,20 +8,37 @@ namespace Cyotek.Data.Nbt
   public class XmlTagWriter
     : TagWriter
   {
-    private XmlWriterSettings _settings;
+    #region Private Member Declarations
 
+    private XmlWriterSettings _settings;
     private XmlWriter _writer;
+
+    #endregion Private Member Declarations
+
+    #region Public Constructors
 
     public XmlTagWriter()
       : base()
+    { }
+
+    public XmlTagWriter(Stream stream)
+      : this(stream, NbtOptions.Header)
     { }
 
     public XmlTagWriter(Stream stream, NbtOptions options)
       : base(stream, options)
     { }
 
+    #endregion Public Constructors
+
+    #region Overriden Properties
+
     protected override NbtOptions DefaultOptions
     { get { return NbtOptions.Header; } }
+
+    #endregion Overriden Properties
+
+    #region Public Overridden Methods
 
     public override void Write(ITag value, NbtOptions options)
     {
@@ -99,17 +116,6 @@ namespace Cyotek.Data.Nbt
       _writer.WriteEndElement();
     }
 
-    public virtual void Write(TagCollection value)
-    {
-      if (value.LimitType == TagType.None || value.LimitType == TagType.End)
-        throw new TagException("Limit type not set.");
-
-      _writer.WriteAttributeString("limitType", value.LimitType.ToString());
-
-      foreach (ITag item in value)
-        this.Write(item, NbtOptions.None);
-    }
-
     public override void Write(string value)
     {
       if (value.Contains("<") || value.Contains(">") || value.Contains("&"))
@@ -164,12 +170,6 @@ namespace Cyotek.Data.Nbt
       _writer.WriteValue(value);
     }
 
-    public virtual void Write(TagDictionary value)
-    {
-      foreach (ITag item in value)
-        this.Write(item, NbtOptions.Header);
-    }
-
     public override void Write(byte[] value)
     {
       StringBuilder output;
@@ -204,9 +204,9 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public virtual void WriteEnd()
-    {
-    }
+    #endregion Public Overridden Methods
+
+    #region Protected Overridden Methods
 
     protected override void OnOutputStreamChanged(EventArgs e)
     {
@@ -222,9 +222,40 @@ namespace Cyotek.Data.Nbt
       _writer.WriteStartDocument(true);
     }
 
+    #endregion Protected Overridden Methods
+
+    #region Public Methods
+
+    public virtual void Write(TagCollection value)
+    {
+      if (value.LimitType == TagType.None || value.LimitType == TagType.End)
+        throw new TagException("Limit type not set.");
+
+      _writer.WriteAttributeString("limitType", value.LimitType.ToString());
+
+      foreach (ITag item in value)
+        this.Write(item, NbtOptions.None);
+    }
+
+    public virtual void Write(TagDictionary value)
+    {
+      foreach (ITag item in value)
+        this.Write(item, NbtOptions.Header);
+    }
+
+    public virtual void WriteEnd()
+    {
+    }
+
+    #endregion Public Methods
+
+    #region Protected Methods
+
     protected void WriteHeader(ITag value)
     {
       _writer.WriteAttributeString("type", value.Type.ToString());
     }
+
+    #endregion Protected Methods
   }
 }

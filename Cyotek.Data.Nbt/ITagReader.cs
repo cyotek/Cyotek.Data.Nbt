@@ -1,12 +1,18 @@
-ï»¿using System.IO;
+using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
   public interface ITagReader
   {
+  #region Private Properties 
+
     Stream InputStream { get; set; }
 
     NbtOptions Options { get; set; }
+
+  #endregion Private Properties 
+
+  #region Private Methods 
 
     TagCompound Load(string fileName, NbtOptions options);
 
@@ -35,5 +41,7 @@ namespace Cyotek.Data.Nbt
     short ReadShort();
 
     string ReadString();
+
+  #endregion Private Methods 
   }
 }

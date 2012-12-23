@@ -1,4 +1,4 @@
-ï»¿using NUnit.Framework;
+using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
@@ -6,6 +6,8 @@ namespace Cyotek.Data.Nbt.Tests
   internal class XmlTagWriterTests
     : TestBase
   {
+    #region  Public Methods
+
     [Test]
     public void SaveTest()
     {
@@ -22,5 +24,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       FileAssert.AreEqual(this.ComplexXmlDataFileName, this.OutputFileName);
     }
+
+    #endregion  Public Methods
   }
 }

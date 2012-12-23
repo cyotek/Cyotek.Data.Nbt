@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -9,9 +9,15 @@ namespace Cyotek.Data.Nbt
   public abstract class Tag
     : ITag
   {
+    #region Private Member Declarations
+
     private string _name;
     private ITag _parent;
     private object _value;
+
+    #endregion Private Member Declarations
+
+    #region Events
 
     [Category("Property Changed")]
     public event EventHandler NameChanged;
@@ -21,6 +27,90 @@ namespace Cyotek.Data.Nbt
 
     [Category("Property Changed")]
     public event EventHandler ValueChanged;
+
+    #endregion Events
+
+    #region Public Overridden Methods
+
+    public override string ToString()
+    {
+      return this.ToString(string.Empty);
+    }
+
+    #endregion Public Overridden Methods
+
+    #region Public Abstract Methods
+
+    public abstract string ToString(string indentString);
+
+    #endregion Public Abstract Methods
+
+    #region Public Methods
+
+    public ITag[] Flatten()
+    {
+      List<ITag> tags;
+
+      tags = new List<ITag>();
+
+      this.FlattenTag(this, tags);
+
+      return tags.ToArray();
+    }
+
+    public ITag[] GetAncestors()
+    {
+      List<ITag> tags;
+      ITag tag;
+
+      tags = new List<ITag>();
+      tag = this.Parent;
+
+      if (tag != null)
+      {
+        do
+        {
+          tags.Insert(0, tag);
+          tag = tag.Parent;
+        } while (tag != null);
+      }
+
+      return tags.ToArray();
+    }
+
+    public virtual byte[] GetValue()
+    {
+      byte[] result;
+
+      using (MemoryStream stream = new MemoryStream())
+      {
+        TagWriter writer;
+
+        writer = new BinaryTagWriter(stream, NbtOptions.Header);
+        writer.Write(this);
+
+        result = stream.ToArray();
+      }
+
+      return result;
+    }
+
+    public virtual void Remove()
+    {
+      if (!this.CanRemove)
+        throw new TagException("Cannot remove this tag, parent not set or not supported.");
+
+      ((ICollectionTag)this.Parent).Values.Remove(this);
+    }
+
+    public virtual string ToValueString()
+    {
+      return this.Value != null ? this.Value.ToString() : string.Empty;
+    }
+
+    #endregion Public Methods
+
+    #region Public Properties
 
     public virtual bool CanRemove
     { get { return this.Parent != null && this.Parent is ICollectionTag; } }
@@ -98,73 +188,23 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public ITag[] Flatten()
+    #endregion Public Properties
+
+    #region Private Methods
+
+    private void FlattenTag(ITag tag, List<ITag> tags)
     {
-      List<ITag> tags;
-
-      tags = new List<ITag>();
-
-      this.FlattenTag(this, tags);
-
-      return tags.ToArray();
-    }
-
-    public ITag[] GetAncestors()
-    {
-      List<ITag> tags;
-      ITag tag;
-
-      tags = new List<ITag>();
-      tag = this.Parent;
-
-      if (tag != null)
+      tags.Add(tag);
+      if (tag is ICollectionTag)
       {
-        do
-        {
-          tags.Insert(0, tag);
-          tag = tag.Parent;
-        } while (tag != null);
+        foreach (ITag childTag in ((ICollectionTag)tag).Values)
+          this.FlattenTag(childTag, tags);
       }
-
-      return tags.ToArray();
     }
 
-    public virtual byte[] GetValue()
-    {
-      byte[] result;
+    #endregion Private Methods
 
-      using (MemoryStream stream = new MemoryStream())
-      {
-        TagWriter writer;
-
-        writer = new BinaryTagWriter(stream, NbtOptions.Header);
-        writer.Write(this);
-
-        result = stream.ToArray();
-      }
-
-      return result;
-    }
-
-    public virtual void Remove()
-    {
-      if (!this.CanRemove)
-        throw new TagException("Cannot remove this tag, parent not set or not supported.");
-
-      ((ICollectionTag)this.Parent).Values.Remove(this);
-    }
-
-    public override string ToString()
-    {
-      return this.ToString(string.Empty);
-    }
-
-    public abstract string ToString(string indentString);
-
-    public virtual string ToValueString()
-    {
-      return this.Value != null ? this.Value.ToString() : string.Empty;
-    }
+    #region Protected Methods
 
     protected virtual void OnNameChanged(EventArgs e)
     {
@@ -196,14 +236,6 @@ namespace Cyotek.Data.Nbt
         handler(this, e);
     }
 
-    private void FlattenTag(ITag tag, List<ITag> tags)
-    {
-      tags.Add(tag);
-      if (tag is ICollectionTag)
-      {
-        foreach (ITag childTag in ((ICollectionTag)tag).Values)
-          this.FlattenTag(childTag, tags);
-      }
-    }
+    #endregion Protected Methods
   }
 }

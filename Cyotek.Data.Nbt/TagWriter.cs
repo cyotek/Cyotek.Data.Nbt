@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -8,7 +8,13 @@ namespace Cyotek.Data.Nbt
   public abstract class TagWriter
     : ITagWriter
   {
+    #region Private Member Declarations
+
     private Stream _outputStream;
+
+    #endregion Private Member Declarations
+
+    #region Protected Constructors
 
     protected TagWriter()
     { }
@@ -23,35 +29,19 @@ namespace Cyotek.Data.Nbt
       this.Options = options;
     }
 
+    #endregion Protected Constructors
+
+    #region Events
+
     /// <summary>
     /// Occurs when the OutputStream property value changes
     /// </summary>
     [Category("Property Changed")]
     public event EventHandler OutputStreamChanged;
 
-    public NbtOptions Options { get; set; }
+    #endregion Events
 
-    public virtual Stream OutputStream
-    {
-      get { return _outputStream; }
-      set
-      {
-        if (this.OutputStream != value)
-        {
-          _outputStream = value;
-
-          this.OnOutputStreamChanged(EventArgs.Empty);
-        }
-      }
-    }
-
-    protected abstract NbtOptions DefaultOptions { get; }
-
-    [DebuggerStepThrough]
-    public virtual void Write(ITag value)
-    {
-      this.Write(value, this.Options);
-    }
+    #region Public Abstract Methods
 
     public abstract void Write(ITag value, NbtOptions options);
 
@@ -75,10 +65,50 @@ namespace Cyotek.Data.Nbt
 
     public abstract void Write(TagCompound tag, string fileName, NbtOptions options);
 
+    #endregion Public Abstract Methods
+
+    #region Public Methods
+
+    [DebuggerStepThrough]
+    public virtual void Write(ITag value)
+    {
+      this.Write(value, this.Options);
+    }
+
     public virtual void Write(TagCompound tag, string fileName)
     {
       this.Write(tag, fileName, this.DefaultOptions);
     }
+
+    #endregion Public Methods
+
+    #region Public Properties
+
+    public NbtOptions Options { get; set; }
+
+    public virtual Stream OutputStream
+    {
+      get { return _outputStream; }
+      set
+      {
+        if (this.OutputStream != value)
+        {
+          _outputStream = value;
+
+          this.OnOutputStreamChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    #endregion Public Properties
+
+    #region Protected Properties
+
+    protected abstract NbtOptions DefaultOptions { get; }
+
+    #endregion Protected Properties
+
+    #region Protected Methods
 
     /// <summary>
     /// Raises the <see cref="E:OutputStreamChanged" /> event.
@@ -93,5 +123,7 @@ namespace Cyotek.Data.Nbt
       if (handler != null)
         handler(this, e);
     }
+
+    #endregion Protected Methods
   }
 }

@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
@@ -6,6 +6,11 @@ namespace Cyotek.Data.Nbt
   public class TagDictionary
     : KeyedCollection<string, ITag>
   {
+    #region Public Constructors
+
+    public TagDictionary()
+    { }
+
     public TagDictionary(ITag owner)
       : this()
     {
@@ -15,10 +20,50 @@ namespace Cyotek.Data.Nbt
       this.Owner = owner;
     }
 
-    public TagDictionary()
-    { }
+    #endregion Public Constructors
 
-    public ITag Owner { get; set; }
+    #region Protected Overridden Methods
+
+    protected override void ClearItems()
+    {
+      foreach (ITag item in this)
+        item.Parent = null;
+
+      base.ClearItems();
+    }
+
+    protected override string GetKeyForItem(ITag item)
+    {
+      return item.Name;
+    }
+
+    protected override void InsertItem(int index, ITag item)
+    {
+      item.Parent = this.Owner;
+
+      base.InsertItem(index, item);
+    }
+
+    protected override void RemoveItem(int index)
+    {
+      ITag item;
+
+      item = this[index];
+      item.Parent = null;
+
+      base.RemoveItem(index);
+    }
+
+    protected override void SetItem(int index, ITag item)
+    {
+      item.Parent = this.Owner;
+
+      base.SetItem(index, item);
+    }
+
+    #endregion Protected Overridden Methods
+
+    #region Public Methods
 
     public ITag Add(string name, string value)
     {
@@ -263,46 +308,21 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
+    #endregion Public Methods
+
+    #region Internal Methods
+
     internal void ChangeKey(ITag item, string newKey)
     {
       base.ChangeItemKey(item, newKey);
     }
 
-    protected override void ClearItems()
-    {
-      foreach (ITag item in this)
-        item.Parent = null;
+    #endregion Internal Methods
 
-      base.ClearItems();
-    }
+    #region Public Properties
 
-    protected override string GetKeyForItem(ITag item)
-    {
-      return item.Name;
-    }
+    public ITag Owner { get; set; }
 
-    protected override void InsertItem(int index, ITag item)
-    {
-      item.Parent = this.Owner;
-
-      base.InsertItem(index, item);
-    }
-
-    protected override void RemoveItem(int index)
-    {
-      ITag item;
-
-      item = this[index];
-      item.Parent = null;
-
-      base.RemoveItem(index);
-    }
-
-    protected override void SetItem(int index, ITag item)
-    {
-      item.Parent = this.Owner;
-
-      base.SetItem(index, item);
-    }
+    #endregion Public Properties
   }
 }

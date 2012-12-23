@@ -1,4 +1,4 @@
-ï»¿using NUnit.Framework;
+using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
@@ -6,6 +6,8 @@ namespace Cyotek.Data.Nbt.Tests
   internal class TagFloatTests
     : TestBase
   {
+    #region  Public Methods
+
     [Test]
     public void ConstructorTest()
     {
@@ -173,5 +175,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(expected, target.Value);
     }
+
+    #endregion  Public Methods
   }
 }

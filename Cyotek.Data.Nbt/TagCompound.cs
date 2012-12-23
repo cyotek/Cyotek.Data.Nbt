@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
@@ -7,6 +7,8 @@ namespace Cyotek.Data.Nbt
   public class TagCompound
     : Tag, ICollectionTag
   {
+    #region Public Constructors
+
     public TagCompound()
       : this(string.Empty)
     { }
@@ -17,37 +19,27 @@ namespace Cyotek.Data.Nbt
       this.Value = new TagDictionary(this);
     }
 
-    bool ICollectionTag.IsList
-    { get { return false; } }
+    #endregion Public Constructors
 
-    TagType ICollectionTag.LimitToType
-    {
-      get { return TagType.None; }
-      set { }
-    }
-
-    IList<ITag> ICollectionTag.Values
-    {
-      get { return this.Value; }
-    }
+    #region Overriden Properties
 
     public override TagType Type
     {
       get { return TagType.Compound; }
     }
 
-    public new TagDictionary Value
-    {
-      get { return (TagDictionary)base.Value; }
-      set
-      {
-        if (value == null)
-          throw new ArgumentNullException("value");
+    #endregion Overriden Properties
 
-        base.Value = value;
-        value.Owner = this;
-      }
+    #region Public Overridden Methods
+
+    public override string ToString(string indentString)
+    {
+      return string.Format("{0}[Compound: {1}] ({2} entries)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
     }
+
+    #endregion Public Overridden Methods
+
+    #region Public Methods
 
     public bool Contains(string name)
     {
@@ -357,9 +349,41 @@ namespace Cyotek.Data.Nbt
       return tag != null ? (T)tag.Value : defaultValue;
     }
 
-    public override string ToString(string indentString)
+    #endregion Public Methods
+
+    #region Public Properties
+
+    public new TagDictionary Value
     {
-      return string.Format("{0}[Compound: {1}] ({2} entries)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
+      get { return (TagDictionary)base.Value; }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException("value");
+
+        base.Value = value;
+        value.Owner = this;
+      }
     }
+
+    #endregion Public Properties
+
+    #region Private Properties
+
+    bool ICollectionTag.IsList
+    { get { return false; } }
+
+    TagType ICollectionTag.LimitToType
+    {
+      get { return TagType.None; }
+      set { }
+    }
+
+    IList<ITag> ICollectionTag.Values
+    {
+      get { return this.Value; }
+    }
+
+    #endregion Private Properties
   }
 }

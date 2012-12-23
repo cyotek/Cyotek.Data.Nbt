@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
@@ -7,6 +7,8 @@ namespace Cyotek.Data.Nbt
   public class TagList
     : Tag, ICollectionTag
   {
+    #region Public Constructors
+
     public TagList()
     {
       this.Name = string.Empty;
@@ -29,19 +31,27 @@ namespace Cyotek.Data.Nbt
       this.ListType = listType;
     }
 
-    bool ICollectionTag.IsList
-    { get { return true; } }
+    #endregion Public Constructors
 
-    TagType ICollectionTag.LimitToType
+    #region Overriden Properties
+
+    public override TagType Type
     {
-      get { return this.ListType; }
-      set { this.ListType = value; }
+      get { return TagType.List; }
     }
 
-    IList<ITag> ICollectionTag.Values
+    #endregion Overriden Properties
+
+    #region Public Overridden Methods
+
+    public override string ToString(string indentString)
     {
-      get { return this.Value; }
+      return string.Format("{0}[List: {1}] ({2} items)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
     }
+
+    #endregion Public Overridden Methods
+
+    #region Public Properties
 
     public int Count
     { get { return this.Value.Count; } }
@@ -54,11 +64,6 @@ namespace Cyotek.Data.Nbt
         if (this.Value == null || this.Value.LimitType != value)
           this.Value = new TagCollection(this, value);
       }
-    }
-
-    public override TagType Type
-    {
-      get { return TagType.List; }
     }
 
     public new TagCollection Value
@@ -74,9 +79,24 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public override string ToString(string indentString)
+    #endregion Public Properties
+
+    #region Private Properties
+
+    bool ICollectionTag.IsList
+    { get { return true; } }
+
+    TagType ICollectionTag.LimitToType
     {
-      return string.Format("{0}[List: {1}] ({2} items)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
+      get { return this.ListType; }
+      set { this.ListType = value; }
     }
+
+    IList<ITag> ICollectionTag.Values
+    {
+      get { return this.Value; }
+    }
+
+    #endregion Private Properties
   }
 }

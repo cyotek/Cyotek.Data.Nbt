@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -7,6 +7,8 @@ namespace Cyotek.Data.Nbt.Tests
   internal class NbtDocumentTests
     : TestBase
   {
+    #region  Public Methods
+
     [Test]
     public void ConstructorTest()
     {
@@ -179,6 +181,203 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(typeof(XmlTagReader), target.ReaderType);
       Assert.AreEqual(typeof(XmlTagWriter), target.WriterType);
+    }
+
+    #endregion  Public Methods
+
+    [Test]
+    public void GetDocumentNameNullArgumentTest()
+    {
+      // arrange
+      string actual;
+      string expected;
+      string fileName;
+
+      expected = null;
+      fileName = null;
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+
+    }
+
+    [Test]
+    public void GetDocumentNameMissingFileTest()
+    {
+      // arrange
+      string actual;
+      string expected;
+      string fileName;
+
+      expected = null;
+      fileName = Guid.NewGuid().ToString("N");
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+
+    }
+
+    [Test]
+    public void GetDocumentNameBadFileTest()
+    {
+      // arrange
+      string actual;
+      string expected;
+      string fileName;
+
+      expected = null;
+      fileName = this.BadFileName;
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetDocumentNameTest()
+    {
+      // arrange
+      string actual;
+      string expected;
+      string fileName;
+
+      expected = "hello world";
+      fileName = this.SimpleDataFileName;
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void EmptyListXmlTest()
+    {
+      // arrange
+      NbtDocument target;
+      NbtDocument reloaded;
+      string fileName;
+
+      fileName = this.GetWorkFile();
+      target = new NbtDocument(NbtFormat.XML);
+      target.DocumentRoot.Name = "Test";
+      target.DocumentRoot.Value.Add("EmptyList", TagType.List, TagType.Compound);
+
+      // act
+      try
+      {
+        target.Save(fileName);
+        reloaded = NbtDocument.LoadDocument(fileName);
+      }
+      finally
+      {
+        this.DeleteFile(fileName);
+      }
+
+      // assert
+      // this test is essentially ensuring that an infinite loop when reloading an XML document is no longer present
+      this.CompareTags(target.DocumentRoot, reloaded.DocumentRoot);
+    }
+
+    [Test]
+    public void LoadTest()
+    {
+      // arrange
+      NbtDocument target1;
+      NbtDocument target2;
+      string fileName;
+
+      fileName = this.ComplexDataFileName;
+      target1 = new NbtDocument(this.CreateComplexData());
+      target2 = new NbtDocument();
+      target2.FileName = fileName;
+
+      // act
+      target2.Load();
+
+      // assert
+      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+    }
+
+    [Test]
+    public void LoadWithFileTest()
+    {
+      // arrange
+      NbtDocument target1;
+      NbtDocument target2;
+      string fileName;
+
+      fileName = this.ComplexDataFileName;
+      target1 = new NbtDocument(this.CreateComplexData());
+      target2 = new NbtDocument();
+
+      // act
+      target2.Load(fileName);
+
+      // assert
+      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+    }
+
+    [Test]
+    public void SaveTest()
+    {
+      // arrange
+      NbtDocument target1;
+      NbtDocument target2;
+      string fileName;
+
+      fileName = this.GetWorkFile();
+      target1 = new NbtDocument(this.CreateComplexData());
+      target1.FileName = fileName;
+
+      // act
+      try
+      {
+        target1.Save();
+        target2 = NbtDocument.LoadDocument(fileName);
+      }
+      finally
+      {
+        this.DeleteFile(fileName);
+      }
+
+      // assert
+      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+    }
+
+    [Test]
+    public void SaveWithFileTest()
+    {
+      // arrange
+      NbtDocument target1;
+      NbtDocument target2;
+      string fileName;
+
+      fileName = this.GetWorkFile();
+      target1 = new NbtDocument(this.CreateComplexData());
+
+      // act
+      try
+      {
+        target1.Save(fileName);
+        target2 = NbtDocument.LoadDocument(fileName);
+      }
+      finally
+      {
+        this.DeleteFile(fileName);
+      }
+
+      // assert
+      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
     }
   }
 }
