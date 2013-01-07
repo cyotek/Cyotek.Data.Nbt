@@ -6,18 +6,17 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public abstract class Tag
-    : ITag
+  public abstract class Tag : ITag
   {
-    #region Private Member Declarations
+    #region Instance Fields
 
     private string _name;
     private ITag _parent;
     private object _value;
 
-    #endregion Private Member Declarations
+    #endregion
 
-    #region Events
+    #region Events
 
     [Category("Property Changed")]
     public event EventHandler NameChanged;
@@ -28,92 +27,23 @@ namespace Cyotek.Data.Nbt
     [Category("Property Changed")]
     public event EventHandler ValueChanged;
 
-    #endregion Events
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override string ToString()
     {
       return this.ToString(string.Empty);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
 
-    #region Public Abstract Methods
-
-    public abstract string ToString(string indentString);
-
-    #endregion Public Abstract Methods
-
-    #region Public Methods
-
-    public ITag[] Flatten()
-    {
-      List<ITag> tags;
-
-      tags = new List<ITag>();
-
-      this.FlattenTag(this, tags);
-
-      return tags.ToArray();
-    }
-
-    public ITag[] GetAncestors()
-    {
-      List<ITag> tags;
-      ITag tag;
-
-      tags = new List<ITag>();
-      tag = this.Parent;
-
-      if (tag != null)
-      {
-        do
-        {
-          tags.Insert(0, tag);
-          tag = tag.Parent;
-        } while (tag != null);
-      }
-
-      return tags.ToArray();
-    }
-
-    public virtual byte[] GetValue()
-    {
-      byte[] result;
-
-      using (MemoryStream stream = new MemoryStream())
-      {
-        TagWriter writer;
-
-        writer = new BinaryTagWriter(stream, NbtOptions.Header);
-        writer.Write(this);
-
-        result = stream.ToArray();
-      }
-
-      return result;
-    }
-
-    public virtual void Remove()
-    {
-      if (!this.CanRemove)
-        throw new TagException("Cannot remove this tag, parent not set or not supported.");
-
-      ((ICollectionTag)this.Parent).Values.Remove(this);
-    }
-
-    public virtual string ToValueString()
-    {
-      return this.Value != null ? this.Value.ToString() : string.Empty;
-    }
-
-    #endregion Public Methods
-
-    #region Public Properties
+    #region Properties
 
     public virtual bool CanRemove
-    { get { return this.Parent != null && this.Parent is ICollectionTag; } }
+    {
+      get { return this.Parent is ICollectionTag; }
+    }
 
     public virtual string FullPath
     {
@@ -146,7 +76,7 @@ namespace Cyotek.Data.Nbt
       {
         if (this.Name != value)
         {
-          if (this.Parent != null && this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).Values is TagDictionary)
+          if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).Values is TagDictionary)
             ((TagDictionary)((ICollectionTag)this.Parent).Values).ChangeKey(this, value);
 
           _name = value;
@@ -188,23 +118,69 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    #endregion Public Properties
+    #endregion
 
-    #region Private Methods
+    #region Members
 
-    private void FlattenTag(ITag tag, List<ITag> tags)
+    public ITag[] Flatten()
     {
-      tags.Add(tag);
-      if (tag is ICollectionTag)
-      {
-        foreach (ITag childTag in ((ICollectionTag)tag).Values)
-          this.FlattenTag(childTag, tags);
-      }
+      List<ITag> tags;
+
+      tags = new List<ITag>();
+
+      this.FlattenTag(this, tags);
+
+      return tags.ToArray();
     }
 
-    #endregion Private Methods
+    public ITag[] GetAncestors()
+    {
+      List<ITag> tags;
+      ITag tag;
 
-    #region Protected Methods
+      tags = new List<ITag>();
+      tag = this.Parent;
+
+      while (tag != null)
+      {
+        tags.Insert(0, tag);
+        tag = tag.Parent;
+      }
+
+      return tags.ToArray();
+    }
+
+    public virtual byte[] GetValue()
+    {
+      byte[] result;
+
+      using (MemoryStream stream = new MemoryStream())
+      {
+        TagWriter writer;
+
+        writer = new BinaryTagWriter(stream, NbtOptions.Header);
+        writer.Write(this);
+
+        result = stream.ToArray();
+      }
+
+      return result;
+    }
+
+    public virtual void Remove()
+    {
+      if (!this.CanRemove)
+        throw new TagException("Cannot remove this tag, parent not set or not supported.");
+
+      ((ICollectionTag)this.Parent).Values.Remove(this);
+    }
+
+    public abstract string ToString(string indentString);
+
+    public virtual string ToValueString()
+    {
+      return this.Value != null ? this.Value.ToString() : string.Empty;
+    }
 
     protected virtual void OnNameChanged(EventArgs e)
     {
@@ -236,6 +212,92 @@ namespace Cyotek.Data.Nbt
         handler(this, e);
     }
 
-    #endregion Protected Methods
+    private void FlattenTag(ITag tag, List<ITag> tags)
+    {
+      ICollectionTag collectionTag;
+
+      tags.Add(tag);
+
+      collectionTag = tag as ICollectionTag;
+      if (collectionTag != null)
+      {
+        foreach (ITag childTag in collectionTag.Values)
+          this.FlattenTag(childTag, tags);
+      }
+    }
+
+    #endregion
+
+    #region ITag Members
+
+    bool ITag.CanRemove
+    {
+      get { return this.CanRemove; }
+    }
+
+    string ITag.FullPath
+    {
+      get { return this.FullPath; }
+    }
+
+    string ITag.Name
+    {
+      get { return this.Name; }
+      set { this.Name = value; }
+    }
+
+    ITag ITag.Parent
+    {
+      get { return this.Parent; }
+      set { this.Parent = value; }
+    }
+
+    TagType ITag.Type
+    {
+      get { return this.Type; }
+    }
+
+    object ITag.Value
+    {
+      get { return this.Value; }
+      set { this.Value = value; }
+    }
+
+    ITag[] ITag.Flatten()
+    {
+      return this.Flatten();
+    }
+
+    ITag[] ITag.GetAncestors()
+    {
+      return this.GetAncestors();
+    }
+
+    byte[] ITag.GetValue()
+    {
+      return this.GetValue();
+    }
+
+    void ITag.Remove()
+    {
+      this.Remove();
+    }
+
+    string ITag.ToString()
+    {
+      return this.ToString();
+    }
+
+    string ITag.ToString(string indent)
+    {
+      return this.ToString(indent);
+    }
+
+    string ITag.ToValueString()
+    {
+      return this.ToValueString();
+    }
+
+    #endregion
   }
 }

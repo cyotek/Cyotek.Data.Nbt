@@ -7,11 +7,8 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagTests
-    : TestBase
+  internal class TagTests : TestBase
   {
-    #region  Public Methods
-
     [Test]
     public void CanRemoveTest()
     {
@@ -44,7 +41,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = this.GetComplexData();
       expectedCount = 29;
-      expectedNames = new string[] { "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest" };
+      expectedNames = new[] { "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest" };
 
       // act
       tags = target.Flatten();
@@ -87,7 +84,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       data = this.GetComplexData();
       target = data.Query(@"listTest (compound)\0\name");
-      expected = new ITag[] { data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0") };
+      expected = new[] { data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0") };
 
       // act
       actual = target.GetAncestors();
@@ -123,10 +120,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       eventRaised = false;
       target = new TagString();
-      target.NameChanged += delegate(object sender, EventArgs e)
-      {
-        eventRaised = true;
-      };
+      target.NameChanged += delegate { eventRaised = true; };
 
       // act
       target.Name = "newvalue";
@@ -135,8 +129,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsTrue(eventRaised);
     }
 
-    [Test]
-    [ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
+    [Test, ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
     public void ReadExceptionTest()
     {
       // arrange
@@ -154,8 +147,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
     }
 
-    [Test]
-    [ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
+    [Test, ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
     public void RemoveExceptionTest()
     {
       // arrange
@@ -409,10 +401,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       eventRaised = false;
       target = new TagString();
-      target.ValueChanged += delegate(object sender, EventArgs e)
-      {
-        eventRaised = true;
-      };
+      target.ValueChanged += delegate { eventRaised = true; };
 
       // act
       target.Value = "newvalue";
@@ -421,12 +410,8 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsTrue(eventRaised);
     }
 
-    #endregion  Public Methods
-
-    #region  Private Methods
-
     /// <summary>
-    /// Decompresses the specified stream.
+    ///   Decompresses the specified stream.
     /// </summary>
     /// <param name="stream">The stream.</param>
     /// <returns></returns>
@@ -444,14 +429,13 @@ namespace Cyotek.Data.Nbt.Tests
 
         using (MemoryStream memory = new MemoryStream())
         {
-          int count = 0;
+          int count;
           do
           {
             count = decompressStream.Read(buffer, 0, bufferSize);
             if (count > 0)
               memory.Write(buffer, 0, count);
-          }
-          while (count > 0);
+          } while (count > 0);
 
           result = memory.ToArray();
         }
@@ -459,7 +443,5 @@ namespace Cyotek.Data.Nbt.Tests
 
       return result;
     }
-
-    #endregion  Private Methods
   }
 }

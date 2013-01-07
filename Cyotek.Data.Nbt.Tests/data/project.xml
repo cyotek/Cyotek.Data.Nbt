@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<project type="Compound">
+  <slices type="List" limitType="Compound">
+    <tag type="Compound">
+      <location type="Compound" />
+    </tag>
+  </slices>
+  <regions type="List" limitType="Compound">
+    <tag type="Compound">
+    </tag>
+    <tag type="Compound">
+    </tag>
+  </regions>
+</project>

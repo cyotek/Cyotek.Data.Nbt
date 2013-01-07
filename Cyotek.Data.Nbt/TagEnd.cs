@@ -1,34 +1,29 @@
 namespace Cyotek.Data.Nbt
 {
-  public class TagEnd
-    : Tag
+  public class TagEnd : Tag
   {
-    #region Public Constructors
+    #region Overridden Properties
 
-    public TagEnd()
+    public override string Name
     {
+      get { return string.Empty; }
+      set { }
     }
-
-    #endregion Public Constructors
-
-    #region Overriden Properties
-
-    public override string Name { get { return string.Empty; } set { } }
 
     public override TagType Type
     {
       get { return TagType.End; }
     }
 
-    #endregion Overriden Properties
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override string ToString(string indentString)
     {
       return string.Format("{0}[End]", indentString);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
   }
 }

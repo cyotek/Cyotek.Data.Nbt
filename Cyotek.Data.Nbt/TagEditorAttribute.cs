@@ -3,29 +3,30 @@ using System;
 namespace Cyotek.Data.Nbt
 {
   [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-  public sealed class TagEditorAttribute
-    : Attribute
+  public sealed class TagEditorAttribute : Attribute
   {
-    #region Private Member Declarations
+    #region Instance Fields
 
-    private string _editorTypeName;
+    private readonly string _editorTypeName;
 
-    #endregion Private Member Declarations
+    #endregion
 
-    #region Public Constructors
+    #region Constructors
 
     public TagEditorAttribute(string editorTypeName)
     {
       _editorTypeName = editorTypeName;
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Public Properties
+    #region Properties
 
     public string EditorTypeName
-    { get { return _editorTypeName; } }
+    {
+      get { return _editorTypeName; }
+    }
 
-    #endregion Public Properties
+    #endregion
   }
 }

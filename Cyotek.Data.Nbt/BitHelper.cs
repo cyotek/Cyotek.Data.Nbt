@@ -4,19 +4,15 @@ namespace Cyotek.Data.Nbt
 {
   internal static class BitHelper
   {
-    #region Internal Class Methods
+    #region Class Members
 
     internal static void SwapBytes(byte[] buffer, int offset, int length)
     {
       if (length < 1)
-      {
         return;
-      }
 
       if (offset + length > buffer.Length)
-      {
         throw new ArgumentException("offset + length is larger than buffer");
-      }
 
       byte temp;
 
@@ -54,6 +50,6 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    #endregion Internal Class Methods
+    #endregion
   }
 }

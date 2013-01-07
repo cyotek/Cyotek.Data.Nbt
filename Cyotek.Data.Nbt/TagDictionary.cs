@@ -3,10 +3,9 @@ using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagDictionary
-    : KeyedCollection<string, ITag>
+  public class TagDictionary : KeyedCollection<string, ITag>
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagDictionary()
     { }
@@ -20,9 +19,9 @@ namespace Cyotek.Data.Nbt
       this.Owner = owner;
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Protected Overridden Methods
+    #region Overridden Members
 
     protected override void ClearItems()
     {
@@ -61,9 +60,15 @@ namespace Cyotek.Data.Nbt
       base.SetItem(index, item);
     }
 
-    #endregion Protected Overridden Methods
+    #endregion
 
-    #region Public Methods
+    #region Properties
+
+    public ITag Owner { get; set; }
+
+    #endregion
+
+    #region Members
 
     public ITag Add(string name, string value)
     {
@@ -198,11 +203,14 @@ namespace Cyotek.Data.Nbt
     public ITag Add(string name, TagType tagType, TagType limitToType)
     {
       ITag tag;
+      ICollectionTag collectionTag;
 
       tag = TagFactory.CreateTag(tagType);
       tag.Name = name;
-      if (tag is ICollectionTag)
-        ((ICollectionTag)tag).LimitToType = limitToType;
+
+      collectionTag = tag as ICollectionTag;
+      if (collectionTag != null)
+        collectionTag.LimitToType = limitToType;
 
       this.Add(tag);
 
@@ -211,86 +219,41 @@ namespace Cyotek.Data.Nbt
 
     public ITag AddIfNotDefault(string name, string value)
     {
-      ITag result;
-
-      if (!string.IsNullOrEmpty(value))
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      return !string.IsNullOrEmpty(value) ? this.Add(name, value) : null;
     }
 
     public ITag AddIfNotDefault(string name, bool value)
     {
-      ITag result;
-
-      if (value)
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      return value ? this.Add(name, true) : null;
     }
 
     public ITag AddIfNotDefault(string name, long value)
     {
-      ITag result;
-
-      if (value != 0)
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      return value != 0 ? this.Add(name, value) : null;
     }
 
     public ITag AddIfNotDefault(string name, short value)
     {
-      ITag result;
-
-      if (value != 0)
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      return value != 0 ? this.Add(name, value) : null;
     }
 
     public ITag AddIfNotDefault(string name, double value)
     {
-      ITag result;
-
-      if (value != 0)
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      // ReSharper disable CompareOfFloatsByEqualityOperator
+      return value != 0 ? this.Add(name, value) : null;
+      // ReSharper restore CompareOfFloatsByEqualityOperator
     }
 
     public ITag AddIfNotDefault(string name, int value)
     {
-      ITag result;
-
-      if (value != 0)
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      return value != 0 ? this.Add(name, value) : null;
     }
 
     public ITag AddIfNotDefault(string name, float value)
     {
-      ITag result;
-
-      if (value != 0)
-        result = this.Add(name, value);
-      else
-        result = null;
-
-      return result;
+      // ReSharper disable CompareOfFloatsByEqualityOperator
+      return value != 0 ? this.Add(name, value) : null;
+      // ReSharper restore CompareOfFloatsByEqualityOperator
     }
 
     public bool TryGetValue(string key, out ITag value)
@@ -308,21 +271,11 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    #endregion Public Methods
-
-    #region Internal Methods
-
     internal void ChangeKey(ITag item, string newKey)
     {
       base.ChangeItemKey(item, newKey);
     }
 
-    #endregion Internal Methods
-
-    #region Public Properties
-
-    public ITag Owner { get; set; }
-
-    #endregion Public Properties
+    #endregion
   }
 }

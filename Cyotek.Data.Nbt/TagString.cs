@@ -1,10 +1,9 @@
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagTextEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagString
-    : Tag
+  public class TagString : Tag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagString()
       : this(string.Empty, string.Empty)
@@ -20,27 +19,27 @@ namespace Cyotek.Data.Nbt
       this.Value = value;
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Overriden Properties
+    #region Overridden Properties
 
     public override TagType Type
     {
       get { return TagType.String; }
     }
 
-    #endregion Overriden Properties
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override string ToString(string indentString)
     {
       return string.Format("{0}[String: {1}=\"{2}\"]", indentString, Name, Value);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
 
-    #region Public Properties
+    #region Properties
 
     public new string Value
     {
@@ -48,6 +47,6 @@ namespace Cyotek.Data.Nbt
       set { base.Value = value; }
     }
 
-    #endregion Public Properties
+    #endregion
   }
 }

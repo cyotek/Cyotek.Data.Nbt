@@ -4,10 +4,9 @@ using System.Collections.Generic;
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagList
-    : Tag, ICollectionTag
+  public class TagList : Tag, ICollectionTag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagList()
     {
@@ -31,30 +30,32 @@ namespace Cyotek.Data.Nbt
       this.ListType = listType;
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Overriden Properties
+    #region Overridden Properties
 
     public override TagType Type
     {
       get { return TagType.List; }
     }
 
-    #endregion Overriden Properties
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override string ToString(string indentString)
     {
       return string.Format("{0}[List: {1}] ({2} items)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
 
-    #region Public Properties
+    #region Properties
 
     public int Count
-    { get { return this.Value.Count; } }
+    {
+      get { return this.Value.Count; }
+    }
 
     public virtual TagType ListType
     {
@@ -79,12 +80,14 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    #endregion Public Properties
+    #endregion
 
-    #region Private Properties
+    #region ICollectionTag Members
 
     bool ICollectionTag.IsList
-    { get { return true; } }
+    {
+      get { return true; }
+    }
 
     TagType ICollectionTag.LimitToType
     {
@@ -97,6 +100,6 @@ namespace Cyotek.Data.Nbt
       get { return this.Value; }
     }
 
-    #endregion Private Properties
+    #endregion
   }
 }

@@ -5,16 +5,15 @@ using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
-  public abstract class TagWriter
-    : ITagWriter
+  public abstract class TagWriter : ITagWriter
   {
-    #region Private Member Declarations
+    #region Instance Fields
 
     private Stream _outputStream;
 
-    #endregion Private Member Declarations
+    #endregion
 
-    #region Protected Constructors
+    #region Constructors
 
     protected TagWriter()
     { }
@@ -29,19 +28,41 @@ namespace Cyotek.Data.Nbt
       this.Options = options;
     }
 
-    #endregion Protected Constructors
+    #endregion
 
-    #region Events
+    #region Events
 
     /// <summary>
-    /// Occurs when the OutputStream property value changes
+    ///   Occurs when the OutputStream property value changes
     /// </summary>
     [Category("Property Changed")]
     public event EventHandler OutputStreamChanged;
 
-    #endregion Events
+    #endregion
 
-    #region Public Abstract Methods
+    #region Properties
+
+    public NbtOptions Options { get; protected set; }
+
+    public virtual Stream OutputStream
+    {
+      get { return _outputStream; }
+      protected set
+      {
+        if (this.OutputStream != value)
+        {
+          _outputStream = value;
+
+          this.OnOutputStreamChanged(EventArgs.Empty);
+        }
+      }
+    }
+
+    protected abstract NbtOptions DefaultOptions { get; }
+
+    #endregion
+
+    #region Members
 
     public abstract void Write(ITag value, NbtOptions options);
 
@@ -65,10 +86,6 @@ namespace Cyotek.Data.Nbt
 
     public abstract void Write(TagCompound tag, string fileName, NbtOptions options);
 
-    #endregion Public Abstract Methods
-
-    #region Public Methods
-
     [DebuggerStepThrough]
     public virtual void Write(ITag value)
     {
@@ -80,40 +97,12 @@ namespace Cyotek.Data.Nbt
       this.Write(tag, fileName, this.DefaultOptions);
     }
 
-    #endregion Public Methods
-
-    #region Public Properties
-
-    public NbtOptions Options { get; set; }
-
-    public virtual Stream OutputStream
-    {
-      get { return _outputStream; }
-      set
-      {
-        if (this.OutputStream != value)
-        {
-          _outputStream = value;
-
-          this.OnOutputStreamChanged(EventArgs.Empty);
-        }
-      }
-    }
-
-    #endregion Public Properties
-
-    #region Protected Properties
-
-    protected abstract NbtOptions DefaultOptions { get; }
-
-    #endregion Protected Properties
-
-    #region Protected Methods
-
     /// <summary>
-    /// Raises the <see cref="E:OutputStreamChanged" /> event.
+    ///   Raises the <see cref="OutputStreamChanged" /> event.
     /// </summary>
-    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+    /// <param name="e">
+    ///   The <see cref="EventArgs" /> instance containing the event data.
+    /// </param>
     protected virtual void OnOutputStreamChanged(EventArgs e)
     {
       EventHandler handler;
@@ -124,6 +113,87 @@ namespace Cyotek.Data.Nbt
         handler(this, e);
     }
 
-    #endregion Protected Methods
+    #endregion
+
+    #region ITagWriter Members
+
+    NbtOptions ITagWriter.Options
+    {
+      get { return this.Options; }
+      set { this.Options = value; }
+    }
+
+    Stream ITagWriter.OutputStream
+    {
+      get { return this.OutputStream; }
+      set { this.OutputStream = value; }
+    }
+
+    void ITagWriter.Write(TagCompound tag, string fileName)
+    {
+      this.Write(tag, fileName);
+    }
+
+    void ITagWriter.Write(TagCompound tag, string fileName, NbtOptions options)
+    {
+      this.Write(tag, fileName, options);
+    }
+
+    void ITagWriter.Write(ITag value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(ITag value, NbtOptions options)
+    {
+      this.Write(value, options);
+    }
+
+    void ITagWriter.Write(byte value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(byte[] value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(double value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(short value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(int value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(int[] value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(long value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(float value)
+    {
+      this.Write(value);
+    }
+
+    void ITagWriter.Write(string value)
+    {
+      this.Write(value);
+    }
+
+    #endregion
   }
 }

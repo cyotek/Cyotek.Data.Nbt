@@ -3,11 +3,8 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class BinaryTagWriterTests
-    : TestBase
+  internal class BinaryTagWriterTests : TestBase
   {
-    #region  Public Methods
-
     [Test]
     public void SaveCompressedTest()
     {
@@ -42,7 +39,5 @@ namespace Cyotek.Data.Nbt.Tests
       this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
       FileAssert.AreEqual(this.UncompressedComplexDataFileName, this.OutputFileName);
     }
-
-    #endregion  Public Methods
   }
 }

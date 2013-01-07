@@ -3,11 +3,8 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagDoubleTests
-    : TestBase
+  internal class TagDoubleTests : TestBase
   {
-    #region  Public Methods
-
     [Test]
     public void ConstructorTest()
     {
@@ -175,7 +172,5 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(expected, target.Value);
     }
-
-    #endregion  Public Methods
   }
 }

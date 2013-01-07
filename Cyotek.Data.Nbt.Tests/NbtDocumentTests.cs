@@ -4,11 +4,8 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class NbtDocumentTests
-    : TestBase
+  internal class NbtDocumentTests : TestBase
   {
-    #region  Public Methods
-
     [Test]
     public void ConstructorTest()
     {
@@ -59,7 +56,7 @@ namespace Cyotek.Data.Nbt.Tests
       NbtDocument target;
 
       // act
-      target = new NbtDocument(NbtFormat.XML);
+      target = new NbtDocument(NbtFormat.Xml);
 
       // assert
       Assert.AreEqual(typeof(XmlTagReader), target.ReaderType);
@@ -77,6 +74,140 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = NbtDocument.DefaultFormat;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void EmptyListXmlTest()
+    {
+      // arrange
+      NbtDocument target;
+      NbtDocument reloaded;
+      string fileName;
+
+      fileName = this.GetWorkFile();
+      target = new NbtDocument(NbtFormat.Xml);
+      target.DocumentRoot.Name = "Test";
+      target.DocumentRoot.Value.Add("EmptyList", TagType.List, TagType.Compound);
+
+      // act
+      try
+      {
+        target.Save(fileName);
+        reloaded = NbtDocument.LoadDocument(fileName);
+      }
+      finally
+      {
+        this.DeleteFile(fileName);
+      }
+
+      // assert
+      // this test is essentially ensuring that an infinite loop when reloading an XML document is no longer present
+      this.CompareTags(target.DocumentRoot, reloaded.DocumentRoot);
+    }
+
+    [Test]
+    public void FormatTest()
+    {
+      // arrange
+      NbtDocument source;
+      NbtDocument target1;
+      NbtDocument target2;
+      string fileName1;
+      string fileName2;
+      bool file1IsBinary;
+      bool file2IsXml;
+
+      fileName1 = this.GetWorkFile();
+      fileName2 = this.GetWorkFile();
+      source = new NbtDocument(this.CreateComplexData());
+
+      // act
+      try
+      {
+        source.Format = NbtFormat.Binary;
+        source.Save(fileName1);
+        source.Format = NbtFormat.Xml;
+        source.Save(fileName2);
+
+        target1 = NbtDocument.LoadDocument(fileName1);
+        target2 = NbtDocument.LoadDocument(fileName2);
+
+        file1IsBinary = (target1.Format == NbtFormat.Binary);
+        file2IsXml = (target2.Format == NbtFormat.Xml);
+      }
+      finally
+      {
+        this.DeleteFile(fileName1);
+        this.DeleteFile(fileName2);
+      }
+
+      // assert
+      Assert.IsTrue(file1IsBinary);
+      Assert.IsTrue(file2IsXml);
+      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+    }
+
+    [Test]
+    public void GetDocumentNameBadFileTest()
+    {
+      // arrange
+      string actual;
+      string fileName;
+
+      fileName = this.BadFileName;
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
+    [Test]
+    public void GetDocumentNameMissingFileTest()
+    {
+      // arrange
+      string actual;
+      string fileName;
+
+      fileName = Guid.NewGuid().ToString("N");
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
+    [Test]
+    public void GetDocumentNameNullArgumentTest()
+    {
+      // arrange
+      string actual;
+
+      // act
+      actual = NbtDocument.GetDocumentName(null);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
+    [Test]
+    public void GetDocumentNameTest()
+    {
+      // arrange
+      string actual;
+      string expected;
+      string fileName;
+
+      expected = "hello world";
+      fileName = this.SimpleDataFileName;
+
+      // act
+      actual = NbtDocument.GetDocumentName(fileName);
 
       // assert
       Assert.AreEqual(expected, actual);
@@ -102,7 +233,7 @@ namespace Cyotek.Data.Nbt.Tests
       expected1 = NbtFormat.Binary;
       expected2 = NbtFormat.Binary;
       expected3 = NbtFormat.Binary;
-      expected4 = NbtFormat.XML;
+      expected4 = NbtFormat.Xml;
       expected5 = NbtFormat.Custom;
 
       // act
@@ -120,8 +251,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(expected5, actual5);
     }
 
-    [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [Test, ExpectedException(typeof(ArgumentException))]
     public void InvalidFormatTest()
     {
       // arrange
@@ -133,159 +263,6 @@ namespace Cyotek.Data.Nbt.Tests
       target.Format = (NbtFormat)(-1);
 
       // assert
-    }
-
-    [Test]
-    public void SetBinaryFormatTest()
-    {
-      // arrange
-      NbtDocument target;
-
-      target = new NbtDocument(NbtFormat.XML);
-
-      // act
-      target.Format = NbtFormat.Binary;
-
-      // assert
-      Assert.AreEqual(typeof(BinaryTagReader), target.ReaderType);
-      Assert.AreEqual(typeof(BinaryTagWriter), target.WriterType);
-    }
-
-    [Test]
-    public void SetCustomFormatTest()
-    {
-      // arrange
-      NbtDocument target;
-
-      target = new NbtDocument(NbtFormat.Binary);
-
-      // act
-      target.Format = NbtFormat.Custom;
-
-      // assert
-      Assert.IsNull(target.ReaderType);
-      Assert.IsNull(target.WriterType);
-    }
-
-    [Test]
-    public void SetXmlFormatTest()
-    {
-      // arrange
-      NbtDocument target;
-
-      target = new NbtDocument(NbtFormat.Binary);
-
-      // act
-      target.Format = NbtFormat.XML;
-
-      // assert
-      Assert.AreEqual(typeof(XmlTagReader), target.ReaderType);
-      Assert.AreEqual(typeof(XmlTagWriter), target.WriterType);
-    }
-
-    #endregion  Public Methods
-
-    [Test]
-    public void GetDocumentNameNullArgumentTest()
-    {
-      // arrange
-      string actual;
-      string expected;
-      string fileName;
-
-      expected = null;
-      fileName = null;
-
-      // act
-      actual = NbtDocument.GetDocumentName(fileName);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-
-    }
-
-    [Test]
-    public void GetDocumentNameMissingFileTest()
-    {
-      // arrange
-      string actual;
-      string expected;
-      string fileName;
-
-      expected = null;
-      fileName = Guid.NewGuid().ToString("N");
-
-      // act
-      actual = NbtDocument.GetDocumentName(fileName);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-
-    }
-
-    [Test]
-    public void GetDocumentNameBadFileTest()
-    {
-      // arrange
-      string actual;
-      string expected;
-      string fileName;
-
-      expected = null;
-      fileName = this.BadFileName;
-
-      // act
-      actual = NbtDocument.GetDocumentName(fileName);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void GetDocumentNameTest()
-    {
-      // arrange
-      string actual;
-      string expected;
-      string fileName;
-
-      expected = "hello world";
-      fileName = this.SimpleDataFileName;
-
-      // act
-      actual = NbtDocument.GetDocumentName(fileName);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void EmptyListXmlTest()
-    {
-      // arrange
-      NbtDocument target;
-      NbtDocument reloaded;
-      string fileName;
-
-      fileName = this.GetWorkFile();
-      target = new NbtDocument(NbtFormat.XML);
-      target.DocumentRoot.Name = "Test";
-      target.DocumentRoot.Value.Add("EmptyList", TagType.List, TagType.Compound);
-
-      // act
-      try
-      {
-        target.Save(fileName);
-        reloaded = NbtDocument.LoadDocument(fileName);
-      }
-      finally
-      {
-        this.DeleteFile(fileName);
-      }
-
-      // assert
-      // this test is essentially ensuring that an infinite loop when reloading an XML document is no longer present
-      this.CompareTags(target.DocumentRoot, reloaded.DocumentRoot);
     }
 
     [Test]
@@ -378,6 +355,54 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+    }
+
+    [Test]
+    public void SetBinaryFormatTest()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument(NbtFormat.Xml);
+
+      // act
+      target.Format = NbtFormat.Binary;
+
+      // assert
+      Assert.AreEqual(typeof(BinaryTagReader), target.ReaderType);
+      Assert.AreEqual(typeof(BinaryTagWriter), target.WriterType);
+    }
+
+    [Test]
+    public void SetCustomFormatTest()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument(NbtFormat.Binary);
+
+      // act
+      target.Format = NbtFormat.Custom;
+
+      // assert
+      Assert.IsNull(target.ReaderType);
+      Assert.IsNull(target.WriterType);
+    }
+
+    [Test]
+    public void SetXmlFormatTest()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument(NbtFormat.Binary);
+
+      // act
+      target.Format = NbtFormat.Xml;
+
+      // assert
+      Assert.AreEqual(typeof(XmlTagReader), target.ReaderType);
+      Assert.AreEqual(typeof(XmlTagWriter), target.WriterType);
     }
   }
 }

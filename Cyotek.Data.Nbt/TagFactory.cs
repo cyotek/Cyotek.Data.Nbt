@@ -4,16 +4,16 @@ namespace Cyotek.Data.Nbt
 {
   public static class TagFactory
   {
-    #region Public Class Methods
+    #region Class Members
 
     public static ITag CreateTag(TagType tagType)
     {
-      return TagFactory.CreateTag(tagType, null);
+      return CreateTag(tagType, null);
     }
 
     public static ITag CreateTag(TagType tagType, object defaultValue)
     {
-      return TagFactory.CreateTag(tagType, string.Empty, defaultValue);
+      return CreateTag(tagType, string.Empty, defaultValue);
     }
 
     public static ITag CreateTag(TagType tagType, string name, object defaultValue)
@@ -81,6 +81,6 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    #endregion Public Class Methods
+    #endregion
   }
 }

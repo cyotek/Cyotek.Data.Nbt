@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public interface ICollectionTag
   {
-    #region Private Properties
+    #region Properties
 
     bool IsList { get; }
 
@@ -12,6 +12,6 @@ namespace Cyotek.Data.Nbt
 
     IList<ITag> Values { get; }
 
-    #endregion Private Properties
+    #endregion
   }
 }

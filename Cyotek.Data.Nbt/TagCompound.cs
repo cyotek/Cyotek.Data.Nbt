@@ -4,10 +4,9 @@ using System.Collections.Generic;
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagCompound
-    : Tag, ICollectionTag
+  public class TagCompound : Tag, ICollectionTag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagCompound()
       : this(string.Empty)
@@ -19,27 +18,44 @@ namespace Cyotek.Data.Nbt
       this.Value = new TagDictionary(this);
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Overriden Properties
+    #region Overridden Properties
 
     public override TagType Type
     {
       get { return TagType.Compound; }
     }
 
-    #endregion Overriden Properties
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override string ToString(string indentString)
     {
       return string.Format("{0}[Compound: {1}] ({2} entries)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
 
-    #region Public Methods
+    #region Properties
+
+    public new TagDictionary Value
+    {
+      get { return (TagDictionary)base.Value; }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException("value");
+
+        base.Value = value;
+        value.Owner = this;
+      }
+    }
+
+    #endregion
+
+    #region Members
 
     public bool Contains(string name)
     {
@@ -57,7 +73,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagByte>(name);
 
-      return value != null ? value.Value != 0 ? true : false : defaultValue;
+      return value != null ? value.Value != 0 : defaultValue;
     }
 
     public TagByte GetByte(string name)
@@ -124,7 +140,7 @@ namespace Cyotek.Data.Nbt
 
     public T GetEnumValue<T>(string name) where T : struct
     {
-      return this.GetEnumValue<T>(name, default(T));
+      return this.GetEnumValue(name, default(T));
     }
 
     public T GetEnumValue<T>(string name, T defaultValue) where T : struct
@@ -288,7 +304,7 @@ namespace Cyotek.Data.Nbt
       string[] parts;
       ITag element;
 
-      parts = query.Split(new char[] { '\\', '/' });
+      parts = query.Split(new[] { '\\', '/' });
       element = this;
 
       // HACK: This is all quickly thrown together
@@ -307,13 +323,16 @@ namespace Cyotek.Data.Nbt
           value = subParts[1];
           matchFound = false;
 
-          foreach (TagCompound tag in ((TagList)element).Value)
+          if (element is TagList)
           {
-            if (tag.GetStringValue(name) == value)
+            foreach (TagCompound tag in ((TagList)element).Value)
             {
-              element = tag;
-              matchFound = true;
-              break;
+              if (tag.GetStringValue(name) == value)
+              {
+                element = tag;
+                matchFound = true;
+                break;
+              }
             }
           }
 
@@ -337,7 +356,7 @@ namespace Cyotek.Data.Nbt
 
     public T QueryValue<T>(string query)
     {
-      return this.QueryValue<T>(query, default(T));
+      return this.QueryValue(query, default(T));
     }
 
     public T QueryValue<T>(string query, T defaultValue)
@@ -349,29 +368,14 @@ namespace Cyotek.Data.Nbt
       return tag != null ? (T)tag.Value : defaultValue;
     }
 
-    #endregion Public Methods
+    #endregion
 
-    #region Public Properties
-
-    public new TagDictionary Value
-    {
-      get { return (TagDictionary)base.Value; }
-      set
-      {
-        if (value == null)
-          throw new ArgumentNullException("value");
-
-        base.Value = value;
-        value.Owner = this;
-      }
-    }
-
-    #endregion Public Properties
-
-    #region Private Properties
+    #region ICollectionTag Members
 
     bool ICollectionTag.IsList
-    { get { return false; } }
+    {
+      get { return false; }
+    }
 
     TagType ICollectionTag.LimitToType
     {
@@ -384,6 +388,6 @@ namespace Cyotek.Data.Nbt
       get { return this.Value; }
     }
 
-    #endregion Private Properties
+    #endregion
   }
 }

@@ -1,10 +1,9 @@
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagNumberEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
-  public class TagShort
-    : Tag
+  public class TagShort : Tag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagShort()
       : this(string.Empty, 0)
@@ -24,27 +23,27 @@ namespace Cyotek.Data.Nbt
       this.Value = value;
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Overriden Properties
+    #region Overridden Properties
 
     public override TagType Type
     {
       get { return TagType.Short; }
     }
 
-    #endregion Overriden Properties
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override string ToString(string indentString)
     {
       return string.Format("{0}[Short: {1}={2}]", indentString, Name, Value);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
 
-    #region Public Properties
+    #region Properties
 
     public new short Value
     {
@@ -52,6 +51,6 @@ namespace Cyotek.Data.Nbt
       set { base.Value = value; }
     }
 
-    #endregion Public Properties
+    #endregion
   }
 }

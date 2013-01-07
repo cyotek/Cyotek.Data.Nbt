@@ -1,5 +1,12 @@
 # Cyotek.Data.Nbt Change Log
 
+## 1.0.3.4
+### Changes and new features
+* Code refactoring according to Resharper suggestions
+
+### Bug Fixes
+* Fixed corrupt document tree and crash when loading XML document with self closing tags
+
 ## 1.0.3.3
 ### Changes and new features
 * Added a number of `TagCollection.Add` overloads without the `name` parameter to make it somewhat easier to populate lists via code.

@@ -5,13 +5,21 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class BinaryTagWriter
-    : TagWriter
+  public class BinaryTagWriter : TagWriter
   {
-    #region Public Constructors
+    #region Constants
+
+    internal static readonly int DoubleSize = 8;
+    internal static readonly int FloatSize = 4;
+    internal static readonly int IntSize = 4;
+    internal static readonly int LongSize = 8;
+    internal static readonly int ShortSize = 2;
+
+    #endregion
+
+    #region Constructors
 
     public BinaryTagWriter()
-      : base()
     { }
 
     public BinaryTagWriter(Stream stream)
@@ -22,16 +30,18 @@ namespace Cyotek.Data.Nbt
       : base(stream, options)
     { }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Overriden Properties
+    #region Overridden Properties
 
     protected override NbtOptions DefaultOptions
-    { get { return NbtOptions.Header | NbtOptions.Compress; } }
+    {
+      get { return NbtOptions.Header | NbtOptions.Compress; }
+    }
 
-    #endregion Overriden Properties
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override void Write(ITag value, NbtOptions options)
     {
@@ -112,9 +122,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.ShortSize);
+        BitHelper.SwapBytes(data, 0, ShortSize);
 
-      this.OutputStream.Write(data, 0, BinaryTagWriter.ShortSize);
+      this.OutputStream.Write(data, 0, ShortSize);
     }
 
     public override void Write(long value)
@@ -123,9 +133,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.LongSize);
+        BitHelper.SwapBytes(data, 0, LongSize);
 
-      this.OutputStream.Write(data, 0, BinaryTagWriter.LongSize);
+      this.OutputStream.Write(data, 0, LongSize);
     }
 
     public override void Write(int[] value)
@@ -146,9 +156,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.IntSize);
+        BitHelper.SwapBytes(data, 0, IntSize);
 
-      this.OutputStream.Write(data, 0, BinaryTagWriter.IntSize);
+      this.OutputStream.Write(data, 0, IntSize);
     }
 
     public override void Write(float value)
@@ -157,9 +167,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.FloatSize);
+        BitHelper.SwapBytes(data, 0, FloatSize);
 
-      this.OutputStream.Write(data, 0, BinaryTagWriter.FloatSize);
+      this.OutputStream.Write(data, 0, FloatSize);
     }
 
     public override void Write(double value)
@@ -168,9 +178,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.DoubleSize);
+        BitHelper.SwapBytes(data, 0, DoubleSize);
 
-      this.OutputStream.Write(data, 0, BinaryTagWriter.DoubleSize);
+      this.OutputStream.Write(data, 0, DoubleSize);
     }
 
     public override void Write(byte value)
@@ -204,9 +214,9 @@ namespace Cyotek.Data.Nbt
         this.WriteUncompressed(tag, fileName);
     }
 
-    #endregion Public Overridden Methods
+    #endregion
 
-    #region Public Methods
+    #region Members
 
     public virtual void Write(TagCollection value)
     {
@@ -233,10 +243,6 @@ namespace Cyotek.Data.Nbt
     {
       this.OutputStream.WriteByte((byte)TagType.End);
     }
-
-    #endregion Public Methods
-
-    #region Protected Methods
 
     protected void WriteCompressed(TagCompound tag, string fileName)
     {
@@ -265,12 +271,6 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    #endregion Protected Methods
-
-    internal static readonly int DoubleSize = 8;
-    internal static readonly int FloatSize = 4;
-    internal static readonly int IntSize = 4;
-    internal static readonly int LongSize = 8;
-    internal static readonly int ShortSize = 2;
+    #endregion
   }
 }

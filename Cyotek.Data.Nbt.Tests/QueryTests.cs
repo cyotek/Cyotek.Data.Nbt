@@ -4,11 +4,8 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class QueryTests
-    : TestBase
+  internal class QueryTests : TestBase
   {
-    #region  Public Methods
-
     [Test]
     public void QueryValueTest()
     {
@@ -48,7 +45,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsNotNull(result);
-      Assert.AreEqual(expectedValue, (string)result.Value["name"].Value);
+      Assert.AreEqual(expectedValue, result.Value["name"].Value);
     }
 
     [Test]
@@ -95,7 +92,5 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsAssignableFrom(expectedType, result);
       Assert.AreEqual(expectedValue, (long)result.Value);
     }
-
-    #endregion  Public Methods
   }
 }

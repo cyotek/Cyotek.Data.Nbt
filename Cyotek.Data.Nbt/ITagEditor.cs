@@ -2,12 +2,12 @@ namespace Cyotek.Data.Nbt
 {
   public interface ITagEditor
   {
-  #region Private Methods 
+    #region Members
 
     void Bind(ITag tag);
 
     void SaveChanges();
 
-  #endregion Private Methods 
+    #endregion
   }
 }

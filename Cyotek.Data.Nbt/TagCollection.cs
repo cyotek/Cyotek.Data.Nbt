@@ -3,10 +3,9 @@ using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagCollection
-    : Collection<ITag>
+  public class TagCollection : Collection<ITag>
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagCollection()
     {
@@ -28,9 +27,9 @@ namespace Cyotek.Data.Nbt
       this.LimitType = limitType;
     }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Protected Overridden Methods
+    #region Overridden Members
 
     protected override void ClearItems()
     {
@@ -70,9 +69,17 @@ namespace Cyotek.Data.Nbt
       base.SetItem(index, item);
     }
 
-    #endregion Protected Overridden Methods
+    #endregion
 
-    #region Public Methods
+    #region Properties
+
+    public TagType LimitType { get; set; }
+
+    public ITag Owner { get; set; }
+
+    #endregion
+
+    #region Members
 
     public ITag Add(DateTime value)
     {
@@ -250,7 +257,7 @@ namespace Cyotek.Data.Nbt
 
       tag = TagFactory.CreateTag(tagType);
       tag.Name = name;
-      
+
       collectionTag = tag as ICollectionTag;
       if (collectionTag != null)
         collectionTag.LimitToType = limitToType;
@@ -260,14 +267,6 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    #endregion Public Methods
-
-    #region Public Properties
-
-    public TagType LimitType { get; set; }
-
-    public ITag Owner { get; set; }
-
-    #endregion Public Properties
+    #endregion
   }
 }

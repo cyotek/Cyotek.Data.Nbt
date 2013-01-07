@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public interface ITag
   {
-  #region Events 
+    #region Events
 
     event EventHandler NameChanged;
 
@@ -12,9 +12,9 @@ namespace Cyotek.Data.Nbt
 
     event EventHandler ValueChanged;
 
-  #endregion Events 
+    #endregion
 
-  #region Private Properties 
+    #region Properties
 
     bool CanRemove { get; }
 
@@ -28,9 +28,9 @@ namespace Cyotek.Data.Nbt
 
     object Value { get; set; }
 
-  #endregion Private Properties 
+    #endregion
 
-  #region Private Methods 
+    #region Members
 
     ITag[] Flatten();
 
@@ -46,6 +46,6 @@ namespace Cyotek.Data.Nbt
 
     string ToValueString();
 
-  #endregion Private Methods 
+    #endregion
   }
 }

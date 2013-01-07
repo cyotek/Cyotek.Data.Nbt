@@ -5,22 +5,20 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class BinaryTagReader
-    : TagReader
+  public class BinaryTagReader : TagReader
   {
-    #region Public Constructors
+    #region Constructors
 
     public BinaryTagReader()
-      : base()
     { }
 
     public BinaryTagReader(Stream input, NbtOptions options)
       : base(input, options)
     { }
 
-    #endregion Public Constructors
+    #endregion
 
-    #region Public Overridden Methods
+    #region Overridden Members
 
     public override TagCompound Load(string fileName, NbtOptions options)
     {
@@ -29,7 +27,8 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("fileName");
-      else if (!File.Exists(fileName))
+
+      if (!File.Exists(fileName))
         throw new FileNotFoundException("Cannot find source file.", fileName);
 
       //Check if gzipped stream
@@ -50,9 +49,7 @@ namespace Cyotek.Data.Nbt
       }
 
       if (tag != null)
-      {
         return tag;
-      }
 
       //Try Deflate stream
       try
@@ -72,9 +69,7 @@ namespace Cyotek.Data.Nbt
       }
 
       if (tag != null)
-      {
         return tag;
-      }
 
       //Assume uncompressed stream
       using (FileStream input = File.OpenRead(fileName))
@@ -149,7 +144,7 @@ namespace Cyotek.Data.Nbt
           break;
 
         default:
-          throw new NotImplementedException(string.Format("Unrecognized tag type: {0}", rawType));
+          throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", rawType));
       }
 
       result.Value = value;
@@ -162,14 +157,10 @@ namespace Cyotek.Data.Nbt
       int data;
 
       data = this.InputStream.ReadByte();
-      if (data == (data & 0xFF))
-      {
-        return (byte)data;
-      }
-      else
-      {
-        throw new Exception();
-      }
+      if (data != (data & 0xFF))
+        throw new InvalidDataException();
+
+      return (byte)data;
     }
 
     public override byte[] ReadByteArray()
@@ -385,9 +376,9 @@ namespace Cyotek.Data.Nbt
       if (length != this.InputStream.Read(data, 0, length))
         throw new InvalidDataException();
 
-      return Encoding.UTF8.GetString(data);
+      return data.Length != 0 ? Encoding.UTF8.GetString(data) : null;
     }
 
-    #endregion Public Overridden Methods
+    #endregion
   }
 }

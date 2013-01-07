@@ -1,13 +1,11 @@
+using System.IO;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class XmlTagReaderTests
-    : TestBase
+  internal class XmlTagReaderTests : TestBase
   {
-    #region  Public Methods
-
     [Test]
     public void LoadTest()
     {
@@ -26,6 +24,17 @@ namespace Cyotek.Data.Nbt.Tests
       this.CompareTags(expected, actual);
     }
 
-    #endregion  Public Methods
+    [Test]
+    public void SelfClosingTagBugTest()
+    {
+      // arrange
+      NbtDocument document;
+
+      // act
+      document = NbtDocument.LoadDocument(Path.Combine(this.DataPath, "project.xml"));
+
+      // assert
+      Assert.AreEqual(NbtFormat.Xml, document.Format);
+    }
   }
 }
