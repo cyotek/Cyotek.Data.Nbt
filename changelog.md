@@ -1,5 +1,33 @@
 # Cyotek.Data.Nbt Change Log
 
+## 1.0.4.0
+### Changes and new features
+* Added tests for `Tag.ToValueString`
+* `ICollectionTag` now explicitly inherits from `ITag` so you don't have to cast back to the former if you only have a reference to the latter.
+* Added new `TagEventArgs` helper class
+
+### Bug Fixes
+* `TagIntArray.ToValueString` and `TagByteArray.ToValueString` now return appropriate values instead of the .NET type name for their respective arrays.
+
+## 1.0.3.6
+### Changes and new features
+* `Tag.Value` is now virtual
+* Added `AddRange` method to `TagDictionary`
+* Added `AddRange` and `Add(bool)` methods to `TagCollection`
+* Added tests for `TagDictionary`, `TagCollection` and `TagEnd`, and added some other tests for classes without full coverage [still more to go]
+* Setting the value of the `TagEnd` class now has no effect, and retrieving the value always returns `null`
+* Added new `NbtOptions.HeaderOnly` flag, allowing the name of a tag to be read without loading the full body
+
+### Bug Fixes
+* Calling `NbtDocument.GetDocumentName` no longer loads the entire NBT document to return a single string value
+* `TagDictionary.Add(Guid)` and `TagCollection.Add(Guid)` now return `ITag` instead of `void`
+* Removed `AddIfNotDefault` methods from `TagDictionary`
+* `BinaryTagReader.Load` always passed in default options rather than whatever the caller had specified
+
+## 1.0.3.5
+### Bug Fixes
+* Changed `TagEditor` attributes on tag classes to remove fixed version information
+
 ## 1.0.3.4
 ### Changes and new features
 * Code refactoring according to Resharper suggestions

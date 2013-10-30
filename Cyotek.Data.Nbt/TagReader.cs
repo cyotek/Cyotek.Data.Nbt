@@ -45,7 +45,7 @@ namespace Cyotek.Data.Nbt
     public virtual Stream InputStream
     {
       get { return _inputStream; }
-      protected set
+      set
       {
         if (this.InputStream != value)
         {
@@ -56,11 +56,11 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public NbtOptions Options { get; protected set; }
+    public NbtOptions Options { get; set; }
 
     protected virtual NbtOptions DefaultOptions
     {
-      get { return NbtOptions.Header; }
+      get { return NbtOptions.ReadHeader; }
     }
 
     #endregion

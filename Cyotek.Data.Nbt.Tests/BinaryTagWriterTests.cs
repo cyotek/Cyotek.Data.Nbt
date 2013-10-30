@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class BinaryTagWriterTests : TestBase
+  public class BinaryTagWriterTests : TestBase
   {
     [Test]
     public void SaveCompressedTest()
@@ -16,7 +16,7 @@ namespace Cyotek.Data.Nbt.Tests
       writer = new BinaryTagWriter();
 
       // act
-      writer.Write(tag, this.OutputFileName, NbtOptions.Compress | NbtOptions.Header);
+      writer.Write(tag, this.OutputFileName, NbtOptions.Compress | NbtOptions.ReadHeader);
 
       // assert
       this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
@@ -33,7 +33,7 @@ namespace Cyotek.Data.Nbt.Tests
       writer = new BinaryTagWriter();
 
       // act
-      writer.Write(tag, this.OutputFileName, NbtOptions.Header);
+      writer.Write(tag, this.OutputFileName, NbtOptions.ReadHeader);
 
       // assert
       this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);

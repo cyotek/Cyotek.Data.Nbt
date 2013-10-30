@@ -1,6 +1,8 @@
+using System.Linq;
+
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.TagIntArrayEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
+  [TagEditor("Cyotek.Windows.Forms.Nbt.TagIntArrayEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagIntArray : Tag
   {
     #region Constructors
@@ -39,6 +41,11 @@ namespace Cyotek.Data.Nbt
     public override string ToString(string indentString)
     {
       return string.Format("{0}[IntArray: {1}={2} values]", indentString, this.Name, (this.Value != null) ? this.Value.Length : 0);
+    }
+
+    public override string ToValueString()
+    {
+      return string.Join(", ", this.Value.Select(b => b.ToString()).ToArray());
     }
 
     #endregion

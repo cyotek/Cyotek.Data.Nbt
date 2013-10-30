@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class QueryTests : TestBase
+  public class QueryTests : TestBase
   {
     [Test]
     public void QueryValueTest()

@@ -64,6 +64,12 @@ namespace Cyotek.Data.Nbt
 
     #region Members
 
+    public virtual void Close()
+    { }
+
+    public virtual void Open()
+    { }
+
     public abstract void Write(ITag value, NbtOptions options);
 
     public abstract void Write(byte value);

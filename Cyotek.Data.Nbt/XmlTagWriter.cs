@@ -11,6 +11,7 @@ namespace Cyotek.Data.Nbt
     #region Instance Fields
 
     private XmlWriterSettings _settings;
+
     private XmlWriter _writer;
 
     #endregion
@@ -21,7 +22,7 @@ namespace Cyotek.Data.Nbt
     { }
 
     public XmlTagWriter(Stream stream)
-      : this(stream, NbtOptions.Header)
+      : this(stream, NbtOptions.ReadHeader)
     { }
 
     public XmlTagWriter(Stream stream, NbtOptions options)
@@ -34,16 +35,41 @@ namespace Cyotek.Data.Nbt
 
     protected override NbtOptions DefaultOptions
     {
-      get { return NbtOptions.Header; }
+      get { return NbtOptions.ReadHeader; }
     }
 
     #endregion
 
     #region Overridden Members
 
+    public override void Close()
+    {
+      base.Close();
+
+      _writer.WriteEndDocument();
+      _writer.Flush();
+    }
+
+    public override void Open()
+    {
+      base.Open();
+
+      _settings = new XmlWriterSettings
+      {
+        Indent = true,
+        Encoding = Encoding.UTF8
+      };
+
+      _writer = XmlWriter.Create(this.OutputStream, _settings);
+      _writer.WriteStartDocument(true);
+    }
+
     public override void Write(ITag value, NbtOptions options)
     {
       string name;
+
+      if (options.HasFlag(NbtOptions.SingleUse))
+        this.Open();
 
       name = value.Name;
       if (string.IsNullOrEmpty(name))
@@ -57,7 +83,7 @@ namespace Cyotek.Data.Nbt
         _writer.WriteAttributeString("name", name);
       }
 
-      if (options.HasFlag(NbtOptions.Header) && value.Type != TagType.End)
+      if (options.HasFlag(NbtOptions.ReadHeader) && value.Type != TagType.End)
         this.WriteHeader(value);
 
       switch (value.Type)
@@ -115,6 +141,9 @@ namespace Cyotek.Data.Nbt
       }
 
       _writer.WriteEndElement();
+
+      if (options.HasFlag(NbtOptions.SingleUse))
+        this.Close();
     }
 
     public override void Write(string value)
@@ -203,20 +232,10 @@ namespace Cyotek.Data.Nbt
       using (Stream fileStream = File.Create(fileName))
       {
         this.OutputStream = fileStream;
+        this.Open();
         this.Write(tag, options);
-        _writer.WriteEndDocument();
-        _writer.Flush();
+        this.Close();
       }
-    }
-
-    protected override void OnOutputStreamChanged(EventArgs e)
-    {
-      base.OnOutputStreamChanged(e);
-
-      _settings = new XmlWriterSettings { Indent = true, Encoding = Encoding.UTF8 };
-
-      _writer = XmlWriter.Create(this.OutputStream, _settings);
-      _writer.WriteStartDocument(true);
     }
 
     #endregion
@@ -237,7 +256,7 @@ namespace Cyotek.Data.Nbt
     public virtual void Write(IEnumerable<ITag> value)
     {
       foreach (ITag item in value)
-        this.Write(item, NbtOptions.Header);
+        this.Write(item, NbtOptions.ReadHeader);
     }
 
     public virtual void WriteEnd()

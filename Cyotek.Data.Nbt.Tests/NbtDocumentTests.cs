@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using NUnit.Framework;
+using FluentAssertions;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class NbtDocumentTests : TestBase
+  public class NbtDocumentTests : TestBase
   {
     [Test]
     public void ConstructorTest()
@@ -214,44 +216,139 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void GetFormatTest()
+    public void GetFormatBinaryTest()
     {
       // arrange
       NbtDocument target;
-      NbtFormat expected1;
-      NbtFormat expected2;
-      NbtFormat expected3;
-      NbtFormat expected4;
-      NbtFormat expected5;
-      NbtFormat actual1;
-      NbtFormat actual2;
-      NbtFormat actual3;
-      NbtFormat actual4;
-      NbtFormat actual5;
+      NbtFormat expected;
+      NbtFormat actual;
+      string fileName;
 
+      fileName = this.UncompressedComplexDataFileName;
+      expected = NbtFormat.Binary;
       target = new NbtDocument();
-      expected1 = NbtFormat.Binary;
-      expected2 = NbtFormat.Binary;
-      expected3 = NbtFormat.Binary;
-      expected4 = NbtFormat.Xml;
-      expected5 = NbtFormat.Custom;
 
       // act
-      actual1 = target.GetFormat(this.ComplexDataFileName); // gzip compressed binary
-      actual2 = target.GetFormat(this.DeflateComplexDataFileName); // deflate compressed binary
-      actual3 = target.GetFormat(this.UncompressedComplexDataFileName); // raw binary
-      actual4 = target.GetFormat(this.ComplexXmlDataFileName); // xml
-      actual5 = target.GetFormat(this.BadFileName); // invalid
+      actual = target.GetFormat(fileName);
 
       // assert
-      Assert.AreEqual(expected1, actual1);
-      Assert.AreEqual(expected2, actual2);
-      Assert.AreEqual(expected3, actual3);
-      Assert.AreEqual(expected4, actual4);
-      Assert.AreEqual(expected5, actual5);
+      actual.Should().Be(expected);
     }
 
-    [Test, ExpectedException(typeof(ArgumentException))]
+    [Test]
+    public void GetFormatDeflateBinaryTest()
+    {
+      // arrange
+      NbtDocument target;
+      NbtFormat expected;
+      NbtFormat actual;
+      string fileName;
+
+      fileName = this.DeflateComplexDataFileName;
+      expected = NbtFormat.Binary;
+      target = new NbtDocument();
+
+      // act
+      actual = target.GetFormat(fileName);
+
+      // assert
+      actual.Should().Be(expected);
+    }
+
+    [Test]
+    public void GetFormatGzipBinaryTest()
+    {
+      // arrange
+      NbtDocument target;
+      NbtFormat expected;
+      NbtFormat actual;
+      string fileName;
+
+      fileName = this.ComplexDataFileName;
+      expected = NbtFormat.Binary;
+      target = new NbtDocument();
+
+      // act
+      actual = target.GetFormat(fileName);
+
+      // assert
+      actual.Should().Be(expected);
+    }
+
+    [Test]
+    public void GetFormatInvalidTest()
+    {
+      // arrange
+      NbtDocument target;
+      NbtFormat expected;
+      NbtFormat actual;
+      string fileName;
+
+      fileName = this.BadFileName;
+      expected = NbtFormat.Custom;
+      target = new NbtDocument();
+
+      // act
+      actual = target.GetFormat(fileName);
+
+      // assert
+      actual.Should().Be(expected);
+    }
+
+    [Test]
+    [ExpectedException(typeof(FileNotFoundException))]
+    public void GetFormatMissingFileTest()
+    {
+      // arrange
+      NbtDocument target;
+      string fileName;
+
+      target = new NbtDocument();
+      fileName = Guid.NewGuid().ToString();
+
+      // act
+      target.GetFormat(fileName);
+
+      // assert
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void GetFormatNullTest()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument();
+
+      // act
+      target.GetFormat(null);
+
+      // assert
+    }
+
+    [Test]
+    public void GetFormatXmlTest()
+    {
+      // arrange
+      NbtDocument target;
+      NbtFormat expected;
+      NbtFormat actual;
+      string fileName;
+
+      fileName = this.ComplexXmlDataFileName;
+      expected = NbtFormat.Xml;
+      target = new NbtDocument();
+
+      // act
+      actual = target.GetFormat(fileName);
+
+      // assert
+      actual.Should().Be(expected);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentException))]
     public void InvalidFormatTest()
     {
       // arrange
@@ -263,6 +360,114 @@ namespace Cyotek.Data.Nbt.Tests
       target.Format = (NbtFormat)(-1);
 
       // assert
+    }
+
+    [Test]
+    public void IsNbtDocumentBinaryTest()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.UncompressedComplexDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      actual.Should().BeTrue();
+    }
+
+    [Test]
+    public void IsNbtDocumentDeflateBinaryTest()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.DeflateComplexDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      actual.Should().BeTrue();
+    }
+
+    [Test]
+    public void IsNbtDocumentGzipBinaryTest()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.ComplexDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      actual.Should().BeTrue();
+    }
+
+    [Test]
+    public void IsNbtDocumentInvalidTest()
+    {
+      // arrange
+      bool actual;
+      string fileName;
+
+      fileName = this.BadFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      actual.Should().BeFalse();
+    }
+
+    [Test]
+    public void IsNbtDocumentMissingFileTest()
+    {
+      // arrange
+      bool actual;
+      string fileName;
+
+      fileName = Guid.NewGuid().ToString();
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      actual.Should().BeFalse();
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void IsNbtDocumentNullTest()
+    {
+      // arrange
+
+      // act
+      NbtDocument.IsNbtDocument(null);
+
+      // assert
+    }
+
+    [Test]
+    public void IsNbtDocumentXmlTest()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.ComplexXmlDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      actual.Should().BeTrue();
     }
 
     [Test]

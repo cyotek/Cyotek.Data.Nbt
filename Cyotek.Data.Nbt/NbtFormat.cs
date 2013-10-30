@@ -3,7 +3,9 @@
   public enum NbtFormat
   {
     Custom,
+
     Binary,
+
     Xml
   }
 }

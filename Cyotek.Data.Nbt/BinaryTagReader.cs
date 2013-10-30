@@ -38,7 +38,7 @@ namespace Cyotek.Data.Nbt
         {
           using (GZipStream gzipStream = new GZipStream(input, CompressionMode.Decompress))
           {
-            reader = new BinaryTagReader(gzipStream, NbtOptions.Header);
+            reader = new BinaryTagReader(gzipStream, options);
             tag = (TagCompound)reader.Read();
           }
         }
@@ -58,7 +58,7 @@ namespace Cyotek.Data.Nbt
         {
           using (DeflateStream deflateStream = new DeflateStream(input, CompressionMode.Decompress))
           {
-            reader = new BinaryTagReader(deflateStream, NbtOptions.Header);
+            reader = new BinaryTagReader(deflateStream, options);
             tag = (TagCompound)reader.Read();
           }
         }
@@ -74,7 +74,7 @@ namespace Cyotek.Data.Nbt
       //Assume uncompressed stream
       using (FileStream input = File.OpenRead(fileName))
       {
-        reader = new BinaryTagReader(input, NbtOptions.Header);
+        reader = new BinaryTagReader(input, options);
         tag = (TagCompound)reader.Read();
       }
 
@@ -90,62 +90,67 @@ namespace Cyotek.Data.Nbt
       rawType = this.InputStream.ReadByte();
       result = TagFactory.CreateTag((TagType)rawType);
 
-      if (result.Type != TagType.End && options.HasFlag(NbtOptions.Header))
+      if (result.Type != TagType.End && options.HasFlag(NbtOptions.ReadHeader))
         result.Name = this.ReadString();
 
-      switch (result.Type)
+      if (!options.HasFlag(NbtOptions.HeaderOnly))
       {
-        case TagType.End:
-          value = null;
-          break;
+        switch (result.Type)
+        {
+          case TagType.End:
+            value = null;
+            break;
 
-        case TagType.Byte:
-          value = this.ReadByte();
-          break;
+          case TagType.Byte:
+            value = this.ReadByte();
+            break;
 
-        case TagType.Short:
-          value = this.ReadShort();
-          break;
+          case TagType.Short:
+            value = this.ReadShort();
+            break;
 
-        case TagType.Int:
-          value = this.ReadInt();
-          break;
+          case TagType.Int:
+            value = this.ReadInt();
+            break;
 
-        case TagType.IntArray:
-          value = this.ReadIntArray();
-          break;
+          case TagType.IntArray:
+            value = this.ReadIntArray();
+            break;
 
-        case TagType.Long:
-          value = this.ReadLong();
-          break;
+          case TagType.Long:
+            value = this.ReadLong();
+            break;
 
-        case TagType.Float:
-          value = this.ReadFloat();
-          break;
+          case TagType.Float:
+            value = this.ReadFloat();
+            break;
 
-        case TagType.Double:
-          value = this.ReadDouble();
-          break;
+          case TagType.Double:
+            value = this.ReadDouble();
+            break;
 
-        case TagType.ByteArray:
-          value = this.ReadByteArray();
-          break;
+          case TagType.ByteArray:
+            value = this.ReadByteArray();
+            break;
 
-        case TagType.String:
-          value = this.ReadString();
-          break;
+          case TagType.String:
+            value = this.ReadString();
+            break;
 
-        case TagType.List:
-          value = this.ReadCollection((TagList)result);
-          break;
+          case TagType.List:
+            value = this.ReadCollection((TagList)result);
+            break;
 
-        case TagType.Compound:
-          value = this.ReadDictionary((TagCompound)result);
-          break;
+          case TagType.Compound:
+            value = this.ReadDictionary((TagCompound)result);
+            break;
 
-        default:
-          throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", rawType));
+          default:
+            throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", rawType));
+        }
       }
+      else
+        value = null;
 
       result.Value = value;
 

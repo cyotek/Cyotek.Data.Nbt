@@ -14,6 +14,10 @@ namespace Cyotek.Data.Nbt
 
     #region Members
 
+    void Close();
+
+    void Open();
+
     void Write(TagCompound tag, string fileName);
 
     void Write(TagCompound tag, string fileName, NbtOptions options);

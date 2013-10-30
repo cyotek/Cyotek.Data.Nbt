@@ -53,6 +53,7 @@
     <Compile Include="ITagReader.cs" />
     <Compile Include="ITagWriter.cs" />
     <Compile Include="NbtDocument.cs" />
+    <Compile Include="TagEventArgs.cs" />
     <Compile Include="TagReader.cs" />
     <Compile Include="TagWriter.cs" />
     <Compile Include="NbtFormat.cs" />

@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class XmlTagWriterTests : TestBase
+  public class XmlTagWriterTests : TestBase
   {
     [Test]
     public void SaveTest()

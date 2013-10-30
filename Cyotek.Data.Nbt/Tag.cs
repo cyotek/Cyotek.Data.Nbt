@@ -11,7 +11,9 @@ namespace Cyotek.Data.Nbt
     #region Instance Fields
 
     private string _name;
+
     private ITag _parent;
+
     private object _value;
 
     #endregion
@@ -68,7 +70,8 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    [Category(""), DefaultValue("")]
+    [Category("")]
+    [DefaultValue("")]
     public virtual string Name
     {
       get { return _name; }
@@ -103,8 +106,9 @@ namespace Cyotek.Data.Nbt
 
     public abstract TagType Type { get; }
 
-    [Category(""), DefaultValue(null)]
-    public object Value
+    [Category("")]
+    [DefaultValue(null)]
+    public virtual object Value
     {
       get { return _value; }
       set
@@ -158,7 +162,7 @@ namespace Cyotek.Data.Nbt
       {
         TagWriter writer;
 
-        writer = new BinaryTagWriter(stream, NbtOptions.Header);
+        writer = new BinaryTagWriter(stream, NbtOptions.ReadHeader);
         writer.Write(this);
 
         result = stream.ToArray();

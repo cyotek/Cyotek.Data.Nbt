@@ -46,7 +46,10 @@ namespace Cyotek.Data.Nbt
 
     public override byte[] ReadByteArray()
     {
-      return this.ReadString().Split(new[] { " ", "\t", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
+      return this.ReadString().Split(new[]
+      {
+        " ", "\t", "\n", "\r"
+      }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
     }
 
     public override TagCollection ReadCollection(TagList owner)
@@ -96,7 +99,10 @@ namespace Cyotek.Data.Nbt
 
     public override int[] ReadIntArray()
     {
-      return this.ReadString().Split(new[] { " ", "\t", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
+      return this.ReadString().Split(new[]
+      {
+        " ", "\t", "\n", "\r"
+      }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
     }
 
     public override long ReadLong()
@@ -153,7 +159,7 @@ namespace Cyotek.Data.Nbt
       }
       result = TagFactory.CreateTag(type);
 
-      if (options.HasFlag(NbtOptions.Header))
+      if (options.HasFlag(NbtOptions.ReadHeader))
       {
         string name;
 
@@ -164,54 +170,57 @@ namespace Cyotek.Data.Nbt
         result.Name = name;
       }
 
-      switch (type)
+      if (!options.HasFlag(NbtOptions.HeaderOnly))
       {
-        case TagType.Byte:
-          result.Value = this.ReadByte();
-          break;
+        switch (type)
+        {
+          case TagType.Byte:
+            result.Value = this.ReadByte();
+            break;
 
-        case TagType.Short:
-          result.Value = this.ReadShort();
-          break;
+          case TagType.Short:
+            result.Value = this.ReadShort();
+            break;
 
-        case TagType.Int:
-          result.Value = this.ReadInt();
-          break;
+          case TagType.Int:
+            result.Value = this.ReadInt();
+            break;
 
-        case TagType.Long:
-          result.Value = this.ReadLong();
-          break;
+          case TagType.Long:
+            result.Value = this.ReadLong();
+            break;
 
-        case TagType.Float:
-          result.Value = this.ReadFloat();
-          break;
+          case TagType.Float:
+            result.Value = this.ReadFloat();
+            break;
 
-        case TagType.Double:
-          result.Value = this.ReadDouble();
-          break;
+          case TagType.Double:
+            result.Value = this.ReadDouble();
+            break;
 
-        case TagType.ByteArray:
-          result.Value = this.ReadByteArray();
-          break;
+          case TagType.ByteArray:
+            result.Value = this.ReadByteArray();
+            break;
 
-        case TagType.String:
-          result.Value = this.ReadString();
-          break;
+          case TagType.String:
+            result.Value = this.ReadString();
+            break;
 
-        case TagType.List:
-          result.Value = this.ReadCollection((TagList)result);
-          break;
+          case TagType.List:
+            result.Value = this.ReadCollection((TagList)result);
+            break;
 
-        case TagType.Compound:
-          result.Value = this.ReadDictionary((TagCompound)result);
-          break;
+          case TagType.Compound:
+            result.Value = this.ReadDictionary((TagCompound)result);
+            break;
 
-        case TagType.IntArray:
-          result.Value = this.ReadIntArray();
-          break;
+          case TagType.IntArray:
+            result.Value = this.ReadIntArray();
+            break;
 
-        default:
-          throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", type));
+          default:
+            throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", type));
+        }
       }
 
       return result;

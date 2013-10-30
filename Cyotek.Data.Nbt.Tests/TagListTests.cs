@@ -1,9 +1,10 @@
+using System;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagListTests : TestBase
+  public class TagListTests : TestBase
   {
     [Test]
     public void ConstructorTest()
@@ -83,6 +84,29 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsNotNull(tag.Value);
       Assert.AreSame(tag, tag.Value.Owner);
       Assert.AreEqual(value, tag.ListType);
+    }
+
+    [Test]
+    public void CountTest()
+    {
+      // arrange
+      TagList target;
+      int expectedCount;
+
+      target = new TagList(TagType.Long);
+
+      target.Value.Add((long)int.MinValue);
+      target.Value.Add((long)int.MaxValue);
+      target.Value.Add(long.MinValue);
+      target.Value.Add(long.MaxValue);
+
+      expectedCount = 3;
+
+      // act
+      target.Value.RemoveAt(3);
+
+      // assert
+      Assert.AreEqual(expectedCount, target.Count);
     }
 
     [Test]
@@ -215,6 +239,21 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void ValueExceptionTest()
+    {
+      // arrange
+      TagList target;
+
+      target = new TagList();
+
+      // act
+      target.Value = null;
+
+      // assert
+    }
+
+    [Test]
     public void ValueTest()
     {
       // arrange
@@ -235,5 +274,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreSame(target, target.Value.Owner);
       Assert.AreEqual(defaultType, target.ListType);
     }
+
+    //ncrunch: no coverage 
   }
 }

@@ -10,9 +10,13 @@ namespace Cyotek.Data.Nbt
     #region Constants
 
     internal static readonly int DoubleSize = 8;
+
     internal static readonly int FloatSize = 4;
+
     internal static readonly int IntSize = 4;
+
     internal static readonly int LongSize = 8;
+
     internal static readonly int ShortSize = 2;
 
     #endregion
@@ -23,7 +27,7 @@ namespace Cyotek.Data.Nbt
     { }
 
     public BinaryTagWriter(Stream stream)
-      : this(stream, NbtOptions.Header | NbtOptions.Compress)
+      : this(stream, NbtOptions.ReadHeader | NbtOptions.Compress)
     { }
 
     public BinaryTagWriter(Stream stream, NbtOptions options)
@@ -36,7 +40,7 @@ namespace Cyotek.Data.Nbt
 
     protected override NbtOptions DefaultOptions
     {
-      get { return NbtOptions.Header | NbtOptions.Compress; }
+      get { return NbtOptions.ReadHeader | NbtOptions.Compress; }
     }
 
     #endregion
@@ -45,7 +49,7 @@ namespace Cyotek.Data.Nbt
 
     public override void Write(ITag value, NbtOptions options)
     {
-      if (options.HasFlag(NbtOptions.Header) && value.Type != TagType.End)
+      if (options.HasFlag(NbtOptions.ReadHeader) && value.Type != TagType.End)
         this.WriteHeader(value);
 
       switch (value.Type)
@@ -203,7 +207,8 @@ namespace Cyotek.Data.Nbt
     {
       if (string.IsNullOrEmpty(fileName))
         throw new ArgumentNullException("fileName");
-      else if (tag == null)
+
+      if (tag == null)
         throw new ArgumentNullException("tag");
 
       this.Options = options;
@@ -234,7 +239,7 @@ namespace Cyotek.Data.Nbt
     public virtual void Write(TagDictionary value)
     {
       foreach (ITag item in value)
-        this.Write(item, NbtOptions.Header);
+        this.Write(item, NbtOptions.ReadHeader);
 
       this.WriteEnd();
     }

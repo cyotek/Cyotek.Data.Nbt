@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagShortTests : TestBase
+  public class TagShortTests : TestBase
   {
     [Test]
     public void ConstructorTest()
@@ -135,6 +135,26 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = target.ToString(prefix);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueStringTest()
+    {
+      // arrange
+      ITag target;
+      string expected;
+      string actual;
+      short value;
+
+      value = short.MaxValue;
+      expected = value.ToString();
+      target = new TagShort(value);
+
+      // act
+      actual = target.ToValueString();
 
       // assert
       Assert.AreEqual(expected, actual);

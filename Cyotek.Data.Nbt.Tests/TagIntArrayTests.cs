@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagIntArrayTests : TestBase
+  public class TagIntArrayTests : TestBase
   {
     [Test]
     public void ConstructorTest()
@@ -31,7 +31,10 @@ namespace Cyotek.Data.Nbt.Tests
       int[] value;
 
       name = "creationDate";
-      value = new[] { int.MinValue, int.MaxValue };
+      value = new[]
+      {
+        int.MinValue, int.MaxValue
+      };
 
       // act
       tag = new TagIntArray(name, value);
@@ -67,7 +70,10 @@ namespace Cyotek.Data.Nbt.Tests
       TagIntArray tag;
       int[] value;
 
-      value = new[] { int.MinValue, int.MaxValue };
+      value = new[]
+      {
+        int.MinValue, int.MaxValue
+      };
 
       // act
       tag = new TagIntArray(value);
@@ -105,7 +111,10 @@ namespace Cyotek.Data.Nbt.Tests
       int[] value;
 
       name = "tagname";
-      value = new[] { int.MinValue, int.MaxValue };
+      value = new[]
+      {
+        int.MinValue, int.MaxValue
+      };
       expected = string.Format("[IntArray: {0}={1} values]", name, value.Length);
       target = new TagIntArray(name, value);
 
@@ -129,12 +138,38 @@ namespace Cyotek.Data.Nbt.Tests
 
       prefix = "test";
       name = "tagname";
-      value = new[] { int.MinValue, int.MaxValue };
+      value = new[]
+      {
+        int.MinValue, int.MaxValue
+      };
       expected = string.Format("{2}[IntArray: {0}={1} values]", name, value.Length, prefix);
       target = new TagIntArray(name, value);
 
       // act
       actual = target.ToString(prefix);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueStringTest()
+    {
+      // arrange
+      ITag target;
+      string expected;
+      string actual;
+      int[] value;
+
+      value = new[]
+      {
+        int.MinValue, int.MaxValue
+      };
+      expected = "-2147483648, 2147483647";
+      target = new TagIntArray(value);
+
+      // act
+      actual = target.ToValueString();
 
       // assert
       Assert.AreEqual(expected, actual);
@@ -164,7 +199,10 @@ namespace Cyotek.Data.Nbt.Tests
       int[] expected;
 
       target = new TagIntArray();
-      expected = new[] { int.MinValue, int.MaxValue };
+      expected = new[]
+      {
+        int.MinValue, int.MaxValue
+      };
 
       // act
       target.Value = expected;

@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class XmlTagReaderTests : TestBase
+  public class XmlTagReaderTests : TestBase
   {
     [Test]
     public void LoadTest()

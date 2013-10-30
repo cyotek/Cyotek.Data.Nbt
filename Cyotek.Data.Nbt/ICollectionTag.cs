@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
 {
-  public interface ICollectionTag
+  public interface ICollectionTag : ITag
   {
     #region Properties
 

@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagCompoundTests : TestBase
+  public class TagCompoundTests : TestBase
   {
     [Test]
     public void ConstructorTest()

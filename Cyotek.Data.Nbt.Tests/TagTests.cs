@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagTests : TestBase
+  public class TagTests : TestBase
   {
     [Test]
     public void CanRemoveTest()
@@ -41,7 +41,10 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = this.GetComplexData();
       expectedCount = 29;
-      expectedNames = new[] { "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest" };
+      expectedNames = new[]
+      {
+        "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest"
+      };
 
       // act
       tags = target.Flatten();
@@ -84,7 +87,10 @@ namespace Cyotek.Data.Nbt.Tests
 
       data = this.GetComplexData();
       target = data.Query(@"listTest (compound)\0\name");
-      expected = new[] { data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0") };
+      expected = new[]
+      {
+        data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0")
+      };
 
       // act
       actual = target.GetAncestors();
@@ -129,7 +135,8 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsTrue(eventRaised);
     }
 
-    [Test, ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
+    [Test]
+    [ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
     public void ReadExceptionTest()
     {
       // arrange
@@ -147,7 +154,8 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
     }
 
-    [Test, ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
+    [Test]
+    [ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
     public void RemoveExceptionTest()
     {
       // arrange
@@ -199,7 +207,7 @@ namespace Cyotek.Data.Nbt.Tests
       // act
       using (MemoryStream stream = new MemoryStream())
       {
-        writer = new BinaryTagWriter(stream, NbtOptions.Header);
+        writer = new BinaryTagWriter(stream, NbtOptions.ReadHeader);
         writer.Write(target);
         destination = stream.ToArray();
       }

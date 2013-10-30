@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
@@ -185,19 +186,24 @@ namespace Cyotek.Data.Nbt
       return this.Add(name, value.ToString("u"));
     }
 
-    public void Add(string name, Guid value)
+    public ITag Add(string name, Guid value)
     {
-      this.Add(name, value.ToByteArray());
-    }
-
-    public ITag Add(TagType tagType)
-    {
-      return this.Add(string.Empty, tagType);
+      return this.Add(name, value.ToByteArray());
     }
 
     public ITag Add(string name, TagType tagType)
     {
       return this.Add(name, tagType, TagType.None);
+    }
+
+    public ITag Add(string name, TagType tagType, object value)
+    {
+      ITag tag;
+
+      tag = this.Add(name, tagType);
+      tag.Value = value;
+
+      return tag;
     }
 
     public ITag Add(string name, TagType tagType, TagType limitToType)
@@ -217,43 +223,46 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag AddIfNotDefault(string name, string value)
+    public ITag Add(string name, object value)
     {
-      return !string.IsNullOrEmpty(value) ? this.Add(name, value) : null;
+      ITag result;
+
+      // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
+      if (value is byte)
+        result = this.Add(name, (byte)value);
+      else if (value is byte[])
+        result = this.Add(name, (byte[])value);
+      else if (value is int)
+        result = this.Add(name, (int)value);
+      else if (value is int[])
+        result = this.Add(name, (int[])value);
+      else if (value is float)
+        result = this.Add(name, (float)value);
+      else if (value is double)
+        result = this.Add(name, (double)value);
+      else if (value is long)
+        result = this.Add(name, (long)value);
+      else if (value is short)
+        result = this.Add(name, (short)value);
+      else if (value is string)
+        result = this.Add(name, (string)value);
+      else if (value is DateTime)
+        result = this.Add(name, (DateTime)value);
+      else if (value is Guid)
+        result = this.Add(name, (Guid)value);
+      else if (value is bool)
+        result = this.Add(name, (bool)value);
+      else
+        throw new ArgumentException("Invalid value type.", "value");
+      // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
+
+      return result;
     }
 
-    public ITag AddIfNotDefault(string name, bool value)
+    public void AddRange(IEnumerable<KeyValuePair<string, object>> values)
     {
-      return value ? this.Add(name, true) : null;
-    }
-
-    public ITag AddIfNotDefault(string name, long value)
-    {
-      return value != 0 ? this.Add(name, value) : null;
-    }
-
-    public ITag AddIfNotDefault(string name, short value)
-    {
-      return value != 0 ? this.Add(name, value) : null;
-    }
-
-    public ITag AddIfNotDefault(string name, double value)
-    {
-      // ReSharper disable CompareOfFloatsByEqualityOperator
-      return value != 0 ? this.Add(name, value) : null;
-      // ReSharper restore CompareOfFloatsByEqualityOperator
-    }
-
-    public ITag AddIfNotDefault(string name, int value)
-    {
-      return value != 0 ? this.Add(name, value) : null;
-    }
-
-    public ITag AddIfNotDefault(string name, float value)
-    {
-      // ReSharper disable CompareOfFloatsByEqualityOperator
-      return value != 0 ? this.Add(name, value) : null;
-      // ReSharper restore CompareOfFloatsByEqualityOperator
+      foreach (KeyValuePair<string, object> value in values)
+        this.Add(value.Key, value.Value);
     }
 
     public bool TryGetValue(string key, out ITag value)

@@ -15,6 +15,12 @@ namespace Cyotek.Data.Nbt
       get { return TagType.End; }
     }
 
+    public override object Value
+    {
+      get { return null; }
+      set { }
+    }
+
     #endregion
 
     #region Overridden Members

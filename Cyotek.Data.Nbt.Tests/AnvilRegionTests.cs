@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class AnvilRegionTests : TestBase
+  public class AnvilRegionTests : TestBase
   {
     [Test]
     public void TestAnvilRegion()
@@ -41,7 +41,7 @@ namespace Cyotek.Data.Nbt.Tests
         inputStream = new DeflateStream(new MemoryStream(buffer, 2, buffer.Length - 6), CompressionMode.Decompress);
 
       BinaryTagReader reader;
-      reader = new BinaryTagReader(inputStream, NbtOptions.Header);
+      reader = new BinaryTagReader(inputStream, NbtOptions.ReadHeader);
       TagCompound tag = (TagCompound)reader.Read();
       string strTag = tag.ToString();
 

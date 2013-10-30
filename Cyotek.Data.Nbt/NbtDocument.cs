@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
@@ -9,7 +10,9 @@ namespace Cyotek.Data.Nbt
     #region Instance Fields
 
     private NbtFormat _format;
+
     private Type _readerType;
+
     private Type _writerType;
 
     #endregion
@@ -96,10 +99,17 @@ namespace Cyotek.Data.Nbt
         try
         {
           NbtDocument document;
+          ITagReader reader;
+          TagCompound root;
 
-          document = LoadDocument(fileName);
+          document = new NbtDocument(GetDocumentFormat(fileName));
+          document.FileName = fileName;
 
-          result = document.DocumentRoot.Name;
+          reader = (ITagReader)Activator.CreateInstance(document.ReaderType);
+
+          root = reader.Load(fileName, NbtOptions.ReadHeader | NbtOptions.HeaderOnly);
+
+          result = root.Name;
         }
           // ReSharper disable EmptyGeneralCatchClause
         catch
@@ -112,15 +122,7 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    public static NbtDocument LoadDocument(string fileName)
-    {
-      if (string.IsNullOrEmpty(fileName))
-        throw new ArgumentNullException("fileName");
-
-      return new NbtDocument(fileName);
-    }
-
-    private static bool IsDeflateDocument(string fileName)
+    public static bool IsDeflateDocument(string fileName)
     {
       bool result;
 
@@ -140,7 +142,7 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    private static bool IsGzipDocument(string fileName)
+    public static bool IsGzipDocument(string fileName)
     {
       bool result;
 
@@ -160,7 +162,15 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    private static bool IsRawDocument(string fileName)
+    public static bool IsNbtDocument(string fileName)
+    {
+      if (string.IsNullOrEmpty(fileName))
+        throw new ArgumentNullException("fileName");
+
+      return File.Exists(fileName) && GetDocumentFormat(fileName) != NbtFormat.Custom;
+    }
+
+    public static bool IsRawDocument(string fileName)
     {
       bool result;
 
@@ -177,7 +187,7 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    private static bool IsXmlDocument(string fileName)
+    public static bool IsXmlDocument(string fileName)
     {
       bool result;
 
@@ -202,6 +212,32 @@ namespace Cyotek.Data.Nbt
       }
 
       return result;
+    }
+
+    public static NbtDocument LoadDocument(string fileName)
+    {
+      if (string.IsNullOrEmpty(fileName))
+        throw new ArgumentNullException("fileName");
+
+      return new NbtDocument(fileName);
+    }
+
+    #endregion
+
+    #region Overridden Members
+
+    public override string ToString()
+    {
+      StringBuilder result;
+      int indent;
+
+      result = new StringBuilder();
+      indent = -1;
+
+      if (this.DocumentRoot != null)
+        this.WriteTagString(this.DocumentRoot, result, ref indent);
+
+      return result.ToString();
     }
 
     #endregion
@@ -313,7 +349,7 @@ namespace Cyotek.Data.Nbt
       this.Format = format;
       reader = (ITagReader)Activator.CreateInstance(this.ReaderType);
 
-      this.DocumentRoot = reader.Load(fileName, NbtOptions.Header);
+      this.DocumentRoot = reader.Load(fileName, NbtOptions.ReadHeader);
       this.FileName = fileName;
     }
 
@@ -334,7 +370,7 @@ namespace Cyotek.Data.Nbt
 
     public void Save(string fileName)
     {
-      this.Save(fileName, NbtOptions.Compress | NbtOptions.Header);
+      this.Save(fileName, NbtOptions.Compress | NbtOptions.ReadHeader);
     }
 
     public void Save(string fileName, NbtOptions options)
@@ -348,6 +384,41 @@ namespace Cyotek.Data.Nbt
 
       writer.Write(this.DocumentRoot, fileName, options);
       this.FileName = fileName;
+    }
+
+    private void WriteTagString(ITag tag, StringBuilder result, ref int indent)
+    {
+      ICollectionTag collection;
+
+      indent++;
+
+      result.Append(new string(' ', indent * 2));
+
+      result.Append(tag.Type.ToString().ToLowerInvariant());
+      if (tag.Parent is ICollectionTag && ((ICollectionTag)tag.Parent).IsList)
+      {
+        result.Append("#");
+        result.Append(((ICollectionTag)tag.Parent).Values.IndexOf(tag));
+      }
+      else
+      {
+        result.Append(":");
+        result.Append(tag.Name);
+      }
+
+      if (!(tag is ICollectionTag))
+        result.AppendFormat(" [{0}]", tag.ToValueString());
+
+      result.AppendLine();
+
+      collection = tag as ICollectionTag;
+      if (collection != null)
+      {
+        foreach (ITag child in collection.Values)
+          this.WriteTagString(child, result, ref indent);
+      }
+
+      indent--;
     }
 
     #endregion

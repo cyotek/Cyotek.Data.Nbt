@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d164292f52c48c9")]
+  [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagCompound : Tag, ICollectionTag
   {
     #region Constructors
@@ -173,11 +173,16 @@ namespace Cyotek.Data.Nbt
 
     public Guid GetGuidValue(string name)
     {
+      return this.GetGuidValue(name, Guid.Empty);
+    }
+
+    public Guid GetGuidValue(string name, Guid defaultValue)
+    {
       TagByteArray tag;
 
       tag = this.GetByteArray(name);
 
-      return tag != null ? new Guid(tag.Value) : Guid.Empty;
+      return tag != null ? new Guid(tag.Value) : defaultValue;
     }
 
     public TagInt GetInt(string name)
@@ -304,7 +309,10 @@ namespace Cyotek.Data.Nbt
       string[] parts;
       ITag element;
 
-      parts = query.Split(new[] { '\\', '/' });
+      parts = query.Split(new[]
+      {
+        '\\', '/'
+      });
       element = this;
 
       // HACK: This is all quickly thrown together

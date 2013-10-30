@@ -6,7 +6,13 @@ namespace Cyotek.Data.Nbt
   public enum NbtOptions
   {
     None = 0,
-    Header = 1,
-    Compress = 2
+
+    ReadHeader = 1,
+
+    Compress = 2,
+
+    SingleUse = 4,
+
+    HeaderOnly = 8
   }
 }

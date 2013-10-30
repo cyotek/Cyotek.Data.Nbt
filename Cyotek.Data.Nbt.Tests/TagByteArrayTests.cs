@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  internal class TagByteArrayTests : TestBase
+  public class TagByteArrayTests : TestBase
   {
     [Test]
     public void ConstructorTest()
@@ -31,7 +31,10 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] value;
 
       name = "creationDate";
-      value = new[] { byte.MinValue, byte.MaxValue };
+      value = new[]
+      {
+        byte.MinValue, byte.MaxValue
+      };
 
       // act
       tag = new TagByteArray(name, value);
@@ -67,7 +70,10 @@ namespace Cyotek.Data.Nbt.Tests
       TagByteArray tag;
       byte[] value;
 
-      value = new[] { byte.MinValue, byte.MaxValue };
+      value = new[]
+      {
+        byte.MinValue, byte.MaxValue
+      };
 
       // act
       tag = new TagByteArray(value);
@@ -105,7 +111,10 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] value;
 
       name = "tagname";
-      value = new[] { byte.MinValue, byte.MaxValue };
+      value = new[]
+      {
+        byte.MinValue, byte.MaxValue
+      };
       expected = string.Format("[ByteArray: {0}={1} values]", name, value.Length);
       target = new TagByteArray(name, value);
 
@@ -129,12 +138,38 @@ namespace Cyotek.Data.Nbt.Tests
 
       prefix = "test";
       name = "tagname";
-      value = new[] { byte.MinValue, byte.MaxValue };
+      value = new[]
+      {
+        byte.MinValue, byte.MaxValue
+      };
       expected = string.Format("{2}[ByteArray: {0}={1} values]", name, value.Length, prefix);
       target = new TagByteArray(name, value);
 
       // act
       actual = target.ToString(prefix);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueStringTest()
+    {
+      // arrange
+      ITag target;
+      string expected;
+      string actual;
+      byte[] value;
+
+      value = new[]
+      {
+        byte.MinValue, byte.MaxValue
+      };
+      expected = "00, FF";
+      target = new TagByteArray(value);
+
+      // act
+      actual = target.ToValueString();
 
       // assert
       Assert.AreEqual(expected, actual);
@@ -164,7 +199,10 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] expected;
 
       target = new TagByteArray();
-      expected = new[] { byte.MinValue, byte.MaxValue };
+      expected = new[]
+      {
+        byte.MinValue, byte.MaxValue
+      };
 
       // act
       target.Value = expected;
