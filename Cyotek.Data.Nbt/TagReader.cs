@@ -13,7 +13,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
+    #region Protected Constructors
 
     protected TagReader()
     { }
@@ -22,7 +22,9 @@ namespace Cyotek.Data.Nbt
       : this()
     {
       if (input == null)
+      {
         throw new ArgumentNullException("input");
+      }
 
       this.InputStream = input;
       this.Options = options;
@@ -40,7 +42,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public virtual Stream InputStream
     {
@@ -58,6 +60,10 @@ namespace Cyotek.Data.Nbt
 
     public NbtOptions Options { get; set; }
 
+    #endregion
+
+    #region Protected Properties
+
     protected virtual NbtOptions DefaultOptions
     {
       get { return NbtOptions.ReadHeader; }
@@ -65,7 +71,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public abstract TagCompound Load(string fileName, NbtOptions options);
 
@@ -104,6 +110,10 @@ namespace Cyotek.Data.Nbt
 
     public abstract string ReadString();
 
+    #endregion
+
+    #region Protected Members
+
     /// <summary>
     ///   Raises the <see cref="InputStreamChanged" /> event.
     /// </summary>
@@ -117,7 +127,9 @@ namespace Cyotek.Data.Nbt
       handler = this.InputStreamChanged;
 
       if (handler != null)
+      {
         handler(this, e);
+      }
     }
 
     #endregion

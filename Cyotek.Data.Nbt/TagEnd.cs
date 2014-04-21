@@ -23,7 +23,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {

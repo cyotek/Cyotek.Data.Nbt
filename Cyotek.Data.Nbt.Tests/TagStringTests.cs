@@ -5,6 +5,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagStringTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void ConstructorTest()
     {
@@ -170,5 +172,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(expected, target.Value);
     }
+
+    #endregion
   }
 }

@@ -7,7 +7,7 @@ namespace Cyotek.Data.Nbt
 {
   public class BinaryTagReader : TagReader
   {
-    #region Constructors
+    #region Public Constructors
 
     public BinaryTagReader()
     { }
@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override TagCompound Load(string fileName, NbtOptions options)
     {
@@ -26,10 +26,14 @@ namespace Cyotek.Data.Nbt
       BinaryTagReader reader;
 
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       if (!File.Exists(fileName))
+      {
         throw new FileNotFoundException("Cannot find source file.", fileName);
+      }
 
       //Check if gzipped stream
       try
@@ -49,7 +53,9 @@ namespace Cyotek.Data.Nbt
       }
 
       if (tag != null)
+      {
         return tag;
+      }
 
       //Try Deflate stream
       try
@@ -69,7 +75,9 @@ namespace Cyotek.Data.Nbt
       }
 
       if (tag != null)
+      {
         return tag;
+      }
 
       //Assume uncompressed stream
       using (FileStream input = File.OpenRead(fileName))
@@ -91,7 +99,9 @@ namespace Cyotek.Data.Nbt
       result = TagFactory.CreateTag((TagType)rawType);
 
       if (result.Type != TagType.End && options.HasFlag(NbtOptions.ReadHeader))
+      {
         result.Name = this.ReadString();
+      }
 
       if (!options.HasFlag(NbtOptions.HeaderOnly))
       {
@@ -150,7 +160,9 @@ namespace Cyotek.Data.Nbt
         }
       }
       else
+      {
         value = null;
+      }
 
       result.Value = value;
 
@@ -163,7 +175,9 @@ namespace Cyotek.Data.Nbt
 
       data = this.InputStream.ReadByte();
       if (data != (data & 0xFF))
+      {
         throw new InvalidDataException();
+      }
 
       return (byte)data;
     }
@@ -177,7 +191,9 @@ namespace Cyotek.Data.Nbt
 
       data = new byte[length];
       if (length != this.InputStream.Read(data, 0, length))
+      {
         throw new InvalidDataException();
+      }
 
       return data;
     }
@@ -280,10 +296,14 @@ namespace Cyotek.Data.Nbt
 
       data = new byte[BinaryTagWriter.DoubleSize];
       if (BinaryTagWriter.DoubleSize != this.InputStream.Read(data, 0, BinaryTagWriter.DoubleSize))
+      {
         throw new InvalidDataException();
+      }
 
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, BinaryTagWriter.DoubleSize);
+      }
 
       return BitConverter.ToDouble(data, 0);
     }
@@ -294,10 +314,14 @@ namespace Cyotek.Data.Nbt
 
       data = new byte[BinaryTagWriter.FloatSize];
       if (BinaryTagWriter.FloatSize != this.InputStream.Read(data, 0, BinaryTagWriter.FloatSize))
+      {
         throw new InvalidDataException();
+      }
 
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, BinaryTagWriter.FloatSize);
+      }
 
       return BitConverter.ToSingle(data, 0);
     }
@@ -308,10 +332,14 @@ namespace Cyotek.Data.Nbt
 
       data = new byte[BinaryTagWriter.IntSize];
       if (BinaryTagWriter.IntSize != this.InputStream.Read(data, 0, BinaryTagWriter.IntSize))
+      {
         throw new InvalidDataException();
+      }
 
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, BinaryTagWriter.IntSize);
+      }
 
       return BitConverter.ToInt32(data, 0);
     }
@@ -328,13 +356,17 @@ namespace Cyotek.Data.Nbt
 
       buffer = new byte[bufferLength];
       if (bufferLength != this.InputStream.Read(buffer, 0, bufferLength))
+      {
         throw new InvalidDataException();
+      }
 
       ints = new int[length];
       for (int i = 0; i < length; i++)
       {
         if (BitConverter.IsLittleEndian)
+        {
           BitHelper.SwapBytes(buffer, i * 4, 4);
+        }
 
         ints[i] = BitConverter.ToInt32(buffer, i * 4);
       }
@@ -348,10 +380,14 @@ namespace Cyotek.Data.Nbt
 
       data = new byte[BinaryTagWriter.LongSize];
       if (BinaryTagWriter.LongSize != this.InputStream.Read(data, 0, BinaryTagWriter.LongSize))
+      {
         throw new InvalidDataException();
+      }
 
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, BinaryTagWriter.LongSize);
+      }
 
       return BitConverter.ToInt64(data, 0);
     }
@@ -362,10 +398,14 @@ namespace Cyotek.Data.Nbt
 
       data = new byte[BinaryTagWriter.ShortSize];
       if (BinaryTagWriter.ShortSize != this.InputStream.Read(data, 0, BinaryTagWriter.ShortSize))
+      {
         throw new InvalidDataException();
+      }
 
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, BinaryTagWriter.ShortSize);
+      }
 
       return BitConverter.ToInt16(data, 0);
     }
@@ -379,7 +419,9 @@ namespace Cyotek.Data.Nbt
       data = new byte[length];
 
       if (length != this.InputStream.Read(data, 0, length))
+      {
         throw new InvalidDataException();
+      }
 
       return data.Length != 0 ? Encoding.UTF8.GetString(data) : null;
     }

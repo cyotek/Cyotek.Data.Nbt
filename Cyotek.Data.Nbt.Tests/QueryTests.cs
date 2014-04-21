@@ -6,6 +6,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class QueryTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void QueryValueTest()
     {
@@ -92,5 +94,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsAssignableFrom(expectedType, result);
       Assert.AreEqual(expectedValue, (long)result.Value);
     }
+
+    #endregion
   }
 }

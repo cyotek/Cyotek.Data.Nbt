@@ -6,6 +6,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagListTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void ConstructorTest()
     {
@@ -274,6 +276,8 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreSame(target, target.Value.Owner);
       Assert.AreEqual(defaultType, target.ListType);
     }
+
+    #endregion
 
     //ncrunch: no coverage 
   }

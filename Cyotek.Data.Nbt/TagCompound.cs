@@ -6,7 +6,7 @@ namespace Cyotek.Data.Nbt
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagCompound : Tag, ICollectionTag
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagCompound()
       : this(string.Empty)
@@ -29,7 +29,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {
@@ -38,7 +38,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public new TagDictionary Value
     {
@@ -46,7 +46,9 @@ namespace Cyotek.Data.Nbt
       set
       {
         if (value == null)
+        {
           throw new ArgumentNullException("value");
+        }
 
         base.Value = value;
         value.Owner = this;
@@ -55,7 +57,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public bool Contains(string name)
     {
@@ -310,9 +312,9 @@ namespace Cyotek.Data.Nbt
       ITag element;
 
       parts = query.Split(new[]
-      {
-        '\\', '/'
-      });
+                          {
+                            '\\', '/'
+                          });
       element = this;
 
       // HACK: This is all quickly thrown together
@@ -345,7 +347,9 @@ namespace Cyotek.Data.Nbt
           }
 
           if (!matchFound)
+          {
             throw new ArgumentException(string.Format("Could not find element matching pattern '{0}'", part), "query");
+          }
         }
         else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
         {

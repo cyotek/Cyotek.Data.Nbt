@@ -6,7 +6,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagCollection : Collection<ITag>
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagCollection()
     {
@@ -30,12 +30,14 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     protected override void ClearItems()
     {
       foreach (ITag item in this)
+      {
         item.Parent = null;
+      }
 
       base.ClearItems();
     }
@@ -43,7 +45,9 @@ namespace Cyotek.Data.Nbt
     protected override void InsertItem(int index, ITag item)
     {
       if (this.LimitType != TagType.None && item.Type != this.LimitType)
+      {
         throw new ArgumentException(string.Format("Only items of type {0} can be added to this collection.", this.LimitType), "item");
+      }
 
       item.Parent = this.Owner;
 
@@ -63,7 +67,9 @@ namespace Cyotek.Data.Nbt
     protected override void SetItem(int index, ITag item)
     {
       if (this.LimitType != TagType.None && item.Type != this.LimitType)
+      {
         throw new ArgumentException(string.Format("Only items of type {0} can be added to this collection.", this.LimitType), "item");
+      }
 
       item.Parent = this.Owner;
 
@@ -72,7 +78,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public TagType LimitType { get; set; }
 
@@ -80,7 +86,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public ITag Add(DateTime value)
     {
@@ -277,7 +283,9 @@ namespace Cyotek.Data.Nbt
 
       collectionTag = tag as ICollectionTag;
       if (collectionTag != null)
+      {
         collectionTag.LimitToType = limitToType;
+      }
 
       this.Add(tag);
 
@@ -300,31 +308,57 @@ namespace Cyotek.Data.Nbt
 
       // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
       if (value is byte)
+      {
         result = this.Add(name, (byte)value);
+      }
       else if (value is byte[])
+      {
         result = this.Add(name, (byte[])value);
+      }
       else if (value is int)
+      {
         result = this.Add(name, (int)value);
+      }
       else if (value is int[])
+      {
         result = this.Add(name, (int[])value);
+      }
       else if (value is float)
+      {
         result = this.Add(name, (float)value);
+      }
       else if (value is double)
+      {
         result = this.Add(name, (double)value);
+      }
       else if (value is long)
+      {
         result = this.Add(name, (long)value);
+      }
       else if (value is short)
+      {
         result = this.Add(name, (short)value);
+      }
       else if (value is string)
+      {
         result = this.Add(name, (string)value);
+      }
       else if (value is DateTime)
+      {
         result = this.Add(name, (DateTime)value);
+      }
       else if (value is Guid)
+      {
         result = this.Add(name, (Guid)value);
+      }
       else if (value is bool)
+      {
         result = this.Add(name, (bool)value);
+      }
       else
+      {
         throw new ArgumentException("Invalid value type.", "value");
+      }
       // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 
       return result;
@@ -333,13 +367,17 @@ namespace Cyotek.Data.Nbt
     public void AddRange(IEnumerable<object> values)
     {
       foreach (object value in values)
+      {
         this.Add(string.Empty, value);
+      }
     }
 
     public void AddRange(IEnumerable<KeyValuePair<string, object>> values)
     {
       foreach (KeyValuePair<string, object> value in values)
+      {
         this.Add(value.Key, value.Value);
+      }
     }
 
     #endregion

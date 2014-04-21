@@ -14,14 +14,16 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override TagCompound Load(string fileName, NbtOptions options)
     {
       TagCompound result;
 
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       this.Options = options;
 
@@ -47,9 +49,9 @@ namespace Cyotek.Data.Nbt
     public override byte[] ReadByteArray()
     {
       return this.ReadString().Split(new[]
-      {
-        " ", "\t", "\n", "\r"
-      }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
+                                     {
+                                       " ", "\t", "\n", "\r"
+                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
     }
 
     public override TagCollection ReadCollection(TagList owner)
@@ -60,7 +62,9 @@ namespace Cyotek.Data.Nbt
 
       listTypeName = _reader.GetAttribute("limitType");
       if (string.IsNullOrEmpty(listTypeName))
+      {
         throw new InvalidDataException("Missing limitType attribute, unable to determine list contents type.");
+      }
 
       listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
       owner.ListType = listType;
@@ -100,9 +104,9 @@ namespace Cyotek.Data.Nbt
     public override int[] ReadIntArray()
     {
       return this.ReadString().Split(new[]
-      {
-        " ", "\t", "\n", "\r"
-      }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
+                                     {
+                                       " ", "\t", "\n", "\r"
+                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
     }
 
     public override long ReadLong()
@@ -121,7 +125,9 @@ namespace Cyotek.Data.Nbt
 
       value = _reader.ReadElementContentAsString();
       if (string.IsNullOrEmpty(value))
+      {
         value = null;
+      }
 
       return value;
     }
@@ -133,12 +139,14 @@ namespace Cyotek.Data.Nbt
       _reader = XmlReader.Create(this.InputStream);
 
       while (!_reader.IsStartElement())
+      {
         _reader.Read();
+      }
     }
 
     #endregion
 
-    #region Members
+    #region Protected Members
 
     protected ITag Read(NbtOptions options, TagType defaultTagType)
     {
@@ -146,14 +154,18 @@ namespace Cyotek.Data.Nbt
       TagType type;
 
       if (defaultTagType != TagType.None)
+      {
         type = defaultTagType;
+      }
       else
       {
         string typeName;
 
         typeName = _reader.GetAttribute("type");
         if (string.IsNullOrEmpty(typeName))
+        {
           throw new InvalidDataException("Missing type attribute, unable to determine tag type.");
+        }
 
         type = (TagType)Enum.Parse(typeof(TagType), typeName, true);
       }
@@ -165,7 +177,9 @@ namespace Cyotek.Data.Nbt
 
         name = _reader.GetAttribute("name");
         if (string.IsNullOrEmpty(name))
+        {
           name = _reader.Name;
+        }
 
         result.Name = name;
       }
@@ -226,6 +240,10 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
+    #endregion
+
+    #region Private Members
+
     private void LoadChildren(ICollection<ITag> value, NbtOptions options, TagType listType)
     {
       while (_reader.NodeType != XmlNodeType.EndElement && _reader.NodeType != XmlNodeType.None && !_reader.IsEmptyElement)
@@ -233,11 +251,15 @@ namespace Cyotek.Data.Nbt
         _reader.Read();
 
         if (_reader.NodeType == XmlNodeType.Element)
+        {
           value.Add(this.Read(options, listType));
+        }
       }
 
       if (_reader.NodeType == XmlNodeType.EndElement)
+      {
         _reader.Read();
+      }
     }
 
     #endregion

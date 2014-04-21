@@ -7,6 +7,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagCollectionTests
   {
+    #region Tests
+
     [Test]
     public void AddBoolWithNameTest()
     {
@@ -23,9 +25,9 @@ namespace Cyotek.Data.Nbt.Tests
     public void AddByteArrayWithNameTest()
     {
       this.AddTest<byte[], TagByteArray>(Guid.NewGuid().ToString(), new[]
-      {
-        byte.MinValue, byte.MaxValue
-      });
+                                                                    {
+                                                                      byte.MinValue, byte.MaxValue
+                                                                    });
     }
 
     [Test]
@@ -96,9 +98,9 @@ namespace Cyotek.Data.Nbt.Tests
     public void AddIntArrayWithNameTest()
     {
       this.AddTest<int[], TagIntArray>(Guid.NewGuid().ToString(), new[]
-      {
-        int.MinValue, int.MaxValue
-      });
+                                                                  {
+                                                                    int.MinValue, int.MaxValue
+                                                                  });
     }
 
     [Test]
@@ -156,9 +158,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       target.AddRange(new[]
-      {
-        new KeyValuePair<string, object>(key1, value1), new KeyValuePair<string, object>(key2, value2)
-      });
+                      {
+                        new KeyValuePair<string, object>(key1, value1), new KeyValuePair<string, object>(key2, value2)
+                      });
 
       // assert
       Assert.AreEqual(2, target.Count);
@@ -182,29 +184,9 @@ namespace Cyotek.Data.Nbt.Tests
       this.AddTest<string, TagString>(Guid.NewGuid().ToString(), "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
     }
 
-    protected void AddTest<TValue, TTag>(string name, TValue value)
-    {
-      this.AddTest<TValue, TTag>(name, value, null);
-    }
+    #endregion
 
-    protected void AddTest<TValue, TTag>(string name, TValue value, object alternateValue)
-    {
-      // arrange
-      TagCollection target;
-      ITag tag;
-
-      target = new TagCollection();
-
-      // act
-      tag = target.Add(name, value);
-
-      // assert
-      Assert.IsNotNull(tag);
-      Assert.Contains(tag, target);
-      Assert.AreEqual(name, tag.Name);
-      Assert.IsInstanceOf<TTag>(tag);
-      Assert.AreEqual(alternateValue ?? value, tag.Value);
-    }
+    #region Test Helpers
 
     protected void AddTagByTypeTest(string name, TagType type)
     {
@@ -243,5 +225,31 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsInstanceOf<ICollectionTag>(tag);
       Assert.AreEqual(limitType, ((ICollectionTag)tag).LimitToType);
     }
+
+    protected void AddTest<TValue, TTag>(string name, TValue value)
+    {
+      this.AddTest<TValue, TTag>(name, value, null);
+    }
+
+    protected void AddTest<TValue, TTag>(string name, TValue value, object alternateValue)
+    {
+      // arrange
+      TagCollection target;
+      ITag tag;
+
+      target = new TagCollection();
+
+      // act
+      tag = target.Add(name, value);
+
+      // assert
+      Assert.IsNotNull(tag);
+      Assert.Contains(tag, target);
+      Assert.AreEqual(name, tag.Name);
+      Assert.IsInstanceOf<TTag>(tag);
+      Assert.AreEqual(alternateValue ?? value, tag.Value);
+    }
+
+    #endregion
   }
 }

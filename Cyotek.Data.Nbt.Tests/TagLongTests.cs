@@ -1,3 +1,4 @@
+using System.Globalization;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -5,6 +6,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagLongTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void ConstructorTest()
     {
@@ -150,7 +153,7 @@ namespace Cyotek.Data.Nbt.Tests
       long value;
 
       value = long.MaxValue;
-      expected = value.ToString();
+      expected = value.ToString(CultureInfo.InvariantCulture);
       target = new TagLong(value);
 
       // act
@@ -192,5 +195,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(expected, target.Value);
     }
+
+    #endregion
   }
 }

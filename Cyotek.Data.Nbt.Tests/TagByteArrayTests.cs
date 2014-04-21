@@ -5,6 +5,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagByteArrayTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void ConstructorTest()
     {
@@ -32,9 +34,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "creationDate";
       value = new[]
-      {
-        byte.MinValue, byte.MaxValue
-      };
+              {
+                byte.MinValue, byte.MaxValue
+              };
 
       // act
       tag = new TagByteArray(name, value);
@@ -71,9 +73,9 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] value;
 
       value = new[]
-      {
-        byte.MinValue, byte.MaxValue
-      };
+              {
+                byte.MinValue, byte.MaxValue
+              };
 
       // act
       tag = new TagByteArray(value);
@@ -112,9 +114,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = new[]
-      {
-        byte.MinValue, byte.MaxValue
-      };
+              {
+                byte.MinValue, byte.MaxValue
+              };
       expected = string.Format("[ByteArray: {0}={1} values]", name, value.Length);
       target = new TagByteArray(name, value);
 
@@ -139,9 +141,9 @@ namespace Cyotek.Data.Nbt.Tests
       prefix = "test";
       name = "tagname";
       value = new[]
-      {
-        byte.MinValue, byte.MaxValue
-      };
+              {
+                byte.MinValue, byte.MaxValue
+              };
       expected = string.Format("{2}[ByteArray: {0}={1} values]", name, value.Length, prefix);
       target = new TagByteArray(name, value);
 
@@ -162,9 +164,9 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] value;
 
       value = new[]
-      {
-        byte.MinValue, byte.MaxValue
-      };
+              {
+                byte.MinValue, byte.MaxValue
+              };
       expected = "00, FF";
       target = new TagByteArray(value);
 
@@ -200,9 +202,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagByteArray();
       expected = new[]
-      {
-        byte.MinValue, byte.MaxValue
-      };
+                 {
+                   byte.MinValue, byte.MaxValue
+                 };
 
       // act
       target.Value = expected;
@@ -210,5 +212,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       CollectionAssert.AreEqual(expected, target.Value);
     }
+
+    #endregion
   }
 }

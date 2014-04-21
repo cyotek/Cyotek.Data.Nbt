@@ -30,7 +30,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Methods
 
     ITag[] Flatten();
 

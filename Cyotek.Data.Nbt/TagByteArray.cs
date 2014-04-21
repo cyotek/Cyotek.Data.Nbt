@@ -5,7 +5,7 @@ namespace Cyotek.Data.Nbt
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagByteArrayEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagByteArray : Tag
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagByteArray()
       : this(string.Empty, new byte[0])
@@ -36,7 +36,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {
@@ -50,7 +50,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public new byte[] Value
     {

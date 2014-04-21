@@ -13,7 +13,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
+    #region Protected Constructors
 
     protected TagWriter()
     { }
@@ -22,7 +22,9 @@ namespace Cyotek.Data.Nbt
       : this()
     {
       if (output == null)
+      {
         throw new ArgumentNullException("output");
+      }
 
       this.OutputStream = output;
       this.Options = options;
@@ -40,7 +42,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public NbtOptions Options { get; protected set; }
 
@@ -58,11 +60,15 @@ namespace Cyotek.Data.Nbt
       }
     }
 
+    #endregion
+
+    #region Protected Properties
+
     protected abstract NbtOptions DefaultOptions { get; }
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public virtual void Close()
     { }
@@ -103,6 +109,10 @@ namespace Cyotek.Data.Nbt
       this.Write(tag, fileName, this.DefaultOptions);
     }
 
+    #endregion
+
+    #region Protected Members
+
     /// <summary>
     ///   Raises the <see cref="OutputStreamChanged" /> event.
     /// </summary>
@@ -116,7 +126,9 @@ namespace Cyotek.Data.Nbt
       handler = this.OutputStreamChanged;
 
       if (handler != null)
+      {
         handler(this, e);
+      }
     }
 
     #endregion

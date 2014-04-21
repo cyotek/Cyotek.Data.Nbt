@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   internal static class EnumExtensions
   {
-    #region Class Members
+    #region Public Class Members
 
     public static bool HasFlag(this Enum value, object flag)
     {

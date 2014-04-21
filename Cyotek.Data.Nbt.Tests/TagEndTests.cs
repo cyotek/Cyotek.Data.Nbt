@@ -5,6 +5,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagEndTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void ConstructorTest()
     {
@@ -120,5 +122,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.IsNull(target.Value);
     }
+
+    #endregion
   }
 }

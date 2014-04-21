@@ -11,7 +11,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
+    #region Public Constructors
 
     public TagEditorAttribute(string editorTypeName)
     {
@@ -20,7 +20,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public string EditorTypeName
     {

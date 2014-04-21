@@ -2,7 +2,7 @@ namespace Cyotek.Data.Nbt
 {
   public interface ITagEditor
   {
-    #region Members
+    #region Methods
 
     void Bind(ITag tag);
 

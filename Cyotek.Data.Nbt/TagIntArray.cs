@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq;
 
 namespace Cyotek.Data.Nbt
@@ -5,7 +6,7 @@ namespace Cyotek.Data.Nbt
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagIntArrayEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagIntArray : Tag
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagIntArray()
       : this(string.Empty, new int[0])
@@ -36,7 +37,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {
@@ -45,12 +46,12 @@ namespace Cyotek.Data.Nbt
 
     public override string ToValueString()
     {
-      return string.Join(", ", this.Value.Select(b => b.ToString()).ToArray());
+      return string.Join(", ", this.Value.Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
     }
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public new int[] Value
     {

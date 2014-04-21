@@ -3,7 +3,7 @@ namespace Cyotek.Data.Nbt
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagNumberEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagLong : Tag
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagLong()
       : this(string.Empty, 0)
@@ -34,7 +34,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {
@@ -43,7 +43,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public new long Value
     {

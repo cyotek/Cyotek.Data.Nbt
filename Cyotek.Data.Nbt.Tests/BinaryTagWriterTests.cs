@@ -5,6 +5,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class BinaryTagWriterTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void SaveCompressedTest()
     {
@@ -39,5 +41,7 @@ namespace Cyotek.Data.Nbt.Tests
       this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
       FileAssert.AreEqual(this.UncompressedComplexDataFileName, this.OutputFileName);
     }
+
+    #endregion
   }
 }

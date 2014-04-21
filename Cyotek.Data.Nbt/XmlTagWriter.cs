@@ -16,7 +16,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
+    #region Public Constructors
 
     public XmlTagWriter()
     { }
@@ -40,7 +40,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override void Close()
     {
@@ -55,10 +55,10 @@ namespace Cyotek.Data.Nbt
       base.Open();
 
       _settings = new XmlWriterSettings
-      {
-        Indent = true,
-        Encoding = Encoding.UTF8
-      };
+                  {
+                    Indent = true,
+                    Encoding = Encoding.UTF8
+                  };
 
       _writer = XmlWriter.Create(this.OutputStream, _settings);
       _writer.WriteStartDocument(true);
@@ -69,14 +69,20 @@ namespace Cyotek.Data.Nbt
       string name;
 
       if (options.HasFlag(NbtOptions.SingleUse))
+      {
         this.Open();
+      }
 
       name = value.Name;
       if (string.IsNullOrEmpty(name))
+      {
         name = "tag";
+      }
 
       if (XmlConvert.EncodeName(name) == name)
+      {
         _writer.WriteStartElement(name);
+      }
       else
       {
         _writer.WriteStartElement("tag");
@@ -84,7 +90,9 @@ namespace Cyotek.Data.Nbt
       }
 
       if (options.HasFlag(NbtOptions.ReadHeader) && value.Type != TagType.End)
+      {
         this.WriteHeader(value);
+      }
 
       switch (value.Type)
       {
@@ -143,7 +151,9 @@ namespace Cyotek.Data.Nbt
       _writer.WriteEndElement();
 
       if (options.HasFlag(NbtOptions.SingleUse))
+      {
         this.Close();
+      }
     }
 
     public override void Write(string value)
@@ -151,9 +161,13 @@ namespace Cyotek.Data.Nbt
       if (value != null)
       {
         if (value.Contains("<") || value.Contains(">") || value.Contains("&"))
+        {
           _writer.WriteCData(value);
+        }
         else
+        {
           _writer.WriteValue(value);
+        }
       }
     }
 
@@ -175,7 +189,9 @@ namespace Cyotek.Data.Nbt
       foreach (int i in value)
       {
         if (output.Length != 0)
+        {
           output.Append(" ");
+        }
 
         output.Append(i);
       }
@@ -211,7 +227,9 @@ namespace Cyotek.Data.Nbt
       foreach (byte i in value)
       {
         if (output.Length != 0)
+        {
           output.Append(" ");
+        }
 
         output.Append(i);
       }
@@ -222,10 +240,14 @@ namespace Cyotek.Data.Nbt
     public override void Write(TagCompound tag, string fileName, NbtOptions options)
     {
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       if (tag == null)
+      {
         throw new ArgumentNullException("tag");
+      }
 
       this.Options = options;
 
@@ -240,29 +262,34 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public virtual void Write(TagCollection value)
     {
-      if (value.LimitType == TagType.None || value.LimitType == TagType.End)
-        throw new TagException("Limit type not set.");
-
       _writer.WriteAttributeString("limitType", value.LimitType.ToString());
 
       foreach (ITag item in value)
+      {
         this.Write(item, NbtOptions.None);
+      }
     }
 
     public virtual void Write(IEnumerable<ITag> value)
     {
       foreach (ITag item in value)
+      {
         this.Write(item, NbtOptions.ReadHeader);
+      }
     }
 
     public virtual void WriteEnd()
     {
       // not supported in XML documents as the tags close themselves
     }
+
+    #endregion
+
+    #region Protected Members
 
     protected void WriteHeader(ITag value)
     {

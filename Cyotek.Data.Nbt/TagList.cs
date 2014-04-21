@@ -6,7 +6,7 @@ namespace Cyotek.Data.Nbt
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagList : Tag, ICollectionTag
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagList()
     {
@@ -41,7 +41,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {
@@ -50,7 +50,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public int Count
     {
@@ -63,7 +63,9 @@ namespace Cyotek.Data.Nbt
       set
       {
         if (this.Value == null || this.Value.LimitType != value)
+        {
           this.Value = new TagCollection(this, value);
+        }
       }
     }
 
@@ -73,7 +75,9 @@ namespace Cyotek.Data.Nbt
       set
       {
         if (value == null)
+        {
           throw new ArgumentNullException("value");
+        }
 
         base.Value = value;
         value.Owner = this;

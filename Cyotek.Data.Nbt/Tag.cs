@@ -31,7 +31,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString()
     {
@@ -40,7 +40,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public virtual bool CanRemove
     {
@@ -62,9 +62,13 @@ namespace Cyotek.Data.Nbt
         }
 
         if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).IsList)
+        {
           results.Append(((ICollectionTag)this.Parent).Values.IndexOf(this));
+        }
         else
+        {
           results.Append(this.Name);
+        }
 
         return results.ToString();
       }
@@ -80,7 +84,9 @@ namespace Cyotek.Data.Nbt
         if (this.Name != value)
         {
           if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).Values is TagDictionary)
+          {
             ((TagDictionary)((ICollectionTag)this.Parent).Values).ChangeKey(this, value);
+          }
 
           _name = value;
 
@@ -124,7 +130,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public ITag[] Flatten()
     {
@@ -174,7 +180,9 @@ namespace Cyotek.Data.Nbt
     public virtual void Remove()
     {
       if (!this.CanRemove)
+      {
         throw new TagException("Cannot remove this tag, parent not set or not supported.");
+      }
 
       ((ICollectionTag)this.Parent).Values.Remove(this);
     }
@@ -186,6 +194,10 @@ namespace Cyotek.Data.Nbt
       return this.Value != null ? this.Value.ToString() : string.Empty;
     }
 
+    #endregion
+
+    #region Protected Members
+
     protected virtual void OnNameChanged(EventArgs e)
     {
       EventHandler handler;
@@ -193,7 +205,9 @@ namespace Cyotek.Data.Nbt
       handler = this.NameChanged;
 
       if (handler != null)
+      {
         handler(this, e);
+      }
     }
 
     protected virtual void OnParentChanged(EventArgs e)
@@ -203,7 +217,9 @@ namespace Cyotek.Data.Nbt
       handler = this.ParentChanged;
 
       if (handler != null)
+      {
         handler(this, e);
+      }
     }
 
     protected virtual void OnValueChanged(EventArgs e)
@@ -213,8 +229,14 @@ namespace Cyotek.Data.Nbt
       handler = this.ValueChanged;
 
       if (handler != null)
+      {
         handler(this, e);
+      }
     }
+
+    #endregion
+
+    #region Private Members
 
     private void FlattenTag(ITag tag, List<ITag> tags)
     {
@@ -226,7 +248,9 @@ namespace Cyotek.Data.Nbt
       if (collectionTag != null)
       {
         foreach (ITag childTag in collectionTag.Values)
+        {
           this.FlattenTag(childTag, tags);
+        }
       }
     }
 

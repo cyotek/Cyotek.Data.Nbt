@@ -5,6 +5,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class XmlTagWriterTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void SaveTest()
     {
@@ -21,5 +23,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       FileAssert.AreEqual(this.ComplexXmlDataFileName, this.OutputFileName);
     }
+
+    #endregion
   }
 }

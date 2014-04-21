@@ -21,7 +21,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
+    #region Public Constructors
 
     public BinaryTagWriter()
     { }
@@ -45,12 +45,14 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override void Write(ITag value, NbtOptions options)
     {
       if (options.HasFlag(NbtOptions.ReadHeader) && value.Type != TagType.End)
+      {
         this.WriteHeader(value);
+      }
 
       switch (value.Type)
       {
@@ -112,9 +114,13 @@ namespace Cyotek.Data.Nbt
       byte[] data;
 
       if (string.IsNullOrEmpty(value))
+      {
         data = new byte[0];
+      }
       else
+      {
         data = Encoding.UTF8.GetBytes(value);
+      }
 
       this.Write((short)data.Length);
       this.OutputStream.Write(data, 0, data.Length);
@@ -126,7 +132,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, ShortSize);
+      }
 
       this.OutputStream.Write(data, 0, ShortSize);
     }
@@ -137,7 +145,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, LongSize);
+      }
 
       this.OutputStream.Write(data, 0, LongSize);
     }
@@ -148,10 +158,14 @@ namespace Cyotek.Data.Nbt
       {
         this.Write(value.Length);
         for (int i = 0; i < value.Length; i++)
+        {
           this.Write(value[i]);
+        }
       }
       else
+      {
         this.Write(0);
+      }
     }
 
     public override void Write(int value)
@@ -160,7 +174,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, IntSize);
+      }
 
       this.OutputStream.Write(data, 0, IntSize);
     }
@@ -171,7 +187,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, FloatSize);
+      }
 
       this.OutputStream.Write(data, 0, FloatSize);
     }
@@ -182,7 +200,9 @@ namespace Cyotek.Data.Nbt
 
       data = BitConverter.GetBytes(value);
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(data, 0, DoubleSize);
+      }
 
       this.OutputStream.Write(data, 0, DoubleSize);
     }
@@ -200,46 +220,57 @@ namespace Cyotek.Data.Nbt
         this.OutputStream.Write(value, 0, value.Length);
       }
       else
+      {
         this.Write((byte)0);
+      }
     }
 
     public override void Write(TagCompound tag, string fileName, NbtOptions options)
     {
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       if (tag == null)
+      {
         throw new ArgumentNullException("tag");
+      }
 
       this.Options = options;
 
       if (options.HasFlag(NbtOptions.Compress))
+      {
         this.WriteCompressed(tag, fileName);
+      }
       else
+      {
         this.WriteUncompressed(tag, fileName);
+      }
     }
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public virtual void Write(TagCollection value)
     {
-      if (value.LimitType == TagType.None || value.LimitType == TagType.End)
-        throw new TagException("Limit type not set.");
-
       this.OutputStream.WriteByte((byte)value.LimitType);
 
       this.Write(value.Count);
 
       foreach (ITag item in value)
+      {
         this.Write(item, NbtOptions.None);
+      }
     }
 
     public virtual void Write(TagDictionary value)
     {
       foreach (ITag item in value)
+      {
         this.Write(item, NbtOptions.ReadHeader);
+      }
 
       this.WriteEnd();
     }
@@ -248,6 +279,10 @@ namespace Cyotek.Data.Nbt
     {
       this.OutputStream.WriteByte((byte)TagType.End);
     }
+
+    #endregion
+
+    #region Protected Members
 
     protected void WriteCompressed(TagCompound tag, string fileName)
     {

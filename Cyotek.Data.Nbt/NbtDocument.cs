@@ -26,7 +26,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
+    #region Public Constructors
 
     public NbtDocument()
       : this(DefaultFormat)
@@ -46,7 +46,9 @@ namespace Cyotek.Data.Nbt
       : this()
     {
       if (document == null)
+      {
         throw new ArgumentNullException("document");
+      }
 
       this.DocumentRoot = document;
     }
@@ -62,28 +64,34 @@ namespace Cyotek.Data.Nbt
       : this(format)
     {
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       if (format == NbtFormat.Custom)
+      {
         throw new ArgumentException("Invalid or unsupported file format.", "format");
+      }
 
       this.Load(fileName);
     }
 
     #endregion
 
-    #region Class Properties
+    #region Public Class Properties
 
     public static NbtFormat DefaultFormat { get; set; }
 
     #endregion
 
-    #region Class Members
+    #region Public Class Members
 
     public static NbtFormat GetDocumentFormat(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       return new NbtDocument(NbtFormat.Custom).GetFormat(fileName);
     }
@@ -103,13 +111,16 @@ namespace Cyotek.Data.Nbt
           TagCompound root;
 
           document = new NbtDocument(GetDocumentFormat(fileName));
-          document.FileName = fileName;
+          if (document.Format != NbtFormat.Custom)
+          {
+            document.FileName = fileName;
 
-          reader = (ITagReader)Activator.CreateInstance(document.ReaderType);
+            reader = (ITagReader)Activator.CreateInstance(document.ReaderType);
 
-          root = reader.Load(fileName, NbtOptions.ReadHeader | NbtOptions.HeaderOnly);
+            root = reader.Load(fileName, NbtOptions.ReadHeader | NbtOptions.HeaderOnly);
 
-          result = root.Name;
+            result = root.Name;
+          }
         }
           // ReSharper disable EmptyGeneralCatchClause
         catch
@@ -131,7 +142,9 @@ namespace Cyotek.Data.Nbt
         using (Stream stream = File.OpenRead(fileName))
         {
           using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
+          {
             result = ((TagType)decompressionStream.ReadByte() == TagType.Compound);
+          }
         }
       }
       catch
@@ -151,7 +164,9 @@ namespace Cyotek.Data.Nbt
         using (Stream stream = File.OpenRead(fileName))
         {
           using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
+          {
             result = ((TagType)decompressionStream.ReadByte() == TagType.Compound);
+          }
         }
       }
       catch
@@ -165,7 +180,9 @@ namespace Cyotek.Data.Nbt
     public static bool IsNbtDocument(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       return File.Exists(fileName) && GetDocumentFormat(fileName) != NbtFormat.Custom;
     }
@@ -177,7 +194,9 @@ namespace Cyotek.Data.Nbt
       try
       {
         using (Stream stream = File.OpenRead(fileName))
+        {
           result = ((TagType)stream.ReadByte() == TagType.Compound);
+        }
       }
       catch
       {
@@ -217,14 +236,16 @@ namespace Cyotek.Data.Nbt
     public static NbtDocument LoadDocument(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       return new NbtDocument(fileName);
     }
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString()
     {
@@ -235,14 +256,16 @@ namespace Cyotek.Data.Nbt
       indent = -1;
 
       if (this.DocumentRoot != null)
+      {
         this.WriteTagString(this.DocumentRoot, result, ref indent);
+      }
 
       return result.ToString();
     }
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public TagCompound DocumentRoot { get; set; }
 
@@ -287,7 +310,9 @@ namespace Cyotek.Data.Nbt
       set
       {
         if (value != null && !typeof(ITagReader).IsAssignableFrom(value))
+        {
           throw new ArgumentException("Cannot assign ITagReader from specified type.", "value");
+        }
 
         _readerType = value;
       }
@@ -299,7 +324,9 @@ namespace Cyotek.Data.Nbt
       set
       {
         if (value != null && !typeof(ITagWriter).IsAssignableFrom(value))
+        {
           throw new ArgumentException("Cannot assign ITagWriter from specified type.", "value");
+        }
 
         _writerType = value;
       }
@@ -307,24 +334,34 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Public Members
 
     public virtual NbtFormat GetFormat(string fileName)
     {
       NbtFormat format;
 
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       if (!File.Exists(fileName))
+      {
         throw new FileNotFoundException("Cannot find file.", fileName);
+      }
 
       if (IsGzipDocument(fileName) || IsDeflateDocument(fileName) || IsRawDocument(fileName))
+      {
         format = NbtFormat.Binary;
+      }
       else if (IsXmlDocument(fileName))
+      {
         format = NbtFormat.Xml;
+      }
       else
+      {
         format = NbtFormat.Custom;
+      }
 
       return format;
     }
@@ -340,11 +377,15 @@ namespace Cyotek.Data.Nbt
       NbtFormat format;
 
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       format = this.GetFormat(fileName);
       if (format == NbtFormat.Custom && this.ReaderType == null)
+      {
         throw new ArgumentException("Cannot load custom formatted documents when appropriate reader not specified.");
+      }
 
       this.Format = format;
       reader = (ITagReader)Activator.CreateInstance(this.ReaderType);
@@ -378,13 +419,19 @@ namespace Cyotek.Data.Nbt
       ITagWriter writer;
 
       if (string.IsNullOrEmpty(fileName))
+      {
         throw new ArgumentNullException("fileName");
+      }
 
       writer = (ITagWriter)Activator.CreateInstance(this.WriterType);
 
       writer.Write(this.DocumentRoot, fileName, options);
       this.FileName = fileName;
     }
+
+    #endregion
+
+    #region Private Members
 
     private void WriteTagString(ITag tag, StringBuilder result, ref int indent)
     {
@@ -407,7 +454,9 @@ namespace Cyotek.Data.Nbt
       }
 
       if (!(tag is ICollectionTag))
+      {
         result.AppendFormat(" [{0}]", tag.ToValueString());
+      }
 
       result.AppendLine();
 
@@ -415,7 +464,9 @@ namespace Cyotek.Data.Nbt
       if (collection != null)
       {
         foreach (ITag child in collection.Values)
+        {
           this.WriteTagString(child, result, ref indent);
+        }
       }
 
       indent--;

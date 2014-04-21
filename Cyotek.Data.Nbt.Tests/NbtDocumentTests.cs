@@ -1,13 +1,15 @@
 using System;
 using System.IO;
-using NUnit.Framework;
 using FluentAssertions;
+using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
   public class NbtDocumentTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void ConstructorTest()
     {
@@ -609,5 +611,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(typeof(XmlTagReader), target.ReaderType);
       Assert.AreEqual(typeof(XmlTagWriter), target.WriterType);
     }
+
+    #endregion
   }
 }

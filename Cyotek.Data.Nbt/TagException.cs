@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagException : Exception
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagException()
     { }

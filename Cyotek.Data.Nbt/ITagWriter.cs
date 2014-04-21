@@ -12,7 +12,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Methods
 
     void Close();
 

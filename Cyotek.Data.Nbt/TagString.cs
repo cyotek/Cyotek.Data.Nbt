@@ -3,7 +3,7 @@ namespace Cyotek.Data.Nbt
   [TagEditor("Cyotek.Windows.Forms.Nbt.TagTextEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagString : Tag
   {
-    #region Constructors
+    #region Public Constructors
 
     public TagString()
       : this(string.Empty, string.Empty)
@@ -30,7 +30,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Members
+    #region Overridden Methods
 
     public override string ToString(string indentString)
     {
@@ -39,7 +39,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Properties
+    #region Public Properties
 
     public new string Value
     {

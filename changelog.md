@@ -1,5 +1,10 @@
 # Cyotek.Data.Nbt Change Log
 
+## 1.0.4.1
+### Bug Fixes
+* `NbtDocument.GetDocumentName` now automatically returns `false` if the format of the document is not XML or binary.
+* Removed exception when lists have a type of 0, as although it makes sense as it's essentially an invalid tag, some Minecraft tags are using zero type lists.
+
 ## 1.0.4.0
 ### Changes and new features
 * Added tests for `Tag.ToValueString`

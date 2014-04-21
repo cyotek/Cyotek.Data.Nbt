@@ -1,79 +1,73 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagDictionary : KeyedCollection<string, ITag>
+  public class TagDictionary : IList<ITag>
   {
-    #region Public Constructors
+    #region Constructors
+
+    protected IDictionary<string, ITag> Dictionary { get; set; }
 
     public TagDictionary()
-    { }
+    {
+      this.Dictionary = new Dictionary<string, ITag>();
+    }
 
     public TagDictionary(ITag owner)
       : this()
     {
       if (owner == null)
-      {
         throw new ArgumentNullException("owner");
-      }
 
       this.Owner = owner;
     }
 
     #endregion
 
-    #region Overridden Methods
+    #region Overridden Members
 
-    protected override void ClearItems()
+    public ITag this[string name]
     {
-      foreach (ITag item in this)
+      get { return this.Dictionary[name]; }
+      set
       {
-        item.Parent = null;
+        this.Remove(value.Name);
+        this.Add(value);
       }
-
-      base.ClearItems();
     }
 
-    protected override string GetKeyForItem(ITag item)
+    public void Clear()
     {
-      return item.Name;
+      this.Dictionary.Clear();
     }
 
-    protected override void InsertItem(int index, ITag item)
-    {
-      item.Parent = this.Owner;
-
-      base.InsertItem(index, item);
-    }
-
-    protected override void RemoveItem(int index)
+    public bool Remove(string name)
     {
       ITag item;
 
-      item = this[index];
-      item.Parent = null;
+      if (this.TryGetValue(name, out item))
+        item.Parent = null;
 
-      base.RemoveItem(index);
+      return this.Dictionary.Remove(name);
     }
 
-    protected override void SetItem(int index, ITag item)
+    public bool Remove(ITag tag)
     {
-      item.Parent = this.Owner;
-
-      base.SetItem(index, item);
+      return this.Remove(tag.Name);
     }
 
     #endregion
 
-    #region Public Properties
+    #region Properties
 
     public ITag Owner { get; set; }
 
     #endregion
 
-    #region Public Members
+    #region Members
 
     public ITag Add(string name, string value)
     {
@@ -117,6 +111,13 @@ namespace Cyotek.Data.Nbt
       this.Add(tag);
 
       return tag;
+    }
+
+    public void Add(ITag tag)
+    {
+      tag.Parent = this.Owner;
+
+      this.Dictionary.Add(tag.Name, tag);
     }
 
     public ITag Add(string name, long value)
@@ -220,9 +221,7 @@ namespace Cyotek.Data.Nbt
 
       collectionTag = tag as ICollectionTag;
       if (collectionTag != null)
-      {
         collectionTag.LimitToType = limitToType;
-      }
 
       this.Add(tag);
 
@@ -235,57 +234,31 @@ namespace Cyotek.Data.Nbt
 
       // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
       if (value is byte)
-      {
         result = this.Add(name, (byte)value);
-      }
       else if (value is byte[])
-      {
         result = this.Add(name, (byte[])value);
-      }
       else if (value is int)
-      {
         result = this.Add(name, (int)value);
-      }
       else if (value is int[])
-      {
         result = this.Add(name, (int[])value);
-      }
       else if (value is float)
-      {
         result = this.Add(name, (float)value);
-      }
       else if (value is double)
-      {
         result = this.Add(name, (double)value);
-      }
       else if (value is long)
-      {
         result = this.Add(name, (long)value);
-      }
       else if (value is short)
-      {
         result = this.Add(name, (short)value);
-      }
       else if (value is string)
-      {
         result = this.Add(name, (string)value);
-      }
       else if (value is DateTime)
-      {
         result = this.Add(name, (DateTime)value);
-      }
       else if (value is Guid)
-      {
         result = this.Add(name, (Guid)value);
-      }
       else if (value is bool)
-      {
         result = this.Add(name, (bool)value);
-      }
       else
-      {
         throw new ArgumentException("Invalid value type.", "value");
-      }
       // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 
       return result;
@@ -294,9 +267,7 @@ namespace Cyotek.Data.Nbt
     public void AddRange(IEnumerable<KeyValuePair<string, object>> values)
     {
       foreach (KeyValuePair<string, object> value in values)
-      {
         this.Add(value.Key, value.Value);
-      }
     }
 
     public bool TryGetValue(string key, out ITag value)
@@ -304,9 +275,7 @@ namespace Cyotek.Data.Nbt
       bool result;
 
       if (this.Dictionary != null)
-      {
         result = this.Dictionary.TryGetValue(key, out value);
-      }
       else
       {
         result = false;
@@ -318,13 +287,70 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Internal Members
 
-    internal void ChangeKey(ITag item, string newKey)
+    public IEnumerator<ITag> GetEnumerator()
     {
-      base.ChangeItemKey(item, newKey);
+      return this.Dictionary.Values.GetEnumerator();
     }
 
-    #endregion
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return this.GetEnumerator();
+    }
+
+    public int IndexOf(ITag item)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void Insert(int index, ITag item)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void RemoveAt(int index)
+    {
+      throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> Keys
+    { get { return this.Keys; } }
+
+    public ITag this[int index]
+    {
+      get
+      {
+        throw new NotImplementedException();
+      }
+      set
+      {
+        throw new NotImplementedException();
+      }
+    }
+
+    public bool Contains(string name)
+    {
+      return this.Dictionary.ContainsKey(name);
+    }
+
+    public bool Contains(ITag item)
+    {
+      return this.Dictionary.ContainsKey(item.Name);
+    }
+
+    public void CopyTo(ITag[] array, int arrayIndex)
+    {
+      this.Dictionary.Values.CopyTo(array, arrayIndex);
+    }
+
+    public int Count
+    {
+      get { return this.Dictionary.Count; }
+    }
+
+    public bool IsReadOnly
+    {
+      get { return false; }
+    }
   }
 }

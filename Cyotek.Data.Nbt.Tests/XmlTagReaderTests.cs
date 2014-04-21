@@ -6,6 +6,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class XmlTagReaderTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void LoadTest()
     {
@@ -36,5 +38,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(NbtFormat.Xml, document.Format);
     }
+
+    #endregion
   }
 }

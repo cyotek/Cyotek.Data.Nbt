@@ -8,6 +8,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class AnvilRegionTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void TestAnvilRegion()
     {
@@ -17,16 +19,22 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] buffer = new byte[4096];
       input.Read(buffer, 0, 4096);
       for (int i = 0; i < 1024; i++)
+      {
         locations[i] = BitConverter.ToInt32(buffer, i * 4);
+      }
 
       int[] timestamps = new int[1024];
       input.Read(buffer, 0, 4096);
       for (int i = 0; i < 1024; i++)
+      {
         timestamps[i] = BitConverter.ToInt32(buffer, i * 4);
+      }
 
       input.Read(buffer, 0, 4);
       if (BitConverter.IsLittleEndian)
+      {
         BitHelper.SwapBytes(buffer, 0, 4);
+      }
       int sizeOfChunkData = BitConverter.ToInt32(buffer, 0) - 1;
 
       int compressionType = input.ReadByte();
@@ -36,9 +44,13 @@ namespace Cyotek.Data.Nbt.Tests
       Stream inputStream = null;
 
       if (compressionType == 1)
+      {
         inputStream = new GZipStream(new MemoryStream(buffer), CompressionMode.Decompress);
+      }
       else if (compressionType == 2)
+      {
         inputStream = new DeflateStream(new MemoryStream(buffer, 2, buffer.Length - 6), CompressionMode.Decompress);
+      }
 
       BinaryTagReader reader;
       reader = new BinaryTagReader(inputStream, NbtOptions.ReadHeader);
@@ -167,5 +179,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsNotNull(section_3_blocks);
       Assert.AreEqual(4096, section_3_blocks.Value.Length);
     }
+
+    #endregion
   }
 }

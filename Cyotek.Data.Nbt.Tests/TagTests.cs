@@ -9,6 +9,8 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagTests : TestBase
   {
+    #region Tests
+
     [Test]
     public void CanRemoveTest()
     {
@@ -42,9 +44,9 @@ namespace Cyotek.Data.Nbt.Tests
       target = this.GetComplexData();
       expectedCount = 29;
       expectedNames = new[]
-      {
-        "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest"
-      };
+                      {
+                        "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest"
+                      };
 
       // act
       tags = target.Flatten();
@@ -88,9 +90,9 @@ namespace Cyotek.Data.Nbt.Tests
       data = this.GetComplexData();
       target = data.Query(@"listTest (compound)\0\name");
       expected = new[]
-      {
-        data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0")
-      };
+                 {
+                   data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0")
+                 };
 
       // act
       actual = target.GetAncestors();
@@ -202,7 +204,9 @@ namespace Cyotek.Data.Nbt.Tests
       target = new NbtDocument(fileName).DocumentRoot;
 
       using (FileStream file = File.OpenRead(fileName))
+      {
         source = this.Decompress(file);
+      }
 
       // act
       using (MemoryStream stream = new MemoryStream())
@@ -418,6 +422,10 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsTrue(eventRaised);
     }
 
+    #endregion
+
+    #region Test Helpers
+
     /// <summary>
     ///   Decompresses the specified stream.
     /// </summary>
@@ -442,7 +450,9 @@ namespace Cyotek.Data.Nbt.Tests
           {
             count = decompressStream.Read(buffer, 0, bufferSize);
             if (count > 0)
+            {
               memory.Write(buffer, 0, count);
+            }
           } while (count > 0);
 
           result = memory.ToArray();
@@ -451,5 +461,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       return result;
     }
+
+    #endregion
   }
 }

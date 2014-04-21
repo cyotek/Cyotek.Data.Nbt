@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public static class TagFactory
   {
-    #region Class Members
+    #region Public Class Members
 
     public static ITag CreateTag(TagType tagType)
     {
@@ -76,7 +76,9 @@ namespace Cyotek.Data.Nbt
 
       result.Name = name;
       if (defaultValue != null)
+      {
         result.Value = defaultValue;
+      }
 
       return result;
     }

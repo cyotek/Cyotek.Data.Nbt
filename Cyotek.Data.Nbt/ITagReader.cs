@@ -12,7 +12,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Members
+    #region Methods
 
     TagCompound Load(string fileName, NbtOptions options);
 
