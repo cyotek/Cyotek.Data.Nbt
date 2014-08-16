@@ -171,7 +171,7 @@ namespace Cyotek.Data.Nbt
       }
       result = TagFactory.CreateTag(type);
 
-      if (options.HasFlag(NbtOptions.ReadHeader))
+      if ((options & NbtOptions.ReadHeader) != 0)
       {
         string name;
 
@@ -184,7 +184,7 @@ namespace Cyotek.Data.Nbt
         result.Name = name;
       }
 
-      if (!options.HasFlag(NbtOptions.HeaderOnly))
+      if ((options & NbtOptions.HeaderOnly) == 0)
       {
         switch (type)
         {

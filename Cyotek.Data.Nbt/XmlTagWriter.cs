@@ -68,7 +68,7 @@ namespace Cyotek.Data.Nbt
     {
       string name;
 
-      if (options.HasFlag(NbtOptions.SingleUse))
+      if ((options & NbtOptions.SingleUse) != 0)
       {
         this.Open();
       }
@@ -89,7 +89,7 @@ namespace Cyotek.Data.Nbt
         _writer.WriteAttributeString("name", name);
       }
 
-      if (options.HasFlag(NbtOptions.ReadHeader) && value.Type != TagType.End)
+      if ((options & NbtOptions.ReadHeader) != 0 && value.Type != TagType.End)
       {
         this.WriteHeader(value);
       }
@@ -150,7 +150,7 @@ namespace Cyotek.Data.Nbt
 
       _writer.WriteEndElement();
 
-      if (options.HasFlag(NbtOptions.SingleUse))
+      if ((options & NbtOptions.SingleUse) != 0)
       {
         this.Close();
       }

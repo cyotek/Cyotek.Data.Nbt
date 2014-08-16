@@ -49,7 +49,7 @@ namespace Cyotek.Data.Nbt
 
     public override void Write(ITag value, NbtOptions options)
     {
-      if (options.HasFlag(NbtOptions.ReadHeader) && value.Type != TagType.End)
+      if ((options & NbtOptions.ReadHeader) != 0 && value.Type != TagType.End)
       {
         this.WriteHeader(value);
       }
@@ -221,7 +221,7 @@ namespace Cyotek.Data.Nbt
       }
       else
       {
-        this.Write((byte)0);
+        this.Write(0);
       }
     }
 
@@ -239,7 +239,7 @@ namespace Cyotek.Data.Nbt
 
       this.Options = options;
 
-      if (options.HasFlag(NbtOptions.Compress))
+      if ((options & NbtOptions.Compress) != 0)
       {
         this.WriteCompressed(tag, fileName);
       }

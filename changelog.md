@@ -1,5 +1,20 @@
 # Cyotek.Data.Nbt Change Log
 
+## 1.0.4.4
+### Bug Fixes
+* Saving an empty byte array didn't store the zero length size correctly, causing a crash when trying to reload the document. Documents affected by this bug are essentially corrupt and can't be loaded.
+
+### Changes and new features
+* Added `ToString` overrides to `TagCollection` and `TagDictionary`
+
+## 1.0.4.3
+### Bug Fixes
+* Removed `EnumExtensions` class and replaced all `HasFlag` calls with bitwise statements
+
+## 1.0.4.2
+### Bug Fixes
+* Added missing `GetByteValue` to `TagCompound`
+
 ## 1.0.4.1
 ### Bug Fixes
 * `NbtDocument.GetDocumentName` now automatically returns `false` if the format of the document is not XML or binary.

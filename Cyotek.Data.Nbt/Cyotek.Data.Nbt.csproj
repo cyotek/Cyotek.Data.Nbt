@@ -49,7 +49,6 @@
   <ItemGroup>
     <Compile Include="BinaryTagReader.cs" />
     <Compile Include="BinaryTagWriter.cs" />
-    <Compile Include="EnumExtensions.cs" />
     <Compile Include="ITagReader.cs" />
     <Compile Include="ITagWriter.cs" />
     <Compile Include="NbtDocument.cs" />

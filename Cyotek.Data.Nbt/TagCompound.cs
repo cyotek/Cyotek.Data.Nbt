@@ -102,6 +102,20 @@ namespace Cyotek.Data.Nbt
       return value != null ? value.Value : defaultValue;
     }
 
+    public byte GetByteValue(string name)
+    {
+      return this.GetByteValue(name, default(byte));
+    }
+
+    public byte GetByteValue(string name, byte defaultValue)
+    {
+      TagByte value;
+
+      value = this.GetTag<TagByte>(name);
+
+      return value != null ? value.Value : defaultValue;
+    }
+
     public TagCompound GetCompound(string name)
     {
       return this.GetTag<TagCompound>(name);

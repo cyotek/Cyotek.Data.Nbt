@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
@@ -25,6 +26,35 @@ namespace Cyotek.Data.Nbt
     #endregion
 
     #region Overridden Methods
+
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>
+    /// A string that represents the current object.
+    /// </returns>
+    public override string ToString()
+    {
+      StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      sb.Append('[');
+
+      foreach (ITag tag in this)
+      {
+        if (sb.Length > 1)
+        {
+          sb.Append(',').Append(' ');
+        }
+
+        sb.Append(tag.ToValueString());
+      }
+
+      sb.Append(']');
+
+      return sb.ToString();
+    }
 
     protected override void ClearItems()
     {

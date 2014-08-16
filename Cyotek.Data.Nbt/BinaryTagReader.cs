@@ -98,12 +98,12 @@ namespace Cyotek.Data.Nbt
       rawType = this.InputStream.ReadByte();
       result = TagFactory.CreateTag((TagType)rawType);
 
-      if (result.Type != TagType.End && options.HasFlag(NbtOptions.ReadHeader))
+      if (result.Type != TagType.End && (options & NbtOptions.ReadHeader) != 0)
       {
         result.Name = this.ReadString();
       }
 
-      if (!options.HasFlag(NbtOptions.HeaderOnly))
+      if ((options & NbtOptions.HeaderOnly) == 0)
       {
         switch (result.Type)
         {
