@@ -1,5 +1,12 @@
 # Cyotek.Data.Nbt Change Log
 
+## 1.0.4.5
+### Changed
+* Reformatted using C# 6 syntax, and minor corrections to avoid double casts
+
+### Fixed
+* Added culture info to date conversions
+
 ## 1.0.4.4
 ### Bug Fixes
 * Saving an empty byte array didn't store the zero length size correctly, causing a crash when trying to reload the document. Documents affected by this bug are essentially corrupt and can't be loaded.

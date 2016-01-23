@@ -105,7 +105,7 @@ namespace Cyotek.Data.Nbt
           break;
 
         default:
-          throw new ArgumentException("Unrecognized or unsupported tag type.", "value");
+          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(value));
       }
     }
 
@@ -229,12 +229,12 @@ namespace Cyotek.Data.Nbt
     {
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       if (tag == null)
       {
-        throw new ArgumentNullException("tag");
+        throw new ArgumentNullException(nameof(tag));
       }
 
       this.Options = options;

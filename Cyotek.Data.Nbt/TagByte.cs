@@ -38,7 +38,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      return string.Format("{0}[Byte: {1}={2}]", indentString, Name, Value);
+      return $"{indentString}[Byte: {this.Name}={this.Value}]";
     }
 
     #endregion

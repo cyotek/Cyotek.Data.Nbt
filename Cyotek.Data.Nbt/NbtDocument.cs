@@ -47,7 +47,7 @@ namespace Cyotek.Data.Nbt
     {
       if (document == null)
       {
-        throw new ArgumentNullException("document");
+        throw new ArgumentNullException(nameof(document));
       }
 
       this.DocumentRoot = document;
@@ -65,12 +65,12 @@ namespace Cyotek.Data.Nbt
     {
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       if (format == NbtFormat.Custom)
       {
-        throw new ArgumentException("Invalid or unsupported file format.", "format");
+        throw new ArgumentException("Invalid or unsupported file format.", nameof(format));
       }
 
       this.Load(fileName);
@@ -90,7 +90,7 @@ namespace Cyotek.Data.Nbt
     {
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       return new NbtDocument(NbtFormat.Custom).GetFormat(fileName);
@@ -107,12 +107,13 @@ namespace Cyotek.Data.Nbt
         try
         {
           NbtDocument document;
-          ITagReader reader;
-          TagCompound root;
 
           document = new NbtDocument(GetDocumentFormat(fileName));
           if (document.Format != NbtFormat.Custom)
           {
+            ITagReader reader;
+            TagCompound root;
+
             document.FileName = fileName;
 
             reader = (ITagReader)Activator.CreateInstance(document.ReaderType);
@@ -181,7 +182,7 @@ namespace Cyotek.Data.Nbt
     {
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       return File.Exists(fileName) && GetDocumentFormat(fileName) != NbtFormat.Custom;
@@ -237,7 +238,7 @@ namespace Cyotek.Data.Nbt
     {
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       return new NbtDocument(fileName);
@@ -298,7 +299,7 @@ namespace Cyotek.Data.Nbt
               break;
 
             default:
-              throw new ArgumentException("Invalid format.", "value");
+              throw new ArgumentException("Invalid format.", nameof(value));
           }
         }
       }
@@ -311,7 +312,7 @@ namespace Cyotek.Data.Nbt
       {
         if (value != null && !typeof(ITagReader).IsAssignableFrom(value))
         {
-          throw new ArgumentException("Cannot assign ITagReader from specified type.", "value");
+          throw new ArgumentException("Cannot assign ITagReader from specified type.", nameof(value));
         }
 
         _readerType = value;
@@ -325,7 +326,7 @@ namespace Cyotek.Data.Nbt
       {
         if (value != null && !typeof(ITagWriter).IsAssignableFrom(value))
         {
-          throw new ArgumentException("Cannot assign ITagWriter from specified type.", "value");
+          throw new ArgumentException("Cannot assign ITagWriter from specified type.", nameof(value));
         }
 
         _writerType = value;
@@ -342,7 +343,7 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       if (!File.Exists(fileName))
@@ -378,7 +379,7 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       format = this.GetFormat(fileName);
@@ -420,7 +421,7 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       writer = (ITagWriter)Activator.CreateInstance(this.WriterType);
@@ -436,16 +437,19 @@ namespace Cyotek.Data.Nbt
     private void WriteTagString(ITag tag, StringBuilder result, ref int indent)
     {
       ICollectionTag collection;
+      ICollectionTag parentCollection;
 
       indent++;
 
       result.Append(new string(' ', indent * 2));
 
       result.Append(tag.Type.ToString().ToLowerInvariant());
-      if (tag.Parent is ICollectionTag && ((ICollectionTag)tag.Parent).IsList)
+
+      parentCollection = tag.Parent as ICollectionTag;
+      if (parentCollection != null && parentCollection.IsList)
       {
         result.Append("#");
-        result.Append(((ICollectionTag)tag.Parent).Values.IndexOf(tag));
+        result.Append(parentCollection.Values.IndexOf(tag));
       }
       else
       {

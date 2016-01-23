@@ -45,7 +45,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      return string.Format("{0}[List: {1}] ({2} items)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
+      return $"{indentString}[List: {this.Name}] ({this.Value?.Count ?? 0} items)";
     }
 
     #endregion
@@ -59,7 +59,7 @@ namespace Cyotek.Data.Nbt
 
     public virtual TagType ListType
     {
-      get { return this.Value == null ? TagType.None : this.Value.LimitType; }
+      get { return this.Value?.LimitType ?? TagType.None; }
       set
       {
         if (this.Value == null || this.Value.LimitType != value)
@@ -76,7 +76,7 @@ namespace Cyotek.Data.Nbt
       {
         if (value == null)
         {
-          throw new ArgumentNullException("value");
+          throw new ArgumentNullException(nameof(value));
         }
 
         base.Value = value;

@@ -1,12 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
   [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagCompound : Tag, ICollectionTag
   {
-    #region Public Constructors
+    #region Constants
+
+    private static readonly char[] _queryDelimiters =
+    {
+      '\\',
+      '/'
+    };
+
+    #endregion
+
+    #region Constructors
 
     public TagCompound()
       : this(string.Empty)
@@ -20,25 +31,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Properties
-
-    public override TagType Type
-    {
-      get { return TagType.Compound; }
-    }
-
-    #endregion
-
-    #region Overridden Methods
-
-    public override string ToString(string indentString)
-    {
-      return string.Format("{0}[Compound: {1}] ({2} entries)", indentString, this.Name, this.Value != null ? this.Value.Count : 0);
-    }
-
-    #endregion
-
-    #region Public Properties
+    #region Properties
 
     public new TagDictionary Value
     {
@@ -47,7 +40,7 @@ namespace Cyotek.Data.Nbt
       {
         if (value == null)
         {
-          throw new ArgumentNullException("value");
+          throw new ArgumentNullException(nameof(value));
         }
 
         base.Value = value;
@@ -57,7 +50,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Public Members
+    #region Methods
 
     public bool Contains(string name)
     {
@@ -113,7 +106,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagByte>(name);
 
-      return value != null ? value.Value : defaultValue;
+      return value?.Value ?? defaultValue;
     }
 
     public TagCompound GetCompound(string name)
@@ -132,7 +125,10 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagString>(name);
 
-      return value != null ? DateTime.Parse(value.Value).ToUniversalTime() : defaultValue;
+      return value != null
+               ? DateTime.Parse(value.Value, CultureInfo.InvariantCulture).
+                          ToUniversalTime()
+               : defaultValue;
     }
 
     public TagDouble GetDouble(string name)
@@ -151,7 +147,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagDouble>(name);
 
-      return value != null ? value.Value : defaultValue;
+      return value?.Value ?? defaultValue;
     }
 
     public T GetEnumValue<T>(string name) where T : struct
@@ -184,7 +180,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagFloat>(name);
 
-      return value != null ? value.Value : defaultValue;
+      return value?.Value ?? defaultValue;
     }
 
     public Guid GetGuidValue(string name)
@@ -236,7 +232,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagInt>(name);
 
-      return value != null ? value.Value : defaultValue;
+      return value?.Value ?? defaultValue;
     }
 
     public TagList GetList(string name)
@@ -260,7 +256,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagLong>(name);
 
-      return value != null ? value.Value : defaultValue;
+      return value?.Value ?? defaultValue;
     }
 
     public TagShort GetShort(string name)
@@ -279,7 +275,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagShort>(name);
 
-      return value != null ? value.Value : defaultValue;
+      return value?.Value ?? defaultValue;
     }
 
     public TagString GetString(string name)
@@ -325,33 +321,39 @@ namespace Cyotek.Data.Nbt
       string[] parts;
       ITag element;
 
-      parts = query.Split(new[]
-                          {
-                            '\\', '/'
-                          });
+      parts = query.Split(_queryDelimiters);
       element = this;
 
       // HACK: This is all quickly thrown together
 
       foreach (string part in parts)
       {
-        if (part.Contains("["))
+        if (part.IndexOf('[') != -1)
         {
           string[] subParts;
           string name;
           string value;
           bool matchFound;
+          TagList list;
 
-          subParts = part.Substring(1, part.Length - 2).Split('=');
+          subParts = part.Substring(1, part.Length - 2).
+                          Split('=');
           name = subParts[0];
           value = subParts[1];
           matchFound = false;
 
-          if (element is TagList)
+          list = element as TagList;
+
+          if (list != null)
           {
-            foreach (TagCompound tag in ((TagList)element).Value)
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            foreach (ITag tag in list.Value)
             {
-              if (tag.GetStringValue(name) == value)
+              TagCompound compound;
+
+              compound = tag as TagCompound;
+
+              if (compound != null && compound.GetStringValue(name) == value)
               {
                 element = tag;
                 matchFound = true;
@@ -362,7 +364,7 @@ namespace Cyotek.Data.Nbt
 
           if (!matchFound)
           {
-            throw new ArgumentException(string.Format("Could not find element matching pattern '{0}'", part), "query");
+            throw new ArgumentException($"Could not find element matching pattern '{part}'", nameof(query));
           }
         }
         else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
@@ -396,7 +398,17 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region ICollectionTag Members
+    #region ICollectionTag Interface
+
+    public override string ToString(string indentString)
+    {
+      return $"{indentString}[Compound: {this.Name}] ({this.Value?.Count ?? 0} entries)";
+    }
+
+    public override TagType Type
+    {
+      get { return TagType.Compound; }
+    }
 
     bool ICollectionTag.IsList
     {

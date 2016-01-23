@@ -27,7 +27,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      return string.Format("{0}[End]", indentString);
+      return $"{indentString}[End]";
     }
 
     #endregion

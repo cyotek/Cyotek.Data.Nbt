@@ -23,7 +23,7 @@ namespace Cyotek.Data.Nbt
     {
       if (output == null)
       {
-        throw new ArgumentNullException("output");
+        throw new ArgumentNullException(nameof(output));
       }
 
       this.OutputStream = output;

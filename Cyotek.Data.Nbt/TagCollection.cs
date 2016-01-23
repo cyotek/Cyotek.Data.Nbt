@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Text;
 
 namespace Cyotek.Data.Nbt
@@ -76,7 +77,7 @@ namespace Cyotek.Data.Nbt
     {
       if (this.LimitType != TagType.None && item.Type != this.LimitType)
       {
-        throw new ArgumentException(string.Format("Only items of type {0} can be added to this collection.", this.LimitType), "item");
+        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.", nameof(item));
       }
 
       item.Parent = this.Owner;
@@ -98,7 +99,7 @@ namespace Cyotek.Data.Nbt
     {
       if (this.LimitType != TagType.None && item.Type != this.LimitType)
       {
-        throw new ArgumentException(string.Format("Only items of type {0} can be added to this collection.", this.LimitType), "item");
+        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.", nameof(item));
       }
 
       item.Parent = this.Owner;
@@ -125,7 +126,7 @@ namespace Cyotek.Data.Nbt
 
     public ITag Add(string name, DateTime value)
     {
-      return this.Add(name, value.ToString("u"));
+      return this.Add(name, value.ToString("u", CultureInfo.InvariantCulture));
     }
 
     public ITag Add(string value)
@@ -387,7 +388,7 @@ namespace Cyotek.Data.Nbt
       }
       else
       {
-        throw new ArgumentException("Invalid value type.", "value");
+        throw new ArgumentException("Invalid value type.", nameof(value));
       }
       // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 

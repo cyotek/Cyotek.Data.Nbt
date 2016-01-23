@@ -27,7 +27,7 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       if (!File.Exists(fileName))
@@ -156,7 +156,7 @@ namespace Cyotek.Data.Nbt
             break;
 
           default:
-            throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", rawType));
+            throw new InvalidDataException($"Unrecognized tag type: {rawType}");
         }
       }
       else

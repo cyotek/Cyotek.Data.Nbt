@@ -17,7 +17,7 @@ namespace Cyotek.Data.Nbt
     {
       if (owner == null)
       {
-        throw new ArgumentNullException("owner");
+        throw new ArgumentNullException(nameof(owner));
       }
 
       this.Owner = owner;
@@ -314,7 +314,7 @@ namespace Cyotek.Data.Nbt
       }
       else
       {
-        throw new ArgumentException("Invalid value type.", "value");
+        throw new ArgumentException("Invalid value type.", nameof(value));
       }
       // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 

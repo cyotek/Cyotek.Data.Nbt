@@ -40,7 +40,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString(string indentString)
     {
-      return string.Format("{0}[ByteArray: {1}={2} values]", indentString, this.Name, (this.Value != null) ? this.Value.Length : 0);
+      return $"{indentString}[ByteArray: {this.Name}={this.Value?.Length ?? 0} values]";
     }
 
     public override string ToValueString()

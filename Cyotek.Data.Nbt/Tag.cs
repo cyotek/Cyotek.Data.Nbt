@@ -52,6 +52,7 @@ namespace Cyotek.Data.Nbt
       get
       {
         StringBuilder results;
+        ICollectionTag list;
 
         results = new StringBuilder();
 
@@ -61,9 +62,10 @@ namespace Cyotek.Data.Nbt
           results.Append(@"\");
         }
 
-        if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).IsList)
+        list = this.Parent as ICollectionTag;
+        if (list != null && list.IsList)
         {
-          results.Append(((ICollectionTag)this.Parent).Values.IndexOf(this));
+          results.Append(list.Values.IndexOf(this));
         }
         else
         {
@@ -83,10 +85,13 @@ namespace Cyotek.Data.Nbt
       {
         if (this.Name != value)
         {
-          if (this.Parent is ICollectionTag && ((ICollectionTag)this.Parent).Values is TagDictionary)
-          {
-            ((TagDictionary)((ICollectionTag)this.Parent).Values).ChangeKey(this, value);
-          }
+          ICollectionTag collection;
+          TagDictionary values;
+
+          collection = this.Parent as ICollectionTag;
+          values = collection?.Values as TagDictionary;
+
+          values?.ChangeKey(this, value);
 
           _name = value;
 
@@ -191,7 +196,7 @@ namespace Cyotek.Data.Nbt
 
     public virtual string ToValueString()
     {
-      return this.Value != null ? this.Value.ToString() : string.Empty;
+      return this.Value?.ToString() ?? string.Empty;
     }
 
     #endregion

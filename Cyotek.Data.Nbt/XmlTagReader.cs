@@ -22,7 +22,7 @@ namespace Cyotek.Data.Nbt
 
       if (string.IsNullOrEmpty(fileName))
       {
-        throw new ArgumentNullException("fileName");
+        throw new ArgumentNullException(nameof(fileName));
       }
 
       this.Options = options;
@@ -233,7 +233,7 @@ namespace Cyotek.Data.Nbt
             break;
 
           default:
-            throw new InvalidDataException(string.Format("Unrecognized tag type: {0}", type));
+            throw new InvalidDataException($"Unrecognized tag type: {type}");
         }
       }
 

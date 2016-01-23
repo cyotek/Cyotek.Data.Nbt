@@ -71,7 +71,7 @@ namespace Cyotek.Data.Nbt
           break;
 
         default:
-          throw new ArgumentException(string.Format("Unrecognized tag type: {0}", tagType));
+          throw new ArgumentException($"Unrecognized tag type: {tagType}");
       }
 
       result.Name = name;
