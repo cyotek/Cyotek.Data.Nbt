@@ -2,47 +2,35 @@ using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
-  internal interface ITagWriter
+  public interface ITagWriter
   {
-    #region Properties
-
-    NbtOptions Options { get; set; }
-
-    Stream OutputStream { get; set; }
-
-    #endregion
-
     #region Methods
 
-    void Close();
+    void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression);
 
-    void Open();
+    void WriteDocument(Stream stream, TagCompound tag);
 
-    void Write(TagCompound tag, string fileName);
+    void WriteTag(ITag value);
 
-    void Write(TagCompound tag, string fileName, NbtOptions options);
+    void WriteTag(ITag value, WriteOptions options);
 
-    void Write(ITag value);
+    void WriteValue(byte value);
 
-    void Write(ITag value, NbtOptions options);
+    void WriteValue(byte[] value);
 
-    void Write(byte value);
+    void WriteValue(double value);
 
-    void Write(byte[] value);
+    void WriteValue(short value);
 
-    void Write(double value);
+    void WriteValue(int value);
 
-    void Write(short value);
+    void WriteValue(int[] value);
 
-    void Write(int value);
+    void WriteValue(long value);
 
-    void Write(int[] value);
+    void WriteValue(float value);
 
-    void Write(long value);
-
-    void Write(float value);
-
-    void Write(string value);
+    void WriteValue(string value);
 
     #endregion
   }

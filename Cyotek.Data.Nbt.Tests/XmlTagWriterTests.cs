@@ -1,3 +1,4 @@
+using System.IO;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -11,14 +12,17 @@ namespace Cyotek.Data.Nbt.Tests
     public void SaveTest()
     {
       // arrange
-      XmlTagWriter writer;
+      ITagWriter writer;
       TagCompound target;
 
       target = this.GetComplexData();
       writer = new XmlTagWriter();
 
       // act
-      writer.Write(target, this.OutputFileName);
+      using (Stream stream = File.Create(this.OutputFileName))
+      {
+        writer.WriteDocument(stream, target);
+      }
 
       // assert
       FileAssert.AreEqual(this.ComplexXmlDataFileName, this.OutputFileName);

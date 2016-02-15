@@ -7,6 +7,16 @@ namespace Cyotek.Data.Nbt
 {
   public class BinaryTagReader : TagReader
   {
+    private const int _doubleSize = 8;
+
+    private const int _floatSize = 4;
+
+    private const int _intSize = 4;
+
+    private const int _longSize = 8;
+
+    private const int _shortSize = 2;
+
     #region Public Constructors
 
     public BinaryTagReader()
@@ -294,15 +304,15 @@ namespace Cyotek.Data.Nbt
     {
       byte[] data;
 
-      data = new byte[BinaryTagWriter.DoubleSize];
-      if (BinaryTagWriter.DoubleSize != this.InputStream.Read(data, 0, BinaryTagWriter.DoubleSize))
+      data = new byte[_doubleSize];
+      if (_doubleSize != this.InputStream.Read(data, 0, _doubleSize))
       {
         throw new InvalidDataException();
       }
 
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.DoubleSize);
+        BitHelper.SwapBytes(data, 0, _doubleSize);
       }
 
       return BitConverter.ToDouble(data, 0);
@@ -312,15 +322,15 @@ namespace Cyotek.Data.Nbt
     {
       byte[] data;
 
-      data = new byte[BinaryTagWriter.FloatSize];
-      if (BinaryTagWriter.FloatSize != this.InputStream.Read(data, 0, BinaryTagWriter.FloatSize))
+      data = new byte[_floatSize];
+      if (_floatSize != this.InputStream.Read(data, 0, _floatSize))
       {
         throw new InvalidDataException();
       }
 
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.FloatSize);
+        BitHelper.SwapBytes(data, 0, _floatSize);
       }
 
       return BitConverter.ToSingle(data, 0);
@@ -330,15 +340,15 @@ namespace Cyotek.Data.Nbt
     {
       byte[] data;
 
-      data = new byte[BinaryTagWriter.IntSize];
-      if (BinaryTagWriter.IntSize != this.InputStream.Read(data, 0, BinaryTagWriter.IntSize))
+      data = new byte[_intSize];
+      if (_intSize != this.InputStream.Read(data, 0, _intSize))
       {
         throw new InvalidDataException();
       }
 
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.IntSize);
+        BitHelper.SwapBytes(data, 0, _intSize);
       }
 
       return BitConverter.ToInt32(data, 0);
@@ -352,7 +362,7 @@ namespace Cyotek.Data.Nbt
       int[] ints;
 
       length = this.ReadInt();
-      bufferLength = length * BinaryTagWriter.IntSize;
+      bufferLength = length * _intSize;
 
       buffer = new byte[bufferLength];
       if (bufferLength != this.InputStream.Read(buffer, 0, bufferLength))
@@ -378,15 +388,15 @@ namespace Cyotek.Data.Nbt
     {
       byte[] data;
 
-      data = new byte[BinaryTagWriter.LongSize];
-      if (BinaryTagWriter.LongSize != this.InputStream.Read(data, 0, BinaryTagWriter.LongSize))
+      data = new byte[_longSize];
+      if (_longSize != this.InputStream.Read(data, 0, _longSize))
       {
         throw new InvalidDataException();
       }
 
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.LongSize);
+        BitHelper.SwapBytes(data, 0, _longSize);
       }
 
       return BitConverter.ToInt64(data, 0);
@@ -396,15 +406,15 @@ namespace Cyotek.Data.Nbt
     {
       byte[] data;
 
-      data = new byte[BinaryTagWriter.ShortSize];
-      if (BinaryTagWriter.ShortSize != this.InputStream.Read(data, 0, BinaryTagWriter.ShortSize))
+      data = new byte[_shortSize];
+      if (_shortSize != this.InputStream.Read(data, 0, _shortSize))
       {
         throw new InvalidDataException();
       }
 
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BinaryTagWriter.ShortSize);
+        BitHelper.SwapBytes(data, 0, _shortSize);
       }
 
       return BitConverter.ToInt16(data, 0);

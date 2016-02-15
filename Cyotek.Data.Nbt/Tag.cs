@@ -171,10 +171,10 @@ namespace Cyotek.Data.Nbt
 
       using (MemoryStream stream = new MemoryStream())
       {
-        TagWriter writer;
+        ITagWriter writer;
 
-        writer = new BinaryTagWriter(stream, NbtOptions.ReadHeader);
-        writer.Write(this);
+        writer = new BinaryTagWriter(stream);
+        writer.WriteTag(this, WriteOptions.None);
 
         result = stream.ToArray();
       }

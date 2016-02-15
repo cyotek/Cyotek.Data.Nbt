@@ -12,14 +12,17 @@ namespace Cyotek.Data.Nbt.Tests
     public void SaveCompressedTest()
     {
       // arrange
-      BinaryTagWriter writer;
+      ITagWriter writer;
       TagCompound tag;
 
       tag = this.GetComplexData();
       writer = new BinaryTagWriter();
 
       // act
-      writer.Write(tag, this.OutputFileName, NbtOptions.Compress | NbtOptions.ReadHeader);
+      using (Stream stream = File.Create(this.OutputFileName))
+      {
+        writer.WriteDocument(stream, tag, CompressionOption.On);
+      }
 
       // assert
       this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
@@ -29,14 +32,17 @@ namespace Cyotek.Data.Nbt.Tests
     public void SaveUncompressedTest()
     {
       // arrange
-      BinaryTagWriter writer;
+      ITagWriter writer;
       TagCompound tag;
 
       tag = this.GetComplexData();
       writer = new BinaryTagWriter();
 
       // act
-      writer.Write(tag, this.OutputFileName, NbtOptions.ReadHeader);
+      using (Stream stream = File.Create(this.OutputFileName))
+      {
+        writer.WriteDocument(stream, tag, CompressionOption.Off);
+      }
 
       // assert
       this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
@@ -47,7 +53,7 @@ namespace Cyotek.Data.Nbt.Tests
     public void WriteEmptyByteArrayTest()
     {
       // arrange
-      BinaryTagWriter target;
+      ITagWriter target;
       NbtDocument expected;
       MemoryStream stream;
       BinaryTagReader reader;
@@ -62,7 +68,7 @@ namespace Cyotek.Data.Nbt.Tests
       target = new BinaryTagWriter(stream);
 
       // act
-      target.Write(expected.DocumentRoot);
+      target.WriteTag(expected.DocumentRoot, WriteOptions.None);
 
       // assert
       stream.Seek(0, SeekOrigin.Begin);

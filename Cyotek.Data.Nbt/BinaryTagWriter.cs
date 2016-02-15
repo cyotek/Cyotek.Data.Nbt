@@ -5,51 +5,110 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class BinaryTagWriter : TagWriter
+  public class BinaryTagWriter : ITagWriter
   {
     #region Constants
 
-    internal static readonly int DoubleSize = 8;
+    private const int _doubleSize = 8;
 
-    internal static readonly int FloatSize = 4;
+    private const int _floatSize = 4;
 
-    internal static readonly int IntSize = 4;
+    private const int _intSize = 4;
 
-    internal static readonly int LongSize = 8;
+    private const int _longSize = 8;
 
-    internal static readonly int ShortSize = 2;
+    private const int _shortSize = 2;
 
     #endregion
 
-    #region Public Constructors
+    #region Fields
+
+    private Stream _stream;
+
+    #endregion
+
+    #region Constructors
 
     public BinaryTagWriter()
     { }
 
     public BinaryTagWriter(Stream stream)
-      : this(stream, NbtOptions.ReadHeader | NbtOptions.Compress)
-    { }
-
-    public BinaryTagWriter(Stream stream, NbtOptions options)
-      : base(stream, options)
-    { }
-
-    #endregion
-
-    #region Overridden Properties
-
-    protected override NbtOptions DefaultOptions
+      : this()
     {
-      get { return NbtOptions.ReadHeader | NbtOptions.Compress; }
+      _stream = stream;
     }
 
     #endregion
 
-    #region Overridden Methods
+    #region Methods
 
-    public override void Write(ITag value, NbtOptions options)
+    protected virtual void WriteEnd()
     {
-      if ((options & NbtOptions.ReadHeader) != 0 && value.Type != TagType.End)
+      _stream.WriteByte((byte)TagType.End);
+    }
+
+    protected void WriteHeader(ITag value)
+    {
+      this.WriteValue((byte)value.Type);
+      this.WriteValue(value.Name);
+    }
+
+    protected virtual void WriteValue(TagCollection value)
+    {
+      _stream.WriteByte((byte)value.LimitType);
+
+      this.WriteValue(value.Count);
+
+      foreach (ITag item in value)
+      {
+        this.WriteTag(item, WriteOptions.IgnoreName);
+      }
+    }
+
+    protected virtual void WriteValue(TagDictionary value)
+    {
+      foreach (ITag item in value)
+      {
+        this.WriteTag(item, WriteOptions.None);
+      }
+
+      this.WriteEnd();
+    }
+
+    #endregion
+
+    #region ITagWriter2 Interface
+
+    public virtual void WriteDocument(Stream stream, TagCompound tag)
+    {
+      this.WriteDocument(stream, tag, CompressionOption.Auto);
+    }
+
+    public virtual void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
+    {
+      if (compression != CompressionOption.Off)
+      {
+        using (Stream compressedStream = new GZipStream(stream, CompressionMode.Compress))
+        {
+          _stream = compressedStream;
+          this.WriteTag(tag, WriteOptions.None);
+        }
+      }
+      else
+      {
+        _stream = stream;
+        this.WriteTag(tag, WriteOptions.None);
+      }
+    }
+
+    public virtual void WriteTag(ITag value)
+    {
+      this.WriteTag(value, WriteOptions.None);
+    }
+
+    public virtual void WriteTag(ITag value, WriteOptions options)
+    {
+      if (value.Type != TagType.End && (options & WriteOptions.IgnoreName) == 0)
       {
         this.WriteHeader(value);
       }
@@ -61,47 +120,47 @@ namespace Cyotek.Data.Nbt
           break;
 
         case TagType.Byte:
-          this.Write((byte)value.Value);
+          this.WriteValue((byte)value.Value);
           break;
 
         case TagType.Short:
-          this.Write((short)value.Value);
+          this.WriteValue((short)value.Value);
           break;
 
         case TagType.Int:
-          this.Write((int)value.Value);
+          this.WriteValue((int)value.Value);
           break;
 
         case TagType.Long:
-          this.Write((long)value.Value);
+          this.WriteValue((long)value.Value);
           break;
 
         case TagType.Float:
-          this.Write((float)value.Value);
+          this.WriteValue((float)value.Value);
           break;
 
         case TagType.Double:
-          this.Write((double)value.Value);
+          this.WriteValue((double)value.Value);
           break;
 
         case TagType.ByteArray:
-          this.Write((byte[])value.Value);
+          this.WriteValue((byte[])value.Value);
           break;
 
         case TagType.String:
-          this.Write((string)value.Value);
+          this.WriteValue((string)value.Value);
           break;
 
         case TagType.List:
-          this.Write((TagCollection)value.Value);
+          this.WriteValue((TagCollection)value.Value);
           break;
 
         case TagType.Compound:
-          this.Write((TagDictionary)value.Value);
+          this.WriteValue((TagDictionary)value.Value);
           break;
 
         case TagType.IntArray:
-          this.Write((int[])value.Value);
+          this.WriteValue((int[])value.Value);
           break;
 
         default:
@@ -109,205 +168,124 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public override void Write(string value)
+    public virtual void WriteValue(string value)
     {
-      byte[] data;
-
       if (string.IsNullOrEmpty(value))
       {
-        data = new byte[0];
+        this.WriteValue((short)0);
       }
       else
       {
-        data = Encoding.UTF8.GetBytes(value);
-      }
+        byte[] buffer;
 
-      this.Write((short)data.Length);
-      this.OutputStream.Write(data, 0, data.Length);
+        buffer = Encoding.UTF8.GetBytes(value);
+
+        this.WriteValue((short)buffer.Length);
+        _stream.Write(buffer, 0, buffer.Length);
+      }
     }
 
-    public override void Write(short value)
+    public virtual void WriteValue(short value)
     {
-      byte[] data;
+      byte[] buffer;
 
-      data = BitConverter.GetBytes(value);
+      buffer = BitConverter.GetBytes(value);
+
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, ShortSize);
+        BitHelper.SwapBytes(buffer, 0, _shortSize);
       }
 
-      this.OutputStream.Write(data, 0, ShortSize);
+      _stream.Write(buffer, 0, _shortSize);
     }
 
-    public override void Write(long value)
+    public virtual void WriteValue(long value)
     {
-      byte[] data;
+      byte[] buffer;
 
-      data = BitConverter.GetBytes(value);
+      buffer = BitConverter.GetBytes(value);
+
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, LongSize);
+        BitHelper.SwapBytes(buffer, 0, _longSize);
       }
 
-      this.OutputStream.Write(data, 0, LongSize);
+      _stream.Write(buffer, 0, _longSize);
     }
 
-    public override void Write(int[] value)
+    public virtual void WriteValue(int[] value)
     {
       if (value != null && value.Length != 0)
       {
-        this.Write(value.Length);
-        for (int i = 0; i < value.Length; i++)
+        this.WriteValue(value.Length);
+        foreach (int item in value)
         {
-          this.Write(value[i]);
+          this.WriteValue(item);
         }
       }
       else
       {
-        this.Write(0);
+        this.WriteValue(0);
       }
     }
 
-    public override void Write(int value)
+    public virtual void WriteValue(int value)
     {
-      byte[] data;
+      byte[] buffer;
 
-      data = BitConverter.GetBytes(value);
+      buffer = BitConverter.GetBytes(value);
+
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, IntSize);
+        BitHelper.SwapBytes(buffer, 0, _intSize);
       }
 
-      this.OutputStream.Write(data, 0, IntSize);
+      _stream.Write(buffer, 0, _intSize);
     }
 
-    public override void Write(float value)
+    public virtual void WriteValue(float value)
     {
-      byte[] data;
+      byte[] buffer;
 
-      data = BitConverter.GetBytes(value);
+      buffer = BitConverter.GetBytes(value);
+
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, FloatSize);
+        BitHelper.SwapBytes(buffer, 0, _floatSize);
       }
 
-      this.OutputStream.Write(data, 0, FloatSize);
+      _stream.Write(buffer, 0, _floatSize);
     }
 
-    public override void Write(double value)
+    public virtual void WriteValue(double value)
     {
-      byte[] data;
+      byte[] buffer;
 
-      data = BitConverter.GetBytes(value);
+      buffer = BitConverter.GetBytes(value);
+
       if (BitConverter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, DoubleSize);
+        BitHelper.SwapBytes(buffer, 0, _doubleSize);
       }
 
-      this.OutputStream.Write(data, 0, DoubleSize);
+      _stream.Write(buffer, 0, _doubleSize);
     }
 
-    public override void Write(byte value)
+    public virtual void WriteValue(byte value)
     {
-      this.OutputStream.WriteByte(value);
+      _stream.WriteByte(value);
     }
 
-    public override void Write(byte[] value)
+    public virtual void WriteValue(byte[] value)
     {
       if (value != null && value.Length != 0)
       {
-        this.Write(value.Length);
-        this.OutputStream.Write(value, 0, value.Length);
+        this.WriteValue(value.Length);
+        _stream.Write(value, 0, value.Length);
       }
       else
       {
-        this.Write(0);
-      }
-    }
-
-    public override void Write(TagCompound tag, string fileName, NbtOptions options)
-    {
-      if (string.IsNullOrEmpty(fileName))
-      {
-        throw new ArgumentNullException(nameof(fileName));
-      }
-
-      if (tag == null)
-      {
-        throw new ArgumentNullException(nameof(tag));
-      }
-
-      this.Options = options;
-
-      if ((options & NbtOptions.Compress) != 0)
-      {
-        this.WriteCompressed(tag, fileName);
-      }
-      else
-      {
-        this.WriteUncompressed(tag, fileName);
-      }
-    }
-
-    #endregion
-
-    #region Public Members
-
-    public virtual void Write(TagCollection value)
-    {
-      this.OutputStream.WriteByte((byte)value.LimitType);
-
-      this.Write(value.Count);
-
-      foreach (ITag item in value)
-      {
-        this.Write(item, NbtOptions.None);
-      }
-    }
-
-    public virtual void Write(TagDictionary value)
-    {
-      foreach (ITag item in value)
-      {
-        this.Write(item, NbtOptions.ReadHeader);
-      }
-
-      this.WriteEnd();
-    }
-
-    public virtual void WriteEnd()
-    {
-      this.OutputStream.WriteByte((byte)TagType.End);
-    }
-
-    #endregion
-
-    #region Protected Members
-
-    protected void WriteCompressed(TagCompound tag, string fileName)
-    {
-      using (Stream fileStream = File.Open(fileName, FileMode.Create))
-      {
-        using (Stream output = new GZipStream(fileStream, CompressionMode.Compress))
-        {
-          this.OutputStream = output;
-          this.Write(tag);
-        }
-      }
-    }
-
-    protected void WriteHeader(ITag value)
-    {
-      this.Write((byte)value.Type);
-      this.Write(value.Name);
-    }
-
-    protected void WriteUncompressed(TagCompound tag, string fileName)
-    {
-      using (FileStream output = File.Open(fileName, FileMode.Create))
-      {
-        this.OutputStream = output;
-        this.Write(tag);
+        this.WriteValue(0);
       }
     }
 

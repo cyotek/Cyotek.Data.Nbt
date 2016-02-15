@@ -123,9 +123,9 @@ namespace Cyotek.Data.Nbt
             result = root.Name;
           }
         }
-          // ReSharper disable EmptyGeneralCatchClause
+        // ReSharper disable EmptyGeneralCatchClause
         catch
-          // ReSharper restore EmptyGeneralCatchClause
+        // ReSharper restore EmptyGeneralCatchClause
         {
           // ignore errors
         }
@@ -326,7 +326,7 @@ namespace Cyotek.Data.Nbt
       {
         if (value != null && !typeof(ITagWriter).IsAssignableFrom(value))
         {
-          throw new ArgumentException("Cannot assign ITagWriter from specified type.", nameof(value));
+          throw new ArgumentException("Cannot assign ITagWriter2 from specified type.", nameof(value));
         }
 
         _writerType = value;
@@ -412,10 +412,10 @@ namespace Cyotek.Data.Nbt
 
     public void Save(string fileName)
     {
-      this.Save(fileName, NbtOptions.Compress | NbtOptions.ReadHeader);
+      this.Save(fileName, CompressionOption.Auto);
     }
 
-    public void Save(string fileName, NbtOptions options)
+    public void Save(string fileName, CompressionOption compression)
     {
       ITagWriter writer;
 
@@ -426,7 +426,11 @@ namespace Cyotek.Data.Nbt
 
       writer = (ITagWriter)Activator.CreateInstance(this.WriterType);
 
-      writer.Write(this.DocumentRoot, fileName, options);
+      using (Stream stream = File.Create(fileName))
+      {
+        writer.WriteDocument(stream, this.DocumentRoot, compression);
+      }
+
       this.FileName = fileName;
     }
 

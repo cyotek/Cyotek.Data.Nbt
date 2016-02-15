@@ -195,7 +195,6 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCompound target;
-      TagWriter writer;
       string fileName;
       byte[] source;
       byte[] destination;
@@ -211,8 +210,10 @@ namespace Cyotek.Data.Nbt.Tests
       // act
       using (MemoryStream stream = new MemoryStream())
       {
-        writer = new BinaryTagWriter(stream, NbtOptions.ReadHeader);
-        writer.Write(target);
+        ITagWriter writer;
+
+        writer = new BinaryTagWriter();
+        writer.WriteDocument(stream, target, CompressionOption.Off);
         destination = stream.ToArray();
       }
       File.WriteAllBytes(this.OutputFileName, destination);
