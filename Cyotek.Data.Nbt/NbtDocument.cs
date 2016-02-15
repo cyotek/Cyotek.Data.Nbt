@@ -118,7 +118,10 @@ namespace Cyotek.Data.Nbt
 
             reader = (ITagReader)Activator.CreateInstance(document.ReaderType);
 
-            root = reader.Load(fileName, NbtOptions.ReadHeader | NbtOptions.HeaderOnly);
+            using (Stream stream = File.OpenRead(fileName))
+            {
+              root = reader.ReadDocument(stream, ReadTagOptions.IgnoreValue);
+            }
 
             result = root.Name;
           }
@@ -312,7 +315,7 @@ namespace Cyotek.Data.Nbt
       {
         if (value != null && !typeof(ITagReader).IsAssignableFrom(value))
         {
-          throw new ArgumentException("Cannot assign ITagReader from specified type.", nameof(value));
+          throw new ArgumentException("Cannot assign ITagReader2 from specified type.", nameof(value));
         }
 
         _readerType = value;
@@ -391,7 +394,11 @@ namespace Cyotek.Data.Nbt
       this.Format = format;
       reader = (ITagReader)Activator.CreateInstance(this.ReaderType);
 
-      this.DocumentRoot = reader.Load(fileName, NbtOptions.ReadHeader);
+      using (Stream stream = File.OpenRead(fileName))
+      {
+        this.DocumentRoot = reader.ReadDocument(stream);
+      }
+
       this.FileName = fileName;
     }
 

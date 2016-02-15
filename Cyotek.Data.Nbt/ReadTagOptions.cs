@@ -6,9 +6,12 @@ using System.Text;
 namespace Cyotek.Data.Nbt
 {
   [Flags]
-  public enum WriteOptions
+  public enum ReadTagOptions
   {
     None = 0,
-    IgnoreName = 1
+
+    IgnoreName = 1,
+
+    IgnoreValue = 8
   }
 }

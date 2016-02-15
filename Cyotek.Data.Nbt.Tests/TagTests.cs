@@ -143,15 +143,15 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       MemoryStream stream;
-      BinaryTagReader reader;
+      ITagReader reader;
 
       stream = new MemoryStream();
       stream.WriteByte(255);
       stream.Seek(0, SeekOrigin.Begin);
-      reader = new BinaryTagReader(stream, NbtOptions.None);
+      reader = new BinaryTagReader(stream);
 
       // act
-      reader.Read();
+      reader.ReadTag();
 
       // assert
     }

@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class BinaryTagReader : TagReader
+  public class BinaryTagReader : ITagReader
   {
     private const int _doubleSize = 8;
 
@@ -22,99 +24,113 @@ namespace Cyotek.Data.Nbt
     public BinaryTagReader()
     { }
 
-    public BinaryTagReader(Stream input, NbtOptions options)
-      : base(input, options)
-    { }
+    public BinaryTagReader(Stream stream)
+      : this()
+    {
+      _stream = stream;
+    }
+
 
     #endregion
 
     #region Overridden Methods
 
-    public override TagCompound Load(string fileName, NbtOptions options)
+    public virtual TagCompound ReadDocument(Stream stream)
+    {
+      return this.ReadDocument(stream, ReadTagOptions.None);
+    }
+    public virtual TagCompound ReadDocument(Stream stream,ReadTagOptions options)
     {
       TagCompound tag;
-      BinaryTagReader reader;
 
-      if (string.IsNullOrEmpty(fileName))
+      if (stream.IsGzipCompressed())
       {
-        throw new ArgumentNullException(nameof(fileName));
-      }
-
-      if (!File.Exists(fileName))
-      {
-        throw new FileNotFoundException("Cannot find source file.", fileName);
-      }
-
-      //Check if gzipped stream
-      try
-      {
-        using (FileStream input = File.OpenRead(fileName))
+        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
         {
-          using (GZipStream gzipStream = new GZipStream(input, CompressionMode.Decompress))
-          {
-            reader = new BinaryTagReader(gzipStream, options);
-            tag = (TagCompound)reader.Read();
-          }
+          _stream = decompressionStream;
+          tag = (TagCompound)this.ReadTag(options);
         }
       }
-      catch (Exception)
+      else
       {
-        tag = null;
+        _stream = stream;
+        tag = (TagCompound)this.ReadTag(options);
       }
 
-      if (tag != null)
-      {
-        return tag;
-      }
+      //BinaryTagReader reader;
 
-      //Try Deflate stream
-      try
-      {
-        using (FileStream input = File.OpenRead(fileName))
-        {
-          using (DeflateStream deflateStream = new DeflateStream(input, CompressionMode.Decompress))
-          {
-            reader = new BinaryTagReader(deflateStream, options);
-            tag = (TagCompound)reader.Read();
-          }
-        }
-      }
-      catch (Exception)
-      {
-        tag = null;
-      }
 
-      if (tag != null)
-      {
-        return tag;
-      }
+      ////Check if gzipped stream
+      //try
+      //{
+      //    using (GZipStream gzipStream = new GZipStream(stream, CompressionMode.Decompress))
+      //    {
+      //      reader = new BinaryTagReader2(gzipStream, options);
+      //      tag = (TagCompound)reader.Read();
+      //    }
+      //  }
+      //}
+      //catch (Exception)
+      //{
+      //  tag = null;
+      //}
 
-      //Assume uncompressed stream
-      using (FileStream input = File.OpenRead(fileName))
-      {
-        reader = new BinaryTagReader(input, options);
-        tag = (TagCompound)reader.Read();
-      }
+      //if (tag != null)
+      //{
+      //  return tag;
+      //}
+
+      ////Try Deflate stream
+      //try
+      //{
+      //  using (FileStream input = File.OpenRead(fileName))
+      //  {
+      //    using (DeflateStream deflateStream = new DeflateStream(input, CompressionMode.Decompress))
+      //    {
+      //      reader = new BinaryTagReader(deflateStream, options);
+      //      tag = (TagCompound)reader.Read();
+      //    }
+      //  }
+      //}
+      //catch (Exception)
+      //{
+      //  tag = null;
+      //}
+
+      //if (tag != null)
+      //{
+      //  return tag;
+      //}
+
+      ////Assume uncompressed stream
+      //using (FileStream input = File.OpenRead(fileName))
+      //{
+      //  reader = new BinaryTagReader(input, options);
+      //  tag = (TagCompound)reader.Read();
+      //}
 
       return tag;
     }
 
-    public override ITag Read(NbtOptions options)
+    private Stream _stream;
+
+    public virtual ITag ReadTag(ReadTagOptions options)
     {
       int rawType;
       ITag result;
-      object value;
 
-      rawType = this.InputStream.ReadByte();
+      rawType = _stream.ReadByte();
       result = TagFactory.CreateTag((TagType)rawType);
 
-      if (result.Type != TagType.End && (options & NbtOptions.ReadHeader) != 0)
+      if (result.Type != TagType.End && (options & ReadTagOptions.IgnoreName) == 0)
       {
         result.Name = this.ReadString();
       }
 
-      if ((options & NbtOptions.HeaderOnly) == 0)
+      if ((options & ReadTagOptions.IgnoreValue) == 0)
       {
+        object value;
+
         switch (result.Type)
         {
           case TagType.End:
@@ -168,22 +184,19 @@ namespace Cyotek.Data.Nbt
           default:
             throw new InvalidDataException($"Unrecognized tag type: {rawType}");
         }
-      }
-      else
-      {
-        value = null;
+
+        result.Value = value;
       }
 
-      result.Value = value;
 
       return result;
     }
 
-    public override byte ReadByte()
+    public virtual byte ReadByte()
     {
       int data;
 
-      data = this.InputStream.ReadByte();
+      data = _stream.ReadByte();
       if (data != (data & 0xFF))
       {
         throw new InvalidDataException();
@@ -192,7 +205,7 @@ namespace Cyotek.Data.Nbt
       return (byte)data;
     }
 
-    public override byte[] ReadByteArray()
+    public virtual byte[] ReadByteArray()
     {
       int length;
       byte[] data;
@@ -200,7 +213,7 @@ namespace Cyotek.Data.Nbt
       length = this.ReadInt();
 
       data = new byte[length];
-      if (length != this.InputStream.Read(data, 0, length))
+      if (length != _stream.Read(data, 0, length))
       {
         throw new InvalidDataException();
       }
@@ -208,7 +221,7 @@ namespace Cyotek.Data.Nbt
       return data;
     }
 
-    public override TagCollection ReadCollection(TagList owner)
+    public virtual TagCollection ReadCollection(TagList owner)
     {
       TagCollection tags;
       int length;
@@ -283,29 +296,34 @@ namespace Cyotek.Data.Nbt
       return tags;
     }
 
-    public override TagDictionary ReadDictionary(TagCompound owner)
+    public virtual TagDictionary ReadDictionary(TagCompound owner)
     {
       TagDictionary results;
       ITag tag;
 
       results = new TagDictionary(owner);
 
-      tag = this.Read();
+      tag = this.ReadTag();
       while (tag.Type != TagType.End)
       {
         results.Add(tag);
-        tag = this.Read();
+        tag = this.ReadTag();
       }
 
       return results;
     }
 
-    public override double ReadDouble()
+    public virtual ITag ReadTag()
+    {
+      return this.ReadTag(ReadTagOptions.None);
+    }
+
+    public virtual double ReadDouble()
     {
       byte[] data;
 
       data = new byte[_doubleSize];
-      if (_doubleSize != this.InputStream.Read(data, 0, _doubleSize))
+      if (_doubleSize != _stream.Read(data, 0, _doubleSize))
       {
         throw new InvalidDataException();
       }
@@ -318,12 +336,12 @@ namespace Cyotek.Data.Nbt
       return BitConverter.ToDouble(data, 0);
     }
 
-    public override float ReadFloat()
+    public virtual float ReadFloat()
     {
       byte[] data;
 
       data = new byte[_floatSize];
-      if (_floatSize != this.InputStream.Read(data, 0, _floatSize))
+      if (_floatSize != _stream.Read(data, 0, _floatSize))
       {
         throw new InvalidDataException();
       }
@@ -336,12 +354,12 @@ namespace Cyotek.Data.Nbt
       return BitConverter.ToSingle(data, 0);
     }
 
-    public override int ReadInt()
+    public virtual int ReadInt()
     {
       byte[] data;
 
       data = new byte[_intSize];
-      if (_intSize != this.InputStream.Read(data, 0, _intSize))
+      if (_intSize != _stream.Read(data, 0, _intSize))
       {
         throw new InvalidDataException();
       }
@@ -354,7 +372,7 @@ namespace Cyotek.Data.Nbt
       return BitConverter.ToInt32(data, 0);
     }
 
-    public override int[] ReadIntArray()
+    public virtual int[] ReadIntArray()
     {
       int length;
       int bufferLength;
@@ -365,7 +383,7 @@ namespace Cyotek.Data.Nbt
       bufferLength = length * _intSize;
 
       buffer = new byte[bufferLength];
-      if (bufferLength != this.InputStream.Read(buffer, 0, bufferLength))
+      if (bufferLength != _stream.Read(buffer, 0, bufferLength))
       {
         throw new InvalidDataException();
       }
@@ -384,12 +402,12 @@ namespace Cyotek.Data.Nbt
       return ints;
     }
 
-    public override long ReadLong()
+    public virtual long ReadLong()
     {
       byte[] data;
 
       data = new byte[_longSize];
-      if (_longSize != this.InputStream.Read(data, 0, _longSize))
+      if (_longSize != _stream.Read(data, 0, _longSize))
       {
         throw new InvalidDataException();
       }
@@ -402,12 +420,12 @@ namespace Cyotek.Data.Nbt
       return BitConverter.ToInt64(data, 0);
     }
 
-    public override short ReadShort()
+    public virtual short ReadShort()
     {
       byte[] data;
 
       data = new byte[_shortSize];
-      if (_shortSize != this.InputStream.Read(data, 0, _shortSize))
+      if (_shortSize != _stream.Read(data, 0, _shortSize))
       {
         throw new InvalidDataException();
       }
@@ -420,7 +438,7 @@ namespace Cyotek.Data.Nbt
       return BitConverter.ToInt16(data, 0);
     }
 
-    public override string ReadString()
+    public virtual string ReadString()
     {
       short length;
       byte[] data;
@@ -428,7 +446,7 @@ namespace Cyotek.Data.Nbt
       length = this.ReadShort();
       data = new byte[length];
 
-      if (length != this.InputStream.Read(data, 0, length))
+      if (length != _stream.Read(data, 0, length))
       {
         throw new InvalidDataException();
       }

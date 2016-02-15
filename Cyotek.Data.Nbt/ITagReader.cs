@@ -4,21 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public interface ITagReader
   {
-    #region Properties
-
-    Stream InputStream { get; set; }
-
-    NbtOptions Options { get; set; }
-
-    #endregion
-
     #region Methods
-
-    TagCompound Load(string fileName, NbtOptions options);
-
-    ITag Read();
-
-    ITag Read(NbtOptions options);
 
     byte ReadByte();
 
@@ -27,6 +13,9 @@ namespace Cyotek.Data.Nbt
     TagCollection ReadCollection(TagList owner);
 
     TagDictionary ReadDictionary(TagCompound owner);
+
+    TagCompound ReadDocument(Stream stream);
+    TagCompound ReadDocument(Stream stream,ReadTagOptions options);
 
     double ReadDouble();
 
@@ -41,6 +30,10 @@ namespace Cyotek.Data.Nbt
     short ReadShort();
 
     string ReadString();
+
+    ITag ReadTag();
+
+    ITag ReadTag(ReadTagOptions options);
 
     #endregion
   }

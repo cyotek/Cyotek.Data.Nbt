@@ -12,7 +12,7 @@ namespace Cyotek.Data.Nbt
 
     void WriteTag(ITag value);
 
-    void WriteTag(ITag value, WriteOptions options);
+    void WriteTag(ITag value, WriteTagOptions options);
 
     void WriteValue(byte value);
 

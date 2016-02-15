@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 
 namespace Cyotek.Data.Nbt
 {
-  public class XmlTagReader : TagReader
+  public class XmlTagReader : ITagReader
   {
     #region Instance Fields
 
@@ -16,37 +17,41 @@ namespace Cyotek.Data.Nbt
 
     #region Overridden Methods
 
-    public override TagCompound Load(string fileName, NbtOptions options)
+    public virtual TagCompound ReadDocument(Stream stream)
+    {
+      return this.ReadDocument(stream, ReadTagOptions.None);
+    }
+    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
     {
       TagCompound result;
 
-      if (string.IsNullOrEmpty(fileName))
+      _reader = XmlReader.Create(stream);
+
+      while (!_reader.IsStartElement())
       {
-        throw new ArgumentNullException(nameof(fileName));
+        _reader.Read();
       }
 
-      this.Options = options;
-
-      using (Stream fileStream = File.OpenRead(fileName))
-      {
-        this.InputStream = fileStream;
-        result = (TagCompound)this.Read(options);
-      }
+      result = (TagCompound)this.ReadTag(options);
 
       return result;
     }
 
-    public override ITag Read(NbtOptions options)
+    public virtual ITag ReadTag()
     {
-      return this.Read(options, TagType.None);
+      return this.ReadTag(ReadTagOptions.None);
+    }
+    public virtual ITag ReadTag(ReadTagOptions options)
+    {
+      return this.ReadTag(options, TagType.None);
     }
 
-    public override byte ReadByte()
+    public virtual byte ReadByte()
     {
       return (byte)_reader.ReadElementContentAsInt();
     }
 
-    public override byte[] ReadByteArray()
+    public virtual byte[] ReadByteArray()
     {
       return this.ReadString().Split(new[]
                                      {
@@ -54,7 +59,7 @@ namespace Cyotek.Data.Nbt
                                      }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
     }
 
-    public override TagCollection ReadCollection(TagList owner)
+    public virtual TagCollection ReadCollection(TagList owner)
     {
       TagCollection value;
       TagType listType;
@@ -70,38 +75,38 @@ namespace Cyotek.Data.Nbt
       owner.ListType = listType;
       value = new TagCollection(owner, listType);
 
-      this.LoadChildren(value, NbtOptions.None, listType);
+      this.LoadChildren(value, ReadTagOptions.IgnoreName, listType);
 
       return value;
     }
 
-    public override TagDictionary ReadDictionary(TagCompound owner)
+    public virtual TagDictionary ReadDictionary(TagCompound owner)
     {
       TagDictionary value;
 
       value = new TagDictionary(owner);
 
-      this.LoadChildren(value, this.Options, TagType.None);
+      this.LoadChildren(value, ReadTagOptions.None, TagType.None);
 
       return value;
     }
 
-    public override double ReadDouble()
+    public virtual double ReadDouble()
     {
       return _reader.ReadElementContentAsDouble();
     }
 
-    public override float ReadFloat()
+    public virtual float ReadFloat()
     {
       return _reader.ReadElementContentAsFloat();
     }
 
-    public override int ReadInt()
+    public virtual int ReadInt()
     {
       return _reader.ReadElementContentAsInt();
     }
 
-    public override int[] ReadIntArray()
+    public virtual int[] ReadIntArray()
     {
       return this.ReadString().Split(new[]
                                      {
@@ -109,17 +114,17 @@ namespace Cyotek.Data.Nbt
                                      }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
     }
 
-    public override long ReadLong()
+    public virtual long ReadLong()
     {
       return _reader.ReadElementContentAsLong();
     }
 
-    public override short ReadShort()
+    public virtual short ReadShort()
     {
       return (short)_reader.ReadElementContentAsInt();
     }
 
-    public override string ReadString()
+    public virtual string ReadString()
     {
       string value;
 
@@ -132,23 +137,13 @@ namespace Cyotek.Data.Nbt
       return value;
     }
 
-    protected override void OnInputStreamChanged(EventArgs e)
-    {
-      base.OnInputStreamChanged(e);
 
-      _reader = XmlReader.Create(this.InputStream);
-
-      while (!_reader.IsStartElement())
-      {
-        _reader.Read();
-      }
-    }
 
     #endregion
 
     #region Protected Members
 
-    protected ITag Read(NbtOptions options, TagType defaultTagType)
+    protected ITag ReadTag(ReadTagOptions options, TagType defaultTagType)
     {
       ITag result;
       TagType type;
@@ -171,7 +166,7 @@ namespace Cyotek.Data.Nbt
       }
       result = TagFactory.CreateTag(type);
 
-      if ((options & NbtOptions.ReadHeader) != 0)
+      if ((options & ReadTagOptions.IgnoreName) == 0)
       {
         string name;
 
@@ -184,7 +179,7 @@ namespace Cyotek.Data.Nbt
         result.Name = name;
       }
 
-      if ((options & NbtOptions.HeaderOnly) == 0)
+      if ((options & ReadTagOptions.IgnoreValue) == 0)
       {
         switch (type)
         {
@@ -244,7 +239,7 @@ namespace Cyotek.Data.Nbt
 
     #region Private Members
 
-    private void LoadChildren(ICollection<ITag> value, NbtOptions options, TagType listType)
+    private void LoadChildren(ICollection<ITag> value, ReadTagOptions options, TagType listType)
     {
       while (_reader.NodeType != XmlNodeType.EndElement && _reader.NodeType != XmlNodeType.None && !_reader.IsEmptyElement)
       {
@@ -252,7 +247,7 @@ namespace Cyotek.Data.Nbt
 
         if (_reader.NodeType == XmlNodeType.Element)
         {
-          value.Add(this.Read(options, listType));
+          value.Add(this.ReadTag(options, listType));
         }
       }
 

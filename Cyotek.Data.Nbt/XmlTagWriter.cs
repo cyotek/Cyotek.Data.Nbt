@@ -28,7 +28,7 @@ namespace Cyotek.Data.Nbt
 
       foreach (ITag item in value)
       {
-        this.WriteTag(item, WriteOptions.IgnoreName);
+        this.WriteTag(item, WriteTagOptions.IgnoreName);
       }
     }
 
@@ -36,7 +36,7 @@ namespace Cyotek.Data.Nbt
     {
       foreach (ITag item in value)
       {
-        this.WriteTag(item, WriteOptions.None);
+        this.WriteTag(item, WriteTagOptions.None);
       }
     }
 
@@ -65,7 +65,7 @@ namespace Cyotek.Data.Nbt
       _writer = XmlWriter.Create(stream, _settings);
       _writer.WriteStartDocument(true);
 
-      this.WriteTag(tag, WriteOptions.None);
+      this.WriteTag(tag, WriteTagOptions.None);
 
       _writer.WriteEndDocument();
       _writer.Flush();
@@ -73,10 +73,10 @@ namespace Cyotek.Data.Nbt
 
     public virtual void WriteTag(ITag value)
     {
-      this.WriteTag(value, WriteOptions.None);
+      this.WriteTag(value, WriteTagOptions.None);
     }
 
-    public virtual void WriteTag(ITag value, WriteOptions options)
+    public virtual void WriteTag(ITag value, WriteTagOptions options)
     {
       string name;
 
@@ -96,7 +96,7 @@ namespace Cyotek.Data.Nbt
         _writer.WriteAttributeString("name", name);
       }
 
-      if (value.Type != TagType.End && (options & WriteOptions.IgnoreName) == 0)
+      if (value.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
         this.WriteHeader(value);
       }

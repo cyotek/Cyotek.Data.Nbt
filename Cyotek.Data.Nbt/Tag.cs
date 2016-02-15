@@ -174,7 +174,7 @@ namespace Cyotek.Data.Nbt
         ITagWriter writer;
 
         writer = new BinaryTagWriter(stream);
-        writer.WriteTag(this, WriteOptions.None);
+        writer.WriteTag(this, WriteTagOptions.None);
 
         result = stream.ToArray();
       }

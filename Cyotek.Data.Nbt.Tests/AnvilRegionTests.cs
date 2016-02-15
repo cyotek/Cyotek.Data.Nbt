@@ -52,9 +52,9 @@ namespace Cyotek.Data.Nbt.Tests
         inputStream = new DeflateStream(new MemoryStream(buffer, 2, buffer.Length - 6), CompressionMode.Decompress);
       }
 
-      BinaryTagReader reader;
-      reader = new BinaryTagReader(inputStream, NbtOptions.ReadHeader);
-      TagCompound tag = (TagCompound)reader.Read();
+      ITagReader reader;
+      reader = new BinaryTagReader(inputStream);
+      TagCompound tag = (TagCompound)reader.ReadTag();
       string strTag = tag.ToString();
 
       Assert.IsNotNull(tag);

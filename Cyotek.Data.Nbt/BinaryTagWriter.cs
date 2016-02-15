@@ -61,7 +61,7 @@ namespace Cyotek.Data.Nbt
 
       foreach (ITag item in value)
       {
-        this.WriteTag(item, WriteOptions.IgnoreName);
+        this.WriteTag(item, WriteTagOptions.IgnoreName);
       }
     }
 
@@ -69,7 +69,7 @@ namespace Cyotek.Data.Nbt
     {
       foreach (ITag item in value)
       {
-        this.WriteTag(item, WriteOptions.None);
+        this.WriteTag(item, WriteTagOptions.None);
       }
 
       this.WriteEnd();
@@ -91,24 +91,24 @@ namespace Cyotek.Data.Nbt
         using (Stream compressedStream = new GZipStream(stream, CompressionMode.Compress))
         {
           _stream = compressedStream;
-          this.WriteTag(tag, WriteOptions.None);
+          this.WriteTag(tag, WriteTagOptions.None);
         }
       }
       else
       {
         _stream = stream;
-        this.WriteTag(tag, WriteOptions.None);
+        this.WriteTag(tag, WriteTagOptions.None);
       }
     }
 
     public virtual void WriteTag(ITag value)
     {
-      this.WriteTag(value, WriteOptions.None);
+      this.WriteTag(value, WriteTagOptions.None);
     }
 
-    public virtual void WriteTag(ITag value, WriteOptions options)
+    public virtual void WriteTag(ITag value, WriteTagOptions options)
     {
-      if (value.Type != TagType.End && (options & WriteOptions.IgnoreName) == 0)
+      if (value.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
         this.WriteHeader(value);
       }

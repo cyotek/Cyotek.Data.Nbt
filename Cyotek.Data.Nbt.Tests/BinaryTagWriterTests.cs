@@ -56,7 +56,7 @@ namespace Cyotek.Data.Nbt.Tests
       ITagWriter target;
       NbtDocument expected;
       MemoryStream stream;
-      BinaryTagReader reader;
+      ITagReader reader;
 
       expected = new NbtDocument();
       expected.DocumentRoot.Name = "WriteEmptyByteArrayTest";
@@ -68,12 +68,12 @@ namespace Cyotek.Data.Nbt.Tests
       target = new BinaryTagWriter(stream);
 
       // act
-      target.WriteTag(expected.DocumentRoot, WriteOptions.None);
+      target.WriteTag(expected.DocumentRoot, WriteTagOptions.None);
 
       // assert
       stream.Seek(0, SeekOrigin.Begin);
-      reader = new BinaryTagReader(stream, NbtOptions.ReadHeader | NbtOptions.Compress);
-      this.CompareTags(expected.DocumentRoot, reader.Read());
+      reader = new BinaryTagReader(stream);
+      this.CompareTags(expected.DocumentRoot, reader.ReadTag());
     }
 
     #endregion

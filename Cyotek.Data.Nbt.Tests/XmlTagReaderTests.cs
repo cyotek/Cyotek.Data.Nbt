@@ -12,7 +12,7 @@ namespace Cyotek.Data.Nbt.Tests
     public void LoadTest()
     {
       // arrange
-      XmlTagReader target;
+      ITagReader target;
       TagCompound expected;
       TagCompound actual;
 
@@ -20,7 +20,10 @@ namespace Cyotek.Data.Nbt.Tests
       target = new XmlTagReader();
 
       // act
-      actual = target.Load(this.ComplexXmlDataFileName);
+      using (Stream stream = File.OpenRead(this.ComplexXmlDataFileName))
+      {
+        actual = target.ReadDocument(stream);
+      }
 
       // assert
       this.CompareTags(expected, actual);
