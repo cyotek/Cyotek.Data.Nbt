@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Cyotek.Data.Nbt
+namespace Cyotek.Data.Nbt.Serialization
 {
   [Flags]
   public enum ReadTagOptions

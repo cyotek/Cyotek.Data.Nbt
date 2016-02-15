@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests

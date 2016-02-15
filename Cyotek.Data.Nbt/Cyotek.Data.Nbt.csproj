@@ -39,7 +39,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>cyopublic.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\res\Cyotek.Data.Nbt.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -47,13 +47,16 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryTagReader.cs" />
-    <Compile Include="BinaryTagWriter.cs" />
     <Compile Include="CompressionOption.cs" />
-    <Compile Include="ITagReader.cs" />
-    <Compile Include="ITagWriter.cs" />
     <Compile Include="NbtDocument.cs" />
-    <Compile Include="ReadTagOptions.cs" />
+    <Compile Include="Serialization\BinaryTagReader.cs" />
+    <Compile Include="Serialization\BinaryTagWriter.cs" />
+    <Compile Include="Serialization\ITagReader.cs" />
+    <Compile Include="Serialization\ITagWriter.cs" />
+    <Compile Include="Serialization\ReadTagOptions.cs" />
+    <Compile Include="Serialization\WriteTagOptions.cs" />
+    <Compile Include="Serialization\XmlTagReader.cs" />
+    <Compile Include="Serialization\XmlTagWriter.cs" />
     <Compile Include="StreamExtensions.cs" />
     <Compile Include="TagEventArgs.cs" />
     <Compile Include="NbtFormat.cs" />
@@ -79,12 +82,11 @@
     <Compile Include="TagShort.cs" />
     <Compile Include="TagString.cs" />
     <Compile Include="TagType.cs" />
-    <Compile Include="WriteTagOptions.cs" />
-    <Compile Include="XmlTagReader.cs" />
-    <Compile Include="XmlTagWriter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cyopublic.snk" />
+    <None Include="..\res\Cyotek.Data.Nbt.snk">
+      <Link>Cyotek.Data.Nbt.snk</Link>
+    </None>
     <None Include="Cyotek.Data.Nbt.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

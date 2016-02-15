@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Cyotek.Data.Nbt.Serialization;
 using FluentAssertions;
 using NUnit.Framework;
 

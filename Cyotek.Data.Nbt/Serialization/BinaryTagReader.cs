@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
-using Cyotek.Data.Nbt.Serialization;
 
-namespace Cyotek.Data.Nbt
+namespace Cyotek.Data.Nbt.Serialization
 {
   public class BinaryTagReader : ITagReader
   {

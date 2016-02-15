@@ -45,6 +45,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\Cyotek.Data.Nbt\BitHelper.cs">
+      <Link>BitHelper.cs</Link>
+    </Compile>
     <Compile Include="AnvilRegionTests.cs" />
     <Compile Include="BinaryTagWriterTests.cs" />
     <Compile Include="NbtDocumentTests.cs" />

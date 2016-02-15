@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cyotek.Data.Nbt
+namespace Cyotek.Data.Nbt.Serialization
 {
   [Flags]
   public enum WriteTagOptions

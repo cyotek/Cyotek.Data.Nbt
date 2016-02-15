@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Cyotek.Data.Nbt
+namespace Cyotek.Data.Nbt.Serialization
 {
   public interface ITagReader
   {

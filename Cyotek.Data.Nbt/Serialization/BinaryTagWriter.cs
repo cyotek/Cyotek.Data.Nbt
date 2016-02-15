@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Cyotek.Data.Nbt.Serialization;
 
-namespace Cyotek.Data.Nbt
+namespace Cyotek.Data.Nbt.Serialization
 {
   public class BinaryTagWriter : ITagWriter
   {
