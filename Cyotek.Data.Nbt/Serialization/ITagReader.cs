@@ -6,6 +6,8 @@ namespace Cyotek.Data.Nbt.Serialization
   {
     #region Methods
 
+    bool IsNbtDocument(Stream stream);
+
     byte ReadByte();
 
     byte[] ReadByteArray();
@@ -15,7 +17,8 @@ namespace Cyotek.Data.Nbt.Serialization
     TagDictionary ReadDictionary(TagCompound owner);
 
     TagCompound ReadDocument(Stream stream);
-    TagCompound ReadDocument(Stream stream,ReadTagOptions options);
+
+    TagCompound ReadDocument(Stream stream, ReadTagOptions options);
 
     double ReadDouble();
 

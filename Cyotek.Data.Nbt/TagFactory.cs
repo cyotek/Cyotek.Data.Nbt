@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public static class TagFactory
   {
-    #region Public Class Members
+    #region Static Methods
 
     public static ITag CreateTag(TagType tagType)
     {

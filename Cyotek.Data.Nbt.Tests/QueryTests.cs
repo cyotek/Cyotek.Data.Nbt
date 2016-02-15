@@ -6,7 +6,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class QueryTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void QueryValueTest()
@@ -17,7 +17,7 @@ namespace Cyotek.Data.Nbt.Tests
       string path;
       long expectedValue;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
       path = @"listTest (compound)\1\created-on";
       expectedValue = 1264099775885;
 
@@ -38,7 +38,7 @@ namespace Cyotek.Data.Nbt.Tests
       string path;
       string expectedValue;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
       path = @"listTest (compound)/[name=Compound tag #0]";
       expectedValue = "Compound tag #0";
 
@@ -59,7 +59,7 @@ namespace Cyotek.Data.Nbt.Tests
       string path;
       string expectedValue;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
       path = @"listTest (compound)\0\name";
       expectedValue = "Compound tag #0";
 
@@ -81,7 +81,7 @@ namespace Cyotek.Data.Nbt.Tests
       Type expectedType;
       long expectedValue;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
       path = @"listTest (compound)\1\created-on";
       expectedType = typeof(TagLong);
       expectedValue = 1264099775885;

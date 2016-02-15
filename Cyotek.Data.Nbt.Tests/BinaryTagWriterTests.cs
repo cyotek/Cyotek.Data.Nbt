@@ -7,7 +7,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class BinaryTagWriterTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void SaveCompressedTest()
@@ -16,7 +16,7 @@ namespace Cyotek.Data.Nbt.Tests
       ITagWriter writer;
       TagCompound tag;
 
-      tag = this.GetComplexData();
+      tag = this.CreateComplexData();
       writer = new BinaryTagWriter();
 
       // act
@@ -26,7 +26,8 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
+      this.CompareTags(tag, NbtDocument.LoadFromFile(this.OutputFileName).
+                                        DocumentRoot);
     }
 
     [Test]
@@ -36,7 +37,7 @@ namespace Cyotek.Data.Nbt.Tests
       ITagWriter writer;
       TagCompound tag;
 
-      tag = this.GetComplexData();
+      tag = this.CreateComplexData();
       writer = new BinaryTagWriter();
 
       // act
@@ -46,7 +47,8 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(tag, new NbtDocument(this.OutputFileName).DocumentRoot);
+      this.CompareTags(tag, NbtDocument.LoadFromFile(this.OutputFileName).
+                                        DocumentRoot);
       FileAssert.AreEqual(this.UncompressedComplexDataFileName, this.OutputFileName);
     }
 

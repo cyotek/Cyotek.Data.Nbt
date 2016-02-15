@@ -42,7 +42,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #endregion
 
-    #region ITagWriter2 Interface
+    #region ITagWriter Interface
 
     public virtual void WriteDocument(Stream stream, TagCompound tag)
     {

@@ -6,7 +6,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagListTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void ConstructorTest()
@@ -279,6 +279,6 @@ namespace Cyotek.Data.Nbt.Tests
 
     #endregion
 
-    //ncrunch: no coverage 
+    //ncrunch: no coverage
   }
 }

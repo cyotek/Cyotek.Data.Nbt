@@ -2,7 +2,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagByte : Tag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagByte()
       : this(string.Empty, 0)
@@ -24,30 +24,26 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Properties
+    #region Properties
 
     public override TagType Type
     {
       get { return TagType.Byte; }
     }
 
-    #endregion
-
-    #region Overridden Methods
-
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[Byte: {this.Name}={this.Value}]";
-    }
-
-    #endregion
-
-    #region Public Properties
-
     public new byte Value
     {
       get { return (byte)base.Value; }
       set { base.Value = value; }
+    }
+
+    #endregion
+
+    #region Methods
+
+    public override string ToString(string indentString)
+    {
+      return $"{indentString}[Byte: {this.Name}={this.Value}]";
     }
 
     #endregion

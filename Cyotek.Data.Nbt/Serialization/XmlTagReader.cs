@@ -8,139 +8,13 @@ namespace Cyotek.Data.Nbt.Serialization
 {
   public class XmlTagReader : ITagReader
   {
-    #region Instance Fields
+    #region Fields
 
     private XmlReader _reader;
 
     #endregion
 
-    #region Overridden Methods
-
-    public virtual TagCompound ReadDocument(Stream stream)
-    {
-      return this.ReadDocument(stream, ReadTagOptions.None);
-    }
-    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
-    {
-      TagCompound result;
-
-      _reader = XmlReader.Create(stream);
-
-      while (!_reader.IsStartElement())
-      {
-        _reader.Read();
-      }
-
-      result = (TagCompound)this.ReadTag(options);
-
-      return result;
-    }
-
-    public virtual ITag ReadTag()
-    {
-      return this.ReadTag(ReadTagOptions.None);
-    }
-    public virtual ITag ReadTag(ReadTagOptions options)
-    {
-      return this.ReadTag(options, TagType.None);
-    }
-
-    public virtual byte ReadByte()
-    {
-      return (byte)_reader.ReadElementContentAsInt();
-    }
-
-    public virtual byte[] ReadByteArray()
-    {
-      return this.ReadString().Split(new[]
-                                     {
-                                       " ", "\t", "\n", "\r"
-                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
-    }
-
-    public virtual TagCollection ReadCollection(TagList owner)
-    {
-      TagCollection value;
-      TagType listType;
-      string listTypeName;
-
-      listTypeName = _reader.GetAttribute("limitType");
-      if (string.IsNullOrEmpty(listTypeName))
-      {
-        throw new InvalidDataException("Missing limitType attribute, unable to determine list contents type.");
-      }
-
-      listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
-      owner.ListType = listType;
-      value = new TagCollection(owner, listType);
-
-      this.LoadChildren(value, ReadTagOptions.IgnoreName, listType);
-
-      return value;
-    }
-
-    public virtual TagDictionary ReadDictionary(TagCompound owner)
-    {
-      TagDictionary value;
-
-      value = new TagDictionary(owner);
-
-      this.LoadChildren(value, ReadTagOptions.None, TagType.None);
-
-      return value;
-    }
-
-    public virtual double ReadDouble()
-    {
-      return _reader.ReadElementContentAsDouble();
-    }
-
-    public virtual float ReadFloat()
-    {
-      return _reader.ReadElementContentAsFloat();
-    }
-
-    public virtual int ReadInt()
-    {
-      return _reader.ReadElementContentAsInt();
-    }
-
-    public virtual int[] ReadIntArray()
-    {
-      return this.ReadString().Split(new[]
-                                     {
-                                       " ", "\t", "\n", "\r"
-                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
-    }
-
-    public virtual long ReadLong()
-    {
-      return _reader.ReadElementContentAsLong();
-    }
-
-    public virtual short ReadShort()
-    {
-      return (short)_reader.ReadElementContentAsInt();
-    }
-
-    public virtual string ReadString()
-    {
-      string value;
-
-      value = _reader.ReadElementContentAsString();
-      if (string.IsNullOrEmpty(value))
-      {
-        value = null;
-      }
-
-      return value;
-    }
-
-
-
-    #endregion
-
-    #region Protected Members
+    #region Methods
 
     protected ITag ReadTag(ReadTagOptions options, TagType defaultTagType)
     {
@@ -234,13 +108,10 @@ namespace Cyotek.Data.Nbt.Serialization
       return result;
     }
 
-    #endregion
-
-    #region Private Members
-
     private void LoadChildren(ICollection<ITag> value, ReadTagOptions options, TagType listType)
     {
-      while (_reader.NodeType != XmlNodeType.EndElement && _reader.NodeType != XmlNodeType.None && !_reader.IsEmptyElement)
+      while (_reader.NodeType != XmlNodeType.EndElement && _reader.NodeType != XmlNodeType.None &&
+             !_reader.IsEmptyElement)
       {
         _reader.Read();
 
@@ -254,6 +125,176 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         _reader.Read();
       }
+    }
+
+    #endregion
+
+    #region ITagReader Interface
+
+    public virtual bool IsNbtDocument(Stream stream)
+    {
+      bool result;
+      long position;
+
+      position = stream.Position;
+
+      try
+      {
+        string typeName;
+
+        _reader = XmlReader.Create(stream);
+
+        while (!_reader.IsStartElement())
+        {
+          _reader.Read();
+        }
+
+        typeName = _reader.GetAttribute("type");
+
+        result = typeName != null;
+      }
+      catch
+      {
+        result = false;
+      }
+
+      stream.Position = position;
+
+      return result;
+    }
+
+    public virtual byte ReadByte()
+    {
+      return (byte)_reader.ReadElementContentAsInt();
+    }
+
+    public virtual byte[] ReadByteArray()
+    {
+      return this.ReadString().
+                  Split(new[]
+                        {
+                          " ",
+                          "\t",
+                          "\n",
+                          "\r"
+                        }, StringSplitOptions.RemoveEmptyEntries).
+                  Select(c => Convert.ToByte(c)).
+                  ToArray();
+    }
+
+    public virtual TagCollection ReadCollection(TagList owner)
+    {
+      TagCollection value;
+      TagType listType;
+      string listTypeName;
+
+      listTypeName = _reader.GetAttribute("limitType");
+      if (string.IsNullOrEmpty(listTypeName))
+      {
+        throw new InvalidDataException("Missing limitType attribute, unable to determine list contents type.");
+      }
+
+      listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
+      owner.ListType = listType;
+      value = new TagCollection(owner, listType);
+
+      this.LoadChildren(value, ReadTagOptions.IgnoreName, listType);
+
+      return value;
+    }
+
+    public virtual TagDictionary ReadDictionary(TagCompound owner)
+    {
+      TagDictionary value;
+
+      value = new TagDictionary(owner);
+
+      this.LoadChildren(value, ReadTagOptions.None, TagType.None);
+
+      return value;
+    }
+
+    public virtual TagCompound ReadDocument(Stream stream)
+    {
+      return this.ReadDocument(stream, ReadTagOptions.None);
+    }
+
+    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
+    {
+      TagCompound result;
+
+      _reader = XmlReader.Create(stream);
+
+      while (!_reader.IsStartElement())
+      {
+        _reader.Read();
+      }
+
+      result = (TagCompound)this.ReadTag(options);
+
+      return result;
+    }
+
+    public virtual double ReadDouble()
+    {
+      return _reader.ReadElementContentAsDouble();
+    }
+
+    public virtual float ReadFloat()
+    {
+      return _reader.ReadElementContentAsFloat();
+    }
+
+    public virtual int ReadInt()
+    {
+      return _reader.ReadElementContentAsInt();
+    }
+
+    public virtual int[] ReadIntArray()
+    {
+      return this.ReadString().
+                  Split(new[]
+                        {
+                          " ",
+                          "\t",
+                          "\n",
+                          "\r"
+                        }, StringSplitOptions.RemoveEmptyEntries).
+                  Select(c => Convert.ToInt32(c)).
+                  ToArray();
+    }
+
+    public virtual long ReadLong()
+    {
+      return _reader.ReadElementContentAsLong();
+    }
+
+    public virtual short ReadShort()
+    {
+      return (short)_reader.ReadElementContentAsInt();
+    }
+
+    public virtual string ReadString()
+    {
+      string value;
+
+      value = _reader.ReadElementContentAsString();
+      if (string.IsNullOrEmpty(value))
+      {
+        value = null;
+      }
+
+      return value;
+    }
+
+    public virtual ITag ReadTag()
+    {
+      return this.ReadTag(ReadTagOptions.None);
+    }
+
+    public virtual ITag ReadTag(ReadTagOptions options)
+    {
+      return this.ReadTag(options, TagType.None);
     }
 
     #endregion

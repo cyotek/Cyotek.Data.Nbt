@@ -9,7 +9,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class AnvilRegionTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void TestAnvilRegion()
@@ -60,7 +60,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       Assert.IsNotNull(tag);
 
-      Assert.AreEqual(TagType.Compound, tag.GetTag("Level").Type);
+      Assert.AreEqual(TagType.Compound, tag.GetTag("Level").
+                                            Type);
       TagCompound levelTag = tag.GetCompound("Level");
 
       ITag aTag = levelTag.GetTag("Entities");

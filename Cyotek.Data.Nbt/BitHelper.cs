@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   internal static class BitHelper
   {
-    #region Internal Class Members
+    #region Static Methods
 
     internal static void SwapBytes(byte[] buffer, int offset, int length)
     {

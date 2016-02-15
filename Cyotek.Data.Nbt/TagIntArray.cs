@@ -5,7 +5,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagIntArray : Tag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagIntArray()
       : this(string.Empty, new int[0])
@@ -27,16 +27,22 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Properties
+    #region Properties
 
     public override TagType Type
     {
       get { return TagType.IntArray; }
     }
 
+    public new int[] Value
+    {
+      get { return (int[])base.Value; }
+      set { base.Value = value; }
+    }
+
     #endregion
 
-    #region Overridden Methods
+    #region Methods
 
     public override string ToString(string indentString)
     {
@@ -45,17 +51,8 @@ namespace Cyotek.Data.Nbt
 
     public override string ToValueString()
     {
-      return string.Join(", ", this.Value.Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
-    }
-
-    #endregion
-
-    #region Public Properties
-
-    public new int[] Value
-    {
-      get { return (int[])base.Value; }
-      set { base.Value = value; }
+      return string.Join(", ", this.Value.Select(b => b.ToString(CultureInfo.InvariantCulture)).
+                                    ToArray());
     }
 
     #endregion

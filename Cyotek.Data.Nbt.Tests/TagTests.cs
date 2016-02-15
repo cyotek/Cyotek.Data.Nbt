@@ -10,7 +10,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void CanRemoveTest()
@@ -20,7 +20,7 @@ namespace Cyotek.Data.Nbt.Tests
       bool actual1;
       bool actual2;
 
-      data = this.GetComplexData();
+      data = this.CreateComplexData();
 
       // act
       actual1 = data.Value["listTest (compound)"].CanRemove;
@@ -42,17 +42,36 @@ namespace Cyotek.Data.Nbt.Tests
       int expectedCount;
       int actualCount;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
       expectedCount = 29;
       expectedNames = new[]
                       {
-                        "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest"
+                        "Level",
+                        "longTest",
+                        "shortTest",
+                        "stringTest",
+                        "floatTest",
+                        "intTest",
+                        "nested compound test",
+                        "ham",
+                        "name",
+                        "value",
+                        "egg",
+                        "listTest (long)",
+                        "",
+                        "listTest (compound)",
+                        "created-on",
+                        "byteTest",
+                        "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
+                        "doubleTest"
                       };
 
       // act
       tags = target.Flatten();
       actualCount = tags.Length;
-      actualNames = tags.Select(t => t.Name).Distinct().ToArray();
+      actualNames = tags.Select(t => t.Name).
+                         Distinct().
+                         ToArray();
 
       // assert
       Assert.AreEqual(expectedCount, actualCount);
@@ -68,7 +87,7 @@ namespace Cyotek.Data.Nbt.Tests
       string expected;
       string actual;
 
-      data = this.GetComplexData();
+      data = this.CreateComplexData();
       expected = @"Level\listTest (compound)\0\name";
       target = data.Query(@"listTest (compound)\0\name");
 
@@ -88,11 +107,13 @@ namespace Cyotek.Data.Nbt.Tests
       ITag[] actual;
       ITag[] expected;
 
-      data = this.GetComplexData();
+      data = this.CreateComplexData();
       target = data.Query(@"listTest (compound)\0\name");
       expected = new[]
                  {
-                   data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0")
+                   data,
+                   data.Value["listTest (compound)"],
+                   data.Query(@"listTest (compound)\0")
                  };
 
       // act
@@ -111,7 +132,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] actual;
 
       expected = File.ReadAllBytes(this.UncompressedComplexDataFileName);
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
 
       // act
       actual = target.GetValue();
@@ -158,13 +179,14 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
+    [ExpectedException(ExpectedException = typeof(TagException),
+      ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
     public void RemoveExceptionTest()
     {
       // arrange
       TagCompound target;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
 
       // act
       target.Remove();
@@ -180,7 +202,7 @@ namespace Cyotek.Data.Nbt.Tests
       ITag target;
       string key;
 
-      data = this.GetComplexData();
+      data = this.CreateComplexData();
       key = "listTest (compound)";
       target = data.Value[key];
 
@@ -201,7 +223,8 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] destination;
 
       fileName = this.ComplexDataFileName;
-      target = new NbtDocument(fileName).DocumentRoot;
+      target = NbtDocument.LoadFromFile(fileName).
+                           DocumentRoot;
 
       using (FileStream file = File.OpenRead(fileName))
       {
@@ -221,8 +244,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       CollectionAssert.AreEqual(source, destination);
-
-      new NbtDocument(this.OutputFileName);
     }
 
     [Test]
@@ -230,7 +251,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       ITag tag;
 
-      tag = this.GetComplexData();
+      tag = this.CreateComplexData();
 
       Assert.IsNotNull(tag);
       Assert.IsInstanceOf<TagCompound>(tag);
@@ -342,9 +363,13 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual("created-on", listTest_compound_tag1_createdOn.Name);
       Assert.AreEqual(1264099775885, listTest_compound_tag1_createdOn.Value);
 
-      TagByteArray byteArrayTest = level.GetByteArray("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))");
+      TagByteArray byteArrayTest =
+        level.GetByteArray(
+                           "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))");
       Assert.IsNotNull(byteArrayTest);
-      Assert.AreEqual("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", byteArrayTest.Name);
+      Assert.AreEqual(
+                      "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
+                      byteArrayTest.Name);
       Assert.IsNotNull(byteArrayTest.Value);
       Assert.AreEqual(1000, byteArrayTest.Value.Length);
     }
@@ -393,7 +418,8 @@ namespace Cyotek.Data.Nbt.Tests
       string actual1;
       string actual2;
 
-      target1 = this.GetComplexData().Query(@"nested compound test\ham\name");
+      target1 = this.CreateComplexData().
+                     Query(@"nested compound test\ham\name");
       target2 = new TagString(null, null);
       expected1 = "Hampus";
 

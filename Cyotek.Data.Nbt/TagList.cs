@@ -5,7 +5,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagList : Tag, ICollectionTag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagList()
     {
@@ -31,25 +31,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Properties
-
-    public override TagType Type
-    {
-      get { return TagType.List; }
-    }
-
-    #endregion
-
-    #region Overridden Methods
-
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[List: {this.Name}] ({this.Value?.Count ?? 0} items)";
-    }
-
-    #endregion
-
-    #region Public Properties
+    #region Properties
 
     public int Count
     {
@@ -85,7 +67,17 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region ICollectionTag Members
+    #region ICollectionTag Interface
+
+    public override string ToString(string indentString)
+    {
+      return $"{indentString}[List: {this.Name}] ({this.Value?.Count ?? 0} items)";
+    }
+
+    public override TagType Type
+    {
+      get { return TagType.List; }
+    }
 
     bool ICollectionTag.IsList
     {

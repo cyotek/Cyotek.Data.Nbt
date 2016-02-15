@@ -8,7 +8,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagCollection : Collection<ITag>
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagCollection()
     {
@@ -32,84 +32,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Methods
-
-    /// <summary>
-    /// Returns a string that represents the current object.
-    /// </summary>
-    /// <returns>
-    /// A string that represents the current object.
-    /// </returns>
-    public override string ToString()
-    {
-      StringBuilder sb;
-
-      sb = new StringBuilder();
-
-      sb.Append('[');
-
-      foreach (ITag tag in this)
-      {
-        if (sb.Length > 1)
-        {
-          sb.Append(',').Append(' ');
-        }
-
-        sb.Append(tag.ToValueString());
-      }
-
-      sb.Append(']');
-
-      return sb.ToString();
-    }
-
-    protected override void ClearItems()
-    {
-      foreach (ITag item in this)
-      {
-        item.Parent = null;
-      }
-
-      base.ClearItems();
-    }
-
-    protected override void InsertItem(int index, ITag item)
-    {
-      if (this.LimitType != TagType.None && item.Type != this.LimitType)
-      {
-        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.", nameof(item));
-      }
-
-      item.Parent = this.Owner;
-
-      base.InsertItem(index, item);
-    }
-
-    protected override void RemoveItem(int index)
-    {
-      ITag item;
-
-      item = this[index];
-      item.Parent = null;
-
-      base.RemoveItem(index);
-    }
-
-    protected override void SetItem(int index, ITag item)
-    {
-      if (this.LimitType != TagType.None && item.Type != this.LimitType)
-      {
-        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.", nameof(item));
-      }
-
-      item.Parent = this.Owner;
-
-      base.SetItem(index, item);
-    }
-
-    #endregion
-
-    #region Public Properties
+    #region Properties
 
     public TagType LimitType { get; set; }
 
@@ -117,7 +40,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Public Members
+    #region Methods
 
     public ITag Add(DateTime value)
     {
@@ -409,6 +332,82 @@ namespace Cyotek.Data.Nbt
       {
         this.Add(value.Key, value.Value);
       }
+    }
+
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>
+    /// A string that represents the current object.
+    /// </returns>
+    public override string ToString()
+    {
+      StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      sb.Append('[');
+
+      foreach (ITag tag in this)
+      {
+        if (sb.Length > 1)
+        {
+          sb.Append(',').
+             Append(' ');
+        }
+
+        sb.Append(tag.ToValueString());
+      }
+
+      sb.Append(']');
+
+      return sb.ToString();
+    }
+
+    protected override void ClearItems()
+    {
+      foreach (ITag item in this)
+      {
+        item.Parent = null;
+      }
+
+      base.ClearItems();
+    }
+
+    protected override void InsertItem(int index, ITag item)
+    {
+      if (this.LimitType != TagType.None && item.Type != this.LimitType)
+      {
+        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.",
+                                    nameof(item));
+      }
+
+      item.Parent = this.Owner;
+
+      base.InsertItem(index, item);
+    }
+
+    protected override void RemoveItem(int index)
+    {
+      ITag item;
+
+      item = this[index];
+      item.Parent = null;
+
+      base.RemoveItem(index);
+    }
+
+    protected override void SetItem(int index, ITag item)
+    {
+      if (this.LimitType != TagType.None && item.Type != this.LimitType)
+      {
+        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.",
+                                    nameof(item));
+      }
+
+      item.Parent = this.Owner;
+
+      base.SetItem(index, item);
     }
 
     #endregion

@@ -4,7 +4,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagEventArgs : EventArgs
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagEventArgs(ITag tag)
       : this()
@@ -12,16 +12,12 @@ namespace Cyotek.Data.Nbt
       this.Tag = tag;
     }
 
-    #endregion
-
-    #region Protected Constructors
-
     protected TagEventArgs()
     { }
 
     #endregion
 
-    #region Public Properties
+    #region Properties
 
     public ITag Tag { get; protected set; }
 

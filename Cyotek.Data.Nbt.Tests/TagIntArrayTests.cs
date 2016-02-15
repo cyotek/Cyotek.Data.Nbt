@@ -5,7 +5,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagIntArrayTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void ConstructorTest()
@@ -35,7 +35,8 @@ namespace Cyotek.Data.Nbt.Tests
       name = "creationDate";
       value = new[]
               {
-                int.MinValue, int.MaxValue
+                int.MinValue,
+                int.MaxValue
               };
 
       // act
@@ -74,7 +75,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       value = new[]
               {
-                int.MinValue, int.MaxValue
+                int.MinValue,
+                int.MaxValue
               };
 
       // act
@@ -115,7 +117,8 @@ namespace Cyotek.Data.Nbt.Tests
       name = "tagname";
       value = new[]
               {
-                int.MinValue, int.MaxValue
+                int.MinValue,
+                int.MaxValue
               };
       expected = string.Format("[IntArray: {0}={1} values]", name, value.Length);
       target = new TagIntArray(name, value);
@@ -142,7 +145,8 @@ namespace Cyotek.Data.Nbt.Tests
       name = "tagname";
       value = new[]
               {
-                int.MinValue, int.MaxValue
+                int.MinValue,
+                int.MaxValue
               };
       expected = string.Format("{2}[IntArray: {0}={1} values]", name, value.Length, prefix);
       target = new TagIntArray(name, value);
@@ -165,7 +169,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       value = new[]
               {
-                int.MinValue, int.MaxValue
+                int.MinValue,
+                int.MaxValue
               };
       expected = "-2147483648, 2147483647";
       target = new TagIntArray(value);
@@ -203,7 +208,8 @@ namespace Cyotek.Data.Nbt.Tests
       target = new TagIntArray();
       expected = new[]
                  {
-                   int.MinValue, int.MaxValue
+                   int.MinValue,
+                   int.MaxValue
                  };
 
       // act

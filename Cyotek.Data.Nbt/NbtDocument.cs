@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using Cyotek.Data.Nbt.Serialization;
 
@@ -8,40 +7,19 @@ namespace Cyotek.Data.Nbt
 {
   public class NbtDocument
   {
-    #region Instance Fields
+    #region Fields
 
     private NbtFormat _format;
 
-    private Type _readerType;
-
-    private Type _writerType;
-
     #endregion
 
-    #region Static Constructors
-
-    static NbtDocument()
-    {
-      DefaultFormat = NbtFormat.Binary;
-    }
-
-    #endregion
-
-    #region Public Constructors
+    #region Constructors
 
     public NbtDocument()
-      : this(DefaultFormat)
-    { }
-
-    public NbtDocument(NbtFormat format)
     {
+      this.Format = NbtFormat.Binary;
       this.DocumentRoot = new TagCompound();
-      this.Format = format;
     }
-
-    public NbtDocument(string fileName)
-      : this(fileName, GetDocumentFormat(fileName))
-    { }
 
     public NbtDocument(TagCompound document)
       : this()
@@ -54,294 +32,11 @@ namespace Cyotek.Data.Nbt
       this.DocumentRoot = document;
     }
 
-    public NbtDocument(Type reader, Type writer)
-      : this(NbtFormat.Custom)
-    {
-      this.ReaderType = reader;
-      this.WriterType = writer;
-    }
-
-    public NbtDocument(string fileName, NbtFormat format)
-      : this(format)
-    {
-      if (string.IsNullOrEmpty(fileName))
-      {
-        throw new ArgumentNullException(nameof(fileName));
-      }
-
-      if (format == NbtFormat.Custom)
-      {
-        throw new ArgumentException("Invalid or unsupported file format.", nameof(format));
-      }
-
-      this.Load(fileName);
-    }
-
     #endregion
 
-    #region Public Class Properties
-
-    public static NbtFormat DefaultFormat { get; set; }
-
-    #endregion
-
-    #region Public Class Members
+    #region Static Methods
 
     public static NbtFormat GetDocumentFormat(string fileName)
-    {
-      if (string.IsNullOrEmpty(fileName))
-      {
-        throw new ArgumentNullException(nameof(fileName));
-      }
-
-      return new NbtDocument(NbtFormat.Custom).GetFormat(fileName);
-    }
-
-    public static string GetDocumentName(string fileName)
-    {
-      string result;
-
-      result = null;
-
-      if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
-      {
-        try
-        {
-          NbtDocument document;
-
-          document = new NbtDocument(GetDocumentFormat(fileName));
-          if (document.Format != NbtFormat.Custom)
-          {
-            ITagReader reader;
-            TagCompound root;
-
-            document.FileName = fileName;
-
-            reader = (ITagReader)Activator.CreateInstance(document.ReaderType);
-
-            using (Stream stream = File.OpenRead(fileName))
-            {
-              root = reader.ReadDocument(stream, ReadTagOptions.IgnoreValue);
-            }
-
-            result = root.Name;
-          }
-        }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch
-        // ReSharper restore EmptyGeneralCatchClause
-        {
-          // ignore errors
-        }
-      }
-
-      return result;
-    }
-
-    public static bool IsDeflateDocument(string fileName)
-    {
-      bool result;
-
-      try
-      {
-        using (Stream stream = File.OpenRead(fileName))
-        {
-          using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
-          {
-            result = ((TagType)decompressionStream.ReadByte() == TagType.Compound);
-          }
-        }
-      }
-      catch
-      {
-        result = false;
-      }
-
-      return result;
-    }
-
-    public static bool IsGzipDocument(string fileName)
-    {
-      bool result;
-
-      try
-      {
-        using (Stream stream = File.OpenRead(fileName))
-        {
-          using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
-          {
-            result = ((TagType)decompressionStream.ReadByte() == TagType.Compound);
-          }
-        }
-      }
-      catch
-      {
-        result = false;
-      }
-
-      return result;
-    }
-
-    public static bool IsNbtDocument(string fileName)
-    {
-      if (string.IsNullOrEmpty(fileName))
-      {
-        throw new ArgumentNullException(nameof(fileName));
-      }
-
-      return File.Exists(fileName) && GetDocumentFormat(fileName) != NbtFormat.Custom;
-    }
-
-    public static bool IsRawDocument(string fileName)
-    {
-      bool result;
-
-      try
-      {
-        using (Stream stream = File.OpenRead(fileName))
-        {
-          result = ((TagType)stream.ReadByte() == TagType.Compound);
-        }
-      }
-      catch
-      {
-        result = false;
-      }
-
-      return result;
-    }
-
-    public static bool IsXmlDocument(string fileName)
-    {
-      bool result;
-
-      try
-      {
-        using (Stream stream = File.OpenRead(fileName))
-        {
-          using (StreamReader reader = new StreamReader(stream))
-          {
-            char[] buffer;
-
-            buffer = new char[1];
-            reader.Read(buffer, 0, 1);
-
-            result = buffer[0] == '<';
-          }
-        }
-      }
-      catch
-      {
-        result = false;
-      }
-
-      return result;
-    }
-
-    public static NbtDocument LoadDocument(string fileName)
-    {
-      if (string.IsNullOrEmpty(fileName))
-      {
-        throw new ArgumentNullException(nameof(fileName));
-      }
-
-      return new NbtDocument(fileName);
-    }
-
-    #endregion
-
-    #region Overridden Methods
-
-    public override string ToString()
-    {
-      StringBuilder result;
-      int indent;
-
-      result = new StringBuilder();
-      indent = -1;
-
-      if (this.DocumentRoot != null)
-      {
-        this.WriteTagString(this.DocumentRoot, result, ref indent);
-      }
-
-      return result.ToString();
-    }
-
-    #endregion
-
-    #region Public Properties
-
-    public TagCompound DocumentRoot { get; set; }
-
-    public string FileName { get; set; }
-
-    public virtual NbtFormat Format
-    {
-      get { return _format; }
-      set
-      {
-        if (_format != value)
-        {
-          _format = value;
-
-          switch (_format)
-          {
-            case NbtFormat.Binary:
-              this.WriterType = typeof(BinaryTagWriter);
-              this.ReaderType = typeof(BinaryTagReader);
-              break;
-
-            case NbtFormat.Xml:
-              this.WriterType = typeof(XmlTagWriter);
-              this.ReaderType = typeof(XmlTagReader);
-              break;
-
-            case NbtFormat.Custom:
-              this.WriterType = null;
-              this.ReaderType = null;
-              break;
-
-            default:
-              throw new ArgumentException("Invalid format.", nameof(value));
-          }
-        }
-      }
-    }
-
-    public virtual Type ReaderType
-    {
-      get { return _readerType; }
-      set
-      {
-        if (value != null && !typeof(ITagReader).IsAssignableFrom(value))
-        {
-          throw new ArgumentException("Cannot assign ITagReader2 from specified type.", nameof(value));
-        }
-
-        _readerType = value;
-      }
-    }
-
-    public virtual Type WriterType
-    {
-      get { return _writerType; }
-      set
-      {
-        if (value != null && !typeof(ITagWriter).IsAssignableFrom(value))
-        {
-          throw new ArgumentException("Cannot assign ITagWriter2 from specified type.", nameof(value));
-        }
-
-        _writerType = value;
-      }
-    }
-
-    #endregion
-
-    #region Public Members
-
-    public virtual NbtFormat GetFormat(string fileName)
     {
       NbtFormat format;
 
@@ -355,21 +50,133 @@ namespace Cyotek.Data.Nbt
         throw new FileNotFoundException("Cannot find file.", fileName);
       }
 
-      if (IsGzipDocument(fileName) || IsDeflateDocument(fileName) || IsRawDocument(fileName))
+      using (Stream stream = File.OpenRead(fileName))
       {
-        format = NbtFormat.Binary;
-      }
-      else if (IsXmlDocument(fileName))
-      {
-        format = NbtFormat.Xml;
-      }
-      else
-      {
-        format = NbtFormat.Custom;
+        if (IsNbtDocument<BinaryTagReader>(stream))
+        {
+          format = NbtFormat.Binary;
+        }
+        else
+        {
+          stream.Seek(0, SeekOrigin.Begin);
+
+          format = IsNbtDocument<XmlTagReader>(stream) ? NbtFormat.Xml : NbtFormat.Unknown;
+        }
       }
 
       return format;
     }
+
+    public static string GetDocumentName(string fileName)
+    {
+      string result;
+
+      if (string.IsNullOrEmpty(fileName))
+      {
+        throw new ArgumentNullException(nameof(fileName));
+      }
+
+      if (!File.Exists(fileName))
+      {
+        throw new FileNotFoundException("Cannot find file.", fileName);
+      }
+
+      using (Stream stream = File.OpenRead(fileName))
+      {
+        result = GetDocumentName<BinaryTagReader>(stream);
+
+        // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+        if (result == null)
+        {
+          stream.Seek(0, SeekOrigin.Begin);
+          result = GetDocumentName<XmlTagReader>(stream);
+        }
+      }
+
+      return result;
+    }
+
+    public static bool IsNbtDocument(string fileName)
+    {
+      return GetDocumentFormat(fileName) != NbtFormat.Unknown;
+    }
+
+    public static NbtDocument LoadFromFile(string fileName)
+    {
+      NbtDocument document;
+
+      document = new NbtDocument();
+      document.Load(fileName);
+
+      return document;
+    }
+
+    private static string GetDocumentName<T>(Stream stream) where T : ITagReader, new()
+    {
+      ITagReader reader;
+      string result;
+
+      reader = new T();
+
+      if (reader.IsNbtDocument(stream))
+      {
+        TagCompound document;
+
+        document = reader.ReadDocument(stream, ReadTagOptions.IgnoreValue);
+
+        result = document?.Name;
+      }
+      else
+      {
+        result = null;
+      }
+
+      return result;
+    }
+
+    private static bool IsNbtDocument<T>(Stream stream) where T : ITagReader, new()
+    {
+      ITagReader reader;
+      bool result;
+
+      reader = new T();
+
+      result = reader.IsNbtDocument(stream);
+
+      return result;
+    }
+
+    #endregion
+
+    #region Properties
+
+    public TagCompound DocumentRoot { get; set; }
+
+    public string FileName { get; set; }
+
+    public virtual NbtFormat Format
+    {
+      get { return _format; }
+      set
+      {
+        if (_format != value)
+        {
+          switch (value)
+          {
+            case NbtFormat.Binary:
+            case NbtFormat.Xml:
+              _format = value;
+              break;
+            default:
+              throw new ArgumentOutOfRangeException(nameof(value), value, null);
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #region Methods
 
     public void Load()
     {
@@ -386,20 +193,25 @@ namespace Cyotek.Data.Nbt
         throw new ArgumentNullException(nameof(fileName));
       }
 
-      format = this.GetFormat(fileName);
-      if (format == NbtFormat.Custom && this.ReaderType == null)
-      {
-        throw new ArgumentException("Cannot load custom formatted documents when appropriate reader not specified.");
-      }
+      format = GetDocumentFormat(fileName);
 
-      this.Format = format;
-      reader = (ITagReader)Activator.CreateInstance(this.ReaderType);
+      switch (format)
+      {
+        case NbtFormat.Binary:
+          reader = new BinaryTagReader();
+          break;
+        case NbtFormat.Xml:
+          reader = new XmlTagReader();
+          break;
+        default:
+          throw new InvalidDataException("Unrecognized or unsupported file format.");
+      }
 
       using (Stream stream = File.OpenRead(fileName))
       {
         this.DocumentRoot = reader.ReadDocument(stream);
       }
-
+      this.Format = format;
       this.FileName = fileName;
     }
 
@@ -432,7 +244,17 @@ namespace Cyotek.Data.Nbt
         throw new ArgumentNullException(nameof(fileName));
       }
 
-      writer = (ITagWriter)Activator.CreateInstance(this.WriterType);
+      switch (_format)
+      {
+        case NbtFormat.Binary:
+          writer = new BinaryTagWriter();
+          break;
+        case NbtFormat.Xml:
+          writer = new XmlTagWriter();
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
 
       using (Stream stream = File.Create(fileName))
       {
@@ -442,9 +264,21 @@ namespace Cyotek.Data.Nbt
       this.FileName = fileName;
     }
 
-    #endregion
+    public override string ToString()
+    {
+      StringBuilder result;
+      int indent;
 
-    #region Private Members
+      result = new StringBuilder();
+      indent = -1;
+
+      if (this.DocumentRoot != null)
+      {
+        this.WriteTagString(this.DocumentRoot, result, ref indent);
+      }
+
+      return result.ToString();
+    }
 
     private void WriteTagString(ITag tag, StringBuilder result, ref int indent)
     {
@@ -455,7 +289,8 @@ namespace Cyotek.Data.Nbt
 
       result.Append(new string(' ', indent * 2));
 
-      result.Append(tag.Type.ToString().ToLowerInvariant());
+      result.Append(tag.Type.ToString().
+                        ToLowerInvariant());
 
       parentCollection = tag.Parent as ICollectionTag;
       if (parentCollection != null && parentCollection.IsList)

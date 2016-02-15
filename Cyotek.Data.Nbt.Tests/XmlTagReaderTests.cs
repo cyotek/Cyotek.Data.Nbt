@@ -7,7 +7,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class XmlTagReaderTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void LoadTest()
@@ -17,7 +17,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagCompound expected;
       TagCompound actual;
 
-      expected = this.GetComplexData();
+      expected = this.CreateComplexData();
       target = new XmlTagReader();
 
       // act
@@ -37,7 +37,7 @@ namespace Cyotek.Data.Nbt.Tests
       NbtDocument document;
 
       // act
-      document = NbtDocument.LoadDocument(Path.Combine(this.DataPath, "project.xml"));
+      document = NbtDocument.LoadFromFile(Path.Combine(this.DataPath, "project.xml"));
 
       // assert
       Assert.AreEqual(NbtFormat.Xml, document.Format);

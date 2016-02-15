@@ -2,7 +2,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagEnd : Tag
   {
-    #region Overridden Properties
+    #region Properties
 
     public override string Name
     {
@@ -23,7 +23,7 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Methods
+    #region Methods
 
     public override string ToString(string indentString)
     {

@@ -7,7 +7,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class XmlTagWriterTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void SaveTest()
@@ -16,7 +16,7 @@ namespace Cyotek.Data.Nbt.Tests
       ITagWriter writer;
       TagCompound target;
 
-      target = this.GetComplexData();
+      target = this.CreateComplexData();
       writer = new XmlTagWriter();
 
       // act

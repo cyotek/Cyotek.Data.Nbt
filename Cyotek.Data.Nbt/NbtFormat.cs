@@ -2,7 +2,7 @@
 {
   public enum NbtFormat
   {
-    Custom,
+    Unknown,
 
     Binary,
 

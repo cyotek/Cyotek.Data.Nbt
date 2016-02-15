@@ -7,7 +7,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagDictionary : KeyedCollection<string, ITag>
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagDictionary()
     { }
@@ -25,85 +25,13 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Methods
-
-    /// <summary>
-    /// Returns a string that represents the current object.
-    /// </summary>
-    /// <returns>
-    /// A string that represents the current object.
-    /// </returns>
-    public override string ToString()
-    {
-      StringBuilder sb;
-
-      sb = new StringBuilder();
-
-      sb.Append('[');
-
-      foreach (ITag tag in this)
-      {
-        if (sb.Length > 1)
-        {
-          sb.Append(',').Append(' ');
-        }
-
-        sb.Append(tag.ToValueString());
-      }
-
-      sb.Append(']');
-
-      return sb.ToString();
-    }
-
-    protected override void ClearItems()
-    {
-      foreach (ITag item in this)
-      {
-        item.Parent = null;
-      }
-
-      base.ClearItems();
-    }
-
-    protected override string GetKeyForItem(ITag item)
-    {
-      return item.Name;
-    }
-
-    protected override void InsertItem(int index, ITag item)
-    {
-      item.Parent = this.Owner;
-
-      base.InsertItem(index, item);
-    }
-
-    protected override void RemoveItem(int index)
-    {
-      ITag item;
-
-      item = this[index];
-      item.Parent = null;
-
-      base.RemoveItem(index);
-    }
-
-    protected override void SetItem(int index, ITag item)
-    {
-      item.Parent = this.Owner;
-
-      base.SetItem(index, item);
-    }
-
-    #endregion
-
-    #region Public Properties
+    #region Properties
 
     public ITag Owner { get; set; }
 
     #endregion
 
-    #region Public Members
+    #region Methods
 
     public ITag Add(string name, string value)
     {
@@ -329,6 +257,36 @@ namespace Cyotek.Data.Nbt
       }
     }
 
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>
+    /// A string that represents the current object.
+    /// </returns>
+    public override string ToString()
+    {
+      StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      sb.Append('[');
+
+      foreach (ITag tag in this)
+      {
+        if (sb.Length > 1)
+        {
+          sb.Append(',').
+             Append(' ');
+        }
+
+        sb.Append(tag.ToValueString());
+      }
+
+      sb.Append(']');
+
+      return sb.ToString();
+    }
+
     public bool TryGetValue(string key, out ITag value)
     {
       bool result;
@@ -346,9 +304,44 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    #endregion
+    protected override void ClearItems()
+    {
+      foreach (ITag item in this)
+      {
+        item.Parent = null;
+      }
 
-    #region Internal Members
+      base.ClearItems();
+    }
+
+    protected override string GetKeyForItem(ITag item)
+    {
+      return item.Name;
+    }
+
+    protected override void InsertItem(int index, ITag item)
+    {
+      item.Parent = this.Owner;
+
+      base.InsertItem(index, item);
+    }
+
+    protected override void RemoveItem(int index)
+    {
+      ITag item;
+
+      item = this[index];
+      item.Parent = null;
+
+      base.RemoveItem(index);
+    }
+
+    protected override void SetItem(int index, ITag item)
+    {
+      item.Parent = this.Owner;
+
+      base.SetItem(index, item);
+    }
 
     internal void ChangeKey(ITag item, string newKey)
     {

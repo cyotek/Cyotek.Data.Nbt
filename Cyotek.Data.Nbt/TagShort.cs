@@ -2,7 +2,7 @@ namespace Cyotek.Data.Nbt
 {
   public class TagShort : Tag
   {
-    #region Public Constructors
+    #region Constructors
 
     public TagShort()
       : this(string.Empty, 0)
@@ -24,30 +24,26 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Overridden Properties
+    #region Properties
 
     public override TagType Type
     {
       get { return TagType.Short; }
     }
 
-    #endregion
-
-    #region Overridden Methods
-
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[Short: {this.Name}={this.Value}]";
-    }
-
-    #endregion
-
-    #region Public Properties
-
     public new short Value
     {
       get { return (short)base.Value; }
       set { base.Value = value; }
+    }
+
+    #endregion
+
+    #region Methods
+
+    public override string ToString(string indentString)
+    {
+      return $"{indentString}[Short: {this.Name}={this.Value}]";
     }
 
     #endregion

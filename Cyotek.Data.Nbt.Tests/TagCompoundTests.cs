@@ -5,7 +5,7 @@ namespace Cyotek.Data.Nbt.Tests
   [TestFixture]
   public class TagCompoundTests : TestBase
   {
-    #region Tests
+    #region  Tests
 
     [Test]
     public void ConstructorTest()
