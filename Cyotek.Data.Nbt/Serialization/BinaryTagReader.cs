@@ -37,7 +37,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       return this.ReadDocument(stream, ReadTagOptions.None);
     }
-    public virtual TagCompound ReadDocument(Stream stream,ReadTagOptions options)
+    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
     {
       TagCompound tag;
 
@@ -49,63 +49,24 @@ namespace Cyotek.Data.Nbt.Serialization
           tag = (TagCompound)this.ReadTag(options);
         }
       }
-      else
+      else if (stream.IsDeflateCompressed())
+      {
+        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
+        {
+          _stream = decompressionStream;
+          tag = (TagCompound)this.ReadTag(options);
+        }
+      }
+      else if (stream.PeekNextByte() == (int)TagType.Compound)
       {
         _stream = stream;
         tag = (TagCompound)this.ReadTag(options);
       }
+      else
+      {
+        throw new InvalidDataException("Source stream does not contain a NBT document.");
+      }
 
-      //BinaryTagReader reader;
-
-
-      ////Check if gzipped stream
-      //try
-      //{
-      //    using (GZipStream gzipStream = new GZipStream(stream, CompressionMode.Decompress))
-      //    {
-      //      reader = new BinaryTagReader2(gzipStream, options);
-      //      tag = (TagCompound)reader.Read();
-      //    }
-      //  }
-      //}
-      //catch (Exception)
-      //{
-      //  tag = null;
-      //}
-
-      //if (tag != null)
-      //{
-      //  return tag;
-      //}
-
-      ////Try Deflate stream
-      //try
-      //{
-      //  using (FileStream input = File.OpenRead(fileName))
-      //  {
-      //    using (DeflateStream deflateStream = new DeflateStream(input, CompressionMode.Decompress))
-      //    {
-      //      reader = new BinaryTagReader(deflateStream, options);
-      //      tag = (TagCompound)reader.Read();
-      //    }
-      //  }
-      //}
-      //catch (Exception)
-      //{
-      //  tag = null;
-      //}
-
-      //if (tag != null)
-      //{
-      //  return tag;
-      //}
-
-      ////Assume uncompressed stream
-      //using (FileStream input = File.OpenRead(fileName))
-      //{
-      //  reader = new BinaryTagReader(input, options);
-      //  tag = (TagCompound)reader.Read();
-      //}
 
       return tag;
     }

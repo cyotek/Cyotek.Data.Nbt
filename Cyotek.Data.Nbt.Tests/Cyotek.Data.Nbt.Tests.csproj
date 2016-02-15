@@ -49,6 +49,7 @@
       <Link>BitHelper.cs</Link>
     </Compile>
     <Compile Include="AnvilRegionTests.cs" />
+    <Compile Include="BinaryTagReaderTests.cs" />
     <Compile Include="BinaryTagWriterTests.cs" />
     <Compile Include="NbtDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
