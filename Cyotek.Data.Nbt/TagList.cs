@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagList : Tag, ICollectionTag
   {
     #region Public Constructors

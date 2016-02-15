@@ -3,7 +3,6 @@ using System.Linq;
 
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.TagIntArrayEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagIntArray : Tag
   {
     #region Public Constructors

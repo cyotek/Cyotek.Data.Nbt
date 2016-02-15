@@ -1,6 +1,5 @@
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.TagNumberEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagDouble : Tag
   {
     #region Public Constructors

@@ -4,7 +4,6 @@ using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.NtbNullEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagCompound : Tag, ICollectionTag
   {
     #region Constants

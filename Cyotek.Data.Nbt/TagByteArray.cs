@@ -2,7 +2,6 @@ using System.Linq;
 
 namespace Cyotek.Data.Nbt
 {
-  [TagEditor("Cyotek.Windows.Forms.Nbt.TagByteArrayEditor, Cyotek.Windows.Forms.Nbt")]
   public class TagByteArray : Tag
   {
     #region Public Constructors
