@@ -37,7 +37,7 @@ namespace Cyotek.Data.Nbt.Tests
       NbtDocument document;
 
       // act
-      document = NbtDocument.LoadFromFile(Path.Combine(this.DataPath, "project.xml"));
+      document = NbtDocument.LoadDocument(Path.Combine(this.DataPath, "project.xml"));
 
       // assert
       Assert.AreEqual(NbtFormat.Xml, document.Format);

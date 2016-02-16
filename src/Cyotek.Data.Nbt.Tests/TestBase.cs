@@ -1172,13 +1172,13 @@ namespace Cyotek.Data.Nbt.Tests
 
     protected TagCompound GetComplexData()
     {
-      return NbtDocument.LoadFromFile(this.ComplexDataFileName).
+      return NbtDocument.LoadDocument(this.ComplexDataFileName).
                          DocumentRoot;
     }
 
     protected TagCompound GetSimpleData()
     {
-      return NbtDocument.LoadFromFile(this.SimpleDataFileName).
+      return NbtDocument.LoadDocument(this.SimpleDataFileName).
                          DocumentRoot;
     }
 

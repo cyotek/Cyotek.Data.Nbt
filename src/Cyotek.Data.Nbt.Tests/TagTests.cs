@@ -223,7 +223,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] destination;
 
       fileName = this.ComplexDataFileName;
-      target = NbtDocument.LoadFromFile(fileName).
+      target = NbtDocument.LoadDocument(fileName).
                            DocumentRoot;
 
       using (FileStream file = File.OpenRead(fileName))

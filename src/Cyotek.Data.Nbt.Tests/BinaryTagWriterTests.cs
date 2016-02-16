@@ -26,7 +26,7 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(tag, NbtDocument.LoadFromFile(this.OutputFileName).
+      this.CompareTags(tag, NbtDocument.LoadDocument(this.OutputFileName).
                                         DocumentRoot);
     }
 
@@ -47,7 +47,7 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(tag, NbtDocument.LoadFromFile(this.OutputFileName).
+      this.CompareTags(tag, NbtDocument.LoadDocument(this.OutputFileName).
                                         DocumentRoot);
       FileAssert.AreEqual(this.UncompressedComplexDataFileName, this.OutputFileName);
     }

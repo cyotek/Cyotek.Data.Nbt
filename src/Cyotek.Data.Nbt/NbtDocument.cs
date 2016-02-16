@@ -125,12 +125,22 @@ namespace Cyotek.Data.Nbt
       return GetDocumentFormat(stream) != NbtFormat.Unknown;
     }
 
-    public static NbtDocument LoadFromFile(string fileName)
+    public static NbtDocument LoadDocument(string fileName)
     {
       NbtDocument document;
 
       document = new NbtDocument();
       document.Load(fileName);
+
+      return document;
+    }
+
+    public static NbtDocument LoadDocument(Stream stream)
+    {
+      NbtDocument document;
+
+      document = new NbtDocument();
+      document.Load(stream);
 
       return document;
     }

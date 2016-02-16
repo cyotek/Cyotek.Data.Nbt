@@ -58,7 +58,7 @@ namespace Cyotek.Data.Nbt.Tests
       try
       {
         target.Save(fileName);
-        reloaded = NbtDocument.LoadFromFile(fileName);
+        reloaded = NbtDocument.LoadDocument(fileName);
       }
       finally
       {
@@ -94,8 +94,8 @@ namespace Cyotek.Data.Nbt.Tests
         source.Format = NbtFormat.Xml;
         source.Save(fileName2);
 
-        target1 = NbtDocument.LoadFromFile(fileName1);
-        target2 = NbtDocument.LoadFromFile(fileName2);
+        target1 = NbtDocument.LoadDocument(fileName1);
+        target2 = NbtDocument.LoadDocument(fileName2);
 
         file1IsBinary = (target1.Format == NbtFormat.Binary);
         file2IsXml = (target2.Format == NbtFormat.Xml);
@@ -648,7 +648,7 @@ namespace Cyotek.Data.Nbt.Tests
       try
       {
         target1.Save();
-        target2 = NbtDocument.LoadFromFile(fileName);
+        target2 = NbtDocument.LoadDocument(fileName);
       }
       finally
       {
@@ -674,7 +674,7 @@ namespace Cyotek.Data.Nbt.Tests
       try
       {
         target1.Save(fileName);
-        target2 = NbtDocument.LoadFromFile(fileName);
+        target2 = NbtDocument.LoadDocument(fileName);
       }
       finally
       {
