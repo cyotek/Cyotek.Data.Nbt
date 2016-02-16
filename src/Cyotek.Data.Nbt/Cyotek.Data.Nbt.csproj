@@ -39,7 +39,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\res\Cyotek.Data.Nbt.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\res\Cyotek.Data.Nbt.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -84,7 +84,7 @@
     <Compile Include="TagType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\res\Cyotek.Data.Nbt.snk">
+    <None Include="..\..\res\Cyotek.Data.Nbt.snk">
       <Link>Cyotek.Data.Nbt.snk</Link>
     </None>
     <None Include="Cyotek.Data.Nbt.nuspec" />
