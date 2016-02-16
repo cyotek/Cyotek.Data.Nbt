@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Cyotek.Data.Nbt</id>
-    <version>1.4.5</version>
+    <version>2.0.0</version>
     <title>Cyotek.Data.Nbt</title>
-    <authors>Cyotek</authors>
+    <authors>Cyotek, headhunter45</authors>
     <owners>Cyotek</owners>
-    <licenseUrl>http://creativecommons.org/licenses/by-sa/2.0/</licenseUrl>
+    <licenseUrl>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</licenseUrl>
     <projectUrl>https://github.com/cyotek/Cyotek.Data.Nbt</projectUrl>
-    <iconUrl>http://static.cyotek.com/files/packageicons/imagebox-32x32.png</iconUrl>
+    <iconUrl>http://static.cyotek.com/files/packageicons/cyotek.data.nbt-32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data. This is currently the format that Minecraft uses for player and region data.
