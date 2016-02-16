@@ -13,20 +13,26 @@ namespace Cyotek.Data.Nbt.Tests
     public void SaveTest()
     {
       // arrange
-      ITagWriter writer;
-      TagCompound target;
+      ITagWriter target;
+      TagCompound expected;
+      TagCompound actual;
 
-      target = this.CreateComplexData();
-      writer = new XmlTagWriter();
+      expected = this.CreateComplexData();
+
+      target = new XmlTagWriter();
 
       // act
-      using (Stream stream = File.Create(this.OutputFileName))
+      using (Stream stream = new MemoryStream())
       {
-        writer.WriteDocument(stream, target);
+        target.WriteDocument(stream, expected);
+
+        stream.Seek(0, SeekOrigin.Begin);
+
+        actual = new XmlTagReader().ReadDocument(stream);
       }
 
       // assert
-      FileAssert.AreEqual(this.ComplexXmlDataFileName, this.OutputFileName);
+      this.CompareTags(expected, actual);
     }
 
     #endregion
