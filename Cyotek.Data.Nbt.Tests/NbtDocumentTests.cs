@@ -178,6 +178,46 @@ namespace Cyotek.Data.Nbt.Tests
 
     [Test]
     [ExpectedException(typeof(FileNotFoundException))]
+    public void GetDocumentFormat_should_throw_exception_if_file_not_found()
+    {
+      // arrange
+      string fileName;
+
+      fileName = Guid.NewGuid().
+                      ToString();
+
+      // act
+      NbtDocument.GetDocumentFormat(fileName);
+
+      // assert
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void GetDocumentFormat_should_throw_exception_with_null_filename()
+    {
+      // arrange
+
+      // act
+      NbtDocument.GetDocumentFormat((string)null);
+
+      // assert
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void GetDocumentFormat_should_throw_exception_with_null_stream()
+    {
+      // arrange
+
+      // act
+      NbtDocument.GetDocumentFormat((Stream)null);
+
+      // assert
+    }
+
+    [Test]
+    [ExpectedException(typeof(FileNotFoundException))]
     public void GetDocumentName_should_throw_exception_if_file_not_found()
     {
       // arrange
@@ -323,34 +363,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(FileNotFoundException))]
-    public void GetFormatMissingFileTest()
-    {
-      // arrange
-      string fileName;
-
-      fileName = Guid.NewGuid().
-                      ToString();
-
-      // act
-      NbtDocument.GetDocumentFormat(fileName);
-
-      // assert
-    }
-
-    [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void GetFormatNullTest()
-    {
-      // arrange
-
-      // act
-      NbtDocument.GetDocumentFormat(null);
-
-      // assert
-    }
-
-    [Test]
     public void GetFormatXmlTest()
     {
       // arrange
@@ -384,6 +396,129 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void IsNbtDocument_should_return_false_for_unknown_file()
+    {
+      // arrange
+      bool actual;
+      string fileName;
+
+      fileName = this.BadFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      Assert.IsFalse(actual);
+    }
+
+    [Test]
+    public void IsNbtDocument_should_return_true_for_deflate_binary_file()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.DeflateComplexDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void IsNbtDocument_should_return_true_for_gzip_binary_file()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.ComplexDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void IsNbtDocument_should_return_true_for_gzip_binary_stream()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.ComplexDataFileName;
+
+      // act
+      using (Stream stream = File.OpenRead(fileName))
+      {
+        actual = NbtDocument.IsNbtDocument(stream);
+      }
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void IsNbtDocument_should_return_true_for_uncompressed_binary_file()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.UncompressedComplexDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void IsNbtDocument_should_return_true_for_xml_file()
+    {
+      // arrange
+      string fileName;
+      bool actual;
+
+      fileName = this.ComplexXmlDataFileName;
+
+      // act
+      actual = NbtDocument.IsNbtDocument(fileName);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void IsNbtDocument_should_throw_exception_for_null_filename()
+    {
+      // arrange
+
+      // act
+      NbtDocument.IsNbtDocument((string)null);
+
+      // assert
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void IsNbtDocument_should_throw_exception_for_null_stream()
+    {
+      // arrange
+
+      // act
+      NbtDocument.IsNbtDocument((string)null);
+
+      // assert
+    }
+
+    [Test]
     [ExpectedException(typeof(FileNotFoundException))]
     public void IsNbtDocument_should_throw_exception_if_file_is_missing()
     {
@@ -400,95 +535,62 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void IsNbtDocumentBinaryTest()
+    [ExpectedException(typeof(InvalidDataException))]
+    public void Load_should_throw_exception_for_invalid_file()
     {
       // arrange
-      string fileName;
-      bool actual;
-
-      fileName = this.UncompressedComplexDataFileName;
-
-      // act
-      actual = NbtDocument.IsNbtDocument(fileName);
-
-      // assert
-      Assert.IsTrue(actual);
-    }
-
-    [Test]
-    public void IsNbtDocumentDeflateBinaryTest()
-    {
-      // arrange
-      string fileName;
-      bool actual;
-
-      fileName = this.DeflateComplexDataFileName;
-
-      // act
-      actual = NbtDocument.IsNbtDocument(fileName);
-
-      // assert
-      Assert.IsTrue(actual);
-    }
-
-    [Test]
-    public void IsNbtDocumentGzipBinaryTest()
-    {
-      // arrange
-      string fileName;
-      bool actual;
-
-      fileName = this.ComplexDataFileName;
-
-      // act
-      actual = NbtDocument.IsNbtDocument(fileName);
-
-      // assert
-      Assert.IsTrue(actual);
-    }
-
-    [Test]
-    public void IsNbtDocumentInvalidTest()
-    {
-      // arrange
-      bool actual;
+      NbtDocument target;
       string fileName;
 
       fileName = this.BadFileName;
 
-      // act
-      actual = NbtDocument.IsNbtDocument(fileName);
+      target = new NbtDocument();
 
-      // assert
-      Assert.IsFalse(actual);
+      // act
+      target.Load(fileName);
+    }
+
+    [Test]
+    [ExpectedException(typeof(FileNotFoundException))]
+    public void Load_should_throw_exception_for_missing_file()
+    {
+      // arrange
+      NbtDocument target;
+      string fileName;
+
+      fileName = Guid.NewGuid().
+                      ToString("N");
+
+      target = new NbtDocument();
+
+      // act
+      target.Load(fileName);
     }
 
     [Test]
     [ExpectedException(typeof(ArgumentNullException))]
-    public void IsNbtDocumentNullTest()
+    public void Load_should_throw_exception_for_null_filename()
     {
       // arrange
+      NbtDocument target;
+
+      target = new NbtDocument();
 
       // act
-      NbtDocument.IsNbtDocument(null);
-
-      // assert
+      target.Load((string)null);
     }
 
     [Test]
-    public void IsNbtDocumentXmlTest()
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void Load_should_throw_exception_for_null_stream()
     {
       // arrange
-      string fileName;
-      bool actual;
+      NbtDocument target;
 
-      fileName = this.ComplexXmlDataFileName;
+      target = new NbtDocument();
 
       // act
-      actual = NbtDocument.IsNbtDocument(fileName);
-
-      // assert
-      Assert.IsTrue(actual);
+      target.Load((Stream)null);
     }
 
     [Test]

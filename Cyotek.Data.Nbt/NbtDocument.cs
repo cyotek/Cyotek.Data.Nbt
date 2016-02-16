@@ -52,16 +52,35 @@ namespace Cyotek.Data.Nbt
 
       using (Stream stream = File.OpenRead(fileName))
       {
-        if (IsNbtDocument<BinaryTagReader>(stream))
-        {
-          format = NbtFormat.Binary;
-        }
-        else
-        {
-          stream.Seek(0, SeekOrigin.Begin);
+        format = GetDocumentFormat(stream);
+      }
 
-          format = IsNbtDocument<XmlTagReader>(stream) ? NbtFormat.Xml : NbtFormat.Unknown;
-        }
+      return format;
+    }
+
+    public static NbtFormat GetDocumentFormat(Stream stream)
+    {
+      NbtFormat format;
+
+      if (stream == null)
+      {
+        throw new ArgumentNullException(nameof(stream));
+      }
+
+      if (!stream.CanSeek)
+      {
+        throw new InvalidDataException("Stream is not seekable.");
+      }
+
+      if (IsNbtDocument<BinaryTagReader>(stream))
+      {
+        format = NbtFormat.Binary;
+      }
+      else
+      {
+        stream.Seek(0, SeekOrigin.Begin);
+
+        format = IsNbtDocument<XmlTagReader>(stream) ? NbtFormat.Xml : NbtFormat.Unknown;
       }
 
       return format;
@@ -99,6 +118,11 @@ namespace Cyotek.Data.Nbt
     public static bool IsNbtDocument(string fileName)
     {
       return GetDocumentFormat(fileName) != NbtFormat.Unknown;
+    }
+
+    public static bool IsNbtDocument(Stream stream)
+    {
+      return GetDocumentFormat(stream) != NbtFormat.Unknown;
     }
 
     public static NbtDocument LoadFromFile(string fileName)
@@ -154,7 +178,7 @@ namespace Cyotek.Data.Nbt
 
     public string FileName { get; set; }
 
-    public virtual NbtFormat Format
+    public NbtFormat Format
     {
       get { return _format; }
       set
@@ -185,15 +209,35 @@ namespace Cyotek.Data.Nbt
 
     public void Load(string fileName)
     {
-      ITagReader reader;
-      NbtFormat format;
-
       if (string.IsNullOrEmpty(fileName))
       {
         throw new ArgumentNullException(nameof(fileName));
       }
 
-      format = GetDocumentFormat(fileName);
+      if (!File.Exists(fileName))
+      {
+        throw new FileNotFoundException("File not found.", fileName);
+      }
+
+      using (Stream stream = File.OpenRead(fileName))
+      {
+        this.Load(stream);
+      }
+
+      this.FileName = fileName;
+    }
+
+    public virtual void Load(Stream stream)
+    {
+      ITagReader reader;
+      NbtFormat format;
+
+      if (stream == null)
+      {
+        throw new ArgumentNullException(nameof(stream));
+      }
+
+      format = GetDocumentFormat(stream);
 
       switch (format)
       {
@@ -207,12 +251,8 @@ namespace Cyotek.Data.Nbt
           throw new InvalidDataException("Unrecognized or unsupported file format.");
       }
 
-      using (Stream stream = File.OpenRead(fileName))
-      {
-        this.DocumentRoot = reader.ReadDocument(stream);
-      }
+      this.DocumentRoot = reader.ReadDocument(stream);
       this.Format = format;
-      this.FileName = fileName;
     }
 
     public ITag Query(string query)
@@ -235,13 +275,33 @@ namespace Cyotek.Data.Nbt
       this.Save(fileName, CompressionOption.Auto);
     }
 
-    public void Save(string fileName, CompressionOption compression)
+    public void Save(Stream stream)
     {
-      ITagWriter writer;
+      this.Save(stream, CompressionOption.Auto);
+    }
 
+    public virtual void Save(string fileName, CompressionOption compression)
+    {
       if (string.IsNullOrEmpty(fileName))
       {
         throw new ArgumentNullException(nameof(fileName));
+      }
+
+      using (Stream stream = File.Create(fileName))
+      {
+        this.Save(stream, compression);
+      }
+
+      this.FileName = fileName;
+    }
+
+    public virtual void Save(Stream stream, CompressionOption compression)
+    {
+      ITagWriter writer;
+
+      if (stream == null)
+      {
+        throw new ArgumentNullException(nameof(stream));
       }
 
       switch (_format)
@@ -256,12 +316,7 @@ namespace Cyotek.Data.Nbt
           throw new ArgumentOutOfRangeException();
       }
 
-      using (Stream stream = File.Create(fileName))
-      {
-        writer.WriteDocument(stream, this.DocumentRoot, compression);
-      }
-
-      this.FileName = fileName;
+      writer.WriteDocument(stream, this.DocumentRoot, compression);
     }
 
     public override string ToString()
