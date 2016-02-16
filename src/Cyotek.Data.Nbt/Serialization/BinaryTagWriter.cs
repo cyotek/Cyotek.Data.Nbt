@@ -88,7 +88,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       if (compression != CompressionOption.Off)
       {
-        using (Stream compressedStream = new GZipStream(stream, CompressionMode.Compress))
+        using (Stream compressedStream = new GZipStream(stream, CompressionMode.Compress, true))
         {
           _stream = compressedStream;
           this.WriteTag(tag, WriteTagOptions.None);

@@ -1,12 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   public class TestBase
   {
+    protected void WriteDocumentTest<T, T2>(CompressionOption compression)
+      where T : ITagWriter, new()
+      where T2 : ITagReader, new()
+    {
+      // arrange
+      ITagWriter target;
+      TagCompound expected;
+      TagCompound actual;
+
+      expected = this.CreateComplexData();
+
+      target = new T();
+
+      // act
+      using (Stream stream = new MemoryStream())
+      {
+        target.WriteDocument(stream, expected, compression);
+
+        stream.Seek(0, SeekOrigin.Begin);
+
+        actual = new T2().ReadDocument(stream);
+      }
+
+      // assert
+      this.CompareTags(expected, actual);
+    }
+
     #region Constructors
 
     protected TestBase()
@@ -49,8 +77,6 @@ namespace Cyotek.Data.Nbt.Tests
     {
       get { return Path.Combine(this.DataPath, "complextest.def"); }
     }
-
-    protected string OutputFileName { get; set; }
 
     protected string SimpleDataFileName
     {
@@ -1194,21 +1220,6 @@ namespace Cyotek.Data.Nbt.Tests
       return Path.Combine(path, fileName);
     }
 
-    [SetUp]
-    protected void SetUp()
-    {
-      this.OutputFileName = Path.Combine(this.DataPath, Path.ChangeExtension(Guid.NewGuid().
-                                                                                  ToString("N"), ".tmp"));
-    }
-
-    [TearDown]
-    protected void TearDown()
-    {
-      if (!string.IsNullOrEmpty(this.OutputFileName) && File.Exists(this.OutputFileName))
-      {
-        File.Delete(this.OutputFileName);
-      }
-    }
 
     #endregion
   }

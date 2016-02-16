@@ -10,46 +10,21 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
-    public void SaveCompressedTest()
+    public void WriteDocument_should_accept_forced_compression()
     {
-      // arrange
-      ITagWriter writer;
-      TagCompound tag;
-
-      tag = this.CreateComplexData();
-      writer = new BinaryTagWriter();
-
-      // act
-      using (Stream stream = File.Create(this.OutputFileName))
-      {
-        writer.WriteDocument(stream, tag, CompressionOption.On);
-      }
-
-      // assert
-      this.CompareTags(tag, NbtDocument.LoadDocument(this.OutputFileName).
-                                        DocumentRoot);
+      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.On);
     }
 
     [Test]
-    public void SaveUncompressedTest()
+    public void WriteDocument_should_accept_no_compression()
     {
-      // arrange
-      ITagWriter writer;
-      TagCompound tag;
+      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.Off);
+    }
 
-      tag = this.CreateComplexData();
-      writer = new BinaryTagWriter();
-
-      // act
-      using (Stream stream = File.Create(this.OutputFileName))
-      {
-        writer.WriteDocument(stream, tag, CompressionOption.Off);
-      }
-
-      // assert
-      this.CompareTags(tag, NbtDocument.LoadDocument(this.OutputFileName).
-                                        DocumentRoot);
-      FileAssert.AreEqual(this.UncompressedComplexDataFileName, this.OutputFileName);
+    [Test]
+    public void WriteDocument_should_accept_auto_compression()
+    {
+      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.Auto);
     }
 
     [Test]

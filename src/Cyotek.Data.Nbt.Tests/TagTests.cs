@@ -214,39 +214,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void SaveBinaryTest()
-    {
-      // arrange
-      TagCompound target;
-      string fileName;
-      byte[] source;
-      byte[] destination;
-
-      fileName = this.ComplexDataFileName;
-      target = NbtDocument.LoadDocument(fileName).
-                           DocumentRoot;
-
-      using (FileStream file = File.OpenRead(fileName))
-      {
-        source = this.Decompress(file);
-      }
-
-      // act
-      using (MemoryStream stream = new MemoryStream())
-      {
-        ITagWriter writer;
-
-        writer = new BinaryTagWriter();
-        writer.WriteDocument(stream, target, CompressionOption.Off);
-        destination = stream.ToArray();
-      }
-      File.WriteAllBytes(this.OutputFileName, destination);
-
-      // assert
-      CollectionAssert.AreEqual(source, destination);
-    }
-
-    [Test]
     public void TestLoadComplexNbt()
     {
       ITag tag;

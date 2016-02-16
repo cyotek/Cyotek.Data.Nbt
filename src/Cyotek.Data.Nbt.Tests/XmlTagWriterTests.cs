@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
@@ -10,29 +11,22 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
-    public void SaveTest()
+    [ExpectedException(typeof(NotSupportedException))]
+    public void WriteDocument_should_throw_exception_if_compression_is_enabled()
     {
-      // arrange
-      ITagWriter target;
-      TagCompound expected;
-      TagCompound actual;
+      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(CompressionOption.On);
+    }
 
-      expected = this.CreateComplexData();
+    [Test]
+    public void WriteDocument_should_accept_no_compression()
+    {
+      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(CompressionOption.Off);
+    }
 
-      target = new XmlTagWriter();
-
-      // act
-      using (Stream stream = new MemoryStream())
-      {
-        target.WriteDocument(stream, expected);
-
-        stream.Seek(0, SeekOrigin.Begin);
-
-        actual = new XmlTagReader().ReadDocument(stream);
-      }
-
-      // assert
-      this.CompareTags(expected, actual);
+    [Test]
+    public void WriteDocument_should_accept_auto_compression()
+    {
+      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(CompressionOption.Auto);
     }
 
     #endregion
