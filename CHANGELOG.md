@@ -6,6 +6,9 @@ Cyotek.Data.Nbt Change Log
 
 This major update includes breaking changes, mostly around the `ITagReader` and `ITagWriter` interfaces and implementing classes. The `NbtDocument` class has been updated so that methods such as `Load` and `Save` now can accept a `Stream` rather than always being forced to use a file.
 
+I've also changed the license to the [GNU Lesser General Public License, version 2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html). Originally I said it was licensed under Creative Commons Share Alike to match the original code this library was derived from, but it was actually LGPL all along.
+
+
 ### Added
 * Added overloads accepting `Stream` arguments to `LoadDocument`, `Load`, `Save`, `IsNbtDocument` and `GetDocumentFormat` methods
 * When saving a document, you can now specify `Auto` for compression which essentially lets the serializer choose the compression (on for binary, off for XML)
