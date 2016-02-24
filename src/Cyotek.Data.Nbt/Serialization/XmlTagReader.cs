@@ -14,11 +14,155 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #endregion
 
+    #region Constructors
+
+    public XmlTagReader()
+    { }
+
+    public XmlTagReader(XmlReader reader)
+      : this()
+    {
+      _reader = reader;
+    }
+
+    #endregion
+
     #region Methods
 
     protected ITag ReadTag(ReadTagOptions options, TagType defaultTagType)
     {
       ITag result;
+      TagType type;
+
+      this.InitializeReader();
+
+      type = this.ReadTagType(defaultTagType);
+      result = TagFactory.CreateTag(type);
+
+      if ((options & ReadTagOptions.IgnoreName) == 0)
+      {
+        string name;
+
+        name = _reader.GetAttribute("name");
+        if (string.IsNullOrEmpty(name))
+        {
+          name = _reader.Name;
+        }
+
+        result.Name = name;
+      }
+
+      if ((options & ReadTagOptions.IgnoreValue) == 0)
+      {
+        result.Value = this.ReadTagValue(result);
+      }
+
+      return result;
+    }
+
+    protected virtual object ReadTagValue(ITag tag)
+    {
+      object result;
+
+      switch (tag.Type)
+      {
+        case TagType.Byte:
+          result = this.ReadByte();
+          break;
+
+        case TagType.Short:
+          result = this.ReadShort();
+          break;
+
+        case TagType.Int:
+          result = this.ReadInt();
+          break;
+
+        case TagType.Long:
+          result = this.ReadLong();
+          break;
+
+        case TagType.Float:
+          result = this.ReadFloat();
+          break;
+
+        case TagType.Double:
+          result = this.ReadDouble();
+          break;
+
+        case TagType.ByteArray:
+          result = this.ReadByteArray();
+          break;
+
+        case TagType.String:
+          result = this.ReadString();
+          break;
+
+        case TagType.List:
+          result = this.ReadCollection((TagList)tag);
+          break;
+
+        case TagType.Compound:
+          result = this.ReadDictionary((TagCompound)tag);
+          break;
+
+        case TagType.IntArray:
+          result = this.ReadIntArray();
+          break;
+
+        default:
+          throw new InvalidDataException($"Unrecognized tag type: {tag.Type}");
+      }
+
+      return result;
+    }
+
+    private void InitializeReader()
+    {
+      if (_reader.ReadState == ReadState.Initial)
+      {
+        while (!_reader.IsStartElement())
+        {
+          _reader.Read();
+        }
+      }
+    }
+
+    private void ReadChildValues(ICollection<ITag> value, ReadTagOptions options, TagType listType)
+    {
+      int depth;
+
+      this.SkipWhitespace();
+
+      depth = _reader.Depth;
+
+      if (_reader.NodeType != XmlNodeType.EndElement)
+      {
+        do
+        {
+          if (_reader.NodeType == XmlNodeType.Element)
+          {
+            ITag child;
+
+            child = this.ReadTag(options, listType);
+
+            value.Add(child);
+          }
+          else
+          {
+            _reader.Read();
+          }
+        } while (_reader.Depth == depth);
+      }
+      else
+      {
+        _reader.Read();
+        this.SkipWhitespace();
+      }
+    }
+
+    private TagType ReadTagType(TagType defaultTagType)
+    {
       TagType type;
 
       if (defaultTagType != TagType.None)
@@ -37,91 +181,13 @@ namespace Cyotek.Data.Nbt.Serialization
 
         type = (TagType)Enum.Parse(typeof(TagType), typeName, true);
       }
-      result = TagFactory.CreateTag(type);
 
-      if ((options & ReadTagOptions.IgnoreName) == 0)
-      {
-        string name;
-
-        name = _reader.GetAttribute("name");
-        if (string.IsNullOrEmpty(name))
-        {
-          name = _reader.Name;
-        }
-
-        result.Name = name;
-      }
-
-      if ((options & ReadTagOptions.IgnoreValue) == 0)
-      {
-        switch (type)
-        {
-          case TagType.Byte:
-            result.Value = this.ReadByte();
-            break;
-
-          case TagType.Short:
-            result.Value = this.ReadShort();
-            break;
-
-          case TagType.Int:
-            result.Value = this.ReadInt();
-            break;
-
-          case TagType.Long:
-            result.Value = this.ReadLong();
-            break;
-
-          case TagType.Float:
-            result.Value = this.ReadFloat();
-            break;
-
-          case TagType.Double:
-            result.Value = this.ReadDouble();
-            break;
-
-          case TagType.ByteArray:
-            result.Value = this.ReadByteArray();
-            break;
-
-          case TagType.String:
-            result.Value = this.ReadString();
-            break;
-
-          case TagType.List:
-            result.Value = this.ReadCollection((TagList)result);
-            break;
-
-          case TagType.Compound:
-            result.Value = this.ReadDictionary((TagCompound)result);
-            break;
-
-          case TagType.IntArray:
-            result.Value = this.ReadIntArray();
-            break;
-
-          default:
-            throw new InvalidDataException($"Unrecognized tag type: {type}");
-        }
-      }
-
-      return result;
+      return type;
     }
 
-    private void LoadChildren(ICollection<ITag> value, ReadTagOptions options, TagType listType)
+    private void SkipWhitespace()
     {
-      while (_reader.NodeType != XmlNodeType.EndElement && _reader.NodeType != XmlNodeType.None &&
-             !_reader.IsEmptyElement)
-      {
-        _reader.Read();
-
-        if (_reader.NodeType == XmlNodeType.Element)
-        {
-          value.Add(this.ReadTag(options, listType));
-        }
-      }
-
-      if (_reader.NodeType == XmlNodeType.EndElement)
+      while (_reader.NodeType == XmlNodeType.Whitespace)
       {
         _reader.Read();
       }
@@ -198,7 +264,9 @@ namespace Cyotek.Data.Nbt.Serialization
       owner.ListType = listType;
       value = new TagCollection(owner, listType);
 
-      this.LoadChildren(value, ReadTagOptions.IgnoreName, listType);
+      _reader.Read();
+
+      this.ReadChildValues(value, ReadTagOptions.IgnoreName, listType);
 
       return value;
     }
@@ -209,7 +277,9 @@ namespace Cyotek.Data.Nbt.Serialization
 
       value = new TagDictionary(owner);
 
-      this.LoadChildren(value, ReadTagOptions.None, TagType.None);
+      _reader.Read();
+
+      this.ReadChildValues(value, ReadTagOptions.None, TagType.None);
 
       return value;
     }
@@ -222,15 +292,21 @@ namespace Cyotek.Data.Nbt.Serialization
     public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
     {
       TagCompound result;
+      bool createReader;
 
-      _reader = XmlReader.Create(stream);
+      createReader = _reader == null;
 
-      while (!_reader.IsStartElement())
+      if (createReader)
       {
-        _reader.Read();
+        _reader = XmlReader.Create(stream);
       }
 
       result = (TagCompound)this.ReadTag(options);
+
+      if (createReader)
+      {
+        _reader = null;
+      }
 
       return result;
     }

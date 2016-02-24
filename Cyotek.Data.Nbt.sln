@@ -6,6 +6,12 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.Data.Nbt", "src\Cyotek.Data.Nbt\Cyotek.Data.Nbt.csproj", "{14287AD3-9576-46E6-9DE3-B7731A496DA3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{3D33379A-2DDB-40E1-A507-F49B6C131CA8}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
+		COPYING.txt = COPYING.txt
+		README.md = README.md
+		SPECIFICATION.md = SPECIFICATION.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.Data.Nbt.Tests", "src\Cyotek.Data.Nbt.Tests\Cyotek.Data.Nbt.Tests.csproj", "{97730548-7E5A-4AD4-AFC1-6EE1A656C520}"
 EndProject

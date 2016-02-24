@@ -8,33 +8,6 @@ namespace Cyotek.Data.Nbt.Tests
 {
   public class TestBase
   {
-    protected void WriteDocumentTest<T, T2>(CompressionOption compression)
-      where T : ITagWriter, new()
-      where T2 : ITagReader, new()
-    {
-      // arrange
-      ITagWriter target;
-      TagCompound expected;
-      TagCompound actual;
-
-      expected = this.CreateComplexData();
-
-      target = new T();
-
-      // act
-      using (Stream stream = new MemoryStream())
-      {
-        target.WriteDocument(stream, expected, compression);
-
-        stream.Seek(0, SeekOrigin.Begin);
-
-        actual = new T2().ReadDocument(stream);
-      }
-
-      // assert
-      this.CompareTags(expected, actual);
-    }
-
     #region Constructors
 
     protected TestBase()
@@ -66,6 +39,11 @@ namespace Cyotek.Data.Nbt.Tests
     protected string ComplexXmlDataFileName
     {
       get { return Path.Combine(this.DataPath, "complextest.xml"); }
+    }
+
+    protected string ComplexXmlWithoutWhitespaceDataFileName
+    {
+      get { return Path.Combine(this.DataPath, "complextest-no-ws.xml"); }
     }
 
     protected string DataPath
@@ -1187,6 +1165,26 @@ namespace Cyotek.Data.Nbt.Tests
       return root;
     }
 
+    protected TagCompound CreateSimpleNesting()
+    {
+      TagCompound root;
+      TagCompound compound;
+      TagList list;
+
+      root = new TagCompound("project");
+      list = new TagList("slices", TagType.Compound);
+      compound = new TagCompound();
+      compound.Value.Add(new TagCompound("location"));
+      list.Value.Add(compound);
+      root.Value.Add(list);
+      list = new TagList("regions", TagType.Compound);
+      list.Value.Add(new TagCompound());
+      list.Value.Add(new TagCompound());
+      root.Value.Add(list);
+
+      return root;
+    }
+
     protected void DeleteFile(string fileName)
     {
       if (File.Exists(fileName))
@@ -1220,6 +1218,31 @@ namespace Cyotek.Data.Nbt.Tests
       return Path.Combine(path, fileName);
     }
 
+    protected void WriteDocumentTest<T, T2>(CompressionOption compression) where T : ITagWriter, new()
+      where T2 : ITagReader, new()
+    {
+      // arrange
+      ITagWriter target;
+      TagCompound expected;
+      TagCompound actual;
+
+      expected = this.CreateComplexData();
+
+      target = new T();
+
+      // act
+      using (Stream stream = new MemoryStream())
+      {
+        target.WriteDocument(stream, expected, compression);
+
+        stream.Seek(0, SeekOrigin.Begin);
+
+        actual = new T2().ReadDocument(stream);
+      }
+
+      // assert
+      this.CompareTags(expected, actual);
+    }
 
     #endregion
   }

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Cyotek.Data.Nbt</id>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <title>Cyotek.Data.Nbt</title>
     <authors>Cyotek, headhunter45</authors>
     <owners>Cyotek</owners>

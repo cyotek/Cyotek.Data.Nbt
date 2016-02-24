@@ -1,8 +1,18 @@
 Cyotek.Data.Nbt Change Log
 ==========================
 
-2.0.0
------
+[2.1.0] - 2016-02-24
+------------------
+
+### Added
+* Added new constructor to `XmlTagWriter` allowing you to specify a `XmlWriter`. Useful for when calling `Write*` methods directly, without first using `WriteDocument`
+* Added new constructor to `XmlTagReader` allowing you to specify a `XmlReader`. Useful for when calling `Read*` methods directly, without first using `ReadDocument`
+
+### Fixed
+* XML documents that either didn't include any whitespace between elements or that used self closing tags weren't loaded correctly
+
+[2.0.0] - 2016-02-16
+--------------------
 
 This major update includes breaking changes, mostly around the `ITagReader` and `ITagWriter` interfaces and implementing classes. The `NbtDocument` class has been updated so that methods such as `Load` and `Save` now can accept a `Stream` rather than always being forced to use a file.
 

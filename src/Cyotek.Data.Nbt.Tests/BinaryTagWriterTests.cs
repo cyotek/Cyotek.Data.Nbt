@@ -10,6 +10,12 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
+    public void WriteDocument_should_accept_auto_compression()
+    {
+      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.Auto);
+    }
+
+    [Test]
     public void WriteDocument_should_accept_forced_compression()
     {
       this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.On);
@@ -19,12 +25,6 @@ namespace Cyotek.Data.Nbt.Tests
     public void WriteDocument_should_accept_no_compression()
     {
       this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.Off);
-    }
-
-    [Test]
-    public void WriteDocument_should_accept_auto_compression()
-    {
-      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(CompressionOption.Auto);
     }
 
     [Test]

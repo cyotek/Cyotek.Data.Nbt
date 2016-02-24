@@ -12,7 +12,7 @@ PUSHD %CD%
 MD nuget > NUL
 CD nuget
 
-NUGET pack ..\src\Cyotek.Data.Nbt\Cyotek.Data.Nbt.csproj -Prop Configuration=Release
+%NUGETexe% pack ..\src\Cyotek.Data.Nbt\Cyotek.Data.Nbt.csproj -Prop Configuration=Release
 
 POPD
 

@@ -9,9 +9,20 @@ namespace Cyotek.Data.Nbt.Serialization
   {
     #region Fields
 
-    private XmlWriterSettings _settings;
-
     private XmlWriter _writer;
+
+    #endregion
+
+    #region Constructors
+
+    public XmlTagWriter()
+    { }
+
+    public XmlTagWriter(XmlWriter writer)
+      : this()
+    {
+      _writer = writer;
+    }
 
     #endregion
 
@@ -51,24 +62,37 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public virtual void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
     {
+      bool createWriter;
+
       if (compression == CompressionOption.On)
       {
         throw new NotSupportedException("Compression is not supported.");
       }
 
-      _settings = new XmlWriterSettings
-                  {
-                    Indent = true,
-                    Encoding = Encoding.UTF8
-                  };
+      createWriter = _writer == null;
 
-      _writer = XmlWriter.Create(stream, _settings);
-      _writer.WriteStartDocument(true);
+      if (createWriter)
+      {
+        XmlWriterSettings settings;
+
+        settings = new XmlWriterSettings
+                   {
+                     Indent = true,
+                     Encoding = Encoding.UTF8
+                   };
+
+        _writer = XmlWriter.Create(stream, settings);
+        _writer.WriteStartDocument(true);
+      }
 
       this.WriteTag(tag, WriteTagOptions.None);
 
-      _writer.WriteEndDocument();
-      _writer.Flush();
+      if (createWriter)
+      {
+        _writer.WriteEndDocument();
+        _writer.Flush();
+        _writer = null;
+      }
     }
 
     public virtual void WriteTag(ITag value)
