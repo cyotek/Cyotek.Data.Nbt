@@ -4,6 +4,7 @@ packages/
 bin/
 obj/
 _NCrunch_Cyotek.Data.Nbt/
+testresults
 
 *.ncrunchsolution
 *.ncrunchproject
