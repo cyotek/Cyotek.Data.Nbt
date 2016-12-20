@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Text;
-using Cyotek.Data.Nbt.Serialization;
 
 namespace Cyotek.Data.Nbt
 {
@@ -96,22 +94,6 @@ namespace Cyotek.Data.Nbt
 
     public abstract TagType Type { get; }
 
-    [Category("")]
-    [DefaultValue(null)]
-    public virtual object Value
-    {
-      get { return _value; }
-      set
-      {
-        if (this.Value != value)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
-    }
-
     #endregion
 
     #region Methods
@@ -144,22 +126,22 @@ namespace Cyotek.Data.Nbt
       return tags.ToArray();
     }
 
-    public virtual byte[] GetValue()
-    {
-      byte[] result;
+    //public virtual byte[] GetValue()
+    //{
+    //  byte[] result;
 
-      using (MemoryStream stream = new MemoryStream())
-      {
-        ITagWriter writer;
+    //  using (MemoryStream stream = new MemoryStream())
+    //  {
+    //    ITagWriter writer;
 
-        writer = new BinaryTagWriter(stream);
-        writer.WriteTag(this, WriteTagOptions.None);
+    //    writer = new BinaryTagWriter(stream);
+    //    writer.WriteTag(this, WriteTagOptions.None);
 
-        result = stream.ToArray();
-      }
+    //    result = stream.ToArray();
+    //  }
 
-      return result;
-    }
+    //  return result;
+    //}
 
     public virtual void Remove()
     {
@@ -180,7 +162,7 @@ namespace Cyotek.Data.Nbt
 
     public virtual string ToValueString()
     {
-      return this.Value?.ToString() ?? string.Empty;
+      return this.GetValue()?.ToString() ?? string.Empty;
     }
 
     protected virtual void OnNameChanged(EventArgs e)
@@ -248,6 +230,10 @@ namespace Cyotek.Data.Nbt
     [Category("Property Changed")]
     public event EventHandler ValueChanged;
 
+    public abstract object GetValue();
+
+    public abstract void SetValue(object value);
+
     ITag[] ITag.Flatten()
     {
       return this.Flatten();
@@ -256,11 +242,6 @@ namespace Cyotek.Data.Nbt
     ITag[] ITag.GetAncestors()
     {
       return this.GetAncestors();
-    }
-
-    byte[] ITag.GetValue()
-    {
-      return this.GetValue();
     }
 
     void ITag.Remove()
@@ -308,12 +289,6 @@ namespace Cyotek.Data.Nbt
     TagType ITag.Type
     {
       get { return this.Type; }
-    }
-
-    object ITag.Value
-    {
-      get { return this.Value; }
-      set { this.Value = value; }
     }
 
     #endregion

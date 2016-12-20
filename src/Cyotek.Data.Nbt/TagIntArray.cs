@@ -1,10 +1,17 @@
+using System;
 using System.Globalization;
 using System.Linq;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagIntArray : Tag
+  public sealed class TagIntArray : Tag
   {
+    #region Fields
+
+    private int[] _value;
+
+    #endregion
+
     #region Constructors
 
     public TagIntArray()
@@ -34,15 +41,33 @@ namespace Cyotek.Data.Nbt
       get { return TagType.IntArray; }
     }
 
-    public new int[] Value
+    public int[] Value
     {
-      get { return (int[])base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set
+      {
+        if (_value != value)
+        {
+          _value = value;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
+      }
     }
 
     #endregion
 
     #region Methods
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = (int[])value;
+    }
 
     public override string ToString(string indentString)
     {
@@ -51,8 +76,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToValueString()
     {
-      return string.Join(", ", this.Value.Select(b => b.ToString(CultureInfo.InvariantCulture)).
-                                    ToArray());
+      return string.Join(", ", this.Value.Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
     }
 
     #endregion

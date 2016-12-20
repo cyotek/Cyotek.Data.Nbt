@@ -1,6 +1,8 @@
+using System;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagEnd : Tag
+  public sealed class TagEnd : Tag
   {
     #region Properties
 
@@ -15,15 +17,19 @@ namespace Cyotek.Data.Nbt
       get { return TagType.End; }
     }
 
-    public override object Value
-    {
-      get { return null; }
-      set { }
-    }
-
     #endregion
 
     #region Methods
+
+    public override object GetValue()
+    {
+      throw new NotSupportedException("Tag does not support values.");
+    }
+
+    public override void SetValue(object value)
+    {
+      throw new NotSupportedException("Tag does not support values.");
+    }
 
     public override string ToString(string indentString)
     {

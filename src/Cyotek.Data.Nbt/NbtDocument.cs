@@ -354,8 +354,7 @@ namespace Cyotek.Data.Nbt
 
       result.Append(new string(' ', indent * 2));
 
-      result.Append(tag.Type.ToString().
-                        ToLowerInvariant());
+      result.Append(tag.Type.ToString().ToLowerInvariant());
 
       parentCollection = tag.Parent as ICollectionTag;
       if (parentCollection != null && parentCollection.IsList)

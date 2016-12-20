@@ -12,82 +12,71 @@ namespace Cyotek.Data.Nbt.Tests
     [Test]
     public void AddBoolWithNameTest()
     {
-      this.AddTest<bool, TagByte>(Guid.NewGuid().
-                                       ToString(), true, 1);
+      this.AddTest<bool, TagByte>(Guid.NewGuid().ToString(), true, 1);
     }
 
     [Test]
     public void AddByteArrayTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.ByteArray);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.ByteArray);
     }
 
     [Test]
     public void AddByteArrayWithNameTest()
     {
-      this.AddTest<byte[], TagByteArray>(Guid.NewGuid().
-                                              ToString(), new[]
-                                                          {
-                                                            byte.MinValue,
-                                                            byte.MaxValue
-                                                          });
+      this.AddTest<byte[], TagByteArray>(Guid.NewGuid().ToString(), new[]
+                                                                    {
+                                                                      byte.MinValue,
+                                                                      byte.MaxValue
+                                                                    });
     }
 
     [Test]
     public void AddByteTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Byte);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Byte);
     }
 
     [Test]
     public void AddByteWithNameTest()
     {
-      this.AddTest<byte, TagByte>(Guid.NewGuid().
-                                       ToString(), byte.MaxValue);
+      this.AddTest<byte, TagByte>(Guid.NewGuid().ToString(), byte.MaxValue);
     }
 
     [Test]
     public void AddCompoundTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Compound);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Compound);
     }
 
     [Test]
     public void AddDateTimeWithNameTest()
     {
-      this.AddTest<DateTime, TagString>(Guid.NewGuid().
-                                             ToString(), DateTime.MaxValue, DateTime.MaxValue.ToString("u"));
+      this.AddTest<DateTime, TagString>(Guid.NewGuid().ToString(), DateTime.MaxValue, DateTime.MaxValue.ToString("u"));
     }
 
     [Test]
     public void AddDoubleTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Double);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Double);
     }
 
     [Test]
     public void AddDoubleWithNameTest()
     {
-      this.AddTest<double, TagDouble>(Guid.NewGuid().
-                                           ToString(), double.MaxValue);
+      this.AddTest<double, TagDouble>(Guid.NewGuid().ToString(), double.MaxValue);
     }
 
     [Test]
     public void AddFloatTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Float);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Float);
     }
 
     [Test]
     public void AddFloatWithNameTest()
     {
-      this.AddTest<float, TagFloat>(Guid.NewGuid().
-                                         ToString(), float.MaxValue);
+      this.AddTest<float, TagFloat>(Guid.NewGuid().ToString(), float.MaxValue);
     }
 
     [Test]
@@ -97,69 +86,60 @@ namespace Cyotek.Data.Nbt.Tests
 
       value = Guid.NewGuid();
 
-      this.AddTest<Guid, TagByteArray>(Guid.NewGuid().
-                                            ToString(), value, value.ToByteArray());
+      this.AddTest<Guid, TagByteArray>(Guid.NewGuid().ToString(), value, value.ToByteArray());
     }
 
     [Test]
     public void AddIntArrayTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.IntArray);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.IntArray);
     }
 
     [Test]
     public void AddIntArrayWithNameTest()
     {
-      this.AddTest<int[], TagIntArray>(Guid.NewGuid().
-                                            ToString(), new[]
-                                                        {
-                                                          int.MinValue,
-                                                          int.MaxValue
-                                                        });
+      this.AddTest<int[], TagIntArray>(Guid.NewGuid().ToString(), new[]
+                                                                  {
+                                                                    int.MinValue,
+                                                                    int.MaxValue
+                                                                  });
     }
 
     [Test]
     public void AddIntTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Int);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Int);
     }
 
     [Test]
     public void AddIntWithNameTest()
     {
-      this.AddTest<int, TagInt>(Guid.NewGuid().
-                                     ToString(), int.MaxValue);
+      this.AddTest<int, TagInt>(Guid.NewGuid().ToString(), int.MaxValue);
     }
 
     [Test]
     public void AddListTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.List, TagType.String);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.List, TagType.String);
     }
 
     [Test]
     public void AddLongTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Long);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Long);
     }
 
     [Test]
     public void AddLongWithNameTest()
     {
-      this.AddTest<long, TagLong>(Guid.NewGuid().
-                                       ToString(), long.MaxValue);
+      this.AddTest<long, TagLong>(Guid.NewGuid().ToString(), long.MaxValue);
     }
 
     [Test]
     [ExpectedException(typeof(ArgumentException))]
     public void AddObjectWithNameTest()
     {
-      this.AddTest<object, TagByte>(Guid.NewGuid().
-                                         ToString(), 'c');
+      this.AddTest<object, TagByte>(Guid.NewGuid().ToString(), 'c');
     }
 
     [Test]
@@ -173,14 +153,10 @@ namespace Cyotek.Data.Nbt.Tests
       string value2;
 
       target = new TagCollection();
-      key1 = Guid.NewGuid().
-                  ToString();
-      key2 = Guid.NewGuid().
-                  ToString();
-      value1 = Guid.NewGuid().
-                    ToString();
-      value2 = Guid.NewGuid().
-                    ToString();
+      key1 = Guid.NewGuid().ToString();
+      key2 = Guid.NewGuid().ToString();
+      value1 = Guid.NewGuid().ToString();
+      value2 = Guid.NewGuid().ToString();
 
       // act
       target.AddRange(new[]
@@ -196,22 +172,19 @@ namespace Cyotek.Data.Nbt.Tests
     [Test]
     public void AddShortTypeTest()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Short);
+      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Short);
     }
 
     [Test]
     public void AddShortWithNameTest()
     {
-      this.AddTest<short, TagShort>(Guid.NewGuid().
-                                         ToString(), short.MaxValue);
+      this.AddTest<short, TagShort>(Guid.NewGuid().ToString(), short.MaxValue);
     }
 
     [Test]
     public void AddStringWithNameTest()
     {
-      this.AddTest<string, TagString>(Guid.NewGuid().
-                                           ToString(), "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+      this.AddTest<string, TagString>(Guid.NewGuid().ToString(), "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
     }
 
     #endregion
@@ -277,7 +250,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.Contains(tag, target);
       Assert.AreEqual(name, tag.Name);
       Assert.IsInstanceOf<TTag>(tag);
-      Assert.AreEqual(alternateValue ?? value, tag.Value);
+      Assert.AreEqual(alternateValue ?? value, tag.GetValue());
     }
 
     #endregion

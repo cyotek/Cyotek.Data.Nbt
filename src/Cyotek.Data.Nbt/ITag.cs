@@ -26,8 +26,6 @@ namespace Cyotek.Data.Nbt
 
     TagType Type { get; }
 
-    object Value { get; set; }
-
     #endregion
 
     #region Methods
@@ -36,9 +34,11 @@ namespace Cyotek.Data.Nbt
 
     ITag[] GetAncestors();
 
-    byte[] GetValue();
+    object GetValue();
 
     void Remove();
+
+    void SetValue(object value);
 
     string ToString();
 

@@ -97,8 +97,8 @@ namespace Cyotek.Data.Nbt.Tests
         target1 = NbtDocument.LoadDocument(fileName1);
         target2 = NbtDocument.LoadDocument(fileName2);
 
-        file1IsBinary = (target1.Format == NbtFormat.Binary);
-        file2IsXml = (target2.Format == NbtFormat.Xml);
+        file1IsBinary = target1.Format == NbtFormat.Binary;
+        file2IsXml = target2.Format == NbtFormat.Xml;
       }
       finally
       {
@@ -183,8 +183,7 @@ namespace Cyotek.Data.Nbt.Tests
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString();
+      fileName = Guid.NewGuid().ToString();
 
       // act
       NbtDocument.GetDocumentFormat(fileName);
@@ -223,8 +222,7 @@ namespace Cyotek.Data.Nbt.Tests
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString("N");
+      fileName = Guid.NewGuid().ToString("N");
 
       // act
       NbtDocument.GetDocumentName(fileName);
@@ -525,8 +523,7 @@ namespace Cyotek.Data.Nbt.Tests
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString();
+      fileName = Guid.NewGuid().ToString();
 
       // act
       NbtDocument.IsNbtDocument(fileName);
@@ -558,8 +555,7 @@ namespace Cyotek.Data.Nbt.Tests
       NbtDocument target;
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString("N");
+      fileName = Guid.NewGuid().ToString("N");
 
       target = new NbtDocument();
 

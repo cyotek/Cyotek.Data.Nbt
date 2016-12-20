@@ -1,7 +1,15 @@
+using System;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagByte : Tag
+  public sealed class TagByte : Tag
   {
+    #region Fields
+
+    private byte _value;
+
+    #endregion
+
     #region Constructors
 
     public TagByte()
@@ -31,15 +39,33 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Byte; }
     }
 
-    public new byte Value
+    public byte Value
     {
-      get { return (byte)base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set
+      {
+        if (_value != value)
+        {
+          _value = value;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
+      }
     }
 
     #endregion
 
     #region Methods
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = Convert.ToByte(value);
+    }
 
     public override string ToString(string indentString)
     {

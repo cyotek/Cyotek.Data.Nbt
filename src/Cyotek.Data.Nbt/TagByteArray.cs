@@ -1,9 +1,16 @@
+using System;
 using System.Linq;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagByteArray : Tag
+  public sealed class TagByteArray : Tag
   {
+    #region Fields
+
+    private byte[] _value;
+
+    #endregion
+
     #region Constructors
 
     public TagByteArray()
@@ -33,15 +40,33 @@ namespace Cyotek.Data.Nbt
       get { return TagType.ByteArray; }
     }
 
-    public new byte[] Value
+    public byte[] Value
     {
-      get { return (byte[])base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set
+      {
+        if (_value != value)
+        {
+          _value = value;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
+      }
     }
 
     #endregion
 
     #region Methods
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = (byte[])value;
+    }
 
     public override string ToString(string indentString)
     {
@@ -50,8 +75,7 @@ namespace Cyotek.Data.Nbt
 
     public override string ToValueString()
     {
-      return string.Join(", ", this.Value.Select(b => b.ToString("X2")).
-                                    ToArray());
+      return string.Join(", ", this.Value.Select(b => b.ToString("X2")).ToArray());
     }
 
     #endregion

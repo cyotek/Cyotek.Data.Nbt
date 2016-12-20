@@ -18,7 +18,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsEmpty(target.Name);
-      Assert.IsNull(target.Value);
     }
 
     [Test]
@@ -32,7 +31,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsEmpty(tag.Name);
-      Assert.IsNull(tag.Value);
     }
 
     [Test]
@@ -104,23 +102,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ValueTest()
-    {
-      // arrange
-      TagEnd target;
-      byte expected;
-
-      target = new TagEnd();
-      expected = byte.MaxValue;
-
-      // act
-      target.Value = expected; // TagEnd has no name or value
-
-      // assert
-      Assert.IsNull(target.Value);
     }
 
     #endregion

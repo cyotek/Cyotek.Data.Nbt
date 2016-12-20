@@ -95,16 +95,16 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteTag(ITag value)
+    public virtual void WriteTag(ITag tag)
     {
-      this.WriteTag(value, WriteTagOptions.None);
+      this.WriteTag(tag, WriteTagOptions.None);
     }
 
-    public virtual void WriteTag(ITag value, WriteTagOptions options)
+    public virtual void WriteTag(ITag tag, WriteTagOptions options)
     {
       string name;
 
-      name = value.Name;
+      name = tag.Name;
       if (string.IsNullOrEmpty(name))
       {
         name = "tag";
@@ -120,63 +120,63 @@ namespace Cyotek.Data.Nbt.Serialization
         _writer.WriteAttributeString("name", name);
       }
 
-      if (value.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
-        this.WriteHeader(value);
+        this.WriteHeader(tag);
       }
 
-      switch (value.Type)
+      switch (tag.Type)
       {
         case TagType.End:
           // noop
           break;
 
         case TagType.Byte:
-          this.WriteValue((byte)value.Value);
+          this.WriteValue((byte)tag.GetValue());
           break;
 
         case TagType.Short:
-          this.WriteValue((short)value.Value);
+          this.WriteValue((short)tag.GetValue());
           break;
 
         case TagType.Int:
-          this.WriteValue((int)value.Value);
+          this.WriteValue((int)tag.GetValue());
           break;
 
         case TagType.Long:
-          this.WriteValue((long)value.Value);
+          this.WriteValue((long)tag.GetValue());
           break;
 
         case TagType.Float:
-          this.WriteValue((float)value.Value);
+          this.WriteValue((float)tag.GetValue());
           break;
 
         case TagType.Double:
-          this.WriteValue((double)value.Value);
+          this.WriteValue((double)tag.GetValue());
           break;
 
         case TagType.ByteArray:
-          this.WriteValue((byte[])value.Value);
+          this.WriteValue((byte[])tag.GetValue());
           break;
 
         case TagType.String:
-          this.WriteValue((string)value.Value);
+          this.WriteValue((string)tag.GetValue());
           break;
 
         case TagType.List:
-          this.WriteValue((TagCollection)value.Value);
+          this.WriteValue((TagCollection)tag.GetValue());
           break;
 
         case TagType.Compound:
-          this.WriteValue((TagDictionary)value.Value);
+          this.WriteValue((TagDictionary)tag.GetValue());
           break;
 
         case TagType.IntArray:
-          this.WriteValue((int[])value.Value);
+          this.WriteValue((int[])tag.GetValue());
           break;
 
         default:
-          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(value));
+          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
       }
 
       _writer.WriteEndElement();

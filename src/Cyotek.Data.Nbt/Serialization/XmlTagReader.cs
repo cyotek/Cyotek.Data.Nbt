@@ -54,7 +54,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if ((options & ReadTagOptions.IgnoreValue) == 0)
       {
-        result.Value = this.ReadTagValue(result);
+        result.SetValue(this.ReadTagValue(result));
       }
 
       return result;
@@ -99,11 +99,11 @@ namespace Cyotek.Data.Nbt.Serialization
           break;
 
         case TagType.List:
-          result = this.ReadCollection((TagList)tag);
+          result = this.ReadCollection();
           break;
 
         case TagType.Compound:
-          result = this.ReadDictionary((TagCompound)tag);
+          result = this.ReadDictionary();
           break;
 
         case TagType.IntArray:
@@ -236,19 +236,16 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public virtual byte[] ReadByteArray()
     {
-      return this.ReadString().
-                  Split(new[]
-                        {
-                          " ",
-                          "\t",
-                          "\n",
-                          "\r"
-                        }, StringSplitOptions.RemoveEmptyEntries).
-                  Select(c => Convert.ToByte(c)).
-                  ToArray();
+      return this.ReadString().Split(new[]
+                                     {
+                                       " ",
+                                       "\t",
+                                       "\n",
+                                       "\r"
+                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
     }
 
-    public virtual TagCollection ReadCollection(TagList owner)
+    public virtual TagCollection ReadCollection()
     {
       TagCollection value;
       TagType listType;
@@ -261,8 +258,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
 
       listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
-      owner.ListType = listType;
-      value = new TagCollection(owner, listType);
+      value = new TagCollection(listType);
 
       _reader.Read();
 
@@ -271,11 +267,11 @@ namespace Cyotek.Data.Nbt.Serialization
       return value;
     }
 
-    public virtual TagDictionary ReadDictionary(TagCompound owner)
+    public virtual TagDictionary ReadDictionary()
     {
       TagDictionary value;
 
-      value = new TagDictionary(owner);
+      value = new TagDictionary();
 
       _reader.Read();
 
@@ -328,16 +324,13 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public virtual int[] ReadIntArray()
     {
-      return this.ReadString().
-                  Split(new[]
-                        {
-                          " ",
-                          "\t",
-                          "\n",
-                          "\r"
-                        }, StringSplitOptions.RemoveEmptyEntries).
-                  Select(c => Convert.ToInt32(c)).
-                  ToArray();
+      return this.ReadString().Split(new[]
+                                     {
+                                       " ",
+                                       "\t",
+                                       "\n",
+                                       "\r"
+                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
     }
 
     public virtual long ReadLong()

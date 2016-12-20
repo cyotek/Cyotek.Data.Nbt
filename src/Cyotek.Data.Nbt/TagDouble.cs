@@ -1,7 +1,15 @@
+using System;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagDouble : Tag
+  public sealed class TagDouble : Tag
   {
+    #region Fields
+
+    private double _value;
+
+    #endregion
+
     #region Constructors
 
     public TagDouble()
@@ -31,15 +39,33 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Double; }
     }
 
-    public new double Value
+    public double Value
     {
-      get { return (double)base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set
+      {
+        if (Math.Abs(_value - value) > double.Epsilon)
+        {
+          _value = value;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
+      }
     }
 
     #endregion
 
     #region Methods
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = Convert.ToDouble(value);
+    }
 
     public override string ToString(string indentString)
     {

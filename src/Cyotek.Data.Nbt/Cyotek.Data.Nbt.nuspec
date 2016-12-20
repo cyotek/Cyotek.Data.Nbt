@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <id>Cyotek.Data.Nbt</id>
-    <version>2.1.0</version>
-    <title>Cyotek.Data.Nbt</title>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$id$</title>
     <authors>Cyotek, headhunter45</authors>
     <owners>Cyotek</owners>
     <licenseUrl>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</licenseUrl>
@@ -17,7 +17,7 @@
     </description>
     <summary>Cyotek.Data.Nbt is a library for reading and writing NBT format files used by Minecraft. However, the format is versatile enough to use for many other applications.</summary>
     <releaseNotes />
-    <copyright>Copyright 2010-2016 Cyotek Ltd.</copyright>
+    <copyright>$copyright$</copyright>
     <language>en-GB</language>
     <tags>cyotek nbt minecract</tags>
   </metadata>

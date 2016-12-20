@@ -27,5 +27,5 @@
     Compound = 10,
 
     IntArray = 11,
-  };
+  }
 }

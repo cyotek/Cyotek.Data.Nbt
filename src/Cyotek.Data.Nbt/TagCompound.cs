@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagCompound : Tag, ICollectionTag
+  public sealed class TagCompound : Tag, ICollectionTag
   {
     #region Constants
 
@@ -16,6 +16,12 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
+    #region Fields
+
+    private TagDictionary _value;
+
+    #endregion
+
     #region Constructors
 
     public TagCompound()
@@ -23,27 +29,40 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagCompound(string name)
+      : this(name, new TagDictionary())
+    { }
+
+    public TagCompound(TagDictionary value)
+      : this(string.Empty, value)
+    { }
+
+    public TagCompound(string name, TagDictionary value)
     {
       this.Name = name;
-      this.Value = new TagDictionary(this);
+      this.Value = value;
     }
 
     #endregion
 
     #region Properties
 
-    public new TagDictionary Value
+    public TagDictionary Value
     {
-      get { return (TagDictionary)base.Value; }
+      get { return _value; }
       set
       {
-        if (value == null)
+        if (!ReferenceEquals(_value, value))
         {
-          throw new ArgumentNullException(nameof(value));
-        }
+          if (value == null)
+          {
+            throw new ArgumentNullException(nameof(value));
+          }
 
-        base.Value = value;
-        value.Owner = this;
+          _value = value;
+          value.Owner = this;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -124,10 +143,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagString>(name);
 
-      return value != null
-               ? DateTime.Parse(value.Value, CultureInfo.InvariantCulture).
-                          ToUniversalTime()
-               : defaultValue;
+      return value != null ? DateTime.Parse(value.Value, CultureInfo.InvariantCulture).ToUniversalTime() : defaultValue;
     }
 
     public TagDouble GetDouble(string name)
@@ -335,8 +351,7 @@ namespace Cyotek.Data.Nbt
           bool matchFound;
           TagList list;
 
-          subParts = part.Substring(1, part.Length - 2).
-                          Split('=');
+          subParts = part.Substring(1, part.Length - 2).Split('=');
           name = subParts[0];
           value = subParts[1];
           matchFound = false;
@@ -392,12 +407,22 @@ namespace Cyotek.Data.Nbt
 
       tag = this.Query<ITag>(query);
 
-      return tag != null ? (T)tag.Value : defaultValue;
+      return tag != null ? (T)tag.GetValue() : defaultValue;
     }
 
     #endregion
 
     #region ICollectionTag Interface
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = (TagDictionary)value;
+    }
 
     public override string ToString(string indentString)
     {

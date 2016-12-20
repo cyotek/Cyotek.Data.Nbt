@@ -12,9 +12,9 @@ namespace Cyotek.Data.Nbt.Serialization
 
     byte[] ReadByteArray();
 
-    TagCollection ReadCollection(TagList owner);
+    TagCollection ReadCollection();
 
-    TagDictionary ReadDictionary(TagCompound owner);
+    TagDictionary ReadDictionary();
 
     TagCompound ReadDocument(Stream stream);
 

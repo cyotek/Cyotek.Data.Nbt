@@ -69,9 +69,7 @@ namespace Cyotek.Data.Nbt.Tests
       // act
       tags = target.Flatten();
       actualCount = tags.Length;
-      actualNames = tags.Select(t => t.Name).
-                         Distinct().
-                         ToArray();
+      actualNames = tags.Select(t => t.Name).Distinct().ToArray();
 
       // assert
       Assert.AreEqual(expectedCount, actualCount);
@@ -123,23 +121,23 @@ namespace Cyotek.Data.Nbt.Tests
       CollectionAssert.AreEqual(expected, actual);
     }
 
-    [Test]
-    public void GetValueTest()
-    {
-      // arrange
-      TagCompound target;
-      byte[] expected;
-      byte[] actual;
+    //[Test]
+    //public void GetValueTest()
+    //{
+    //  // arrange
+    //  TagCompound target;
+    //  byte[] expected;
+    //  byte[] actual;
 
-      expected = File.ReadAllBytes(this.UncompressedComplexDataFileName);
-      target = this.CreateComplexData();
+    //  expected = File.ReadAllBytes(this.UncompressedComplexDataFileName);
+    //  target = this.CreateComplexData();
 
-      // act
-      actual = target.GetValue();
+    //  // act
+    //  actual = target.GetValue();
 
-      // assert
-      CollectionAssert.AreEqual(expected, actual);
-    }
+    //  // assert
+    //  CollectionAssert.AreEqual(expected, actual);
+    //}
 
     [Test]
     public void NameChangedEventTest()
@@ -160,7 +158,7 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
+    [ExpectedException(ExpectedException = typeof(InvalidDataException), ExpectedMessage = "Unrecognized tag type: 255.")]
     public void ReadExceptionTest()
     {
       // arrange
@@ -179,8 +177,7 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(ExpectedException = typeof(TagException),
-      ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
+    [ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
     public void RemoveExceptionTest()
     {
       // arrange
@@ -330,13 +327,9 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual("created-on", listTest_compound_tag1_createdOn.Name);
       Assert.AreEqual(1264099775885, listTest_compound_tag1_createdOn.Value);
 
-      TagByteArray byteArrayTest =
-        level.GetByteArray(
-                           "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))");
+      TagByteArray byteArrayTest = level.GetByteArray("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))");
       Assert.IsNotNull(byteArrayTest);
-      Assert.AreEqual(
-                      "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
-                      byteArrayTest.Name);
+      Assert.AreEqual("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", byteArrayTest.Name);
       Assert.IsNotNull(byteArrayTest.Value);
       Assert.AreEqual(1000, byteArrayTest.Value.Length);
     }
@@ -385,8 +378,7 @@ namespace Cyotek.Data.Nbt.Tests
       string actual1;
       string actual2;
 
-      target1 = this.CreateComplexData().
-                     Query(@"nested compound test\ham\name");
+      target1 = this.CreateComplexData().Query(@"nested compound test\ham\name");
       target2 = new TagString(null, null);
       expected1 = "Hampus";
 
@@ -403,7 +395,7 @@ namespace Cyotek.Data.Nbt.Tests
     public void ValueChangedEventTest()
     {
       // arrange
-      Tag target;
+      TagString target;
       bool eventRaised;
 
       eventRaised = false;

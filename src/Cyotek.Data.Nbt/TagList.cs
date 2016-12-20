@@ -3,8 +3,14 @@ using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagList : Tag, ICollectionTag
+  public sealed class TagList : Tag, ICollectionTag
   {
+    #region Fields
+
+    private TagCollection _value;
+
+    #endregion
+
     #region Constructors
 
     public TagList()
@@ -22,11 +28,24 @@ namespace Cyotek.Data.Nbt
       : this(string.Empty, listType)
     { }
 
+    public TagList(TagCollection value)
+      : this(string.Empty, value)
+    { }
+
     public TagList(string name, TagType listType)
+      : this(name, listType, new TagCollection(listType))
+    { }
+
+    public TagList(string name, TagCollection value)
+      : this(name, value.LimitType, value)
+    { }
+
+    public TagList(string name, TagType listType, TagCollection value)
       : this()
     {
       this.Name = name;
       this.ListType = listType;
+      this.Value = value;
     }
 
     #endregion
@@ -38,7 +57,7 @@ namespace Cyotek.Data.Nbt
       get { return this.Value.Count; }
     }
 
-    public virtual TagType ListType
+    public TagType ListType
     {
       get { return this.Value?.LimitType ?? TagType.None; }
       set
@@ -50,24 +69,39 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    public new TagCollection Value
+    public TagCollection Value
     {
-      get { return (TagCollection)base.Value; }
+      get { return _value; }
       set
       {
-        if (value == null)
+        if (!ReferenceEquals(_value, value))
         {
-          throw new ArgumentNullException(nameof(value));
-        }
+          if (value == null)
+          {
+            throw new ArgumentNullException(nameof(value));
+          }
 
-        base.Value = value;
-        value.Owner = this;
+          _value = value;
+          value.Owner = this;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
       }
     }
 
     #endregion
 
     #region ICollectionTag Interface
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = (TagCollection)value;
+    }
 
     public override string ToString(string indentString)
     {

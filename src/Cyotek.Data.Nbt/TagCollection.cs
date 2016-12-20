@@ -8,6 +8,8 @@ namespace Cyotek.Data.Nbt
 {
   public class TagCollection : Collection<ITag>
   {
+    private ITag _owner;
+
     #region Constructors
 
     public TagCollection()
@@ -36,8 +38,19 @@ namespace Cyotek.Data.Nbt
 
     public TagType LimitType { get; set; }
 
-    public ITag Owner { get; set; }
+    public ITag Owner
+    {
+      get { return _owner; }
+      set
+      {
+        _owner = value;
 
+        foreach (ITag child in this)
+        {
+          child.Parent = value;
+        }
+      }
+    }
     #endregion
 
     #region Methods
@@ -352,8 +365,7 @@ namespace Cyotek.Data.Nbt
       {
         if (sb.Length > 1)
         {
-          sb.Append(',').
-             Append(' ');
+          sb.Append(',').Append(' ');
         }
 
         sb.Append(tag.ToValueString());
@@ -378,8 +390,7 @@ namespace Cyotek.Data.Nbt
     {
       if (this.LimitType != TagType.None && item.Type != this.LimitType)
       {
-        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.",
-                                    nameof(item));
+        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.", nameof(item));
       }
 
       item.Parent = this.Owner;
@@ -401,8 +412,7 @@ namespace Cyotek.Data.Nbt
     {
       if (this.LimitType != TagType.None && item.Type != this.LimitType)
       {
-        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.",
-                                    nameof(item));
+        throw new ArgumentException($"Only items of type {this.LimitType} can be added to this collection.", nameof(item));
       }
 
       item.Parent = this.Owner;

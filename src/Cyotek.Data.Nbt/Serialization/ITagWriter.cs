@@ -10,9 +10,9 @@ namespace Cyotek.Data.Nbt.Serialization
 
     void WriteDocument(Stream stream, TagCompound tag);
 
-    void WriteTag(ITag value);
+    void WriteTag(ITag tag);
 
-    void WriteTag(ITag value, WriteTagOptions options);
+    void WriteTag(ITag tag, WriteTagOptions options);
 
     void WriteValue(byte value);
 

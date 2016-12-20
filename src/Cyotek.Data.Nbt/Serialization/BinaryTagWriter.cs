@@ -9,21 +9,22 @@ namespace Cyotek.Data.Nbt.Serialization
   {
     #region Constants
 
-    private const int _doubleSize = 8;
-
-    private const int _floatSize = 4;
-
-    private const int _intSize = 4;
-
-    private const int _longSize = 8;
-
-    private const int _shortSize = 2;
+    private static readonly bool _isLittleEndian;
 
     #endregion
 
     #region Fields
 
     private Stream _stream;
+
+    #endregion
+
+    #region Static Constructors
+
+    static BinaryTagWriter()
+    {
+      _isLittleEndian = BitConverter.IsLittleEndian;
+    }
 
     #endregion
 
@@ -101,70 +102,70 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteTag(ITag value)
+    public virtual void WriteTag(ITag tag)
     {
-      this.WriteTag(value, WriteTagOptions.None);
+      this.WriteTag(tag, WriteTagOptions.None);
     }
 
-    public virtual void WriteTag(ITag value, WriteTagOptions options)
+    public virtual void WriteTag(ITag tag, WriteTagOptions options)
     {
-      if (value.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
-        this.WriteHeader(value);
+        this.WriteHeader(tag);
       }
 
-      switch (value.Type)
+      switch (tag.Type)
       {
         case TagType.End:
           this.WriteEnd();
           break;
 
         case TagType.Byte:
-          this.WriteValue((byte)value.Value);
+          this.WriteValue(((TagByte)tag).Value);
           break;
 
         case TagType.Short:
-          this.WriteValue((short)value.Value);
+          this.WriteValue(((TagShort)tag).Value);
           break;
 
         case TagType.Int:
-          this.WriteValue((int)value.Value);
+          this.WriteValue(((TagInt)tag).Value);
           break;
 
         case TagType.Long:
-          this.WriteValue((long)value.Value);
+          this.WriteValue(((TagLong)tag).Value);
           break;
 
         case TagType.Float:
-          this.WriteValue((float)value.Value);
+          this.WriteValue(((TagFloat)tag).Value);
           break;
 
         case TagType.Double:
-          this.WriteValue((double)value.Value);
+          this.WriteValue(((TagDouble)tag).Value);
           break;
 
         case TagType.ByteArray:
-          this.WriteValue((byte[])value.Value);
+          this.WriteValue(((TagByteArray)tag).Value);
           break;
 
         case TagType.String:
-          this.WriteValue((string)value.Value);
+          this.WriteValue(((TagString)tag).Value);
           break;
 
         case TagType.List:
-          this.WriteValue((TagCollection)value.Value);
+          this.WriteValue(((TagList)tag).Value);
           break;
 
         case TagType.Compound:
-          this.WriteValue((TagDictionary)value.Value);
+          this.WriteValue(((TagCompound)tag).Value);
           break;
 
         case TagType.IntArray:
-          this.WriteValue((int[])value.Value);
+          this.WriteValue(((TagIntArray)tag).Value);
           break;
 
         default:
-          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(value));
+          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
       }
     }
 
@@ -191,12 +192,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (BitConverter.IsLittleEndian)
+      if (_isLittleEndian)
       {
-        BitHelper.SwapBytes(buffer, 0, _shortSize);
+        BitHelper.SwapBytes(buffer, 0, BitHelper.ShortSize);
       }
 
-      _stream.Write(buffer, 0, _shortSize);
+      _stream.Write(buffer, 0, BitHelper.ShortSize);
     }
 
     public virtual void WriteValue(long value)
@@ -205,12 +206,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (BitConverter.IsLittleEndian)
+      if (_isLittleEndian)
       {
-        BitHelper.SwapBytes(buffer, 0, _longSize);
+        BitHelper.SwapBytes(buffer, 0, BitHelper.LongSize);
       }
 
-      _stream.Write(buffer, 0, _longSize);
+      _stream.Write(buffer, 0, BitHelper.LongSize);
     }
 
     public virtual void WriteValue(int[] value)
@@ -235,12 +236,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (BitConverter.IsLittleEndian)
+      if (_isLittleEndian)
       {
-        BitHelper.SwapBytes(buffer, 0, _intSize);
+        BitHelper.SwapBytes(buffer, 0, BitHelper.IntSize);
       }
 
-      _stream.Write(buffer, 0, _intSize);
+      _stream.Write(buffer, 0, BitHelper.IntSize);
     }
 
     public virtual void WriteValue(float value)
@@ -249,12 +250,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (BitConverter.IsLittleEndian)
+      if (_isLittleEndian)
       {
-        BitHelper.SwapBytes(buffer, 0, _floatSize);
+        BitHelper.SwapBytes(buffer, 0, BitHelper.FloatSize);
       }
 
-      _stream.Write(buffer, 0, _floatSize);
+      _stream.Write(buffer, 0, BitHelper.FloatSize);
     }
 
     public virtual void WriteValue(double value)
@@ -263,12 +264,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (BitConverter.IsLittleEndian)
+      if (_isLittleEndian)
       {
-        BitHelper.SwapBytes(buffer, 0, _doubleSize);
+        BitHelper.SwapBytes(buffer, 0, BitHelper.DoubleSize);
       }
 
-      _stream.Write(buffer, 0, _doubleSize);
+      _stream.Write(buffer, 0, BitHelper.DoubleSize);
     }
 
     public virtual void WriteValue(byte value)

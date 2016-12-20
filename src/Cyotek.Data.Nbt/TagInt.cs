@@ -1,7 +1,15 @@
+using System;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagInt : Tag
+  public sealed class TagInt : Tag
   {
+    #region Fields
+
+    private int _value;
+
+    #endregion
+
     #region Constructors
 
     public TagInt()
@@ -31,15 +39,33 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Int; }
     }
 
-    public new int Value
+    public int Value
     {
-      get { return (int)base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set
+      {
+        if (_value != value)
+        {
+          _value = value;
+
+          this.OnValueChanged(EventArgs.Empty);
+        }
+      }
     }
 
     #endregion
 
     #region Methods
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = Convert.ToInt32(value);
+    }
 
     public override string ToString(string indentString)
     {

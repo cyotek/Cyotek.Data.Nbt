@@ -7,6 +7,8 @@ namespace Cyotek.Data.Nbt
 {
   public class TagDictionary : KeyedCollection<string, ITag>
   {
+    private ITag _owner;
+
     #region Constructors
 
     public TagDictionary()
@@ -27,7 +29,19 @@ namespace Cyotek.Data.Nbt
 
     #region Properties
 
-    public ITag Owner { get; set; }
+    public ITag Owner
+    {
+      get { return _owner; }
+      set
+      {
+        _owner = value;
+
+        foreach (ITag child in this)
+        {
+          child.Parent = value;
+        }
+      }
+    }
 
     #endregion
 
@@ -163,7 +177,7 @@ namespace Cyotek.Data.Nbt
       ITag tag;
 
       tag = this.Add(name, tagType);
-      tag.Value = value;
+      tag.SetValue(value);
 
       return tag;
     }
@@ -275,8 +289,7 @@ namespace Cyotek.Data.Nbt
       {
         if (sb.Length > 1)
         {
-          sb.Append(',').
-             Append(' ');
+          sb.Append(',').Append(' ');
         }
 
         sb.Append(tag.ToValueString());
@@ -345,7 +358,7 @@ namespace Cyotek.Data.Nbt
 
     internal void ChangeKey(ITag item, string newKey)
     {
-      base.ChangeItemKey(item, newKey);
+      this.ChangeItemKey(item, newKey);
     }
 
     #endregion

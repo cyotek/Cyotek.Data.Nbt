@@ -47,7 +47,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsNotNull(result);
-      Assert.AreEqual(expectedValue, result.Value["name"].Value);
+      Assert.AreEqual(expectedValue, result.Value["name"].GetValue());
     }
 
     [Test]
@@ -92,7 +92,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.IsNotNull(result);
       Assert.IsAssignableFrom(expectedType, result);
-      Assert.AreEqual(expectedValue, (long)result.Value);
+      Assert.AreEqual(expectedValue, (long)result.GetValue());
     }
 
     #endregion

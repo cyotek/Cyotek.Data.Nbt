@@ -1,8 +1,16 @@
 Cyotek.Data.Nbt Change Log
 ==========================
 
+[3.0]
+-----
+
+Removed ITag.Value. Each Tag implementation has a strongly typed Value property without boxing.
+Added ITag.SetValue and ITag.GetValue methods that allow access to a value when you don't know the concrete type - these method box.
+Concrete tag classes are now sealed
+Reworked TagFactory to try and avoid boxing
+
 [2.1.0] - 2016-02-24
-------------------
+--------------------
 
 ### Added
 * Added new constructor to `XmlTagWriter` allowing you to specify a `XmlWriter`. Useful for when calling `Write*` methods directly, without first using `WriteDocument`
