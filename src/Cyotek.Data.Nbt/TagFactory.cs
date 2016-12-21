@@ -161,7 +161,7 @@ namespace Cyotek.Data.Nbt
           break;
 
         case TagType.String:
-          result = CreateTag(Convert.ToString(value));
+          result = CreateTag(name, Convert.ToString(value));
           break;
 
         case TagType.List:

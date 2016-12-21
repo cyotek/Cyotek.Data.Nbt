@@ -15,7 +15,7 @@ namespace Cyotek.Data.Nbt.Tests
     public void Constructor_allows_external_writer()
     {
       // arrange
-      ITagWriter target;
+      TagWriter target;
       ITag expected;
       ITag actual;
       XmlWriter writer;

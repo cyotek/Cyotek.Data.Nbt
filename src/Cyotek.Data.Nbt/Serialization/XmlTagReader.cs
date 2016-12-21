@@ -33,85 +33,81 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       ITag result;
       TagType type;
+      string name;
 
       this.InitializeReader();
 
       type = this.ReadTagType(defaultTagType);
-      result = TagFactory.CreateTag(type);
 
       if ((options & ReadTagOptions.IgnoreName) == 0)
       {
-        string name;
-
         name = _reader.GetAttribute("name");
         if (string.IsNullOrEmpty(name))
         {
           name = _reader.Name;
         }
-
-        result.Name = name;
+      }
+      else
+      {
+        name = string.Empty;
       }
 
       if ((options & ReadTagOptions.IgnoreValue) == 0)
       {
-        result.SetValue(this.ReadTagValue(result));
+        switch (type)
+        {
+          case TagType.Byte:
+            result = TagFactory.CreateTag(type, name, this.ReadByte());
+            break;
+
+          case TagType.Short:
+            result = TagFactory.CreateTag(type, name, this.ReadShort());
+            break;
+
+          case TagType.Int:
+            result = TagFactory.CreateTag(type, name, this.ReadInt());
+            break;
+
+          case TagType.Long:
+            result = TagFactory.CreateTag(type, name, this.ReadLong());
+            break;
+
+          case TagType.Float:
+            result = TagFactory.CreateTag(type, name, this.ReadFloat());
+            break;
+
+          case TagType.Double:
+            result = TagFactory.CreateTag(type, name, this.ReadDouble());
+            break;
+
+          case TagType.ByteArray:
+            result = TagFactory.CreateTag(type, name, this.ReadByteArray());
+            break;
+
+          case TagType.String:
+            result = TagFactory.CreateTag(type, name, this.ReadString());
+            break;
+
+          case TagType.List:
+            result = TagFactory.CreateTag(type, name, this.ReadCollection());
+            break;
+
+          case TagType.Compound:
+            result = TagFactory.CreateTag(type, name, this.ReadDictionary());
+            break;
+
+          case TagType.IntArray:
+            result = TagFactory.CreateTag(type, name, this.ReadIntArray());
+            break;
+
+          default:
+            throw new InvalidDataException($"Unrecognized tag type: {type}");
+        }
       }
-
-      return result;
-    }
-
-    protected virtual object ReadTagValue(ITag tag)
-    {
-      object result;
-
-      switch (tag.Type)
+      else
       {
-        case TagType.Byte:
-          result = this.ReadByte();
-          break;
-
-        case TagType.Short:
-          result = this.ReadShort();
-          break;
-
-        case TagType.Int:
-          result = this.ReadInt();
-          break;
-
-        case TagType.Long:
-          result = this.ReadLong();
-          break;
-
-        case TagType.Float:
-          result = this.ReadFloat();
-          break;
-
-        case TagType.Double:
-          result = this.ReadDouble();
-          break;
-
-        case TagType.ByteArray:
-          result = this.ReadByteArray();
-          break;
-
-        case TagType.String:
-          result = this.ReadString();
-          break;
-
-        case TagType.List:
-          result = this.ReadCollection();
-          break;
-
-        case TagType.Compound:
-          result = this.ReadDictionary();
-          break;
-
-        case TagType.IntArray:
-          result = this.ReadIntArray();
-          break;
-
-        default:
-          throw new InvalidDataException($"Unrecognized tag type: {tag.Type}");
+        result = TagFactory.CreateTag(type);
+        result.Name = name;
       }
 
       return result;

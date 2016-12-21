@@ -67,7 +67,7 @@ namespace Cyotek.Data.Nbt.Tests
       string name;
 
       name = "tagname";
-      expected = string.Format("[Compound: {0}] (0 entries)", name);
+      expected = $"[Compound: {name}] (0 entries)";
       target = new TagCompound(name);
 
       // act
@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
       string name;
 
       name = "tagname";
-      expected = string.Format("[Compound: {0}] (2 entries)", name);
+      expected = $"[Compound: {name}] (2 entries)";
       target = new TagCompound(name);
       target.Value.Add("item 1", "value1");
       target.Value.Add("item 2", 2.0F);
@@ -140,6 +140,28 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = target.ToString(prefix);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueStringTest()
+    {
+      // arrange
+      TagCompound target;
+      string expected;
+      string actual;
+      string name;
+
+      name = "tagname";
+      expected = "[value1, 2]";
+      target = new TagCompound(name);
+      target.Value.Add("item 1", "value1");
+      target.Value.Add("item 2", 2.0F);
+
+      // act
+      actual = target.ToValueString();
 
       // assert
       Assert.AreEqual(expected, actual);

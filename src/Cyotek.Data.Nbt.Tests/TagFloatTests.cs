@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = float.MaxValue;
-      expected = string.Format("[Float: {0}={1}]", name, value);
+      expected = $"[Float: {name}={value}]";
       target = new TagFloat(name, value);
 
       // act

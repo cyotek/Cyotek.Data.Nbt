@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
@@ -70,6 +71,11 @@ namespace Cyotek.Data.Nbt
     public override string ToString(string indentString)
     {
       return $"{indentString}[Byte: {this.Name}={this.Value}]";
+    }
+
+    public override string ToValueString()
+    {
+      return _value.ToString(CultureInfo.InvariantCulture);
     }
 
     #endregion

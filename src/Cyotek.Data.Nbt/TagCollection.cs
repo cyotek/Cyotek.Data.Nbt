@@ -8,7 +8,11 @@ namespace Cyotek.Data.Nbt
 {
   public class TagCollection : Collection<ITag>
   {
+    #region Fields
+
     private ITag _owner;
+
+    #endregion
 
     #region Constructors
 
@@ -51,6 +55,7 @@ namespace Cyotek.Data.Nbt
         }
       }
     }
+
     #endregion
 
     #region Methods
@@ -74,7 +79,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagString(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -90,7 +95,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagFloat(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -106,7 +111,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagDouble(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -122,7 +127,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagLong(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -138,7 +143,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagShort(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -159,7 +164,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagByte(name, (byte)(value ? 1 : 0));
+      tag = TagFactory.CreateTag(name, (byte)(value ? 1 : 0));
 
       this.Add(tag);
 
@@ -170,7 +175,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagByte(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -186,7 +191,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagInt(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -202,7 +207,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagIntArray(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 
@@ -218,7 +223,7 @@ namespace Cyotek.Data.Nbt
     {
       ITag tag;
 
-      tag = new TagByteArray(name, value);
+      tag = TagFactory.CreateTag(name, value);
 
       this.Add(tag);
 

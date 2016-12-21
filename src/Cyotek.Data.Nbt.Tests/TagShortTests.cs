@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = short.MaxValue;
-      expected = string.Format("[Short: {0}={1}]", name, value);
+      expected = $"[Short: {name}={value}]";
       target = new TagShort(name, value);
 
       // act

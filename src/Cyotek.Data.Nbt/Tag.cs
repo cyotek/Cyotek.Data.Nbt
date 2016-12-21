@@ -153,6 +153,8 @@ namespace Cyotek.Data.Nbt
       ((ICollectionTag)this.Parent).Values.Remove(this);
     }
 
+    public abstract void SetValue(object value);
+
     public override string ToString()
     {
       return this.ToString(string.Empty);
@@ -160,10 +162,7 @@ namespace Cyotek.Data.Nbt
 
     public abstract string ToString(string indentString);
 
-    public virtual string ToValueString()
-    {
-      return this.GetValue()?.ToString() ?? string.Empty;
-    }
+    public abstract string ToValueString();
 
     protected virtual void OnNameChanged(EventArgs e)
     {
@@ -171,10 +170,7 @@ namespace Cyotek.Data.Nbt
 
       handler = this.NameChanged;
 
-      if (handler != null)
-      {
-        handler(this, e);
-      }
+      handler?.Invoke(this, e);
     }
 
     protected virtual void OnParentChanged(EventArgs e)
@@ -183,10 +179,7 @@ namespace Cyotek.Data.Nbt
 
       handler = this.ParentChanged;
 
-      if (handler != null)
-      {
-        handler(this, e);
-      }
+      handler?.Invoke(this, e);
     }
 
     protected virtual void OnValueChanged(EventArgs e)
@@ -195,10 +188,7 @@ namespace Cyotek.Data.Nbt
 
       handler = this.ValueChanged;
 
-      if (handler != null)
-      {
-        handler(this, e);
-      }
+      handler?.Invoke(this, e);
     }
 
     private void FlattenTag(ITag tag, List<ITag> tags)
@@ -231,8 +221,6 @@ namespace Cyotek.Data.Nbt
     public event EventHandler ValueChanged;
 
     public abstract object GetValue();
-
-    public abstract void SetValue(object value);
 
     ITag[] ITag.Flatten()
     {

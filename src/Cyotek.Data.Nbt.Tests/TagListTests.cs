@@ -140,7 +140,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       itemType = TagType.String;
-      expected = string.Format("[List: {0}] (0 items)", name);
+      expected = $"[List: {name}] (0 items)";
       target = new TagList(name, itemType);
 
       // act
@@ -186,7 +186,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       itemType = TagType.String;
-      expected = string.Format("[List: {0}] (2 items)", name);
+      expected = $"[List: {name}] (2 items)";
       target = new TagList(name, itemType);
       target.Value.Add("item 1", "value1");
       target.Value.Add("item 2", "value2");
@@ -219,6 +219,30 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = target.ToString(prefix);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueStringTest()
+    {
+      // arrange
+      TagList target;
+      string expected;
+      string actual;
+      string name;
+      TagType itemType;
+
+      name = "tagname";
+      itemType = TagType.String;
+      expected = "[value1, value2]";
+      target = new TagList(name, itemType);
+      target.Value.Add("item 1", "value1");
+      target.Value.Add("item 2", "value2");
+
+      // act
+      actual = target.ToValueString();
 
       // assert
       Assert.AreEqual(expected, actual);
@@ -278,7 +302,5 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     #endregion
-
-    //ncrunch: no coverage
   }
 }

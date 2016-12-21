@@ -410,6 +410,11 @@ namespace Cyotek.Data.Nbt
       return tag != null ? (T)tag.GetValue() : defaultValue;
     }
 
+    public override void SetValue(object value)
+    {
+      this.Value = (TagDictionary)value;
+    }
+
     #endregion
 
     #region ICollectionTag Interface
@@ -419,14 +424,14 @@ namespace Cyotek.Data.Nbt
       return _value;
     }
 
-    public override void SetValue(object value)
-    {
-      this.Value = (TagDictionary)value;
-    }
-
     public override string ToString(string indentString)
     {
       return $"{indentString}[Compound: {this.Name}] ({this.Value?.Count ?? 0} entries)";
+    }
+
+    public override string ToValueString()
+    {
+      return _value?.ToString() ?? string.Empty;
     }
 
     public override TagType Type

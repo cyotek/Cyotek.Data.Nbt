@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = int.MaxValue;
-      expected = string.Format("[Int: {0}={1}]", name, value);
+      expected = $"[Int: {name}={value}]";
       target = new TagInt(name, value);
 
       // act

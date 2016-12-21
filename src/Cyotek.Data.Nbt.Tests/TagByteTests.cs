@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = byte.MaxValue;
-      expected = string.Format("[Byte: {0}={1}]", name, value);
+      expected = $"[Byte: {name}={value}]";
       target = new TagByte(name, value);
 
       // act

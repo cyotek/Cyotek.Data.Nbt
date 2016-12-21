@@ -31,7 +31,7 @@ namespace Cyotek.Data.Nbt.Tests
     public void WriteEmptyByteArrayTest()
     {
       // arrange
-      ITagWriter target;
+      TagWriter target;
       NbtDocument expected;
       MemoryStream stream;
       ITagReader reader;

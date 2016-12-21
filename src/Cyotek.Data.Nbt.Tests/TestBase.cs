@@ -1213,10 +1213,10 @@ namespace Cyotek.Data.Nbt.Tests
       return Path.Combine(path, fileName);
     }
 
-    protected void WriteDocumentTest<T, T2>(CompressionOption compression) where T : ITagWriter, new() where T2 : ITagReader, new()
+    protected void WriteDocumentTest<T, T2>(CompressionOption compression) where T : TagWriter, new() where T2 : ITagReader, new()
     {
       // arrange
-      ITagWriter target;
+      TagWriter target;
       TagCompound expected;
       TagCompound actual;
 

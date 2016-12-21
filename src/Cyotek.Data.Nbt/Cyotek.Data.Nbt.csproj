@@ -52,7 +52,7 @@
     <Compile Include="Serialization\BinaryTagReader.cs" />
     <Compile Include="Serialization\BinaryTagWriter.cs" />
     <Compile Include="Serialization\ITagReader.cs" />
-    <Compile Include="Serialization\ITagWriter.cs" />
+    <Compile Include="Serialization\TagWriter.cs" />
     <Compile Include="Serialization\ReadTagOptions.cs" />
     <Compile Include="Serialization\WriteTagOptions.cs" />
     <Compile Include="Serialization\XmlTagReader.cs" />

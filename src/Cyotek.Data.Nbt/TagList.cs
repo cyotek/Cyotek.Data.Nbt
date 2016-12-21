@@ -91,6 +91,15 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
+    #region Methods
+
+    public override void SetValue(object value)
+    {
+      this.Value = (TagCollection)value;
+    }
+
+    #endregion
+
     #region ICollectionTag Interface
 
     public override object GetValue()
@@ -98,14 +107,14 @@ namespace Cyotek.Data.Nbt
       return _value;
     }
 
-    public override void SetValue(object value)
-    {
-      this.Value = (TagCollection)value;
-    }
-
     public override string ToString(string indentString)
     {
       return $"{indentString}[List: {this.Name}] ({this.Value?.Count ?? 0} items)";
+    }
+
+    public override string ToValueString()
+    {
+      return _value?.ToString() ?? string.Empty;
     }
 
     public override TagType Type

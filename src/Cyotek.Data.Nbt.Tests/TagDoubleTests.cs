@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = double.MaxValue;
-      expected = string.Format("[Double: {0}={1}]", name, value);
+      expected = $"[Double: {name}={value}]";
       target = new TagDouble(name, value);
 
       // act

@@ -38,8 +38,6 @@ namespace Cyotek.Data.Nbt
 
     void Remove();
 
-    void SetValue(object value);
-
     string ToString();
 
     string ToString(string indent);

@@ -68,6 +68,11 @@ namespace Cyotek.Data.Nbt
       return $"{indentString}[String: {this.Name}=\"{this.Value}\"]";
     }
 
+    public override string ToValueString()
+    {
+      return _value ?? string.Empty;
+    }
+
     #endregion
   }
 }

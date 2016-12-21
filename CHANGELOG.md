@@ -8,6 +8,7 @@ Removed ITag.Value. Each Tag implementation has a strongly typed Value property 
 Added ITag.SetValue and ITag.GetValue methods that allow access to a value when you don't know the concrete type - these method box.
 Concrete tag classes are now sealed
 Reworked TagFactory to try and avoid boxing
+Removed boxing implementation of ToValueString. All concerete classes now explicitly implement.
 
 [2.1.0] - 2016-02-24
 --------------------

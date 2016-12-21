@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class BinaryTagWriter : ITagWriter
+  public class BinaryTagWriter : TagWriter
   {
     #region Constants
 
@@ -43,7 +43,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region Methods
 
-    protected virtual void WriteEnd()
+    protected  void WriteEnd()
     {
       _stream.WriteByte((byte)TagType.End);
     }
@@ -54,7 +54,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteValue(value.Name);
     }
 
-    protected virtual void WriteValue(TagCollection value)
+    protected  void WriteValue(TagCollection value)
     {
       _stream.WriteByte((byte)value.LimitType);
 
@@ -66,7 +66,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    protected virtual void WriteValue(TagDictionary value)
+    protected  void WriteValue(TagDictionary value)
     {
       foreach (ITag item in value)
       {
@@ -80,12 +80,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region ITagWriter Interface
 
-    public virtual void WriteDocument(Stream stream, TagCompound tag)
+    public override void WriteDocument(Stream stream, TagCompound tag)
     {
       this.WriteDocument(stream, tag, CompressionOption.Auto);
     }
 
-    public virtual void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
+    public override void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
     {
       if (compression != CompressionOption.Off)
       {
@@ -102,12 +102,12 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteTag(ITag tag)
+    public override void WriteTag(ITag tag)
     {
       this.WriteTag(tag, WriteTagOptions.None);
     }
 
-    public virtual void WriteTag(ITag tag, WriteTagOptions options)
+    public override void WriteTag(ITag tag, WriteTagOptions options)
     {
       if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
@@ -169,7 +169,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteValue(string value)
+    public override void WriteValue(string value)
     {
       if (string.IsNullOrEmpty(value))
       {
@@ -186,7 +186,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteValue(short value)
+    public override void WriteValue(short value)
     {
       byte[] buffer;
 
@@ -200,7 +200,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.ShortSize);
     }
 
-    public virtual void WriteValue(long value)
+    public override void WriteValue(long value)
     {
       byte[] buffer;
 
@@ -214,7 +214,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.LongSize);
     }
 
-    public virtual void WriteValue(int[] value)
+    public override void WriteValue(int[] value)
     {
       if (value != null && value.Length != 0)
       {
@@ -230,7 +230,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteValue(int value)
+    public override void WriteValue(int value)
     {
       byte[] buffer;
 
@@ -244,7 +244,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.IntSize);
     }
 
-    public virtual void WriteValue(float value)
+    public override void WriteValue(float value)
     {
       byte[] buffer;
 
@@ -258,7 +258,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.FloatSize);
     }
 
-    public virtual void WriteValue(double value)
+    public override void WriteValue(double value)
     {
       byte[] buffer;
 
@@ -272,12 +272,12 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.DoubleSize);
     }
 
-    public virtual void WriteValue(byte value)
+    public override void WriteValue(byte value)
     {
       _stream.WriteByte(value);
     }
 
-    public virtual void WriteValue(byte[] value)
+    public override void WriteValue(byte[] value)
     {
       if (value != null && value.Length != 0)
       {
@@ -288,6 +288,22 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         this.WriteValue(0);
       }
+    }
+
+
+    public void WriteStartDocument()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void WriteEndDocument()
+    {
+      throw new NotImplementedException();
+    }
+
+    public override void Flush()
+    {
+      _stream.Flush();
     }
 
     #endregion

@@ -86,7 +86,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       name = "tagname";
       value = "tagvalue";
-      expected = string.Format("[String: {0}=\"{1}\"]", name, value);
+      expected = $"[String: {name}=\"{value}\"]";
       target = new TagString(name, value);
 
       // act

@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt
     public NbtDocument()
     {
       this.Format = NbtFormat.Binary;
-      this.DocumentRoot = new TagCompound();
+      this.DocumentRoot = (TagCompound)TagFactory.CreateTag(TagType.Compound);
     }
 
     public NbtDocument(TagCompound document)
@@ -307,7 +307,7 @@ namespace Cyotek.Data.Nbt
 
     public virtual void Save(Stream stream, CompressionOption compression)
     {
-      ITagWriter writer;
+      TagWriter writer;
 
       if (stream == null)
       {

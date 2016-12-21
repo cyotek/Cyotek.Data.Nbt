@@ -120,7 +120,7 @@ namespace Cyotek.Data.Nbt.Tests
                 int.MinValue,
                 int.MaxValue
               };
-      expected = string.Format("[IntArray: {0}={1} values]", name, value.Length);
+      expected = $"[IntArray: {name}={value.Length} values]";
       target = new TagIntArray(name, value);
 
       // act

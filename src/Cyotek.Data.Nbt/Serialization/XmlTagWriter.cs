@@ -5,8 +5,19 @@ using System.Xml;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class XmlTagWriter : ITagWriter
+  public class XmlTagWriter : TagWriter
   {
+    #region Constants
+
+    private static readonly char[] _cDataTriggers =
+    {
+      '<',
+      '>',
+      '&'
+    };
+
+    #endregion
+
     #region Fields
 
     private XmlWriter _writer;
@@ -33,7 +44,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _writer.WriteAttributeString("type", value.Type.ToString());
     }
 
-    protected virtual void WriteValue(TagCollection value)
+    protected  void WriteValue(TagCollection value)
     {
       _writer.WriteAttributeString("limitType", value.LimitType.ToString());
 
@@ -43,7 +54,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    protected virtual void WriteValue(TagDictionary value)
+    protected  void WriteValue(TagDictionary value)
     {
       foreach (ITag item in value)
       {
@@ -55,24 +66,18 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region ITagWriter Interface
 
-    public virtual void WriteDocument(Stream stream, TagCompound tag)
+    public override void WriteDocument(Stream stream, TagCompound tag)
     {
       this.WriteDocument(stream, tag, CompressionOption.Auto);
     }
 
-    public virtual void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
+    public override void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
     {
-      bool createWriter;
-
       if (compression == CompressionOption.On)
       {
         throw new NotSupportedException("Compression is not supported.");
       }
 
-      createWriter = _writer == null;
-
-      if (createWriter)
-      {
         XmlWriterSettings settings;
 
         settings = new XmlWriterSettings
@@ -82,25 +87,20 @@ namespace Cyotek.Data.Nbt.Serialization
                    };
 
         _writer = XmlWriter.Create(stream, settings);
-        _writer.WriteStartDocument(true);
-      }
 
+      this.WriteStartDocument();
       this.WriteTag(tag, WriteTagOptions.None);
-
-      if (createWriter)
-      {
-        _writer.WriteEndDocument();
-        _writer.Flush();
-        _writer = null;
-      }
+      this.WriteEndDocument();
     }
 
-    public virtual void WriteTag(ITag tag)
+
+
+    public override void WriteTag(ITag tag)
     {
       this.WriteTag(tag, WriteTagOptions.None);
     }
 
-    public virtual void WriteTag(ITag tag, WriteTagOptions options)
+    public override void WriteTag(ITag tag, WriteTagOptions options)
     {
       string name;
 
@@ -128,51 +128,51 @@ namespace Cyotek.Data.Nbt.Serialization
       switch (tag.Type)
       {
         case TagType.End:
-          // noop
+          // no op
           break;
 
         case TagType.Byte:
-          this.WriteValue((byte)tag.GetValue());
+          this.WriteValue(((TagByte)tag).Value);
           break;
 
         case TagType.Short:
-          this.WriteValue((short)tag.GetValue());
+          this.WriteValue(((TagShort)tag).Value);
           break;
 
         case TagType.Int:
-          this.WriteValue((int)tag.GetValue());
+          this.WriteValue(((TagInt)tag).Value);
           break;
 
         case TagType.Long:
-          this.WriteValue((long)tag.GetValue());
+          this.WriteValue(((TagLong)tag).Value);
           break;
 
         case TagType.Float:
-          this.WriteValue((float)tag.GetValue());
+          this.WriteValue(((TagFloat)tag).Value);
           break;
 
         case TagType.Double:
-          this.WriteValue((double)tag.GetValue());
+          this.WriteValue(((TagDouble)tag).Value);
           break;
 
         case TagType.ByteArray:
-          this.WriteValue((byte[])tag.GetValue());
+          this.WriteValue(((TagByteArray)tag).Value);
           break;
 
         case TagType.String:
-          this.WriteValue((string)tag.GetValue());
+          this.WriteValue(((TagString)tag).Value);
           break;
 
         case TagType.List:
-          this.WriteValue((TagCollection)tag.GetValue());
+          this.WriteValue(((TagList)tag).Value);
           break;
 
         case TagType.Compound:
-          this.WriteValue((TagDictionary)tag.GetValue());
+          this.WriteValue(((TagCompound)tag).Value);
           break;
 
         case TagType.IntArray:
-          this.WriteValue((int[])tag.GetValue());
+          this.WriteValue(((TagIntArray)tag).Value);
           break;
 
         default:
@@ -182,11 +182,11 @@ namespace Cyotek.Data.Nbt.Serialization
       _writer.WriteEndElement();
     }
 
-    public virtual void WriteValue(string value)
+    public override void WriteValue(string value)
     {
       if (value != null)
       {
-        if (value.Contains("<") || value.Contains(">") || value.Contains("&"))
+        if (value.IndexOfAny(_cDataTriggers) != -1)
         {
           _writer.WriteCData(value);
         }
@@ -197,17 +197,17 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteValue(short value)
+    public override void WriteValue(short value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(long value)
+    public override void WriteValue(long value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(int[] value)
+    public override void WriteValue(int[] value)
     {
       StringBuilder output;
 
@@ -226,27 +226,27 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteValue(output.ToString());
     }
 
-    public virtual void WriteValue(int value)
+    public override void WriteValue(int value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(float value)
+    public override void WriteValue(float value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(double value)
+    public override void WriteValue(double value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(byte value)
+    public override void WriteValue(byte value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(byte[] value)
+    public override void WriteValue(byte[] value)
     {
       StringBuilder output;
 
@@ -263,6 +263,23 @@ namespace Cyotek.Data.Nbt.Serialization
       }
 
       this.WriteValue(output.ToString());
+    }
+
+
+    public void WriteStartDocument()
+    {
+      _writer.WriteStartDocument(true);
+    }
+
+    public void WriteEndDocument()
+    {
+        _writer.WriteEndDocument();
+        _writer.Flush();
+    }
+
+    public override void Flush()
+    {
+      _writer.Flush();
     }
 
     #endregion

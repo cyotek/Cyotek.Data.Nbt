@@ -78,7 +78,7 @@ namespace Cyotek.Data.Nbt.Tests
       string prefix;
 
       prefix = "test";
-      expected = string.Format("{0}[End]", prefix);
+      expected = $"{prefix}[End]";
       target = new TagEnd();
 
       // act

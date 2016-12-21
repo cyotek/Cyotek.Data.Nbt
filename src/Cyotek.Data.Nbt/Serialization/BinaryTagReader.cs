@@ -147,7 +147,7 @@ namespace Cyotek.Data.Nbt.Serialization
             break;
 
           case TagType.End:
-            tag = new TagEnd();
+            tag = TagFactory.CreateTag(TagType.End);
             break;
 
           case TagType.Float:
@@ -410,7 +410,7 @@ namespace Cyotek.Data.Nbt.Serialization
         switch (type)
         {
           case TagType.End:
-            result = new TagEnd();
+            result = TagFactory.CreateTag(TagType.End);
             break;
 
           case TagType.Byte:
