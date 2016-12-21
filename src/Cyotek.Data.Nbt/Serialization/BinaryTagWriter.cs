@@ -32,6 +32,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region Methods
 
+    public override void Close()
+    {
+      _stream.Flush();
+      _stream.Close();
+    }
+
     public override void Flush()
     {
       _stream.Flush();

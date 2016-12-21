@@ -21,6 +21,10 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region Constructors
 
+    /// <summary>
+    /// Constructor. <see cref="XmlWriter"/>
+    /// </summary>
+    /// <param name="writer">The writer.</param>
     public XmlTagWriter(XmlWriter writer)
     {
       _writer = writer;
@@ -42,6 +46,12 @@ namespace Cyotek.Data.Nbt.Serialization
     #endregion
 
     #region Methods
+
+    public override void Close()
+    {
+      _writer.Flush();
+      _writer.Close();
+    }
 
     public override void Flush()
     {

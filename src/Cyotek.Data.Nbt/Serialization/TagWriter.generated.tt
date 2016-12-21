@@ -1,0 +1,93 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\NbtGeneratorData.t4" #>
+using System;
+
+namespace Cyotek.Data.Nbt.Serialization
+{
+  partial class TagWriter
+  {
+<# for(var i = 0; i < netTypeNames.Length; i++)
+   {
+     string name;
+     string nbtName;
+
+     name = netTypeNames[i];
+     nbtName = nbtTypeNames[i];
+
+     if(name != null)
+     {
+#>
+    /// <summary>
+    /// Writes a <see cref="<#=name#>" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="<#=name#>" /> value to write.</param>
+    public abstract void WriteValue(<#=name#> value);
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="<#=name#>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="value">The <see cref="<#=name#>" /> value to write.</param>
+    public void WriteTag(string name, <#=name#> value)
+    {
+      this.WriteStartTag(TagType.<#=nbtName#>, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="<#=name#>" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="<#=name#>" /> value to write.</param>
+    public void WriteTag(<#=name#> value)
+    {
+      this.WriteStartTag(TagType.<#=nbtName#>, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+<#
+    }
+  }
+#>
+
+    /// <summary>
+    /// Writes a tag value.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the type of the tag is invalid.</exception>
+    /// <param name="tag">The <see cref="ITag"/> to write.</param>
+    public void WriteValue(ITag tag)
+    {
+      switch (tag.Type)
+      {
+<# for(var i = 0; i < nbtTypeNames.Length; i++)
+   {
+     string tagName;
+     string nbtName;
+
+     nbtName = nbtTypeNames[i];
+     tagName = nbtTagTypeNames[i];
+
+     if(tagName != "TagEnd")
+     {
+#>
+        case TagType.<#=nbtName#>:
+          this.WriteValue(((<#=tagName#>)tag).Value);
+          break;
+
+<#
+    }
+  }
+#>
+
+        default:
+          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
+      }
+    }
+  }
+}

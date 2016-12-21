@@ -68,6 +68,7 @@
     <Compile Include="TagShortTests.cs" />
     <Compile Include="TagStringTests.cs" />
     <Compile Include="TagTests.cs" />
+    <Compile Include="TagTypeTests.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
