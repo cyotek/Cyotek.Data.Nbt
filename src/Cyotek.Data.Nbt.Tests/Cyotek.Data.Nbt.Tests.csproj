@@ -45,11 +45,14 @@
       <Link>BitHelper.cs</Link>
     </Compile>
     <Compile Include="AnvilRegionTests.cs" />
-    <Compile Include="BinaryTagReaderTests.cs" />
-    <Compile Include="BinaryTagWriterTests.cs" />
     <Compile Include="NbtDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
+    <Compile Include="Serialization\BinaryTagReaderTests.cs" />
+    <Compile Include="Serialization\BinaryTagWriterTests.cs" />
+    <Compile Include="Serialization\TagWriterTests.cs" />
+    <Compile Include="Serialization\XmlTagReaderTests.cs" />
+    <Compile Include="Serialization\XmlTagWriterTests.cs" />
     <Compile Include="TagByteArrayTests.cs" />
     <Compile Include="TagByteTests.cs" />
     <Compile Include="TagCollectionTests.cs" />
@@ -65,10 +68,7 @@
     <Compile Include="TagShortTests.cs" />
     <Compile Include="TagStringTests.cs" />
     <Compile Include="TagTests.cs" />
-    <Compile Include="TagWriterTests.cs" />
     <Compile Include="TestBase.cs" />
-    <Compile Include="XmlTagReaderTests.cs" />
-    <Compile Include="XmlTagWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\bigtest.nbt">

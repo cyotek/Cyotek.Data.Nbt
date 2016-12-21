@@ -48,11 +48,6 @@ namespace Cyotek.Data.Nbt.Serialization
       _writer.Flush();
     }
 
-    public override void WriteEnd()
-    {
-      // no op
-    }
-
     public override void WriteEndDocument()
     {
       _writer.WriteEndDocument();
@@ -69,11 +64,8 @@ namespace Cyotek.Data.Nbt.Serialization
       _writer.WriteStartDocument(true);
     }
 
-    public override void WriteStartTag(ITag tag, WriteTagOptions options)
+    public override void WriteStartTag(TagType type, string name, WriteTagOptions options)
     {
-      string name;
-
-      name = tag.Name;
       if (string.IsNullOrEmpty(name))
       {
         name = "tag";
@@ -89,10 +81,16 @@ namespace Cyotek.Data.Nbt.Serialization
         _writer.WriteAttributeString("name", name);
       }
 
-      if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      if (type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
-        _writer.WriteAttributeString("type", tag.Type.ToString());
+        _writer.WriteAttributeString("type", type.ToString());
       }
+    }
+
+    public override void WriteStartTag(TagType type, string name, TagType listType, int count)
+    {
+      this.WriteStartTag(type, name);
+      _writer.WriteAttributeString("limitType", listType.ToString());
     }
 
     public override void WriteValue(string value)
@@ -194,6 +192,11 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         this.WriteTag(item, WriteTagOptions.None);
       }
+    }
+
+    protected override void WriteEnd()
+    {
+      // no op
     }
 
     #endregion

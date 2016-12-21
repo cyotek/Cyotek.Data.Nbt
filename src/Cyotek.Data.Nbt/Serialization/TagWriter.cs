@@ -67,15 +67,25 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public abstract void Flush();
 
-    public abstract void WriteEnd();
-
     public abstract void WriteEndDocument();
 
     public abstract void WriteEndTag();
 
     public abstract void WriteStartDocument();
 
-    public abstract void WriteStartTag(ITag tag, WriteTagOptions options);
+    public void WriteStartTag(ITag tag, WriteTagOptions options)
+    {
+      this.WriteStartTag(tag.Type, tag.Name, options);
+    }
+
+    public void WriteStartTag(TagType type, string name)
+    {
+      this.WriteStartTag(type, name, WriteTagOptions.None);
+    }
+
+    public abstract void WriteStartTag(TagType type, string name, WriteTagOptions options);
+
+    public abstract void WriteStartTag(TagType type, string name, TagType listType, int count);
 
     public void WriteTag(ITag tag)
     {
@@ -90,6 +100,196 @@ namespace Cyotek.Data.Nbt.Serialization
 
       this.WriteEndTag();
     }
+
+    public void WriteTag(string name, byte value)
+    {
+      this.WriteStartTag(TagType.Byte, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, byte[] value)
+    {
+      this.WriteStartTag(TagType.ByteArray, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, TagDictionary value)
+    {
+      this.WriteStartTag(TagType.Compound, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, double value)
+    {
+      this.WriteStartTag(TagType.Double, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, float value)
+    {
+      this.WriteStartTag(TagType.Float, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, int value)
+    {
+      this.WriteStartTag(TagType.Int, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, int[] value)
+    {
+      this.WriteStartTag(TagType.IntArray, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, TagCollection value)
+    {
+      this.WriteStartTag(TagType.List, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, long value)
+    {
+      this.WriteStartTag(TagType.Long, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, short value)
+    {
+      this.WriteStartTag(TagType.Short, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string name, string value)
+    {
+      this.WriteStartTag(TagType.String, name);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(byte value)
+    {
+      this.WriteStartTag(TagType.Byte, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(byte[] value)
+    {
+      this.WriteStartTag(TagType.ByteArray, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(TagDictionary value)
+    {
+      this.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(double value)
+    {
+      this.WriteStartTag(TagType.Double, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(float value)
+    {
+      this.WriteStartTag(TagType.Float, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(int value)
+    {
+      this.WriteStartTag(TagType.Int, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(int[] value)
+    {
+      this.WriteStartTag(TagType.IntArray, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(TagCollection value)
+    {
+      this.WriteStartTag(TagType.List, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(long value)
+    {
+      this.WriteStartTag(TagType.Long, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(short value)
+    {
+      this.WriteStartTag(TagType.Short, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public void WriteTag(string value)
+    {
+      this.WriteStartTag(TagType.String, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    public abstract void WriteValue(byte value);
+
+    public abstract void WriteValue(byte[] value);
+
+    public abstract void WriteValue(double value);
+
+    public abstract void WriteValue(short value);
+
+    public abstract void WriteValue(int value);
+
+    public abstract void WriteValue(int[] value);
+
+    public abstract void WriteValue(long value);
+
+    public abstract void WriteValue(float value);
+
+    public abstract void WriteValue(string value);
+
+    public abstract void WriteValue(TagCollection value);
+
+    public abstract void WriteValue(TagDictionary value);
+
+    /// <summary>
+    /// Releases unmanaged and - optionally - managed resources.
+    /// </summary>
+    /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!this.IsDisposed)
+      {
+        this.IsDisposed = true;
+      }
+    }
+
+    protected abstract void WriteEnd();
 
     private void WriteTagValue(ITag tag)
     {
@@ -145,40 +345,6 @@ namespace Cyotek.Data.Nbt.Serialization
 
         default:
           throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
-      }
-    }
-
-    public abstract void WriteValue(byte value);
-
-    public abstract void WriteValue(byte[] value);
-
-    public abstract void WriteValue(double value);
-
-    public abstract void WriteValue(short value);
-
-    public abstract void WriteValue(int value);
-
-    public abstract void WriteValue(int[] value);
-
-    public abstract void WriteValue(long value);
-
-    public abstract void WriteValue(float value);
-
-    public abstract void WriteValue(string value);
-
-    public abstract void WriteValue(TagCollection value);
-
-    public abstract void WriteValue(TagDictionary value);
-
-    /// <summary>
-    /// Releases unmanaged and - optionally - managed resources.
-    /// </summary>
-    /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!this.IsDisposed)
-      {
-        this.IsDisposed = true;
       }
     }
 

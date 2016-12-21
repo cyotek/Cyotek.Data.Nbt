@@ -2,7 +2,7 @@
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
 
-namespace Cyotek.Data.Nbt.Tests
+namespace Cyotek.Data.Nbt.Tests.Serialization
 {
   [TestFixture]
   public class BinaryTagReaderTests : TestBase

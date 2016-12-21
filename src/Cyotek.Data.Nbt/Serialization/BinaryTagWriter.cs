@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -9,6 +10,14 @@ namespace Cyotek.Data.Nbt.Serialization
     #region Constants
 
     private readonly Stream _stream;
+
+    #endregion
+
+    #region Fields
+
+    private Stack<TagState> _openContainers;
+
+    private Stack<TagType> _openTags;
 
     #endregion
 
@@ -28,33 +37,114 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Flush();
     }
 
-    public override void WriteEnd()
-    {
-      _stream.WriteByte((byte)TagType.End);
-    }
-
     public override void WriteEndDocument()
     {
-      // no-op
+      if (_openTags == null)
+      {
+        throw new InvalidOperationException("No document is currently open");
+      }
+
+      _openTags = null;
+      _openContainers = null;
     }
 
     public override void WriteEndTag()
     {
-      // no-op
+      TagType type;
+
+      if (_openTags == null)
+      {
+        throw new InvalidOperationException("No document is currently open");
+      }
+
+      if (_openTags.Count == 0)
+      {
+        throw new InvalidOperationException("No tag is currently open");
+      }
+
+      type = _openTags.Pop();
+
+      if (type == TagType.List || type == TagType.Compound)
+      {
+        TagState state;
+
+        state = _openContainers.Pop();
+
+        if (type == TagType.Compound)
+        {
+          this.WriteEnd();
+        }
+        else if (state.ChildCount != state.ExpectedCount)
+        {
+          throw new InvalidDataException($"Expected {state.ExpectedCount} children, but {state.ChildCount} were written.");
+        }
+      }
     }
 
     public override void WriteStartDocument()
     {
-      // no-op
+      if (_openTags != null)
+      {
+        throw new InvalidOperationException("Document is already open.");
+      }
+
+      _openTags = new Stack<TagType>();
+      _openContainers = new Stack<TagState>();
     }
 
-    public override void WriteStartTag(ITag tag, WriteTagOptions options)
+    public override void WriteStartTag(TagType type, string name, WriteTagOptions options)
     {
-      if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      if (_openTags == null)
       {
-        this.WriteValue((byte)tag.Type);
-        this.WriteValue(tag.Name);
+        throw new InvalidOperationException("No document is currently open");
       }
+
+      if (_openTags.Count != 0)
+      {
+        TagState state;
+
+        state = _openContainers.Peek();
+
+        if (state.Type == TagType.List && state.ChildType != TagType.End && type != state.ChildType)
+        {
+          throw new InvalidOperationException($"Attempted to add tag of type '{type}' to container that only accepts '{state.ChildType}'");
+        }
+
+        state.ChildCount++;
+      }
+
+      _openTags.Push(type);
+
+      if (type == TagType.Compound || type == TagType.List)
+      {
+        _openContainers.Push(new TagState
+                             {
+                               Type = type
+                             });
+      }
+
+      if (type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      {
+        this.WriteValue((byte)type);
+        this.WriteValue(name);
+      }
+    }
+
+    public override void WriteStartTag(TagType type, string name, TagType listType, int count)
+    {
+      // HACK: This is messy, rethink
+
+      this.WriteStartTag(type, name);
+
+      TagState state;
+
+      state = _openContainers.Pop();
+      state.ChildType = listType;
+      state.ExpectedCount = count;
+      _openContainers.Push(state);
+
+      _stream.WriteByte((byte)listType);
+      this.WriteValue(count);
     }
 
     public override void WriteValue(string value)
@@ -185,6 +275,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override void WriteValue(TagCollection value)
     {
+      TagState state;
+
+      state = _openContainers.Peek();
+      state.ChildType = value.LimitType;
+      state.ExpectedCount = value.Count;
+
       _stream.WriteByte((byte)value.LimitType);
 
       this.WriteValue(value.Count);
@@ -201,8 +297,30 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         this.WriteTag(item, WriteTagOptions.None);
       }
+    }
 
-      this.WriteEnd();
+    protected override void WriteEnd()
+    {
+      _stream.WriteByte((byte)TagType.End);
+    }
+
+    #endregion
+
+    #region Nested type: TagState
+
+    private class TagState
+    {
+      #region Fields
+
+      public int ChildCount;
+
+      public TagType ChildType;
+
+      public int ExpectedCount;
+
+      public TagType Type;
+
+      #endregion
     }
 
     #endregion

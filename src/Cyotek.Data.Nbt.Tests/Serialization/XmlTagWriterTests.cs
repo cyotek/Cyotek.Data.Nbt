@@ -3,7 +3,7 @@ using System.Xml;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
 
-namespace Cyotek.Data.Nbt.Tests
+namespace Cyotek.Data.Nbt.Tests.Serialization
 {
   [TestFixture]
   public class XmlTagWriterTests : TestBase
@@ -47,9 +47,15 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Serialization_deserialization_test()
+    public void Document_serialization_deserialization_test()
     {
       this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream));
+    }
+
+    [Test]
+    public void Serialization_deserialization_test()
+    {
+      this.WriteTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream));
     }
 
     #endregion

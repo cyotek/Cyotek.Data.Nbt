@@ -2,7 +2,7 @@ using System.IO;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
 
-namespace Cyotek.Data.Nbt.Tests
+namespace Cyotek.Data.Nbt.Tests.Serialization
 {
   [TestFixture]
   public class BinaryTagWriterTests : TestBase
@@ -10,9 +10,15 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
-    public void Serialization_deserialization_test()
+    public void Document_serialization_deserialization_test()
     {
       this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream));
+    }
+
+    [Test]
+    public void Serialization_deserialization_test()
+    {
+      this.WriteTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream));
     }
 
     [Test]
@@ -34,7 +40,9 @@ namespace Cyotek.Data.Nbt.Tests
       target = new BinaryTagWriter(stream);
 
       // act
+      target.WriteStartDocument();
       target.WriteTag(expected.DocumentRoot, WriteTagOptions.None);
+      target.WriteEndDocument();
 
       // assert
       stream.Seek(0, SeekOrigin.Begin);
