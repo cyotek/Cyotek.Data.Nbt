@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using Cyotek.Data.Nbt.Serialization;
 
@@ -9,6 +10,10 @@ namespace Cyotek.Data.Nbt
   {
     #region Fields
 
+    private TagCompound _documentRoot;
+
+    private string _fileName;
+
     private NbtFormat _format;
 
     #endregion
@@ -17,8 +22,8 @@ namespace Cyotek.Data.Nbt
 
     public NbtDocument()
     {
-      this.Format = NbtFormat.Binary;
-      this.DocumentRoot = (TagCompound)TagFactory.CreateTag(TagType.Compound);
+      _format = NbtFormat.Binary;
+      _documentRoot = (TagCompound)TagFactory.CreateTag(TagType.Compound);
     }
 
     public NbtDocument(TagCompound document)
@@ -29,7 +34,7 @@ namespace Cyotek.Data.Nbt
         throw new ArgumentNullException(nameof(document));
       }
 
-      this.DocumentRoot = document;
+      _documentRoot = document;
     }
 
     #endregion
@@ -184,9 +189,17 @@ namespace Cyotek.Data.Nbt
 
     #region Properties
 
-    public TagCompound DocumentRoot { get; set; }
+    public TagCompound DocumentRoot
+    {
+      get { return _documentRoot; }
+      set { _documentRoot = value; }
+    }
 
-    public string FileName { get; set; }
+    public string FileName
+    {
+      get { return _fileName; }
+      set { _fileName = value; }
+    }
 
     public NbtFormat Format
     {
@@ -214,7 +227,7 @@ namespace Cyotek.Data.Nbt
 
     public void Load()
     {
-      this.Load(this.FileName);
+      this.Load(_fileName);
     }
 
     public void Load(string fileName)
@@ -234,7 +247,7 @@ namespace Cyotek.Data.Nbt
         this.Load(stream);
       }
 
-      this.FileName = fileName;
+      _fileName = fileName;
     }
 
     public virtual void Load(Stream stream)
@@ -261,8 +274,8 @@ namespace Cyotek.Data.Nbt
           throw new InvalidDataException("Unrecognized or unsupported file format.");
       }
 
-      this.DocumentRoot = reader.ReadDocument(stream);
-      this.Format = format;
+      _documentRoot = reader.ReadDocument(stream);
+      _format = format;
     }
 
     public ITag Query(string query)
@@ -272,25 +285,15 @@ namespace Cyotek.Data.Nbt
 
     public T Query<T>(string query) where T : ITag
     {
-      return this.DocumentRoot.Query<T>(query);
+      return _documentRoot.Query<T>(query);
     }
 
     public void Save()
     {
-      this.Save(this.FileName);
+      this.Save(_fileName);
     }
 
     public void Save(string fileName)
-    {
-      this.Save(fileName, CompressionOption.Auto);
-    }
-
-    public void Save(Stream stream)
-    {
-      this.Save(stream, CompressionOption.Auto);
-    }
-
-    public virtual void Save(string fileName, CompressionOption compression)
     {
       if (string.IsNullOrEmpty(fileName))
       {
@@ -299,34 +302,39 @@ namespace Cyotek.Data.Nbt
 
       using (Stream stream = File.Create(fileName))
       {
-        this.Save(stream, compression);
+        if (_format == NbtFormat.Binary)
+        {
+          // for binary files, compress with gzip
+          using (GZipStream compressedStream = new GZipStream(stream, CompressionMode.Compress))
+          {
+            this.Save(compressedStream);
+          }
+        }
+        else
+        {
+          // leave xml uncompressed
+          this.Save(stream);
+        }
       }
 
-      this.FileName = fileName;
+      _fileName = fileName;
     }
 
-    public virtual void Save(Stream stream, CompressionOption compression)
+    public void Save(Stream stream)
     {
-      TagWriter writer;
-
       if (stream == null)
       {
         throw new ArgumentNullException(nameof(stream));
       }
 
-      switch (_format)
+      using (TagWriter writer = this.GetTagWriter(_format, stream))
       {
-        case NbtFormat.Binary:
-          writer = new BinaryTagWriter();
-          break;
-        case NbtFormat.Xml:
-          writer = new XmlTagWriter();
-          break;
-        default:
-          throw new ArgumentOutOfRangeException();
+        writer.WriteStartDocument();
+        writer.WriteTag(_documentRoot);
+        writer.WriteEndDocument();
+        writer.Flush();
+        writer.Close();
       }
-
-      writer.WriteDocument(stream, this.DocumentRoot, compression);
     }
 
     public override string ToString()
@@ -337,12 +345,17 @@ namespace Cyotek.Data.Nbt
       result = new StringBuilder();
       indent = -1;
 
-      if (this.DocumentRoot != null)
+      if (_documentRoot != null)
       {
-        this.WriteTagString(this.DocumentRoot, result, ref indent);
+        this.WriteTagString(_documentRoot, result, ref indent);
       }
 
       return result.ToString();
+    }
+
+    protected virtual TagWriter GetTagWriter(NbtFormat format, Stream stream)
+    {
+      return TagWriter.CreateWriter(format, stream);
     }
 
     private void WriteTagString(ITag tag, StringBuilder result, ref int indent)

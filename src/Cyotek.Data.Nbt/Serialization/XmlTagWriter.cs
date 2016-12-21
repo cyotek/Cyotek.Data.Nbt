@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -16,91 +15,61 @@ namespace Cyotek.Data.Nbt.Serialization
       '&'
     };
 
-    #endregion
-
-    #region Fields
-
-    private XmlWriter _writer;
+    private readonly XmlWriter _writer;
 
     #endregion
 
     #region Constructors
 
-    public XmlTagWriter()
-    { }
-
     public XmlTagWriter(XmlWriter writer)
-      : this()
     {
       _writer = writer;
+    }
+
+    public XmlTagWriter(Stream stream)
+    {
+      XmlWriterSettings settings;
+
+      settings = new XmlWriterSettings
+                 {
+                   Indent = true,
+                   Encoding = Encoding.UTF8
+                 };
+
+      _writer = XmlWriter.Create(stream, settings);
     }
 
     #endregion
 
     #region Methods
 
-    protected void WriteHeader(ITag value)
+    public override void Flush()
     {
-      _writer.WriteAttributeString("type", value.Type.ToString());
+      _writer.Flush();
     }
 
-    protected  void WriteValue(TagCollection value)
+    public override void WriteEnd()
     {
-      _writer.WriteAttributeString("limitType", value.LimitType.ToString());
-
-      foreach (ITag item in value)
-      {
-        this.WriteTag(item, WriteTagOptions.IgnoreName);
-      }
+      // no op
     }
 
-    protected  void WriteValue(TagDictionary value)
+    public override void WriteEndDocument()
     {
-      foreach (ITag item in value)
-      {
-        this.WriteTag(item, WriteTagOptions.None);
-      }
+      _writer.WriteEndDocument();
+      _writer.Flush();
     }
 
-    #endregion
-
-    #region ITagWriter Interface
-
-    public override void WriteDocument(Stream stream, TagCompound tag)
+    public override void WriteEndTag()
     {
-      this.WriteDocument(stream, tag, CompressionOption.Auto);
+      _writer.WriteEndElement();
     }
 
-    public override void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
+    public override void WriteStartDocument()
     {
-      if (compression == CompressionOption.On)
-      {
-        throw new NotSupportedException("Compression is not supported.");
-      }
-
-        XmlWriterSettings settings;
-
-        settings = new XmlWriterSettings
-                   {
-                     Indent = true,
-                     Encoding = Encoding.UTF8
-                   };
-
-        _writer = XmlWriter.Create(stream, settings);
-
-      this.WriteStartDocument();
-      this.WriteTag(tag, WriteTagOptions.None);
-      this.WriteEndDocument();
+      _writer.WriteStartDocument(true);
     }
 
-
-
-    public override void WriteTag(ITag tag)
-    {
-      this.WriteTag(tag, WriteTagOptions.None);
-    }
-
-    public override void WriteTag(ITag tag, WriteTagOptions options)
+    public override void WriteStartTag(ITag tag, WriteTagOptions options)
     {
       string name;
 
@@ -122,64 +91,8 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
-        this.WriteHeader(tag);
+        _writer.WriteAttributeString("type", tag.Type.ToString());
       }
-
-      switch (tag.Type)
-      {
-        case TagType.End:
-          // no op
-          break;
-
-        case TagType.Byte:
-          this.WriteValue(((TagByte)tag).Value);
-          break;
-
-        case TagType.Short:
-          this.WriteValue(((TagShort)tag).Value);
-          break;
-
-        case TagType.Int:
-          this.WriteValue(((TagInt)tag).Value);
-          break;
-
-        case TagType.Long:
-          this.WriteValue(((TagLong)tag).Value);
-          break;
-
-        case TagType.Float:
-          this.WriteValue(((TagFloat)tag).Value);
-          break;
-
-        case TagType.Double:
-          this.WriteValue(((TagDouble)tag).Value);
-          break;
-
-        case TagType.ByteArray:
-          this.WriteValue(((TagByteArray)tag).Value);
-          break;
-
-        case TagType.String:
-          this.WriteValue(((TagString)tag).Value);
-          break;
-
-        case TagType.List:
-          this.WriteValue(((TagList)tag).Value);
-          break;
-
-        case TagType.Compound:
-          this.WriteValue(((TagCompound)tag).Value);
-          break;
-
-        case TagType.IntArray:
-          this.WriteValue(((TagIntArray)tag).Value);
-          break;
-
-        default:
-          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
-      }
-
-      _writer.WriteEndElement();
     }
 
     public override void WriteValue(string value)
@@ -265,21 +178,22 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteValue(output.ToString());
     }
 
-
-    public void WriteStartDocument()
+    public override void WriteValue(TagCollection value)
     {
-      _writer.WriteStartDocument(true);
+      _writer.WriteAttributeString("limitType", value.LimitType.ToString());
+
+      foreach (ITag item in value)
+      {
+        this.WriteTag(item, WriteTagOptions.IgnoreName);
+      }
     }
 
-    public void WriteEndDocument()
+    public override void WriteValue(TagDictionary value)
     {
-        _writer.WriteEndDocument();
-        _writer.Flush();
-    }
-
-    public override void Flush()
-    {
-      _writer.Flush();
+      foreach (ITag item in value)
+      {
+        this.WriteTag(item, WriteTagOptions.None);
+      }
     }
 
     #endregion

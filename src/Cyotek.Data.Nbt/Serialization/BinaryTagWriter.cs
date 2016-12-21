@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 
 namespace Cyotek.Data.Nbt.Serialization
@@ -9,32 +8,13 @@ namespace Cyotek.Data.Nbt.Serialization
   {
     #region Constants
 
-    private static readonly bool _isLittleEndian;
-
-    #endregion
-
-    #region Fields
-
-    private Stream _stream;
-
-    #endregion
-
-    #region Static Constructors
-
-    static BinaryTagWriter()
-    {
-      _isLittleEndian = BitConverter.IsLittleEndian;
-    }
+    private readonly Stream _stream;
 
     #endregion
 
     #region Constructors
 
-    public BinaryTagWriter()
-    { }
-
     public BinaryTagWriter(Stream stream)
-      : this()
     {
       _stream = stream;
     }
@@ -43,129 +23,37 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region Methods
 
-    protected  void WriteEnd()
+    public override void Flush()
+    {
+      _stream.Flush();
+    }
+
+    public override void WriteEnd()
     {
       _stream.WriteByte((byte)TagType.End);
     }
 
-    protected void WriteHeader(ITag value)
+    public override void WriteEndDocument()
     {
-      this.WriteValue((byte)value.Type);
-      this.WriteValue(value.Name);
+      // no-op
     }
 
-    protected  void WriteValue(TagCollection value)
+    public override void WriteEndTag()
     {
-      _stream.WriteByte((byte)value.LimitType);
-
-      this.WriteValue(value.Count);
-
-      foreach (ITag item in value)
-      {
-        this.WriteTag(item, WriteTagOptions.IgnoreName);
-      }
+      // no-op
     }
 
-    protected  void WriteValue(TagDictionary value)
+    public override void WriteStartDocument()
     {
-      foreach (ITag item in value)
-      {
-        this.WriteTag(item, WriteTagOptions.None);
-      }
-
-      this.WriteEnd();
+      // no-op
     }
 
-    #endregion
-
-    #region ITagWriter Interface
-
-    public override void WriteDocument(Stream stream, TagCompound tag)
-    {
-      this.WriteDocument(stream, tag, CompressionOption.Auto);
-    }
-
-    public override void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
-    {
-      if (compression != CompressionOption.Off)
-      {
-        using (Stream compressedStream = new GZipStream(stream, CompressionMode.Compress, true))
-        {
-          _stream = compressedStream;
-          this.WriteTag(tag, WriteTagOptions.None);
-        }
-      }
-      else
-      {
-        _stream = stream;
-        this.WriteTag(tag, WriteTagOptions.None);
-      }
-    }
-
-    public override void WriteTag(ITag tag)
-    {
-      this.WriteTag(tag, WriteTagOptions.None);
-    }
-
-    public override void WriteTag(ITag tag, WriteTagOptions options)
+    public override void WriteStartTag(ITag tag, WriteTagOptions options)
     {
       if (tag.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
       {
-        this.WriteHeader(tag);
-      }
-
-      switch (tag.Type)
-      {
-        case TagType.End:
-          this.WriteEnd();
-          break;
-
-        case TagType.Byte:
-          this.WriteValue(((TagByte)tag).Value);
-          break;
-
-        case TagType.Short:
-          this.WriteValue(((TagShort)tag).Value);
-          break;
-
-        case TagType.Int:
-          this.WriteValue(((TagInt)tag).Value);
-          break;
-
-        case TagType.Long:
-          this.WriteValue(((TagLong)tag).Value);
-          break;
-
-        case TagType.Float:
-          this.WriteValue(((TagFloat)tag).Value);
-          break;
-
-        case TagType.Double:
-          this.WriteValue(((TagDouble)tag).Value);
-          break;
-
-        case TagType.ByteArray:
-          this.WriteValue(((TagByteArray)tag).Value);
-          break;
-
-        case TagType.String:
-          this.WriteValue(((TagString)tag).Value);
-          break;
-
-        case TagType.List:
-          this.WriteValue(((TagList)tag).Value);
-          break;
-
-        case TagType.Compound:
-          this.WriteValue(((TagCompound)tag).Value);
-          break;
-
-        case TagType.IntArray:
-          this.WriteValue(((TagIntArray)tag).Value);
-          break;
-
-        default:
-          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
+        this.WriteValue((byte)tag.Type);
+        this.WriteValue(tag.Name);
       }
     }
 
@@ -181,6 +69,11 @@ namespace Cyotek.Data.Nbt.Serialization
 
         buffer = Encoding.UTF8.GetBytes(value);
 
+        if (buffer.Length > short.MaxValue)
+        {
+          throw new ArgumentException("String data would be truncated.");
+        }
+
         this.WriteValue((short)buffer.Length);
         _stream.Write(buffer, 0, buffer.Length);
       }
@@ -192,7 +85,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (_isLittleEndian)
+      if (IsLittleEndian)
       {
         BitHelper.SwapBytes(buffer, 0, BitHelper.ShortSize);
       }
@@ -206,7 +99,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (_isLittleEndian)
+      if (IsLittleEndian)
       {
         BitHelper.SwapBytes(buffer, 0, BitHelper.LongSize);
       }
@@ -236,7 +129,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (_isLittleEndian)
+      if (IsLittleEndian)
       {
         BitHelper.SwapBytes(buffer, 0, BitHelper.IntSize);
       }
@@ -250,7 +143,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (_isLittleEndian)
+      if (IsLittleEndian)
       {
         BitHelper.SwapBytes(buffer, 0, BitHelper.FloatSize);
       }
@@ -264,7 +157,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       buffer = BitConverter.GetBytes(value);
 
-      if (_isLittleEndian)
+      if (IsLittleEndian)
       {
         BitHelper.SwapBytes(buffer, 0, BitHelper.DoubleSize);
       }
@@ -290,20 +183,26 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-
-    public void WriteStartDocument()
+    public override void WriteValue(TagCollection value)
     {
-      throw new NotImplementedException();
+      _stream.WriteByte((byte)value.LimitType);
+
+      this.WriteValue(value.Count);
+
+      foreach (ITag item in value)
+      {
+        this.WriteTag(item, WriteTagOptions.IgnoreName);
+      }
     }
 
-    public void WriteEndDocument()
+    public override void WriteValue(TagDictionary value)
     {
-      throw new NotImplementedException();
-    }
+      foreach (ITag item in value)
+      {
+        this.WriteTag(item, WriteTagOptions.None);
+      }
 
-    public override void Flush()
-    {
-      _stream.Flush();
+      this.WriteEnd();
     }
 
     #endregion

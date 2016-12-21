@@ -1213,28 +1213,26 @@ namespace Cyotek.Data.Nbt.Tests
       return Path.Combine(path, fileName);
     }
 
-    protected void WriteDocumentTest<T, T2>(CompressionOption compression) where T : TagWriter, new() where T2 : ITagReader, new()
+    protected void WriteDocumentTest<T, T2>(Func<Stream, T> createWriter) where T : TagWriter where T2 : ITagReader, new()
     {
       // arrange
       TagWriter target;
       TagCompound expected;
       TagCompound actual;
+      Stream stream = new MemoryStream();
 
       expected = this.CreateComplexData();
 
-      target = new T();
+      target = createWriter(stream);
 
       // act
-      using (Stream stream = new MemoryStream())
-      {
-        target.WriteDocument(stream, expected, compression);
-
-        stream.Seek(0, SeekOrigin.Begin);
-
-        actual = new T2().ReadDocument(stream);
-      }
+      target.WriteStartDocument();
+      target.WriteTag(expected);
+      target.WriteEndDocument();
 
       // assert
+      stream.Seek(0, SeekOrigin.Begin);
+      actual = new T2().ReadDocument(stream);
       this.CompareTags(expected, actual);
     }
 

@@ -47,7 +47,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompressionOption.cs" />
     <Compile Include="NbtDocument.cs" />
     <Compile Include="Serialization\BinaryTagReader.cs" />
     <Compile Include="Serialization\BinaryTagWriter.cs" />

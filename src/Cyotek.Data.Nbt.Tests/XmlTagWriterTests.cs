@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Xml;
 using Cyotek.Data.Nbt.Serialization;
@@ -48,22 +47,9 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void WriteDocument_should_accept_auto_compression()
+    public void Serialization_deserialization_test()
     {
-      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(CompressionOption.Auto);
-    }
-
-    [Test]
-    public void WriteDocument_should_accept_no_compression()
-    {
-      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(CompressionOption.Off);
-    }
-
-    [Test]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void WriteDocument_should_throw_exception_if_compression_is_enabled()
-    {
-      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(CompressionOption.On);
+      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream));
     }
 
     #endregion

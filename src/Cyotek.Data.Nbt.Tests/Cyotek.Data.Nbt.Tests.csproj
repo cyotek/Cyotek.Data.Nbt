@@ -65,6 +65,7 @@
     <Compile Include="TagShortTests.cs" />
     <Compile Include="TagStringTests.cs" />
     <Compile Include="TagTests.cs" />
+    <Compile Include="TagWriterTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="XmlTagReaderTests.cs" />
     <Compile Include="XmlTagWriterTests.cs" />
