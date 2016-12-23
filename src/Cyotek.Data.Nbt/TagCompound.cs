@@ -37,14 +37,19 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagCompound(string name, TagDictionary value)
+      : base(name)
     {
-      this.Name = name;
       this.Value = value;
     }
 
     #endregion
 
     #region Properties
+
+    public override TagType Type
+    {
+      get { return TagType.Compound; }
+    }
 
     public TagDictionary Value
     {
@@ -312,29 +317,34 @@ namespace Cyotek.Data.Nbt
       return value != null ? value.Value : defaultValue;
     }
 
-    public T GetTag<T>(string name) where T : ITag
+    public T GetTag<T>(string name) where T : Tag
     {
-      ITag value;
+      Tag value;
 
       this.Value.TryGetValue(name, out value);
 
       return (T)value;
     }
 
-    public ITag GetTag(string name)
+    public Tag GetTag(string name)
     {
-      return this.GetTag<ITag>(name);
+      return this.GetTag<Tag>(name);
     }
 
-    public ITag Query(string query)
+    public override object GetValue()
     {
-      return this.Query<ITag>(query);
+      return _value;
     }
 
-    public T Query<T>(string query) where T : ITag
+    public Tag Query(string query)
+    {
+      return this.Query<Tag>(query);
+    }
+
+    public T Query<T>(string query) where T : Tag
     {
       string[] parts;
-      ITag element;
+      Tag element;
 
       parts = query.Split(_queryDelimiters);
       element = this;
@@ -361,7 +371,7 @@ namespace Cyotek.Data.Nbt
           if (list != null)
           {
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach (ITag tag in list.Value)
+            foreach (Tag tag in list.Value)
             {
               TagCompound compound;
 
@@ -403,9 +413,9 @@ namespace Cyotek.Data.Nbt
 
     public T QueryValue<T>(string query, T defaultValue)
     {
-      ITag tag;
+      Tag tag;
 
-      tag = this.Query<ITag>(query);
+      tag = this.Query<Tag>(query);
 
       return tag != null ? (T)tag.GetValue() : defaultValue;
     }
@@ -413,15 +423,6 @@ namespace Cyotek.Data.Nbt
     public override void SetValue(object value)
     {
       this.Value = (TagDictionary)value;
-    }
-
-    #endregion
-
-    #region ICollectionTag Interface
-
-    public override object GetValue()
-    {
-      return _value;
     }
 
     public override string ToString(string indentString)
@@ -434,10 +435,9 @@ namespace Cyotek.Data.Nbt
       return _value?.ToString() ?? string.Empty;
     }
 
-    public override TagType Type
-    {
-      get { return TagType.Compound; }
-    }
+    #endregion
+
+    #region ICollectionTag Interface
 
     bool ICollectionTag.IsList
     {
@@ -450,7 +450,7 @@ namespace Cyotek.Data.Nbt
       set { }
     }
 
-    IList<ITag> ICollectionTag.Values
+    IList<Tag> ICollectionTag.Values
     {
       get { return this.Value; }
     }

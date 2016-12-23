@@ -190,7 +190,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       _writer.WriteAttributeString("limitType", value.LimitType.ToString());
 
-      foreach (ITag item in value)
+      foreach (Tag item in value)
       {
         this.WriteTag(item, WriteTagOptions.IgnoreName);
       }
@@ -198,7 +198,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override void WriteValue(TagDictionary value)
     {
-      foreach (ITag item in value)
+      foreach (Tag item in value)
       {
         this.WriteTag(item, WriteTagOptions.None);
       }

@@ -12,30 +12,11 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
-    public void CanRemoveTest()
-    {
-      // arrange
-      TagCompound data;
-      bool actual1;
-      bool actual2;
-
-      data = this.CreateComplexData();
-
-      // act
-      actual1 = data.Value["listTest (compound)"].CanRemove;
-      actual2 = data.CanRemove;
-
-      // assert
-      Assert.IsTrue(actual1);
-      Assert.IsFalse(actual2);
-    }
-
-    [Test]
     public void FlattenTest()
     {
       // arrange
       TagCompound target;
-      ITag[] tags;
+      Tag[] tags;
       string[] expectedNames;
       string[] actualNames;
       int expectedCount;
@@ -80,7 +61,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCompound data;
-      ITag target;
+      Tag target;
       string expected;
       string actual;
 
@@ -100,9 +81,9 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCompound data;
-      ITag target;
-      ITag[] actual;
-      ITag[] expected;
+      Tag target;
+      Tag[] actual;
+      Tag[] expected;
 
       data = this.CreateComplexData();
       target = data.Query(@"listTest (compound)\0\name");
@@ -195,7 +176,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCompound data;
-      ITag target;
+      Tag target;
       string key;
 
       data = this.CreateComplexData();
@@ -212,7 +193,7 @@ namespace Cyotek.Data.Nbt.Tests
     [Test]
     public void TestLoadComplexNbt()
     {
-      ITag tag;
+      Tag tag;
 
       tag = this.CreateComplexData();
 
@@ -336,7 +317,7 @@ namespace Cyotek.Data.Nbt.Tests
     [Test]
     public void TestLoadSimpleNbt()
     {
-      ITag tag;
+      Tag tag;
 
       tag = this.GetSimpleData();
 
@@ -356,7 +337,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       TagCompound newTag = new TagCompound();
 
-      ITag aTag = newTag.GetTag("nope");
+      Tag aTag = newTag.GetTag("nope");
 
       Assert.IsNull(aTag);
 
@@ -371,8 +352,8 @@ namespace Cyotek.Data.Nbt.Tests
     public void ToValueStringTest()
     {
       // arrange
-      ITag target1;
-      ITag target2;
+      Tag target1;
+      Tag target2;
       string expected1;
       string actual1;
       string actual2;

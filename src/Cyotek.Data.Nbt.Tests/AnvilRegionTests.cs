@@ -63,7 +63,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(TagType.Compound, tag.GetTag("Level").Type);
       TagCompound levelTag = tag.GetCompound("Level");
 
-      ITag aTag = levelTag.GetTag("Entities");
+      Tag aTag = levelTag.GetTag("Entities");
       Assert.AreEqual(TagType.List, aTag.Type);
       TagList entitiesTag = aTag as TagList;
       Assert.AreEqual(0, entitiesTag.Value.Count);

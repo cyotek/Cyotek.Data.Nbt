@@ -101,7 +101,7 @@ namespace Cyotek.Data.Nbt.Serialization
     public override TagDictionary ReadCompound()
     {
       TagDictionary results;
-      ITag tag;
+      Tag tag;
 
       results = new TagDictionary();
 
@@ -248,7 +248,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       for (int i = 0; i < length; i++)
       {
-        ITag tag;
+        Tag tag;
 
         switch (listType)
         {
@@ -362,9 +362,9 @@ namespace Cyotek.Data.Nbt.Serialization
       return data.Length != 0 ? Encoding.UTF8.GetString(data) : null;
     }
 
-    public override ITag ReadTag(ReadTagOptions options)
+    public override Tag ReadTag(ReadTagOptions options)
     {
-      ITag result;
+      Tag result;
       TagType type;
       string name;
 

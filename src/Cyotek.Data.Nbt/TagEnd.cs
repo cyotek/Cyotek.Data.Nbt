@@ -4,13 +4,15 @@ namespace Cyotek.Data.Nbt
 {
   public sealed class TagEnd : Tag
   {
-    #region Properties
+    #region Constructors
 
-    public override string Name
-    {
-      get { return string.Empty; }
-      set { }
-    }
+    public TagEnd()
+      : base(string.Empty)
+    { }
+
+    #endregion
+
+    #region Properties
 
     public override TagType Type
     {

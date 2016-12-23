@@ -14,11 +14,8 @@ namespace Cyotek.Data.Nbt
     #region Constructors
 
     public TagList()
-    {
-      this.Name = string.Empty;
-      this.Value = new TagCollection(this);
-      this.ListType = TagType.None;
-    }
+      : this(string.Empty)
+    { }
 
     public TagList(string name)
       : this(name, TagType.None)
@@ -41,9 +38,8 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagList(string name, TagType listType, TagCollection value)
-      : this()
+      : base(name)
     {
-      this.Name = name;
       this.ListType = listType;
       this.Value = value;
     }
@@ -67,6 +63,11 @@ namespace Cyotek.Data.Nbt
           this.Value = new TagCollection(this, value);
         }
       }
+    }
+
+    public override TagType Type
+    {
+      get { return TagType.List; }
     }
 
     public TagCollection Value
@@ -93,18 +94,14 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
-    public override void SetValue(object value)
-    {
-      this.Value = (TagCollection)value;
-    }
-
-    #endregion
-
-    #region ICollectionTag Interface
-
     public override object GetValue()
     {
       return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = (TagCollection)value;
     }
 
     public override string ToString(string indentString)
@@ -117,10 +114,9 @@ namespace Cyotek.Data.Nbt
       return _value?.ToString() ?? string.Empty;
     }
 
-    public override TagType Type
-    {
-      get { return TagType.List; }
-    }
+    #endregion
+
+    #region ICollectionTag Interface
 
     bool ICollectionTag.IsList
     {
@@ -133,7 +129,7 @@ namespace Cyotek.Data.Nbt
       set { this.ListType = value; }
     }
 
-    IList<ITag> ICollectionTag.Values
+    IList<Tag> ICollectionTag.Values
     {
       get { return this.Value; }
     }

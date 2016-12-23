@@ -34,23 +34,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void NameTest()
-    {
-      // arrange
-      TagEnd target;
-      string expected;
-
-      target = new TagEnd();
-      expected = "newvalue";
-
-      // act
-      target.Name = expected;
-
-      // assert
-      Assert.IsEmpty(target.Name);
-    }
-
-    [Test]
     public void ToStringTest()
     {
       // arrange

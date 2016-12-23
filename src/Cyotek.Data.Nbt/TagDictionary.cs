@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagDictionary : KeyedCollection<string, ITag>
+  public class TagDictionary : KeyedCollection<string, Tag>
   {
     #region Fields
 
-    private ITag _owner;
+    private Tag _owner;
 
     #endregion
 
@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt
     public TagDictionary()
     { }
 
-    public TagDictionary(ITag owner)
+    public TagDictionary(Tag owner)
       : this()
     {
       if (owner == null)
@@ -33,14 +33,14 @@ namespace Cyotek.Data.Nbt
 
     #region Properties
 
-    public ITag Owner
+    public Tag Owner
     {
       get { return _owner; }
       set
       {
         _owner = value;
 
-        foreach (ITag child in this)
+        foreach (Tag child in this)
         {
           child.Parent = value;
         }
@@ -51,9 +51,9 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
-    public ITag Add(string name, string value)
+    public Tag Add(string name, string value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -62,9 +62,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, bool value)
+    public Tag Add(string name, bool value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, (byte)(value ? 1 : 0));
 
@@ -73,9 +73,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, float value)
+    public Tag Add(string name, float value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -84,9 +84,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, double value)
+    public Tag Add(string name, double value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -95,9 +95,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, long value)
+    public Tag Add(string name, long value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -106,9 +106,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, short value)
+    public Tag Add(string name, short value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -117,9 +117,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, byte value)
+    public Tag Add(string name, byte value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -128,9 +128,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, int value)
+    public Tag Add(string name, int value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -139,9 +139,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, int[] value)
+    public Tag Add(string name, int[] value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -150,9 +150,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, byte[] value)
+    public Tag Add(string name, byte[] value)
     {
-      ITag tag;
+      Tag tag;
 
       tag = TagFactory.CreateTag(name, value);
 
@@ -161,24 +161,24 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, DateTime value)
+    public Tag Add(string name, DateTime value)
     {
       return this.Add(name, value.ToString("u"));
     }
 
-    public ITag Add(string name, Guid value)
+    public Tag Add(string name, Guid value)
     {
       return this.Add(name, value.ToByteArray());
     }
 
-    public ITag Add(string name, TagType tagType)
+    public Tag Add(string name, TagType tagType)
     {
       return this.Add(name, tagType, TagType.None);
     }
 
-    public ITag Add(string name, TagType tagType, TagType limitToType)
+    public Tag Add(string name, TagType tagType, TagType limitToType)
     {
-      ITag tag;
+      Tag tag;
       ICollectionTag collectionTag;
 
       tag = TagFactory.CreateTag(tagType);
@@ -195,9 +195,9 @@ namespace Cyotek.Data.Nbt
       return tag;
     }
 
-    public ITag Add(string name, object value)
+    public Tag Add(string name, object value)
     {
-      ITag result;
+      Tag result;
 
       // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
       if (value is byte)
@@ -279,7 +279,7 @@ namespace Cyotek.Data.Nbt
 
       sb.Append('[');
 
-      foreach (ITag tag in this)
+      foreach (Tag tag in this)
       {
         if (sb.Length > 1)
         {
@@ -294,7 +294,7 @@ namespace Cyotek.Data.Nbt
       return sb.ToString();
     }
 
-    public bool TryGetValue(string key, out ITag value)
+    public bool TryGetValue(string key, out Tag value)
     {
       bool result;
 
@@ -313,7 +313,7 @@ namespace Cyotek.Data.Nbt
 
     protected override void ClearItems()
     {
-      foreach (ITag item in this)
+      foreach (Tag item in this)
       {
         item.Parent = null;
       }
@@ -321,12 +321,12 @@ namespace Cyotek.Data.Nbt
       base.ClearItems();
     }
 
-    protected override string GetKeyForItem(ITag item)
+    protected override string GetKeyForItem(Tag item)
     {
       return item.Name;
     }
 
-    protected override void InsertItem(int index, ITag item)
+    protected override void InsertItem(int index, Tag item)
     {
       item.Parent = this.Owner;
 
@@ -335,7 +335,7 @@ namespace Cyotek.Data.Nbt
 
     protected override void RemoveItem(int index)
     {
-      ITag item;
+      Tag item;
 
       item = this[index];
       item.Parent = null;
@@ -343,14 +343,14 @@ namespace Cyotek.Data.Nbt
       base.RemoveItem(index);
     }
 
-    protected override void SetItem(int index, ITag item)
+    protected override void SetItem(int index, Tag item)
     {
       item.Parent = this.Owner;
 
       base.SetItem(index, item);
     }
 
-    internal void ChangeKey(ITag item, string newKey)
+    internal void ChangeKey(Tag item, string newKey)
     {
       this.ChangeItemKey(item, newKey);
     }

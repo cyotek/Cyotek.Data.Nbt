@@ -26,8 +26,8 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagDouble(string name, double value)
+      : base(name)
     {
-      this.Name = name;
       this.Value = value;
     }
 

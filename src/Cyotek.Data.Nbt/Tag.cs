@@ -5,24 +5,44 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public abstract class Tag : ITag
+  public abstract class Tag
   {
     #region Fields
 
     private string _name;
 
-    private ITag _parent;
+    private Tag _parent;
 
-    private object _value;
+    #endregion
+
+    #region Constructors
+
+    protected Tag()
+    {
+      _name = string.Empty;
+    }
+
+    protected Tag(string name)
+    {
+      _name = name;
+    }
+
+    #endregion
+
+    #region Events
+
+    [Category("Property Changed")]
+    public event EventHandler NameChanged;
+
+    [Category("Property Changed")]
+    public event EventHandler ParentChanged;
+
+    [Category("Property Changed")]
+    public event EventHandler ValueChanged;
 
     #endregion
 
     #region Properties
-
-    public virtual bool CanRemove
-    {
-      get { return this.Parent is ICollectionTag; }
-    }
 
     public virtual string FullPath
     {
@@ -33,13 +53,13 @@ namespace Cyotek.Data.Nbt
 
         results = new StringBuilder();
 
-        if (this.Parent != null)
+        if (_parent != null)
         {
-          results.Append(this.Parent.FullPath);
+          results.Append(_parent.FullPath);
           results.Append(@"\");
         }
 
-        list = this.Parent as ICollectionTag;
+        list = _parent as ICollectionTag;
         if (list != null && list.IsList)
         {
           results.Append(list.Values.IndexOf(this));
@@ -55,7 +75,7 @@ namespace Cyotek.Data.Nbt
 
     [Category("")]
     [DefaultValue("")]
-    public virtual string Name
+    public string Name
     {
       get { return _name; }
       set
@@ -65,7 +85,7 @@ namespace Cyotek.Data.Nbt
           ICollectionTag collection;
           TagDictionary values;
 
-          collection = this.Parent as ICollectionTag;
+          collection = _parent as ICollectionTag;
           values = collection?.Values as TagDictionary;
 
           values?.ChangeKey(this, value);
@@ -78,12 +98,12 @@ namespace Cyotek.Data.Nbt
     }
 
     [Browsable(false)]
-    public virtual ITag Parent
+    public Tag Parent
     {
       get { return _parent; }
       set
       {
-        if (this.Parent != value)
+        if (_parent != value)
         {
           _parent = value;
 
@@ -98,24 +118,24 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
-    public ITag[] Flatten()
+    public Tag[] Flatten()
     {
-      List<ITag> tags;
+      List<Tag> tags;
 
-      tags = new List<ITag>();
+      tags = new List<Tag>();
 
       this.FlattenTag(this, tags);
 
       return tags.ToArray();
     }
 
-    public ITag[] GetAncestors()
+    public Tag[] GetAncestors()
     {
-      List<ITag> tags;
-      ITag tag;
+      List<Tag> tags;
+      Tag tag;
 
-      tags = new List<ITag>();
-      tag = this.Parent;
+      tags = new List<Tag>();
+      tag = _parent;
 
       while (tag != null)
       {
@@ -125,6 +145,8 @@ namespace Cyotek.Data.Nbt
 
       return tags.ToArray();
     }
+
+    public abstract object GetValue();
 
     //public virtual byte[] GetValue()
     //{
@@ -145,12 +167,16 @@ namespace Cyotek.Data.Nbt
 
     public virtual void Remove()
     {
-      if (!this.CanRemove)
+      ICollectionTag parent;
+
+      parent = _parent as ICollectionTag;
+
+      if (parent == null)
       {
         throw new TagException("Cannot remove this tag, parent not set or not supported.");
       }
 
-      ((ICollectionTag)this.Parent).Values.Remove(this);
+      parent.Values.Remove(this);
     }
 
     public abstract void SetValue(object value);
@@ -191,7 +217,7 @@ namespace Cyotek.Data.Nbt
       handler?.Invoke(this, e);
     }
 
-    private void FlattenTag(ITag tag, List<ITag> tags)
+    private void FlattenTag(Tag tag, List<Tag> tags)
     {
       ICollectionTag collectionTag;
 
@@ -200,83 +226,11 @@ namespace Cyotek.Data.Nbt
       collectionTag = tag as ICollectionTag;
       if (collectionTag != null)
       {
-        foreach (ITag childTag in collectionTag.Values)
+        foreach (Tag childTag in collectionTag.Values)
         {
           this.FlattenTag(childTag, tags);
         }
       }
-    }
-
-    #endregion
-
-    #region ITag Interface
-
-    [Category("Property Changed")]
-    public event EventHandler NameChanged;
-
-    [Category("Property Changed")]
-    public event EventHandler ParentChanged;
-
-    [Category("Property Changed")]
-    public event EventHandler ValueChanged;
-
-    public abstract object GetValue();
-
-    ITag[] ITag.Flatten()
-    {
-      return this.Flatten();
-    }
-
-    ITag[] ITag.GetAncestors()
-    {
-      return this.GetAncestors();
-    }
-
-    void ITag.Remove()
-    {
-      this.Remove();
-    }
-
-    string ITag.ToString()
-    {
-      return this.ToString();
-    }
-
-    string ITag.ToString(string indent)
-    {
-      return this.ToString(indent);
-    }
-
-    string ITag.ToValueString()
-    {
-      return this.ToValueString();
-    }
-
-    bool ITag.CanRemove
-    {
-      get { return this.CanRemove; }
-    }
-
-    string ITag.FullPath
-    {
-      get { return this.FullPath; }
-    }
-
-    string ITag.Name
-    {
-      get { return this.Name; }
-      set { this.Name = value; }
-    }
-
-    ITag ITag.Parent
-    {
-      get { return this.Parent; }
-      set { this.Parent = value; }
-    }
-
-    TagType ITag.Type
-    {
-      get { return this.Type; }
     }
 
     #endregion

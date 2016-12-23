@@ -26,8 +26,8 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagFloat(string name, float value)
+      : base(name)
     {
-      this.Name = name;
       this.Value = value;
     }
 

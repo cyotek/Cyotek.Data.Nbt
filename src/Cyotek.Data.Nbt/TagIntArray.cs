@@ -27,8 +27,8 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagIntArray(string name, int[] value)
+      : base(name)
     {
-      this.Name = name;
       this.Value = value;
     }
 

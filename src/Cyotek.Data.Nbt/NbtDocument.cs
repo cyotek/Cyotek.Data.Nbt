@@ -276,12 +276,12 @@ namespace Cyotek.Data.Nbt
       _format = format;
     }
 
-    public ITag Query(string query)
+    public Tag Query(string query)
     {
-      return this.Query<ITag>(query);
+      return this.Query<Tag>(query);
     }
 
-    public T Query<T>(string query) where T : ITag
+    public T Query<T>(string query) where T : Tag
     {
       return _documentRoot.Query<T>(query);
     }
@@ -356,7 +356,7 @@ namespace Cyotek.Data.Nbt
       return TagWriter.CreateWriter(format, stream);
     }
 
-    private void WriteTagString(ITag tag, StringBuilder result, ref int indent)
+    private void WriteTagString(Tag tag, StringBuilder result, ref int indent)
     {
       ICollectionTag collection;
       ICollectionTag parentCollection;
@@ -389,7 +389,7 @@ namespace Cyotek.Data.Nbt
       collection = tag as ICollectionTag;
       if (collection != null)
       {
-        foreach (ITag child in collection.Values)
+        foreach (Tag child in collection.Values)
         {
           this.WriteTagString(child, result, ref indent);
         }

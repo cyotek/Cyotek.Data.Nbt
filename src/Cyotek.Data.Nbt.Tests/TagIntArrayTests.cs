@@ -162,7 +162,7 @@ namespace Cyotek.Data.Nbt.Tests
     public void ToValueStringTest()
     {
       // arrange
-      ITag target;
+      Tag target;
       string expected;
       string actual;
       int[] value;

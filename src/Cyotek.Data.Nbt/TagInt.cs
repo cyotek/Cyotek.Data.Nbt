@@ -26,8 +26,8 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagInt(string name, int value)
+      : base(name)
     {
-      this.Name = name;
       this.Value = value;
     }
 

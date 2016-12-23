@@ -27,12 +27,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public abstract TagCompound ReadDocument(ReadTagOptions options);
 
-    public ITag ReadTag()
+    public Tag ReadTag()
     {
       return this.ReadTag(ReadTagOptions.None);
     }
 
-    public abstract ITag ReadTag(ReadTagOptions options);
+    public abstract Tag ReadTag(ReadTagOptions options);
 
     public abstract TagType ReadTagType();
 

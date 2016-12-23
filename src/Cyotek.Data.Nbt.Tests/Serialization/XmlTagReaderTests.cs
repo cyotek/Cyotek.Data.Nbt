@@ -15,8 +15,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     {
       // arrange
       TagReader target;
-      ITag expected;
-      ITag actual;
+      Tag expected;
+      Tag actual;
       XmlReader reader;
 
       expected = this.CreateComplexData();
@@ -57,8 +57,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     {
       // arrange
       XmlTagReader target;
-      ITag actual;
-      ITag expected;
+      Tag actual;
+      Tag expected;
       Stream stream;
 
       expected = this.CreateSimpleNesting();

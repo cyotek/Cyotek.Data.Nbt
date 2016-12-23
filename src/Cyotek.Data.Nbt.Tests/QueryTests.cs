@@ -76,7 +76,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCompound target;
-      ITag result;
+      Tag result;
       string path;
       Type expectedType;
       long expectedValue;

@@ -70,7 +70,6 @@
     <Compile Include="TagEventArgs.cs" />
     <Compile Include="NbtFormat.cs" />
     <Compile Include="ICollectionTag.cs" />
-    <Compile Include="ITag.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="BitHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

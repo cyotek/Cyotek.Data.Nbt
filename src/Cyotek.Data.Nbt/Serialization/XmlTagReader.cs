@@ -18,10 +18,6 @@ namespace Cyotek.Data.Nbt.Serialization
       '\r'
     };
 
-    #endregion
-
-    #region Fields
-
     private readonly XmlReader _reader;
 
     #endregion
@@ -178,7 +174,7 @@ namespace Cyotek.Data.Nbt.Serialization
       return value;
     }
 
-    public override ITag ReadTag(ReadTagOptions options)
+    public override Tag ReadTag(ReadTagOptions options)
     {
       return this.ReadTag(options, TagType.None);
     }
@@ -199,9 +195,9 @@ namespace Cyotek.Data.Nbt.Serialization
       return type;
     }
 
-    protected ITag ReadTag(ReadTagOptions options, TagType defaultTagType)
+    protected Tag ReadTag(ReadTagOptions options, TagType defaultTagType)
     {
-      ITag result;
+      Tag result;
       TagType type;
       string name;
 
@@ -294,7 +290,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    private void ReadChildValues(ICollection<ITag> value, ReadTagOptions options, TagType listType)
+    private void ReadChildValues(ICollection<Tag> value, ReadTagOptions options, TagType listType)
     {
       int depth;
 
@@ -308,7 +304,7 @@ namespace Cyotek.Data.Nbt.Serialization
         {
           if (_reader.NodeType == XmlNodeType.Element)
           {
-            ITag child;
+            Tag child;
 
             child = this.ReadTag(options, listType);
 

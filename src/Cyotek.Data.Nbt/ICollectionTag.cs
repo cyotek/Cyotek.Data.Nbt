@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
 {
-  public interface ICollectionTag : ITag
+  public interface ICollectionTag
   {
     #region Properties
 
@@ -10,7 +10,7 @@ namespace Cyotek.Data.Nbt
 
     TagType LimitToType { get; set; }
 
-    IList<ITag> Values { get; }
+    IList<Tag> Values { get; }
 
     #endregion
   }

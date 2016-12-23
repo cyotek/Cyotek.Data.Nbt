@@ -199,7 +199,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagDictionary target;
-      ITag tag;
+      Tag tag;
 
       target = new TagDictionary();
 
@@ -218,7 +218,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagDictionary target;
-      ITag tag;
+      Tag tag;
 
       target = new TagDictionary();
 
@@ -244,7 +244,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagDictionary target;
-      ITag tag;
+      Tag tag;
 
       target = new TagDictionary();
 

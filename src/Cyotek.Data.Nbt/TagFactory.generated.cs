@@ -300,9 +300,9 @@ namespace Cyotek.Data.Nbt
     /// <returns>
     /// A tag instance containing the specified value.
     /// </returns>
-    public static ITag CreateTag(TagType tagType, string name, object value)
+    public static Tag CreateTag(TagType tagType, string name, object value)
     {
-      ITag result;
+      Tag result;
 
       switch (tagType)
       {

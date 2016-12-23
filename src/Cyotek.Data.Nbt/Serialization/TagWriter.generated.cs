@@ -338,8 +338,8 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a tag value.
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when the type of the tag is invalid.</exception>
-    /// <param name="tag">The <see cref="ITag"/> to write.</param>
-    public void WriteValue(ITag tag)
+    /// <param name="tag">The <see cref="Tag"/> to write.</param>
+    public void WriteValue(Tag tag)
     {
       switch (tag.Type)
       {

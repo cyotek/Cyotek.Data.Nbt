@@ -26,8 +26,8 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagShort(string name, short value)
+      : base(name)
     {
-      this.Name = name;
       this.Value = value;
     }
 

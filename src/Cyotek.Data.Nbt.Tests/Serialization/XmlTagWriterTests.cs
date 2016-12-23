@@ -15,8 +15,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     {
       // arrange
       TagWriter target;
-      ITag expected;
-      ITag actual;
+      Tag expected;
+      Tag actual;
       XmlWriter writer;
       TextWriter textWriter;
 

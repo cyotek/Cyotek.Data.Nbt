@@ -1078,7 +1078,7 @@ namespace Cyotek.Data.Nbt.Tests
 
     #region Methods
 
-    protected void CompareTags(ITag expected, ITag actual)
+    protected void CompareTags(Tag expected, Tag actual)
     {
       ICollectionTag collection;
 
@@ -1095,15 +1095,13 @@ namespace Cyotek.Data.Nbt.Tests
         Assert.AreEqual(expected.Parent.Name, actual.Parent.Name);
       }
 
-      Assert.AreEqual(expected.CanRemove, actual.CanRemove);
-
       collection = expected as ICollectionTag;
       if (collection != null)
       {
         ICollectionTag expectedChildren;
         ICollectionTag actualChildren;
-        List<ITag> expectedChildValues;
-        List<ITag> actualChildValues;
+        List<Tag> expectedChildValues;
+        List<Tag> actualChildValues;
 
         Assert.IsInstanceOf<ICollectionTag>(actual);
 
@@ -1114,8 +1112,8 @@ namespace Cyotek.Data.Nbt.Tests
         Assert.AreEqual(expectedChildren.LimitToType, actualChildren.LimitToType);
         Assert.AreEqual(expectedChildren.Values.Count, actualChildren.Values.Count);
 
-        expectedChildValues = new List<ITag>(expectedChildren.Values);
-        actualChildValues = new List<ITag>(actualChildren.Values);
+        expectedChildValues = new List<Tag>(expectedChildren.Values);
+        actualChildValues = new List<Tag>(actualChildren.Values);
 
         for (int i = 0; i < expectedChildValues.Count; i++)
         {

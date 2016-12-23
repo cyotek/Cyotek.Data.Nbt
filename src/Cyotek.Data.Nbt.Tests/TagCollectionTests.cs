@@ -195,7 +195,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCollection target;
-      ITag tag;
+      Tag tag;
 
       target = new TagCollection();
 
@@ -213,7 +213,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCollection target;
-      ITag tag;
+      Tag tag;
 
       target = new TagCollection();
 
@@ -238,7 +238,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCollection target;
-      ITag tag;
+      Tag tag;
 
       target = new TagCollection();
 

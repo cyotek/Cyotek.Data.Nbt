@@ -74,10 +74,10 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a tag value.
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when the type of the tag is invalid.</exception>
-    /// <param name="tag">The <see cref="ITag"/> to write.</param>
-    public ITag ReadTag2()
+    /// <param name="tag">The <see cref="Tag"/> to write.</param>
+    public Tag ReadTag2()
     {
-      ITag result;
+      Tag result;
       TagType type;
 
       type = this.ReadTagType();

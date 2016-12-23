@@ -26,9 +26,9 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagByteArray(string name, byte[] value)
+      : base(name)
     {
-      this.Name = name;
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
