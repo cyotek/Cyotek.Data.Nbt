@@ -162,7 +162,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       MemoryStream stream;
-      ITagReader reader;
+      TagReader reader;
 
       stream = new MemoryStream();
       stream.WriteByte(255);

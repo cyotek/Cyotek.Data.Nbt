@@ -14,7 +14,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void Constructor_allows_external_reader()
     {
       // arrange
-      ITagReader target;
+      TagReader target;
       ITag expected;
       ITag actual;
       XmlReader reader;
@@ -36,18 +36,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void LoadTest()
     {
       // arrange
-      ITagReader target;
+      TagReader target;
       TagCompound expected;
       TagCompound actual;
+      Stream stream;
 
       expected = this.CreateComplexData();
-      target = new XmlTagReader();
+      stream = File.OpenRead(this.ComplexXmlDataFileName);
+      target = new XmlTagReader(stream);
 
       // act
-      using (Stream stream = File.OpenRead(this.ComplexXmlDataFileName))
-      {
-        actual = target.ReadDocument(stream);
-      }
+      actual = target.ReadDocument();
 
       // assert
       this.CompareTags(expected, actual);
@@ -60,16 +59,14 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       XmlTagReader target;
       ITag actual;
       ITag expected;
-
-      target = new XmlTagReader();
+      Stream stream;
 
       expected = this.CreateSimpleNesting();
+      stream = File.OpenRead(Path.Combine(this.DataPath, "project.xml"));
+      target = new XmlTagReader(stream);
 
       // act
-      using (Stream stream = File.OpenRead(Path.Combine(this.DataPath, "project.xml")))
-      {
-        actual = target.ReadDocument(stream);
-      }
+      actual = target.ReadDocument();
 
       // assert
       this.CompareTags(expected, actual);
@@ -79,18 +76,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void ReadDocument_can_handle_xml_documents_without_whitespace()
     {
       // arrange
-      ITagReader target;
+      TagReader target;
       TagCompound expected;
       TagCompound actual;
+      Stream stream;
 
       expected = this.CreateComplexData();
-      target = new XmlTagReader();
+      stream = File.OpenRead(this.ComplexXmlWithoutWhitespaceDataFileName);
+      target = new XmlTagReader(stream);
 
       // act
-      using (Stream stream = File.OpenRead(this.ComplexXmlWithoutWhitespaceDataFileName))
-      {
-        actual = target.ReadDocument(stream);
-      }
+      actual = target.ReadDocument();
 
       // assert
       this.CompareTags(expected, actual);

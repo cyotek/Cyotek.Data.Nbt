@@ -66,6 +66,7 @@ namespace Cyotek.Data.Nbt
     public static NbtFormat GetDocumentFormat(Stream stream)
     {
       NbtFormat format;
+      long position;
 
       if (stream == null)
       {
@@ -77,16 +78,20 @@ namespace Cyotek.Data.Nbt
         throw new InvalidDataException("Stream is not seekable.");
       }
 
-      if (IsNbtDocument<BinaryTagReader>(stream))
+      position = stream.Position;
+
+      if (new BinaryTagReader(stream).IsNbtDocument())
       {
         format = NbtFormat.Binary;
       }
       else
       {
-        stream.Seek(0, SeekOrigin.Begin);
+        stream.Position = position;
 
-        format = IsNbtDocument<XmlTagReader>(stream) ? NbtFormat.Xml : NbtFormat.Unknown;
+        format = new XmlTagReader(stream).IsNbtDocument() ? NbtFormat.Xml : NbtFormat.Unknown;
       }
+
+      stream.Position = position;
 
       return format;
     }
@@ -107,13 +112,13 @@ namespace Cyotek.Data.Nbt
 
       using (Stream stream = File.OpenRead(fileName))
       {
-        result = GetDocumentName<BinaryTagReader>(stream);
+        result = GetDocumentName(new BinaryTagReader(stream));
 
         // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
         if (result == null)
         {
           stream.Seek(0, SeekOrigin.Begin);
-          result = GetDocumentName<XmlTagReader>(stream);
+          result = GetDocumentName(new XmlTagReader(stream));
         }
       }
 
@@ -150,18 +155,15 @@ namespace Cyotek.Data.Nbt
       return document;
     }
 
-    private static string GetDocumentName<T>(Stream stream) where T : ITagReader, new()
+    private static string GetDocumentName(TagReader reader)
     {
-      ITagReader reader;
       string result;
 
-      reader = new T();
-
-      if (reader.IsNbtDocument(stream))
+      if (reader.IsNbtDocument())
       {
         TagCompound document;
 
-        document = reader.ReadDocument(stream, ReadTagOptions.IgnoreValue);
+        document = reader.ReadDocument(ReadTagOptions.IgnoreValue);
 
         result = document?.Name;
       }
@@ -173,16 +175,23 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    private static bool IsNbtDocument<T>(Stream stream) where T : ITagReader, new()
+    private static TagReader GetReader(NbtFormat format, Stream stream)
     {
-      ITagReader reader;
-      bool result;
+      TagReader reader;
 
-      reader = new T();
+      switch (format)
+      {
+        case NbtFormat.Binary:
+          reader = new BinaryTagReader(stream);
+          break;
+        case NbtFormat.Xml:
+          reader = new XmlTagReader(stream);
+          break;
+        default:
+          throw new InvalidDataException("Unrecognized or unsupported file format.");
+      }
 
-      result = reader.IsNbtDocument(stream);
-
-      return result;
+      return reader;
     }
 
     #endregion
@@ -252,7 +261,7 @@ namespace Cyotek.Data.Nbt
 
     public virtual void Load(Stream stream)
     {
-      ITagReader reader;
+      TagReader reader;
       NbtFormat format;
 
       if (stream == null)
@@ -261,20 +270,9 @@ namespace Cyotek.Data.Nbt
       }
 
       format = GetDocumentFormat(stream);
+      reader = GetReader(format, stream);
 
-      switch (format)
-      {
-        case NbtFormat.Binary:
-          reader = new BinaryTagReader();
-          break;
-        case NbtFormat.Xml:
-          reader = new XmlTagReader();
-          break;
-        default:
-          throw new InvalidDataException("Unrecognized or unsupported file format.");
-      }
-
-      _documentRoot = reader.ReadDocument(stream);
+      _documentRoot = reader.ReadDocument();
       _format = format;
     }
 

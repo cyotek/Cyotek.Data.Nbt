@@ -13,18 +13,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void ReadDocument_should_handle_deflate_compressed_files()
     {
       // arrange
-      ITagReader target;
+      TagReader target;
       TagCompound expected;
       TagCompound actual;
+      Stream stream;
 
       expected = this.CreateComplexData();
-      target = new BinaryTagReader();
+      stream = File.OpenRead(this.DeflateComplexDataFileName);
+      target = new BinaryTagReader(stream);
 
       // act
-      using (Stream stream = File.OpenRead(this.DeflateComplexDataFileName))
-      {
-        actual = target.ReadDocument(stream);
-      }
+      actual = target.ReadDocument();
 
       // assert
       this.CompareTags(expected, actual);
@@ -34,18 +33,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void ReadDocument_should_handle_gzip_compressed_files()
     {
       // arrange
-      ITagReader target;
+      TagReader target;
       TagCompound expected;
       TagCompound actual;
+      Stream stream;
 
       expected = this.CreateComplexData();
-      target = new BinaryTagReader();
+      stream = File.OpenRead(this.ComplexDataFileName);
+      target = new BinaryTagReader(stream);
 
       // act
-      using (Stream stream = File.OpenRead(this.ComplexDataFileName))
-      {
-        actual = target.ReadDocument(stream);
-      }
+      actual = target.ReadDocument();
 
       // assert
       this.CompareTags(expected, actual);
@@ -55,18 +53,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void ReadDocument_should_handle_uncompressed_files()
     {
       // arrange
-      ITagReader target;
+      TagReader target;
       TagCompound expected;
       TagCompound actual;
+      Stream stream;
 
       expected = this.CreateComplexData();
-      target = new BinaryTagReader();
+      stream = File.OpenRead(this.UncompressedComplexDataFileName);
+      target = new BinaryTagReader(stream);
 
       // act
-      using (Stream stream = File.OpenRead(this.UncompressedComplexDataFileName))
-      {
-        actual = target.ReadDocument(stream);
-      }
+      actual = target.ReadDocument();
 
       // assert
       this.CompareTags(expected, actual);

@@ -50,7 +50,12 @@
     <Compile Include="NbtDocument.cs" />
     <Compile Include="Serialization\BinaryTagReader.cs" />
     <Compile Include="Serialization\BinaryTagWriter.cs" />
-    <Compile Include="Serialization\ITagReader.cs" />
+    <Compile Include="Serialization\TagReader.cs" />
+    <Compile Include="Serialization\TagReader.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TagReader.generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="Serialization\TagWriter.cs" />
     <Compile Include="Serialization\ReadTagOptions.cs" />
     <Compile Include="Serialization\TagWriter.generated.cs">
@@ -114,6 +119,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Serialization\TagReader.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagReader.generated.cs</LastGenOutput>
+    </Content>
     <Content Include="TagFactory.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFactory.generated.cs</LastGenOutput>

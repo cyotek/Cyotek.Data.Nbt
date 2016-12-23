@@ -12,13 +12,13 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     [Test]
     public void Document_serialization_deserialization_test()
     {
-      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream));
+      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream), stream => new BinaryTagReader(stream));
     }
 
     [Test]
     public void Serialization_deserialization_test()
     {
-      this.WriteTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream));
+      this.WriteTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream), stream => new BinaryTagReader(stream));
     }
 
     [Test]
@@ -28,7 +28,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       TagWriter target;
       NbtDocument expected;
       MemoryStream stream;
-      ITagReader reader;
+      TagReader reader;
 
       expected = new NbtDocument();
       expected.DocumentRoot.Name = "WriteEmptyByteArrayTest";

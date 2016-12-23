@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
@@ -72,21 +73,16 @@ namespace Cyotek.Data.Nbt
     public static int PeekNextByte(this Stream stream)
     {
       int result;
+      long position;
 
-      if (stream.CanSeek)
+      if (!stream.CanSeek)
       {
-        long position;
-
-        position = stream.Position;
-
-        result = stream.ReadByte();
-
-        stream.Position = position;
+        throw new NotImplementedException("Stream isn't seekable, peek not available.");
       }
-      else
-      {
-        result = stream.ReadByte();
-      }
+
+      position = stream.Position;
+      result = stream.ReadByte();
+      stream.Position = position;
 
       return result;
     }

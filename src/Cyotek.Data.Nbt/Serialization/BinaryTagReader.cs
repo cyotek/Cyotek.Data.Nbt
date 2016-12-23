@@ -5,26 +5,11 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class BinaryTagReader : ITagReader
+  public class BinaryTagReader : TagReader
   {
-    #region Constants
-
-    private static readonly bool _isLittleEndian;
-
-    #endregion
-
     #region Fields
 
     private Stream _stream;
-
-    #endregion
-
-    #region Static Constructors
-
-    static BinaryTagReader()
-    {
-      _isLittleEndian = BitConverter.IsLittleEndian;
-    }
 
     #endregion
 
@@ -34,39 +19,38 @@ namespace Cyotek.Data.Nbt.Serialization
     { }
 
     public BinaryTagReader(Stream stream)
-      : this()
     {
       _stream = stream;
     }
 
     #endregion
 
-    #region ITagReader Interface
+    #region Methods
 
-    public virtual bool IsNbtDocument(Stream stream)
+    public override bool IsNbtDocument()
     {
       bool result;
       long position;
 
-      position = stream.Position;
+      position = _stream.Position;
 
       try
       {
-        if (stream.IsGzipCompressed())
+        if (_stream.IsGzipCompressed())
         {
-          using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
+          using (Stream decompressionStream = new GZipStream(_stream, CompressionMode.Decompress, true))
           {
-            result = decompressionStream.PeekNextByte() == (int)TagType.Compound;
+            result = decompressionStream.ReadByte() == (int)TagType.Compound;
           }
         }
-        else if (stream.IsDeflateCompressed())
+        else if (_stream.IsDeflateCompressed())
         {
-          using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
+          using (Stream decompressionStream = new DeflateStream(_stream, CompressionMode.Decompress, true))
           {
-            result = decompressionStream.PeekNextByte() == (int)TagType.Compound;
+            result = decompressionStream.ReadByte() == (int)TagType.Compound;
           }
         }
-        else if (stream.PeekNextByte() == (int)TagType.Compound)
+        else if (_stream.ReadByte() == (int)TagType.Compound)
         {
           result = true;
         }
@@ -80,12 +64,12 @@ namespace Cyotek.Data.Nbt.Serialization
         result = false;
       }
 
-      stream.Position = position;
+      _stream.Position = position;
 
       return result;
     }
 
-    public virtual byte ReadByte()
+    public override byte ReadByte()
     {
       int data;
 
@@ -98,7 +82,7 @@ namespace Cyotek.Data.Nbt.Serialization
       return (byte)data;
     }
 
-    public virtual byte[] ReadByteArray()
+    public override byte[] ReadByteArray()
     {
       int length;
       byte[] data;
@@ -114,7 +98,145 @@ namespace Cyotek.Data.Nbt.Serialization
       return data;
     }
 
-    public virtual TagCollection ReadCollection()
+    public override TagDictionary ReadCompound()
+    {
+      TagDictionary results;
+      ITag tag;
+
+      results = new TagDictionary();
+
+      tag = this.ReadTag();
+      while (tag.Type != TagType.End)
+      {
+        results.Add(tag);
+        tag = this.ReadTag();
+      }
+
+      return results;
+    }
+
+    public override TagCompound ReadDocument()
+    {
+      return this.ReadDocument(ReadTagOptions.None);
+    }
+
+    public override TagCompound ReadDocument(ReadTagOptions options)
+    {
+      TagCompound tag;
+
+      if (_stream.IsGzipCompressed())
+      {
+        using (Stream decompressionStream = new GZipStream(_stream, CompressionMode.Decompress))
+        {
+          _stream = decompressionStream;
+          tag = (TagCompound)this.ReadTag(options);
+        }
+      }
+      else if (_stream.IsDeflateCompressed())
+      {
+        using (Stream decompressionStream = new DeflateStream(_stream, CompressionMode.Decompress))
+        {
+          _stream = decompressionStream;
+          tag = (TagCompound)this.ReadTag(options);
+        }
+      }
+      else if (_stream.PeekNextByte() == (int)TagType.Compound)
+      {
+        tag = (TagCompound)this.ReadTag(options);
+      }
+      else
+      {
+        throw new InvalidDataException("Source stream does not contain a NBT document.");
+      }
+
+      return tag;
+    }
+
+    public override double ReadDouble()
+    {
+      byte[] data;
+
+      data = new byte[BitHelper.DoubleSize];
+      if (BitHelper.DoubleSize != _stream.Read(data, 0, BitHelper.DoubleSize))
+      {
+        throw new InvalidDataException();
+      }
+
+      if (TagWriter.IsLittleEndian)
+      {
+        BitHelper.SwapBytes(data, 0, BitHelper.DoubleSize);
+      }
+
+      return BitConverter.ToDouble(data, 0);
+    }
+
+    public override float ReadFloat()
+    {
+      byte[] data;
+
+      data = new byte[BitHelper.FloatSize];
+      if (BitHelper.FloatSize != _stream.Read(data, 0, BitHelper.FloatSize))
+      {
+        throw new InvalidDataException();
+      }
+
+      if (TagWriter.IsLittleEndian)
+      {
+        BitHelper.SwapBytes(data, 0, BitHelper.FloatSize);
+      }
+
+      return BitConverter.ToSingle(data, 0);
+    }
+
+    public override int ReadInt()
+    {
+      byte[] data;
+
+      data = new byte[BitHelper.IntSize];
+      if (BitHelper.IntSize != _stream.Read(data, 0, BitHelper.IntSize))
+      {
+        throw new InvalidDataException();
+      }
+
+      if (TagWriter.IsLittleEndian)
+      {
+        BitHelper.SwapBytes(data, 0, BitHelper.IntSize);
+      }
+
+      return BitConverter.ToInt32(data, 0);
+    }
+
+    public override int[] ReadIntArray()
+    {
+      int length;
+      int bufferLength;
+      byte[] buffer;
+      int[] ints;
+
+      length = this.ReadInt();
+      bufferLength = length * BitHelper.IntSize;
+
+      buffer = new byte[bufferLength];
+      if (bufferLength != _stream.Read(buffer, 0, bufferLength))
+      {
+        throw new InvalidDataException();
+      }
+
+      ints = new int[length];
+      for (int i = 0; i < length; i++)
+      {
+        if (TagWriter.IsLittleEndian)
+        {
+          BitHelper.SwapBytes(buffer, i * 4, 4);
+        }
+
+        ints[i] = BitConverter.ToInt32(buffer, i * 4);
+      }
+
+      return ints;
+    }
+
+    public override TagCollection ReadList()
     {
       TagCollection tags;
       int length;
@@ -139,7 +261,7 @@ namespace Cyotek.Data.Nbt.Serialization
             break;
 
           case TagType.Compound:
-            tag = TagFactory.CreateTag(this.ReadDictionary());
+            tag = TagFactory.CreateTag(this.ReadCompound());
             break;
 
           case TagType.Double:
@@ -163,7 +285,7 @@ namespace Cyotek.Data.Nbt.Serialization
             break;
 
           case TagType.List:
-            tag = TagFactory.CreateTag(this.ReadCollection());
+            tag = TagFactory.CreateTag(this.ReadList());
             break;
 
           case TagType.Long:
@@ -188,146 +310,7 @@ namespace Cyotek.Data.Nbt.Serialization
       return tags;
     }
 
-    public virtual TagDictionary ReadDictionary()
-    {
-      TagDictionary results;
-      ITag tag;
-
-      results = new TagDictionary();
-
-      tag = this.ReadTag();
-      while (tag.Type != TagType.End)
-      {
-        results.Add(tag);
-        tag = this.ReadTag();
-      }
-
-      return results;
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream)
-    {
-      return this.ReadDocument(stream, ReadTagOptions.None);
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
-    {
-      TagCompound tag;
-
-      if (stream.IsGzipCompressed())
-      {
-        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
-        {
-          _stream = decompressionStream;
-          tag = (TagCompound)this.ReadTag(options);
-        }
-      }
-      else if (stream.IsDeflateCompressed())
-      {
-        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
-        {
-          _stream = decompressionStream;
-          tag = (TagCompound)this.ReadTag(options);
-        }
-      }
-      else if (stream.PeekNextByte() == (int)TagType.Compound)
-      {
-        _stream = stream;
-        tag = (TagCompound)this.ReadTag(options);
-      }
-      else
-      {
-        throw new InvalidDataException("Source stream does not contain a NBT document.");
-      }
-
-      return tag;
-    }
-
-    public virtual double ReadDouble()
-    {
-      byte[] data;
-
-      data = new byte[BitHelper.DoubleSize];
-      if (BitHelper.DoubleSize != _stream.Read(data, 0, BitHelper.DoubleSize))
-      {
-        throw new InvalidDataException();
-      }
-
-      if (_isLittleEndian)
-      {
-        BitHelper.SwapBytes(data, 0, BitHelper.DoubleSize);
-      }
-
-      return BitConverter.ToDouble(data, 0);
-    }
-
-    public virtual float ReadFloat()
-    {
-      byte[] data;
-
-      data = new byte[BitHelper.FloatSize];
-      if (BitHelper.FloatSize != _stream.Read(data, 0, BitHelper.FloatSize))
-      {
-        throw new InvalidDataException();
-      }
-
-      if (_isLittleEndian)
-      {
-        BitHelper.SwapBytes(data, 0, BitHelper.FloatSize);
-      }
-
-      return BitConverter.ToSingle(data, 0);
-    }
-
-    public virtual int ReadInt()
-    {
-      byte[] data;
-
-      data = new byte[BitHelper.IntSize];
-      if (BitHelper.IntSize != _stream.Read(data, 0, BitHelper.IntSize))
-      {
-        throw new InvalidDataException();
-      }
-
-      if (_isLittleEndian)
-      {
-        BitHelper.SwapBytes(data, 0, BitHelper.IntSize);
-      }
-
-      return BitConverter.ToInt32(data, 0);
-    }
-
-    public virtual int[] ReadIntArray()
-    {
-      int length;
-      int bufferLength;
-      byte[] buffer;
-      int[] ints;
-
-      length = this.ReadInt();
-      bufferLength = length * BitHelper.IntSize;
-
-      buffer = new byte[bufferLength];
-      if (bufferLength != _stream.Read(buffer, 0, bufferLength))
-      {
-        throw new InvalidDataException();
-      }
-
-      ints = new int[length];
-      for (int i = 0; i < length; i++)
-      {
-        if (_isLittleEndian)
-        {
-          BitHelper.SwapBytes(buffer, i * 4, 4);
-        }
-
-        ints[i] = BitConverter.ToInt32(buffer, i * 4);
-      }
-
-      return ints;
-    }
-
-    public virtual long ReadLong()
+    public override long ReadLong()
     {
       byte[] data;
 
@@ -337,7 +320,7 @@ namespace Cyotek.Data.Nbt.Serialization
         throw new InvalidDataException();
       }
 
-      if (_isLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
         BitHelper.SwapBytes(data, 0, BitHelper.LongSize);
       }
@@ -345,7 +328,7 @@ namespace Cyotek.Data.Nbt.Serialization
       return BitConverter.ToInt64(data, 0);
     }
 
-    public virtual short ReadShort()
+    public override short ReadShort()
     {
       byte[] data;
 
@@ -355,7 +338,7 @@ namespace Cyotek.Data.Nbt.Serialization
         throw new InvalidDataException();
       }
 
-      if (_isLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
         BitHelper.SwapBytes(data, 0, BitHelper.ShortSize);
       }
@@ -363,7 +346,7 @@ namespace Cyotek.Data.Nbt.Serialization
       return BitConverter.ToInt16(data, 0);
     }
 
-    public virtual string ReadString()
+    public override string ReadString()
     {
       short length;
       byte[] data;
@@ -379,19 +362,17 @@ namespace Cyotek.Data.Nbt.Serialization
       return data.Length != 0 ? Encoding.UTF8.GetString(data) : null;
     }
 
-    public virtual ITag ReadTag(ReadTagOptions options)
+    public override ITag ReadTag(ReadTagOptions options)
     {
-      int rawType;
       ITag result;
       TagType type;
       string name;
 
-      rawType = _stream.ReadByte();
-      type = (TagType)rawType;
+      type = this.ReadTagType();
 
       if (type > TagType.IntArray)
       {
-        throw new InvalidDataException($"Unrecognized tag type: {rawType}.");
+        throw new InvalidDataException($"Unrecognized tag type: {type}.");
       }
 
       if (type != TagType.End && (options & ReadTagOptions.IgnoreName) == 0)
@@ -450,11 +431,11 @@ namespace Cyotek.Data.Nbt.Serialization
             break;
 
           case TagType.List:
-            result = TagFactory.CreateTag(name, this.ReadCollection());
+            result = TagFactory.CreateTag(name, this.ReadList());
             break;
 
           case TagType.Compound:
-            result = TagFactory.CreateTag(name, this.ReadDictionary());
+            result = TagFactory.CreateTag(name, this.ReadCompound());
             break;
         }
       }
@@ -468,9 +449,9 @@ namespace Cyotek.Data.Nbt.Serialization
       return result;
     }
 
-    public virtual ITag ReadTag()
+    public override TagType ReadTagType()
     {
-      return this.ReadTag(ReadTagOptions.None);
+      return (TagType)_stream.ReadByte();
     }
 
     #endregion

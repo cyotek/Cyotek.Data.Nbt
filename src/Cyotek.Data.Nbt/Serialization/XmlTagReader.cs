@@ -6,28 +6,198 @@ using System.Xml;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class XmlTagReader : ITagReader
+  public class XmlTagReader : TagReader
   {
+    #region Constants
+
+    private static readonly char[] _arraySeparaters =
+    {
+      ' ',
+      '\t',
+      '\n',
+      '\r'
+    };
+
+    #endregion
+
     #region Fields
 
-    private XmlReader _reader;
+    private readonly XmlReader _reader;
 
     #endregion
 
     #region Constructors
 
-    public XmlTagReader()
-    { }
-
     public XmlTagReader(XmlReader reader)
-      : this()
     {
       _reader = reader;
     }
 
+    public XmlTagReader(Stream stream)
+    {
+      _reader = XmlReader.Create(stream);
+    }
+
+    public XmlTagReader()
+    { }
+
     #endregion
 
     #region Methods
+
+    public override void Close()
+    {
+      base.Close();
+
+      _reader.Close();
+    }
+
+    public override bool IsNbtDocument()
+    {
+      bool result;
+      try
+      {
+        string typeName;
+
+        while (!_reader.IsStartElement())
+        {
+          _reader.Read();
+        }
+
+        typeName = _reader.GetAttribute("type");
+
+        result = typeName != null;
+      }
+      catch
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    public override byte ReadByte()
+    {
+      return (byte)_reader.ReadElementContentAsInt();
+    }
+
+    public override byte[] ReadByteArray()
+    {
+      return this.ReadString().Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
+    }
+
+    public override TagDictionary ReadCompound()
+    {
+      TagDictionary value;
+
+      value = new TagDictionary();
+
+      _reader.Read();
+
+      this.ReadChildValues(value, ReadTagOptions.None, TagType.None);
+
+      return value;
+    }
+
+    public override TagCompound ReadDocument()
+    {
+      return this.ReadDocument(ReadTagOptions.None);
+    }
+
+    public override TagCompound ReadDocument(ReadTagOptions options)
+    {
+      TagCompound result;
+
+      result = (TagCompound)this.ReadTag(options);
+
+      return result;
+    }
+
+    public override double ReadDouble()
+    {
+      return _reader.ReadElementContentAsDouble();
+    }
+
+    public override float ReadFloat()
+    {
+      return _reader.ReadElementContentAsFloat();
+    }
+
+    public override int ReadInt()
+    {
+      return _reader.ReadElementContentAsInt();
+    }
+
+    public override int[] ReadIntArray()
+    {
+      return this.ReadString().Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
+    }
+
+    public override TagCollection ReadList()
+    {
+      TagCollection value;
+      TagType listType;
+      string listTypeName;
+
+      listTypeName = _reader.GetAttribute("limitType");
+      if (string.IsNullOrEmpty(listTypeName))
+      {
+        throw new InvalidDataException("Missing limitType attribute, unable to determine list contents type.");
+      }
+
+      listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
+      value = new TagCollection(listType);
+
+      _reader.Read();
+
+      this.ReadChildValues(value, ReadTagOptions.IgnoreName, listType);
+
+      return value;
+    }
+
+    public override long ReadLong()
+    {
+      return _reader.ReadElementContentAsLong();
+    }
+
+    public override short ReadShort()
+    {
+      return (short)_reader.ReadElementContentAsInt();
+    }
+
+    public override string ReadString()
+    {
+      string value;
+
+      value = _reader.ReadElementContentAsString();
+      if (string.IsNullOrEmpty(value))
+      {
+        value = null;
+      }
+
+      return value;
+    }
+
+    public override ITag ReadTag(ReadTagOptions options)
+    {
+      return this.ReadTag(options, TagType.None);
+    }
+
+    public override TagType ReadTagType()
+    {
+      TagType type;
+      string typeName;
+
+      typeName = _reader.GetAttribute("type");
+      if (string.IsNullOrEmpty(typeName))
+      {
+        throw new InvalidDataException("Missing type attribute, unable to determine tag type.");
+      }
+
+      type = (TagType)Enum.Parse(typeof(TagType), typeName, true);
+
+      return type;
+    }
 
     protected ITag ReadTag(ReadTagOptions options, TagType defaultTagType)
     {
@@ -89,11 +259,11 @@ namespace Cyotek.Data.Nbt.Serialization
             break;
 
           case TagType.List:
-            result = TagFactory.CreateTag(type, name, this.ReadCollection());
+            result = TagFactory.CreateTag(type, name, this.ReadList());
             break;
 
           case TagType.Compound:
-            result = TagFactory.CreateTag(type, name, this.ReadDictionary());
+            result = TagFactory.CreateTag(type, name, this.ReadCompound());
             break;
 
           case TagType.IntArray:
@@ -187,179 +357,6 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         _reader.Read();
       }
-    }
-
-    #endregion
-
-    #region ITagReader Interface
-
-    public virtual bool IsNbtDocument(Stream stream)
-    {
-      bool result;
-      long position;
-
-      position = stream.Position;
-
-      try
-      {
-        string typeName;
-
-        _reader = XmlReader.Create(stream);
-
-        while (!_reader.IsStartElement())
-        {
-          _reader.Read();
-        }
-
-        typeName = _reader.GetAttribute("type");
-
-        result = typeName != null;
-      }
-      catch
-      {
-        result = false;
-      }
-
-      stream.Position = position;
-
-      return result;
-    }
-
-    public virtual byte ReadByte()
-    {
-      return (byte)_reader.ReadElementContentAsInt();
-    }
-
-    public virtual byte[] ReadByteArray()
-    {
-      return this.ReadString().Split(new[]
-                                     {
-                                       " ",
-                                       "\t",
-                                       "\n",
-                                       "\r"
-                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
-    }
-
-    public virtual TagCollection ReadCollection()
-    {
-      TagCollection value;
-      TagType listType;
-      string listTypeName;
-
-      listTypeName = _reader.GetAttribute("limitType");
-      if (string.IsNullOrEmpty(listTypeName))
-      {
-        throw new InvalidDataException("Missing limitType attribute, unable to determine list contents type.");
-      }
-
-      listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
-      value = new TagCollection(listType);
-
-      _reader.Read();
-
-      this.ReadChildValues(value, ReadTagOptions.IgnoreName, listType);
-
-      return value;
-    }
-
-    public virtual TagDictionary ReadDictionary()
-    {
-      TagDictionary value;
-
-      value = new TagDictionary();
-
-      _reader.Read();
-
-      this.ReadChildValues(value, ReadTagOptions.None, TagType.None);
-
-      return value;
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream)
-    {
-      return this.ReadDocument(stream, ReadTagOptions.None);
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
-    {
-      TagCompound result;
-      bool createReader;
-
-      createReader = _reader == null;
-
-      if (createReader)
-      {
-        _reader = XmlReader.Create(stream);
-      }
-
-      result = (TagCompound)this.ReadTag(options);
-
-      if (createReader)
-      {
-        _reader = null;
-      }
-
-      return result;
-    }
-
-    public virtual double ReadDouble()
-    {
-      return _reader.ReadElementContentAsDouble();
-    }
-
-    public virtual float ReadFloat()
-    {
-      return _reader.ReadElementContentAsFloat();
-    }
-
-    public virtual int ReadInt()
-    {
-      return _reader.ReadElementContentAsInt();
-    }
-
-    public virtual int[] ReadIntArray()
-    {
-      return this.ReadString().Split(new[]
-                                     {
-                                       " ",
-                                       "\t",
-                                       "\n",
-                                       "\r"
-                                     }, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
-    }
-
-    public virtual long ReadLong()
-    {
-      return _reader.ReadElementContentAsLong();
-    }
-
-    public virtual short ReadShort()
-    {
-      return (short)_reader.ReadElementContentAsInt();
-    }
-
-    public virtual string ReadString()
-    {
-      string value;
-
-      value = _reader.ReadElementContentAsString();
-      if (string.IsNullOrEmpty(value))
-      {
-        value = null;
-      }
-
-      return value;
-    }
-
-    public virtual ITag ReadTag()
-    {
-      return this.ReadTag(ReadTagOptions.None);
-    }
-
-    public virtual ITag ReadTag(ReadTagOptions options)
-    {
-      return this.ReadTag(options, TagType.None);
     }
 
     #endregion

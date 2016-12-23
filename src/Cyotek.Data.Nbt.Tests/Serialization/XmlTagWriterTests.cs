@@ -49,13 +49,13 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     [Test]
     public void Document_serialization_deserialization_test()
     {
-      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream));
+      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream), stream => new XmlTagReader(stream));
     }
 
     [Test]
     public void Serialization_deserialization_test()
     {
-      this.WriteTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream));
+      this.WriteTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream), stream => new XmlTagReader(stream));
     }
 
     #endregion

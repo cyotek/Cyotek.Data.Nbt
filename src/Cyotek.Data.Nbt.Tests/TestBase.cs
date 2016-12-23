@@ -1223,10 +1223,11 @@ namespace Cyotek.Data.Nbt.Tests
       return Path.Combine(path, fileName);
     }
 
-    protected void WriteDocumentTest<T, T2>(Func<Stream, T> createWriter) where T : TagWriter where T2 : ITagReader, new()
+    protected void WriteDocumentTest<T, T2>(Func<Stream, T> createWriter, Func<Stream, T2> createReader) where T : TagWriter where T2 : TagReader
     {
       // arrange
       TagWriter target;
+      TagReader reader;
       TagCompound expected;
       TagCompound actual;
       Stream stream = new MemoryStream();
@@ -1242,14 +1243,16 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       stream.Seek(0, SeekOrigin.Begin);
-      actual = new T2().ReadDocument(stream);
+      reader = createReader(stream);
+      actual = reader.ReadDocument();
       this.CompareTags(expected, actual);
     }
 
-    protected void WriteTest<T, T2>(Func<Stream, T> createWriter) where T : TagWriter where T2 : ITagReader, new()
+    protected void WriteTest<T, T2>(Func<Stream, T> createWriter, Func<Stream, T2> createReader) where T : TagWriter where T2 : TagReader
     {
       // arrange
       TagWriter target;
+      TagReader reader;
       TagCompound expected;
       TagCompound actual;
       Stream stream = new MemoryStream();
@@ -1301,7 +1304,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       stream.Seek(0, SeekOrigin.Begin);
-      actual = new T2().ReadDocument(stream);
+      reader = createReader(stream);
+      actual = reader.ReadDocument();
       this.CompareTags(expected, actual);
     }
 
