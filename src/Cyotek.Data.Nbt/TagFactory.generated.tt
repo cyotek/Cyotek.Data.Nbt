@@ -4,8 +4,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<#@ include file="NbtGeneratorData.t4" #>
-using System;
+<#@ include file="NbtGeneratorData.t4" #>using System;
 
 namespace Cyotek.Data.Nbt
 {
@@ -25,22 +24,22 @@ namespace Cyotek.Data.Nbt
      {
 #>
     /// <summary>
-    /// Creates a tag for a <see cref="<#=name#>" /> value.
+    /// Creates a tag for a <see cref="T:<#=name#>" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="<#=name#>" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:<#=name#>" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="<#=tagName#>" />.
     /// </returns>
     public static <#=tagName#> CreateTag(<#=name#> value)
     {
-      return new <#=tagName#>(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="<#=name#>" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:<#=name#>" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="<#=name#>" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:<#=name#>" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="<#=tagName#>" />.
     /// </returns>

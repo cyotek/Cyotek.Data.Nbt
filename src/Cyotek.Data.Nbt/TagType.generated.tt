@@ -4,8 +4,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<#@ include file="NbtGeneratorData.t4" #>
-namespace Cyotek.Data.Nbt
+<#@ include file="NbtGeneratorData.t4" #>namespace Cyotek.Data.Nbt
 {
   /// <summary>
   /// Values that represent tag types.

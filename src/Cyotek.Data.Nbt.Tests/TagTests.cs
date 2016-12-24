@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  public class TagTests : TestBase
+  public partial class TagTests : TestBase
   {
     #region  Tests
 
@@ -100,24 +100,6 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       CollectionAssert.AreEqual(expected, actual);
     }
-
-    //[Test]
-    //public void GetValueTest()
-    //{
-    //  // arrange
-    //  TagCompound target;
-    //  byte[] expected;
-    //  byte[] actual;
-
-    //  expected = File.ReadAllBytes(this.UncompressedComplexDataFileName);
-    //  target = this.CreateComplexData();
-
-    //  // act
-    //  actual = target.GetValue();
-
-    //  // assert
-    //  CollectionAssert.AreEqual(expected, actual);
-    //}
 
     [Test]
     public void NameChangedEventTest()

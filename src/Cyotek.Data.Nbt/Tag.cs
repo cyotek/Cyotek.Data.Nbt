@@ -148,24 +148,7 @@ namespace Cyotek.Data.Nbt
 
     public abstract object GetValue();
 
-    //public virtual byte[] GetValue()
-    //{
-    //  byte[] result;
-
-    //  using (MemoryStream stream = new MemoryStream())
-    //  {
-    //    ITagWriter writer;
-
-    //    writer = new BinaryTagWriter(stream);
-    //    writer.WriteTag(this, WriteTagOptions.None);
-
-    //    result = stream.ToArray();
-    //  }
-
-    //  return result;
-    //}
-
-    public virtual void Remove()
+   public virtual void Remove()
     {
       ICollectionTag parent;
 

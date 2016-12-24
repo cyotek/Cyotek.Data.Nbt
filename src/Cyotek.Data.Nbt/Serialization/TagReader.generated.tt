@@ -4,8 +4,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<#@ include file="..\NbtGeneratorData.t4" #>
-using System;
+<#@ include file="..\NbtGeneratorData.t4" #>using System;
 using System.IO;
 
 namespace Cyotek.Data.Nbt.Serialization
@@ -24,7 +23,7 @@ namespace Cyotek.Data.Nbt.Serialization
      {
 #>
     /// <summary>
-    /// Reads a <see cref="<#=name#>" /> value.
+    /// Reads a <see cref="T:<#=name#>" /> value.
     /// </summary>
     public abstract <#=name#> Read<#=nbtName#>();
 

@@ -4,8 +4,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<#@ include file="..\NbtGeneratorData.t4" #>
-using System;
+<#@ include file="..\NbtGeneratorData.t4" #>using System;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
@@ -23,16 +22,16 @@ namespace Cyotek.Data.Nbt.Serialization
      {
 #>
     /// <summary>
-    /// Writes a <see cref="<#=name#>" /> value.
+    /// Writes a <see cref="T:<#=name#>" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="<#=name#>" /> value to write.</param>
+    /// <param name="value">The <see cref="T:<#=name#>" /> value to write.</param>
     public abstract void WriteValue(<#=name#> value);
 
     /// <summary>
-    /// Writes a tag entry for a <see cref="<#=name#>" /> value with the specified name.
+    /// Writes a tag entry for a <see cref="T:<#=name#>" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag entry to write.</param>
-    /// <param name="value">The <see cref="<#=name#>" /> value to write.</param>
+    /// <param name="value">The <see cref="T:<#=name#>" /> value to write.</param>
     public void WriteTag(string name, <#=name#> value)
     {
       this.WriteStartTag(TagType.<#=nbtName#>, name);
@@ -41,9 +40,9 @@ namespace Cyotek.Data.Nbt.Serialization
     }
 
     /// <summary>
-    /// Writes an unnamed tag entry for a <see cref="<#=name#>" /> value.
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name#>" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="<#=name#>" /> value to write.</param>
+    /// <param name="value">The <see cref="T:<#=name#>" /> value to write.</param>
     public void WriteTag(<#=name#> value)
     {
       this.WriteStartTag(TagType.<#=nbtName#>, string.Empty, WriteTagOptions.IgnoreName);

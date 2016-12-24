@@ -7,7 +7,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-
 using System;
 
 namespace Cyotek.Data.Nbt
@@ -15,22 +14,22 @@ namespace Cyotek.Data.Nbt
   partial class TagFactory
   {
     /// <summary>
-    /// Creates a tag for a <see cref="byte" /> value.
+    /// Creates a tag for a <see cref="T:byte" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="byte" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:byte" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagByte" />.
     /// </returns>
     public static TagByte CreateTag(byte value)
     {
-      return new TagByte(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="byte" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:byte" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="byte" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:byte" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagByte" />.
     /// </returns>
@@ -40,22 +39,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="short" /> value.
+    /// Creates a tag for a <see cref="T:short" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="short" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:short" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagShort" />.
     /// </returns>
     public static TagShort CreateTag(short value)
     {
-      return new TagShort(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="short" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:short" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="short" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:short" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagShort" />.
     /// </returns>
@@ -65,22 +64,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="int" /> value.
+    /// Creates a tag for a <see cref="T:int" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="int" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:int" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagInt" />.
     /// </returns>
     public static TagInt CreateTag(int value)
     {
-      return new TagInt(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="int" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:int" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="int" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:int" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagInt" />.
     /// </returns>
@@ -90,22 +89,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="long" /> value.
+    /// Creates a tag for a <see cref="T:long" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="long" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:long" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagLong" />.
     /// </returns>
     public static TagLong CreateTag(long value)
     {
-      return new TagLong(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="long" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:long" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="long" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:long" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagLong" />.
     /// </returns>
@@ -115,22 +114,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="float" /> value.
+    /// Creates a tag for a <see cref="T:float" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="float" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:float" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagFloat" />.
     /// </returns>
     public static TagFloat CreateTag(float value)
     {
-      return new TagFloat(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="float" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:float" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="float" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:float" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagFloat" />.
     /// </returns>
@@ -140,22 +139,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="double" /> value.
+    /// Creates a tag for a <see cref="T:double" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="double" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:double" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagDouble" />.
     /// </returns>
     public static TagDouble CreateTag(double value)
     {
-      return new TagDouble(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="double" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:double" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="double" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:double" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagDouble" />.
     /// </returns>
@@ -165,22 +164,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="byte[]" /> value.
+    /// Creates a tag for a <see cref="T:byte[]" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="byte[]" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:byte[]" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagByteArray" />.
     /// </returns>
     public static TagByteArray CreateTag(byte[] value)
     {
-      return new TagByteArray(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="byte[]" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:byte[]" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="byte[]" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:byte[]" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagByteArray" />.
     /// </returns>
@@ -190,22 +189,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="string" /> value.
+    /// Creates a tag for a <see cref="T:string" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="string" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:string" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagString" />.
     /// </returns>
     public static TagString CreateTag(string value)
     {
-      return new TagString(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="string" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:string" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="string" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:string" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagString" />.
     /// </returns>
@@ -215,22 +214,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="TagCollection" /> value.
+    /// Creates a tag for a <see cref="T:TagCollection" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="TagCollection" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:TagCollection" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagList" />.
     /// </returns>
     public static TagList CreateTag(TagCollection value)
     {
-      return new TagList(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="TagCollection" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:TagCollection" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="TagCollection" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:TagCollection" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagList" />.
     /// </returns>
@@ -240,22 +239,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="TagDictionary" /> value.
+    /// Creates a tag for a <see cref="T:TagDictionary" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="TagDictionary" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:TagDictionary" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagCompound" />.
     /// </returns>
     public static TagCompound CreateTag(TagDictionary value)
     {
-      return new TagCompound(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="TagDictionary" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:TagDictionary" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="TagDictionary" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:TagDictionary" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagCompound" />.
     /// </returns>
@@ -265,22 +264,22 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="int[]" /> value.
+    /// Creates a tag for a <see cref="T:int[]" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="int[]" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:int[]" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagIntArray" />.
     /// </returns>
     public static TagIntArray CreateTag(int[] value)
     {
-      return new TagIntArray(value);
+      return CreateTag(string.Empty, value);
     }
 
     /// <summary>
-    /// Creates a tag for a <see cref="int[]" /> value with the specified name.
+    /// Creates a tag for a <see cref="T:int[]" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag create.</param>
-    /// <param name="value">The <see cref="int[]" /> value of the tag.</param>
+    /// <param name="value">The <see cref="T:int[]" /> value of the tag.</param>
     /// <returns>
     /// A new <see cref="TagIntArray" />.
     /// </returns>

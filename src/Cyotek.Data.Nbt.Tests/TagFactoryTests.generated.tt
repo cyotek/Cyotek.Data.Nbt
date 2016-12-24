@@ -1,0 +1,141 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>using NUnit.Framework;
+
+namespace Cyotek.Data.Nbt.Tests
+{
+  partial class TagFactoryTests
+  {
+<# for(var i = 0; i < netTypeNames.Length; i++)
+   {
+     string name;
+     string nbtName;
+     string tagName;
+     object testValue;
+
+     name = netTypeNames[i];
+     nbtName = nbtTypeNames[i];
+     tagName = nbtTagTypeNames[i];
+     testValue = testValues[i];
+
+     if(name != null)
+     {
+#>
+    [Test]
+    public void Create_with_type_sets_<#=nbtName.ToLower()#>_name()
+    {
+      // arrange
+      Tag actual;
+      string expected;
+      <#=name#> value;
+      TagType type;
+
+      type = TagType.<#=nbtName#>;
+
+      expected = "Alpha_<#=tagName#>";
+      value = default(<#=name#>);
+
+      // act
+      actual = TagFactory.CreateTag(type, expected, value);
+
+      // assert
+      Assert.AreEqual(expected, actual.Name);
+    }
+
+    [Test]
+    public void Create_with_type_creates_<#=nbtName.ToLower()#>()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.<#=nbtName#>;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<Tag<#=nbtName#>>(actual);
+    }
+
+    [Test]
+    public void Create_with_type_sets_<#=nbtName.ToLower()#>_value()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+      object expected;
+
+      type = TagType.<#=nbtName#>;
+
+      expected = <#=testValue#>;
+
+      // act
+      actual = TagFactory.CreateTag(type, expected);
+
+      // assert
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+    [Test]
+    public void Create_with_value_creates_<#=nbtName.ToLower()#>_type()
+    {
+      // arrange
+      Tag actual;
+      <#=name#> expected;
+
+      expected = <#=testValue#>;
+
+      // act
+      actual = TagFactory.CreateTag(expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<Tag<#=nbtName#>>(actual);
+    }
+
+    [Test]
+    public void Create_with_value_sets_<#=nbtName.ToLower()#>_value()
+    {
+      // arrange
+      Tag actual;
+      <#=name#> expected;
+
+      expected = <#=testValue#>;
+
+      // act
+      actual = TagFactory.CreateTag(expected);
+
+      // assert
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+    [Test]
+    public void Create_with_value_sets_<#=nbtName.ToLower()#>_name()
+    {
+      // arrange
+      Tag actual;
+      string expected;
+      <#=name#> value;
+
+      expected = "Alpha_<#=tagName#>";
+      value = <#=testValue#>;
+
+      // act
+      actual = TagFactory.CreateTag(expected, value);
+
+      // assert
+      Assert.AreEqual(expected, actual.Name);
+    }
+
+<#
+    }
+  }
+#>
+  }
+}
