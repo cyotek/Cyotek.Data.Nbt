@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string nbtName      = "Int";
+  string typeName     = "int";
+  object testValue    = int.MaxValue >> 1;
+  object altTestValue = int.MaxValue >> 2;
+  object defaultValue = 0;
+  string valueString  = "1073741823";
+  int    listCount    = 0;
+#>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

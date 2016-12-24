@@ -54,31 +54,81 @@
     <Compile Include="Serialization\XmlTagReaderTests.cs" />
     <Compile Include="Serialization\XmlTagWriterTests.cs" />
     <Compile Include="TagByteArrayTests.cs" />
+    <Compile Include="TagByteArrayTests.generated.cs">
+      <DependentUpon>TagByteArrayTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="TagByteTests.cs" />
+    <Compile Include="TagByteTests.generated.cs">
+      <DependentUpon>TagByteTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="TagCollectionTests.cs" />
+    <Compile Include="TagCompoundTests,generated.cs">
+      <DependentUpon>TagCompoundTests,generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="TagCompoundTests.cs" />
     <Compile Include="TagDictionaryTests.cs" />
     <Compile Include="TagDoubleTests.cs" />
+    <Compile Include="TagDoubleTests.generated.cs">
+      <DependentUpon>TagDoubleTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="TagEndTests.cs" />
     <Compile Include="TagFactoryTests.cs" />
     <Compile Include="TagFactoryTests.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>TagFactoryTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="TagFloatTests.cs" />
-    <Compile Include="TagIntArrayTests.cs" />
-    <Compile Include="TagIntTests.cs" />
-    <Compile Include="TagListTests.cs" />
-    <Compile Include="TagLongTests.cs" />
-    <Compile Include="TagShortTests.cs" />
-    <Compile Include="TagStringTests.cs" />
-    <Compile Include="TagTests.cs" />
-    <Compile Include="TagTests.generated.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Include="TagFloatTests.generated.cs">
+      <DependentUpon>TagFloatTests.generated.tt</DependentUpon>
       <DesignTime>True</DesignTime>
-      <DependentUpon>TagTests.generated.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="TagIntArrayTests.cs" />
+    <Compile Include="TagIntArrayTests.generated.cs">
+      <DependentUpon>TagIntArrayTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TagIntTests.cs" />
+    <Compile Include="TagIntTests.generated.cs">
+      <DependentUpon>TagIntTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TagListTests.cs" />
+    <Compile Include="TagListTests.generated.cs">
+      <DependentUpon>TagListTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TagLongTests.cs" />
+    <Compile Include="TagLongTests.generated.cs">
+      <DependentUpon>TagLongTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TagShortTests.cs" />
+    <Compile Include="TagShortTests.generated.cs">
+      <DependentUpon>TagShortTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TagStringTests.cs" />
+    <Compile Include="TagStringTests.generated.cs">
+      <DependentUpon>TagStringTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="TagTests.cs" />
     <Compile Include="TagTypeTests.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
@@ -96,6 +146,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="TagTests.t4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cyotek.Data.Nbt\Cyotek.Data.Nbt.csproj">
@@ -125,13 +176,65 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="TagByteArrayTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagByteArrayTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagByteArrayTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagByteTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagByteTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagByteTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagCompoundTests,generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagCompoundTests,generated.cs</LastGenOutput>
+      <DependentUpon>TagCompoundTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagDoubleTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagDoubleTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagDoubleTests.cs</DependentUpon>
+    </Content>
     <Content Include="TagFactoryTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFactoryTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagFactoryTests.cs</DependentUpon>
     </Content>
-    <Content Include="TagTests.generated.tt">
+    <Content Include="TagFloatTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TagTests.generated.cs</LastGenOutput>
+      <LastGenOutput>TagFloatTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagFloatTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagIntArrayTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagIntArrayTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagIntArrayTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagIntTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagIntTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagIntTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagListTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagListTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagListTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagLongTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagLongTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagLongTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagShortTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagShortTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagShortTests.cs</DependentUpon>
+    </Content>
+    <Content Include="TagStringTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagStringTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagStringTests.cs</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup>

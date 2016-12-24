@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string nbtName      = "Float";
+  string typeName     = "float";
+  object testValue    = (float.MaxValue / 2) + "F";
+  object altTestValue = (float.MaxValue / 3) + "F";
+  object defaultValue = 0;
+  string valueString  = "1.701412E+38";
+  int    listCount    = 0;
+#>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

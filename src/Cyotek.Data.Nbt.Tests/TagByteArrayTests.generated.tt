@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string nbtName      = "ByteArray";
+  string typeName     = "byte[]";
+  object testValue    = "new byte[] { 2, 4, 8, 16, 32, 64, 128 }";
+  object altTestValue = "new byte[] { 2, 4, 8, 16, 32, 48, 128 }";
+  object defaultValue = "new byte[0]";
+  string valueString  = "02, 04, 08, 10, 20, 40, 80";
+  int    listCount    = 7;
+#>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

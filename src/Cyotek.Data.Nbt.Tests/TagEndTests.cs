@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
@@ -21,16 +22,66 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void ConstructorWithValueTest()
+    public void Equals_returns_true_for_any_end_tag()
     {
       // arrange
-      TagEnd tag;
+      TagEnd target;
+      TagEnd other;
+      bool actual;
+
+      target = new TagEnd();
+      other = new TagEnd();
 
       // act
-      tag = new TagEnd();
+      actual = target.Equals(other);
 
       // assert
-      Assert.IsEmpty(tag.Name);
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void GetHashCode_returns_same_value()
+    {
+      // arrange
+      TagEnd target;
+      int expected;
+      int actual;
+
+      target = new TagEnd();
+
+      expected = new TagEnd().GetHashCode();
+
+      // act
+      actual = target.GetHashCode();
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Tag does not support values.")]
+    public void GetValue_throws_exception()
+    {
+      // arrange
+      TagEnd target;
+
+      target = new TagEnd();
+
+      // act
+      target.GetValue();
+    }
+
+    [Test]
+    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Tag does not support values.")]
+    public void SetValue_throws_exception()
+    {
+      // arrange
+      TagEnd target;
+
+      target = new TagEnd();
+
+      // act
+      target.SetValue("TEST");
     }
 
     [Test]
@@ -49,6 +100,22 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueString_returns_empty_value()
+    {
+      // arrange
+      TagEnd target;
+      string actual;
+
+      target = new TagEnd();
+
+      // act
+      actual = target.ToValueString();
+
+      // assert
+      Assert.IsEmpty(actual);
     }
 
     [Test]

@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string nbtName      = "IntArray";
+  string typeName     = "int[]";
+  object testValue    = "new[] { 2190, 2994, 3248, 4294394 }";
+  object altTestValue = "new[] { 2190, 2994, 3248, 294394 }";
+  object defaultValue = "new int[0]";
+  string valueString  = "2190, 2994, 3248, 4294394";
+  int    listCount    = 4;
+#>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

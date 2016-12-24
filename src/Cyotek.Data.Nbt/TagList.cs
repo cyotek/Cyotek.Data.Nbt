@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  public sealed class TagList : Tag, ICollectionTag
+  public sealed class TagList : Tag, ICollectionTag, IEquatable<TagList>
   {
     #region Fields
 
@@ -95,6 +96,32 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
+    public override int GetHashCode()
+    {
+      // http://stackoverflow.com/a/263416/148962
+
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+        TagCollection values;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+
+        values = this.Value;
+
+        if (values != null)
+        {
+          for (int i = 0; i < values.Count; i++)
+          {
+            hash = hash * 23 + _value[i].GetHashCode();
+          }
+        }
+
+        return hash;
+      }
+    }
+
     public override object GetValue()
     {
       return _value;
@@ -107,7 +134,11 @@ namespace Cyotek.Data.Nbt
 
     public override string ToString()
     {
-      return $"[List: {this.Name}] ({_value?.Count ?? 0} items)";
+      int count;
+
+      count = _value?.Count ?? 0;
+
+      return string.Concat("[", this.Type, ": ", this.Name, "] (", count.ToString(CultureInfo.InvariantCulture), " items)");
     }
 
     public override string ToValueString()
@@ -133,6 +164,50 @@ namespace Cyotek.Data.Nbt
     IList<Tag> ICollectionTag.Values
     {
       get { return this.Value; }
+    }
+
+    #endregion
+
+    #region IEquatable<TagList> Interface
+
+    public bool Equals(TagList other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name) && this.ListType == other.ListType;
+
+        if (result)
+        {
+          IList<Tag> src;
+          IList<Tag> dst;
+
+          src = this.Value;
+          dst = other.Value;
+
+          result = src.Count == dst.Count;
+
+          for (int i = 0; i < src.Count; i++)
+          {
+            Tag srcTag;
+            Tag dstTag;
+
+            srcTag = src[i];
+            dstTag = dst[i];
+
+            if (!srcTag.Equals(dstTag))
+            {
+              result = false;
+              break;
+            }
+          }
+        }
+      }
+
+      return result;
     }
 
     #endregion

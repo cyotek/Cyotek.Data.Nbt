@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string nbtName      = "Compound";
+  string typeName     = "TagDictionary";
+  object testValue    = "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 8) }";
+  object altTestValue = "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 16) }";
+  object defaultValue = "new TagDictionary()";
+  string valueString  = "[2, 4, 8]";
+  int    listCount    = 3;
+#>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

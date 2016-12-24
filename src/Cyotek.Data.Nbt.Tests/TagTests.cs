@@ -12,7 +12,72 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
-    public void FlattenTest()
+    public void Attempting_to_set_name_to_null_sets_empty_string()
+    {
+      // arrange
+      Tag target;
+
+      target = new TagByte("alpha");
+
+      // act
+      target.Name = null;
+
+      // assert
+      Assert.IsEmpty(target.Name);
+    }
+
+    [Test]
+    public void Equals_returns_false_for_null_object()
+    {
+      // arrange
+      Tag target;
+      bool actual;
+
+      target = new TagByte();
+
+      // act
+      actual = target.Equals((object)null);
+
+      // assert
+      Assert.IsFalse(actual);
+    }
+
+    [Test]
+    public void Equals_returns_true_for_same_reference()
+    {
+      // arrange
+      Tag target;
+      bool actual;
+
+      target = new TagByte();
+
+      // act
+      actual = target.Equals((object)target);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void Equals_returns_true_for_same_tag()
+    {
+      // arrange
+      Tag target;
+      Tag other;
+      bool actual;
+
+      target = new TagByte(127);
+      other = new TagByte(127);
+
+      // act
+      actual = target.Equals((object)other);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void Flatten_returns_tag_and_all_descendants()
     {
       // arrange
       TagCompound target;
@@ -54,6 +119,23 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(expectedCount, actualCount);
       CollectionAssert.AreEqual(expectedNames, actualNames);
+    }
+
+    [Test]
+    public void Flattern_returns_tab()
+    {
+      // arrange
+      Tag target;
+      Tag[] actual;
+
+      target = new TagByte();
+
+      // act
+      actual = target.Flatten();
+
+      // assert
+      Assert.AreEqual(1, actual.Length);
+      Assert.AreSame(target, actual[0]);
     }
 
     [Test]
@@ -276,29 +358,6 @@ namespace Cyotek.Data.Nbt.Tests
       aTag = fileTag.GetTag("Entities");
 
       Assert.IsNull(aTag);
-    }
-
-    [Test]
-    public void ToValueStringTest()
-    {
-      // arrange
-      Tag target1;
-      Tag target2;
-      string expected1;
-      string actual1;
-      string actual2;
-
-      target1 = this.CreateComplexData().Query(@"nested compound test\ham\name");
-      target2 = new TagString(null, null);
-      expected1 = "Hampus";
-
-      // act
-      actual1 = target1.ToValueString();
-      actual2 = target2.ToValueString();
-
-      // assert
-      Assert.AreEqual(expected1, actual1);
-      Assert.IsEmpty(actual2);
     }
 
     #endregion

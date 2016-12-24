@@ -16,11 +16,13 @@ namespace Cyotek.Data.Nbt.Tests
      string nbtName;
      string tagName;
      object testValue;
+     string tagClassName;
 
      name = netTypeNames[i];
      nbtName = nbtTypeNames[i];
      tagName = nbtTagTypeNames[i];
      testValue = testValues[i];
+     tagClassName = "Tag" + nbtName;
 
      if(name != null)
      {
@@ -60,7 +62,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<Tag<#=nbtName#>>(actual);
+      Assert.IsInstanceOf<<#=tagClassName#>>(actual);
     }
 
     [Test]
@@ -96,7 +98,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<Tag<#=nbtName#>>(actual);
+      Assert.IsInstanceOf<<#=tagClassName#>>(actual);
     }
 
     [Test]

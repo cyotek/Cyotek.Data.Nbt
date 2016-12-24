@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string nbtName      = "String";
+  string typeName     = "string";
+  object testValue    = "\"HELLO WORLD THIS IS A TEST STRING ÅÄÖ!\"";
+  object altTestValue = "\"DIFFERENT\"";
+  object defaultValue = "string.Empty";
+  string valueString  = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
+  int    listCount    = 0;
+#>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

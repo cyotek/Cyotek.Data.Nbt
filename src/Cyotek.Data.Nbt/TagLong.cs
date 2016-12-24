@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  public sealed class TagLong : Tag
+  public sealed class TagLong : Tag, IEquatable<TagLong>
   {
     #region Fields
 
@@ -53,6 +53,20 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
+    public override int GetHashCode()
+    {
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+        hash = hash * 23 + _value.GetHashCode();
+
+        return hash;
+      }
+    }
+
     public override object GetValue()
     {
       return _value;
@@ -66,6 +80,29 @@ namespace Cyotek.Data.Nbt
     public override string ToValueString()
     {
       return _value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    #endregion
+
+    #region IEquatable<TagLong> Interface
+
+    public bool Equals(TagLong other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          result = _value == other.Value;
+        }
+      }
+
+      return result;
     }
 
     #endregion
