@@ -212,7 +212,9 @@ namespace Cyotek.Data.Nbt.Serialization
       int bufferLength;
       byte[] buffer;
       int[] ints;
+      bool isLittleEndian;
 
+      isLittleEndian = TagWriter.IsLittleEndian;
       length = this.ReadInt();
       bufferLength = length * BitHelper.IntSize;
 
@@ -225,7 +227,7 @@ namespace Cyotek.Data.Nbt.Serialization
       ints = new int[length];
       for (int i = 0; i < length; i++)
       {
-        if (TagWriter.IsLittleEndian)
+        if (isLittleEndian)
         {
           BitHelper.SwapBytes(buffer, i * 4, 4);
         }

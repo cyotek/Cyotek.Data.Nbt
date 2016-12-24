@@ -67,7 +67,6 @@
     <Compile Include="Serialization\XmlTagReader.cs" />
     <Compile Include="Serialization\XmlTagWriter.cs" />
     <Compile Include="StreamExtensions.cs" />
-    <Compile Include="TagEventArgs.cs" />
     <Compile Include="NbtFormat.cs" />
     <Compile Include="ICollectionTag.cs" />
     <Compile Include="Tag.cs" />
@@ -80,7 +79,6 @@
     <Compile Include="TagDictionary.cs" />
     <Compile Include="TagDouble.cs" />
     <Compile Include="TagEnd.cs" />
-    <Compile Include="TagException.cs" />
     <Compile Include="TagFactory.cs" />
     <Compile Include="TagFactory.generated.cs">
       <AutoGen>True</AutoGen>

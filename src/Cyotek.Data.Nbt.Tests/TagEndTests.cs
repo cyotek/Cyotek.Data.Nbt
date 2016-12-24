@@ -52,26 +52,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void ToStringWithIndentTest()
-    {
-      // arrange
-      TagEnd target;
-      string expected;
-      string actual;
-      string prefix;
-
-      prefix = "test";
-      expected = $"{prefix}[End]";
-      target = new TagEnd();
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
     public void TypeTest()
     {
       // arrange

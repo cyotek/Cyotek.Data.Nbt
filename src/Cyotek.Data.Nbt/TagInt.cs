@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Cyotek.Data.Nbt
@@ -28,7 +29,7 @@ namespace Cyotek.Data.Nbt
     public TagInt(string name, int value)
       : base(name)
     {
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -40,18 +41,12 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Int; }
     }
 
+    [Category("Data")]
+    [DefaultValue(0)]
     public int Value
     {
       get { return _value; }
-      set
-      {
-        if (_value != value)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
+      set { _value = value; }
     }
 
     #endregion
@@ -65,12 +60,7 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      this.Value = Convert.ToInt32(value);
-    }
-
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[Int: {this.Name}={this.Value}]";
+      _value = Convert.ToInt32(value);
     }
 
     public override string ToValueString()

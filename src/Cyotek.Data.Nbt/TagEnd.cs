@@ -33,9 +33,9 @@ namespace Cyotek.Data.Nbt
       throw new NotSupportedException("Tag does not support values.");
     }
 
-    public override string ToString(string indentString)
+    public override string ToString()
     {
-      return $"{indentString}[End]";
+      return "[End]";
     }
 
     public override string ToValueString()

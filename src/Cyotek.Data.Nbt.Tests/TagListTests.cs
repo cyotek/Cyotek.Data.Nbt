@@ -151,30 +151,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void ToStringEmptyWithIndentTest()
-    {
-      // arrange
-      TagList target;
-      string expected;
-      string actual;
-      string name;
-      TagType itemType;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      itemType = TagType.String;
-      expected = string.Format("{1}[List: {0}] (0 items)", name, prefix);
-      target = new TagList(name, itemType);
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
     public void ToStringTest()
     {
       // arrange
@@ -193,32 +169,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = target.ToString();
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ToStringWithIndentTest()
-    {
-      // arrange
-      TagList target;
-      string expected;
-      string actual;
-      string name;
-      TagType itemType;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      itemType = TagType.String;
-      expected = string.Format("{1}[List: {0}] (2 items)", name, prefix);
-      target = new TagList(name, itemType);
-      target.Value.Add("item 1", "value1");
-      target.Value.Add("item 2", "value2");
-
-      // act
-      actual = target.ToString(prefix);
 
       // assert
       Assert.AreEqual(expected, actual);

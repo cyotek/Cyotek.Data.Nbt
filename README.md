@@ -1,6 +1,8 @@
 Cyotek.Data.Nbt
 ===============
 
+[![Build status](https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true)](https://ci.appveyor.com/project/cyotek/cyotek-data-nbt)
+
 NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data. This is currently the format that Minecraft uses for player and region data.
 
 Cyotek.Data.Nbt is a library for reading and writing NBT format files used by Minecraft. However, the format is versatile enough to use for many other applications.

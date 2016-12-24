@@ -74,6 +74,11 @@
     <Compile Include="TagShortTests.cs" />
     <Compile Include="TagStringTests.cs" />
     <Compile Include="TagTests.cs" />
+    <Compile Include="TagTests.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TagTests.generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="TagTypeTests.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
@@ -123,6 +128,10 @@
     <Content Include="TagFactoryTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFactoryTests.generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="TagTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagTests.generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

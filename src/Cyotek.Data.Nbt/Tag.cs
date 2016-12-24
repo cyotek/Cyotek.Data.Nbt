@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -26,19 +25,6 @@ namespace Cyotek.Data.Nbt
     {
       _name = name;
     }
-
-    #endregion
-
-    #region Events
-
-    [Category("Property Changed")]
-    public event EventHandler NameChanged;
-
-    [Category("Property Changed")]
-    public event EventHandler ParentChanged;
-
-    [Category("Property Changed")]
-    public event EventHandler ValueChanged;
 
     #endregion
 
@@ -73,7 +59,7 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    [Category("")]
+    [Category("Data")]
     [DefaultValue("")]
     public string Name
     {
@@ -91,8 +77,6 @@ namespace Cyotek.Data.Nbt
           values?.ChangeKey(this, value);
 
           _name = value;
-
-          this.OnNameChanged(EventArgs.Empty);
         }
       }
     }
@@ -101,15 +85,7 @@ namespace Cyotek.Data.Nbt
     public Tag Parent
     {
       get { return _parent; }
-      set
-      {
-        if (_parent != value)
-        {
-          _parent = value;
-
-          this.OnParentChanged(EventArgs.Empty);
-        }
-      }
+      set { _parent = value; }
     }
 
     public abstract TagType Type { get; }
@@ -148,57 +124,14 @@ namespace Cyotek.Data.Nbt
 
     public abstract object GetValue();
 
-   public virtual void Remove()
-    {
-      ICollectionTag parent;
-
-      parent = _parent as ICollectionTag;
-
-      if (parent == null)
-      {
-        throw new TagException("Cannot remove this tag, parent not set or not supported.");
-      }
-
-      parent.Values.Remove(this);
-    }
-
     public abstract void SetValue(object value);
 
     public override string ToString()
     {
-      return this.ToString(string.Empty);
+      return string.Concat("[", this.Type, ": ", this.Name, "=", this.ToValueString(), "]");
     }
-
-    public abstract string ToString(string indentString);
 
     public abstract string ToValueString();
-
-    protected virtual void OnNameChanged(EventArgs e)
-    {
-      EventHandler handler;
-
-      handler = this.NameChanged;
-
-      handler?.Invoke(this, e);
-    }
-
-    protected virtual void OnParentChanged(EventArgs e)
-    {
-      EventHandler handler;
-
-      handler = this.ParentChanged;
-
-      handler?.Invoke(this, e);
-    }
-
-    protected virtual void OnValueChanged(EventArgs e)
-    {
-      EventHandler handler;
-
-      handler = this.ValueChanged;
-
-      handler?.Invoke(this, e);
-    }
 
     private void FlattenTag(Tag tag, List<Tag> tags)
     {

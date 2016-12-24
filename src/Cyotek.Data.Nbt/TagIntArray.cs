@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
@@ -29,7 +29,7 @@ namespace Cyotek.Data.Nbt
     public TagIntArray(string name, int[] value)
       : base(name)
     {
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -41,18 +41,12 @@ namespace Cyotek.Data.Nbt
       get { return TagType.IntArray; }
     }
 
+    [Category("Data")]
+    [DefaultValue(typeof(int[]), null)]
     public int[] Value
     {
       get { return _value; }
-      set
-      {
-        if (_value != value)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
+      set { _value = value; }
     }
 
     #endregion
@@ -66,12 +60,12 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      this.Value = (int[])value;
+      _value = (int[])value;
     }
 
-    public override string ToString(string indentString)
+    public override string ToString()
     {
-      return $"{indentString}[IntArray: {this.Name}={this.Value?.Length ?? 0} values]";
+      return $"[IntArray: {this.Name}={_value?.Length ?? 0} values]";
     }
 
     public override string ToValueString()

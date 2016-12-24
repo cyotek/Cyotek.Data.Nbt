@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Cyotek.Data.Nbt
@@ -40,18 +41,12 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Byte; }
     }
 
+    [Category("Data")]
+    [DefaultValue((byte)0)]
     public byte Value
     {
       get { return _value; }
-      set
-      {
-        if (_value != value)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
+      set { _value = value; }
     }
 
     #endregion
@@ -65,12 +60,7 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      this.Value = Convert.ToByte(value);
-    }
-
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[Byte: {this.Name}={this.Value}]";
+      _value = Convert.ToByte(value);
     }
 
     public override string ToValueString()

@@ -102,24 +102,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void NameChangedEventTest()
-    {
-      // arrange
-      Tag target;
-      bool eventRaised;
-
-      eventRaised = false;
-      target = new TagString();
-      target.NameChanged += delegate { eventRaised = true; };
-
-      // act
-      target.Name = "newvalue";
-
-      // assert
-      Assert.IsTrue(eventRaised);
-    }
-
-    [Test]
     [ExpectedException(ExpectedException = typeof(InvalidDataException), ExpectedMessage = "Unrecognized tag type: 255.")]
     public void ReadExceptionTest()
     {
@@ -136,40 +118,6 @@ namespace Cyotek.Data.Nbt.Tests
       reader.ReadTag();
 
       // assert
-    }
-
-    [Test]
-    [ExpectedException(ExpectedException = typeof(TagException), ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
-    public void RemoveExceptionTest()
-    {
-      // arrange
-      TagCompound target;
-
-      target = this.CreateComplexData();
-
-      // act
-      target.Remove();
-
-      // assert
-    }
-
-    [Test]
-    public void RemoveTest()
-    {
-      // arrange
-      TagCompound data;
-      Tag target;
-      string key;
-
-      data = this.CreateComplexData();
-      key = "listTest (compound)";
-      target = data.Value[key];
-
-      // act
-      target.Remove();
-
-      // assert
-      Assert.IsFalse(data.Contains(key));
     }
 
     [Test]
@@ -351,24 +299,6 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.AreEqual(expected1, actual1);
       Assert.IsEmpty(actual2);
-    }
-
-    [Test]
-    public void ValueChangedEventTest()
-    {
-      // arrange
-      TagString target;
-      bool eventRaised;
-
-      eventRaised = false;
-      target = new TagString();
-      target.ValueChanged += delegate { eventRaised = true; };
-
-      // act
-      target.Value = "newvalue";
-
-      // assert
-      Assert.IsTrue(eventRaised);
     }
 
     #endregion

@@ -120,30 +120,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void ToStringWithIndentTest()
-    {
-      // arrange
-      TagShort target;
-      string expected;
-      string actual;
-      string name;
-      short value;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      value = short.MaxValue;
-      expected = string.Format("{2}[Short: {0}={1}]", name, value, prefix);
-      target = new TagShort(name, value);
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
     public void ToValueStringTest()
     {
       // arrange

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Cyotek.Data.Nbt
@@ -51,6 +52,8 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Compound; }
     }
 
+    [Category("Data")]
+    [DefaultValue(typeof(TagDictionary), null)]
     public TagDictionary Value
     {
       get { return _value; }
@@ -65,8 +68,6 @@ namespace Cyotek.Data.Nbt
 
           _value = value;
           value.Owner = this;
-
-          this.OnValueChanged(EventArgs.Empty);
         }
       }
     }
@@ -425,9 +426,9 @@ namespace Cyotek.Data.Nbt
       this.Value = (TagDictionary)value;
     }
 
-    public override string ToString(string indentString)
+    public override string ToString()
     {
-      return $"{indentString}[Compound: {this.Name}] ({this.Value?.Count ?? 0} entries)";
+      return $"[Compound: {this.Name}] ({_value?.Count ?? 0} entries)";
     }
 
     public override string ToValueString()

@@ -78,28 +78,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void ToStringEmptyWithIndentTest()
-    {
-      // arrange
-      TagCompound target;
-      string expected;
-      string actual;
-      string name;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      expected = string.Format("{1}[Compound: {0}] (0 entries)", name, prefix);
-      target = new TagCompound(name);
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
     public void ToStringTest()
     {
       // arrange
@@ -116,30 +94,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = target.ToString();
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ToStringWithIndentTest()
-    {
-      // arrange
-      TagCompound target;
-      string expected;
-      string actual;
-      string name;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      expected = string.Format("{1}[Compound: {0}] (2 entries)", name, prefix);
-      target = new TagCompound(name);
-      target.Value.Add("item 1", "value1");
-      target.Value.Add("item 2", 2.0F);
-
-      // act
-      actual = target.ToString(prefix);
 
       // assert
       Assert.AreEqual(expected, actual);

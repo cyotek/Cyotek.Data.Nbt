@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Cyotek.Data.Nbt
@@ -28,7 +29,7 @@ namespace Cyotek.Data.Nbt
     public TagDouble(string name, double value)
       : base(name)
     {
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -40,18 +41,12 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Double; }
     }
 
+    [Category("Data")]
+    [DefaultValue(0D)]
     public double Value
     {
       get { return _value; }
-      set
-      {
-        if (Math.Abs(_value - value) > double.Epsilon)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
+      set { _value = value; }
     }
 
     #endregion
@@ -65,12 +60,7 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      this.Value = Convert.ToDouble(value);
-    }
-
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[Double: {this.Name}={this.Value}]";
+      _value = Convert.ToDouble(value);
     }
 
     public override string ToValueString()

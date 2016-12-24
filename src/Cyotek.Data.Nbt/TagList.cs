@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Cyotek.Data.Nbt
 {
@@ -70,6 +71,8 @@ namespace Cyotek.Data.Nbt
       get { return TagType.List; }
     }
 
+    [Category("Data")]
+    [DefaultValue(typeof(TagCollection), null)]
     public TagCollection Value
     {
       get { return _value; }
@@ -84,8 +87,6 @@ namespace Cyotek.Data.Nbt
 
           _value = value;
           value.Owner = this;
-
-          this.OnValueChanged(EventArgs.Empty);
         }
       }
     }
@@ -104,9 +105,9 @@ namespace Cyotek.Data.Nbt
       this.Value = (TagCollection)value;
     }
 
-    public override string ToString(string indentString)
+    public override string ToString()
     {
-      return $"{indentString}[List: {this.Name}] ({this.Value?.Count ?? 0} items)";
+      return $"[List: {this.Name}] ({_value?.Count ?? 0} items)";
     }
 
     public override string ToValueString()

@@ -131,34 +131,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void ToStringWithIndentTest()
-    {
-      // arrange
-      TagByteArray target;
-      string expected;
-      string actual;
-      string name;
-      byte[] value;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      value = new[]
-              {
-                byte.MinValue,
-                byte.MaxValue
-              };
-      expected = string.Format("{2}[ByteArray: {0}={1} values]", name, value.Length, prefix);
-      target = new TagByteArray(name, value);
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
     public void ToValueStringTest()
     {
       // arrange

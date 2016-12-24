@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace Cyotek.Data.Nbt
 {
@@ -23,7 +24,7 @@ namespace Cyotek.Data.Nbt
     public TagString(string name, string value)
       : base(name)
     {
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -35,18 +36,12 @@ namespace Cyotek.Data.Nbt
       get { return TagType.String; }
     }
 
+    [Category("Data")]
+    [DefaultValue("")]
     public string Value
     {
       get { return _value; }
-      set
-      {
-        if (_value != value)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
+      set { _value = value; }
     }
 
     #endregion
@@ -60,12 +55,12 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      this.Value = Convert.ToString(value);
+      _value = Convert.ToString(value);
     }
 
-    public override string ToString(string indentString)
+    public override string ToString()
     {
-      return $"{indentString}[String: {this.Name}=\"{this.Value}\"]";
+      return string.Concat("[String: ", this.Name, "=\"", this.ToValueString(), "\"]");
     }
 
     public override string ToValueString()
