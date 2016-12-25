@@ -1,5 +1,5 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#
-  string writerTypeName = "BinaryTagWriter";
-#>
+    string writerTypeName = "BinaryTagWriter";
+    #>
 <#@ output extension=".cs" #><#@ include file="TagWriterTests.t4" #>

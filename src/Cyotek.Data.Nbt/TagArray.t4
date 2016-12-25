@@ -1,43 +1,43 @@
 ﻿<#
-  string className;
+    string className;
 
-  className = "Tag" + nbtTagName;
-#>
+    className = "Tag" + nbtTagName;
+    #>
 <#@ include file="NbtGeneratorData.t4" #>using System;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  public partial class <#=className#> : Tag, IEquatable<<#=className#>>
+  public partial class <#=className #> : Tag, IEquatable<<#=className #>>
   {
     #region Constants
 
-    private static readonly <#=dataType#>[] _empty = new <#=dataType#>[0];
+    private static readonly <#=dataType #>[] _empty = new <#=dataType #>[0];
 
     #endregion
 
     #region Fields
 
-    private <#=dataType#>[] _value;
+    private <#=dataType #>[] _value;
 
     #endregion
 
     #region Constructors
 
-    public <#=className#>()
+    public <#=className #>()
       : this(string.Empty, _empty)
     { }
 
-    public <#=className#>(string name)
+    public <#=className #>(string name)
       : this(name, _empty)
     { }
 
-    public <#=className#>(<#=dataType#>[] value)
+    public <#=className #>(<#=dataType #>[] value)
       : this(string.Empty, value)
     { }
 
-    public <#=className#>(string name, <#=dataType#>[] value)
+    public <#=className #>(string name, <#=dataType #>[] value)
       : base(name)
     {
       _value = value;
@@ -49,11 +49,11 @@ namespace Cyotek.Data.Nbt
 
     public override TagType Type
     {
-      get { return TagType.<#=nbtTagName#>; }
+      get { return TagType.<#=nbtTagName #>; }
     }
 
     [Category("Data")]
-    public <#=dataType#>[] Value
+    public <#=dataType #>[] Value
     {
       get { return _value; }
       set { _value = value; }
@@ -93,7 +93,7 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      _value = (<#=dataType#>[])value;
+      _value = (<#=dataType #>[])value;
     }
 
     public override string ToString()
@@ -107,9 +107,9 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region IEquatable<<#=className#>> Interface
+    #region IEquatable<<#=className #>> Interface
 
-    public bool Equals(<#=className#> other)
+    public bool Equals(<#=className #> other)
     {
       bool result;
 
@@ -121,7 +121,7 @@ namespace Cyotek.Data.Nbt
 
         if (result)
         {
-          <#=dataType#>[] dst;
+          <#=dataType #>[] dst;
 
           dst = other.Value;
 

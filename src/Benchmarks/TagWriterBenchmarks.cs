@@ -1,7 +1,5 @@
 ﻿using System.IO;
-using System.IO.MemoryMappedFiles;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using Cyotek.Data.Nbt;
 using Cyotek.Data.Nbt.Serialization;
 
@@ -13,13 +11,7 @@ namespace Benchmarks
   {
     #region Constants
 
-//    private readonly TagWriter _binaryWriter;
-
     private readonly TagCompound _predefined;
-
-//    private readonly MemoryStream _stream;
-
-//    private readonly TagWriter _xmlWriter;
 
     #endregion
 
@@ -27,9 +19,6 @@ namespace Benchmarks
 
     public TagWriterBenchmarks()
     {
-      //_stream = new MemoryStream();
-      //_xmlWriter = new XmlTagWriter(_stream);
-  //    _binaryWriter = new BinaryTagWriter(_stream);
       _predefined = this.CreateComplexData();
     }
 
@@ -40,47 +29,47 @@ namespace Benchmarks
     [Benchmark]
     public void WriteBinaryDirect()
     {
-      BinaryTagWriter _binaryWriter = new BinaryTagWriter(new MemoryStream());
+      BinaryTagWriter binaryWriter = new BinaryTagWriter(new MemoryStream());
 
-      _binaryWriter.WriteStartDocument();
-      _binaryWriter.WriteStartTag(TagType.Compound, "Level");
-      _binaryWriter.WriteTag("longTest", 9223372036854775807);
-      _binaryWriter.WriteTag("shortTest", (short)32767);
-      _binaryWriter.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
-      _binaryWriter.WriteTag("floatTest", (float)0.498231471);
-      _binaryWriter.WriteTag("intTest", 2147483647);
-      _binaryWriter.WriteStartTag(TagType.Compound, "nested compound test");
-      _binaryWriter.WriteStartTag(TagType.Compound, "ham");
-      _binaryWriter.WriteTag("name", "Hampus");
-      _binaryWriter.WriteTag("value", 0.75F);
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteStartTag(TagType.Compound, "egg");
-      _binaryWriter.WriteTag("name", "Eggbert");
-      _binaryWriter.WriteTag("value", 0.5F);
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteStartTag(TagType.List, "listTest (long)", TagType.Long, 5);
-      _binaryWriter.WriteTag((long)11);
-      _binaryWriter.WriteTag((long)12);
-      _binaryWriter.WriteTag((long)13);
-      _binaryWriter.WriteTag((long)14);
-      _binaryWriter.WriteTag((long)15);
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteStartTag(TagType.List, "listTest (compound)", TagType.Compound, 2);
-      _binaryWriter.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
-      _binaryWriter.WriteTag("name", "Compound tag #0");
-      _binaryWriter.WriteTag("created-on", 1264099775885);
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
-      _binaryWriter.WriteTag("name", "Compound tag #1");
-      _binaryWriter.WriteTag("created-on", 1264099775885);
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteTag("byteTest", (byte)127);
-      _binaryWriter.WriteTag("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
-      _binaryWriter.WriteTag("doubleTest", 0.49312871321823148);
-      _binaryWriter.WriteEndTag();
-      _binaryWriter.WriteEndDocument();
+      binaryWriter.WriteStartDocument();
+      binaryWriter.WriteStartTag(TagType.Compound, "Level");
+      binaryWriter.WriteTag("longTest", 9223372036854775807);
+      binaryWriter.WriteTag("shortTest", (short)32767);
+      binaryWriter.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+      binaryWriter.WriteTag("floatTest", (float)0.498231471);
+      binaryWriter.WriteTag("intTest", 2147483647);
+      binaryWriter.WriteStartTag(TagType.Compound, "nested compound test");
+      binaryWriter.WriteStartTag(TagType.Compound, "ham");
+      binaryWriter.WriteTag("name", "Hampus");
+      binaryWriter.WriteTag("value", 0.75F);
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteStartTag(TagType.Compound, "egg");
+      binaryWriter.WriteTag("name", "Eggbert");
+      binaryWriter.WriteTag("value", 0.5F);
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteStartTag(TagType.List, "listTest (long)", TagType.Long, 5);
+      binaryWriter.WriteTag((long)11);
+      binaryWriter.WriteTag((long)12);
+      binaryWriter.WriteTag((long)13);
+      binaryWriter.WriteTag((long)14);
+      binaryWriter.WriteTag((long)15);
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteStartTag(TagType.List, "listTest (compound)", TagType.Compound, 2);
+      binaryWriter.WriteStartTag(TagType.Compound);
+      binaryWriter.WriteTag("name", "Compound tag #0");
+      binaryWriter.WriteTag("created-on", 1264099775885);
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteStartTag(TagType.Compound);
+      binaryWriter.WriteTag("name", "Compound tag #1");
+      binaryWriter.WriteTag("created-on", 1264099775885);
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteTag("byteTest", (byte)127);
+      binaryWriter.WriteTag("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
+      binaryWriter.WriteTag("doubleTest", 0.49312871321823148);
+      binaryWriter.WriteEndTag();
+      binaryWriter.WriteEndDocument();
     }
 
     [Benchmark]
@@ -126,77 +115,77 @@ namespace Benchmarks
       root.Value.Add("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
       root.Value.Add("doubleTest", 0.49312871321823148);
 
-      BinaryTagWriter _binaryWriter = new BinaryTagWriter(new MemoryStream());
+      BinaryTagWriter binaryWriter = new BinaryTagWriter(new MemoryStream());
 
-      _binaryWriter.WriteStartDocument();
-      _binaryWriter.WriteTag(root);
-      _binaryWriter.WriteEndDocument();
+      binaryWriter.WriteStartDocument();
+      binaryWriter.WriteTag(root);
+      binaryWriter.WriteEndDocument();
     }
 
     [Benchmark]
     public void WritePredefinedBinaryDocument()
     {
-      BinaryTagWriter _binaryWriter = new BinaryTagWriter(new MemoryStream());
+      BinaryTagWriter binaryWriter = new BinaryTagWriter(new MemoryStream());
 
-      _binaryWriter.WriteStartDocument();
-      _binaryWriter.WriteTag(_predefined);
-      _binaryWriter.WriteEndDocument();
+      binaryWriter.WriteStartDocument();
+      binaryWriter.WriteTag(_predefined);
+      binaryWriter.WriteEndDocument();
     }
 
     [Benchmark]
     public void WritePredefinedXmlDocument()
     {
-      XmlTagWriter _xmlWriter = new XmlTagWriter(new MemoryStream());
+      XmlTagWriter xmlWriter = new XmlTagWriter(new MemoryStream());
 
-      _xmlWriter.WriteStartDocument();
-      _xmlWriter.WriteTag(_predefined);
-      _xmlWriter.WriteEndDocument();
+      xmlWriter.WriteStartDocument();
+      xmlWriter.WriteTag(_predefined);
+      xmlWriter.WriteEndDocument();
     }
 
     [Benchmark]
     public void WriteXmlDirect()
     {
-      XmlTagWriter _xmlWriter = new XmlTagWriter(new MemoryStream());
+      XmlTagWriter xmlWriter = new XmlTagWriter(new MemoryStream());
 
-      _xmlWriter.WriteStartDocument();
-      _xmlWriter.WriteStartTag(TagType.Compound, "Level");
-      _xmlWriter.WriteTag("longTest", 9223372036854775807);
-      _xmlWriter.WriteTag("shortTest", (short)32767);
-      _xmlWriter.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
-      _xmlWriter.WriteTag("floatTest", (float)0.498231471);
-      _xmlWriter.WriteTag("intTest", 2147483647);
-      _xmlWriter.WriteStartTag(TagType.Compound, "nested compound test");
-      _xmlWriter.WriteStartTag(TagType.Compound, "ham");
-      _xmlWriter.WriteTag("name", "Hampus");
-      _xmlWriter.WriteTag("value", 0.75F);
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteStartTag(TagType.Compound, "egg");
-      _xmlWriter.WriteTag("name", "Eggbert");
-      _xmlWriter.WriteTag("value", 0.5F);
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteStartTag(TagType.List, "listTest (long)", TagType.Long, 5);
-      _xmlWriter.WriteTag((long)11);
-      _xmlWriter.WriteTag((long)12);
-      _xmlWriter.WriteTag((long)13);
-      _xmlWriter.WriteTag((long)14);
-      _xmlWriter.WriteTag((long)15);
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteStartTag(TagType.List, "listTest (compound)", TagType.Compound, 2);
-      _xmlWriter.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
-      _xmlWriter.WriteTag("name", "Compound tag #0");
-      _xmlWriter.WriteTag("created-on", 1264099775885);
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
-      _xmlWriter.WriteTag("name", "Compound tag #1");
-      _xmlWriter.WriteTag("created-on", 1264099775885);
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteTag("byteTest", (byte)127);
-      _xmlWriter.WriteTag("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
-      _xmlWriter.WriteTag("doubleTest", 0.49312871321823148);
-      _xmlWriter.WriteEndTag();
-      _xmlWriter.WriteEndDocument();
+      xmlWriter.WriteStartDocument();
+      xmlWriter.WriteStartTag(TagType.Compound, "Level");
+      xmlWriter.WriteTag("longTest", 9223372036854775807);
+      xmlWriter.WriteTag("shortTest", (short)32767);
+      xmlWriter.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+      xmlWriter.WriteTag("floatTest", (float)0.498231471);
+      xmlWriter.WriteTag("intTest", 2147483647);
+      xmlWriter.WriteStartTag(TagType.Compound, "nested compound test");
+      xmlWriter.WriteStartTag(TagType.Compound, "ham");
+      xmlWriter.WriteTag("name", "Hampus");
+      xmlWriter.WriteTag("value", 0.75F);
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteStartTag(TagType.Compound, "egg");
+      xmlWriter.WriteTag("name", "Eggbert");
+      xmlWriter.WriteTag("value", 0.5F);
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteStartTag(TagType.List, "listTest (long)", TagType.Long, 5);
+      xmlWriter.WriteTag((long)11);
+      xmlWriter.WriteTag((long)12);
+      xmlWriter.WriteTag((long)13);
+      xmlWriter.WriteTag((long)14);
+      xmlWriter.WriteTag((long)15);
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteStartTag(TagType.List, "listTest (compound)", TagType.Compound, 2);
+      xmlWriter.WriteStartTag(TagType.Compound);
+      xmlWriter.WriteTag("name", "Compound tag #0");
+      xmlWriter.WriteTag("created-on", 1264099775885);
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteStartTag(TagType.Compound);
+      xmlWriter.WriteTag("name", "Compound tag #1");
+      xmlWriter.WriteTag("created-on", 1264099775885);
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteTag("byteTest", (byte)127);
+      xmlWriter.WriteTag("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
+      xmlWriter.WriteTag("doubleTest", 0.49312871321823148);
+      xmlWriter.WriteEndTag();
+      xmlWriter.WriteEndDocument();
     }
 
     [Benchmark]
@@ -242,11 +231,11 @@ namespace Benchmarks
       root.Value.Add("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
       root.Value.Add("doubleTest", 0.49312871321823148);
 
-      XmlTagWriter _xmlWriter = new XmlTagWriter(new MemoryStream());
+      XmlTagWriter xmlWriter = new XmlTagWriter(new MemoryStream());
 
-      _xmlWriter.WriteStartDocument();
-      _xmlWriter.WriteTag(root);
-      _xmlWriter.WriteEndDocument();
+      xmlWriter.WriteStartDocument();
+      xmlWriter.WriteTag(root);
+      xmlWriter.WriteEndDocument();
     }
 
     #endregion

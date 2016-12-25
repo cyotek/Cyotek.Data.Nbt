@@ -34,7 +34,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         #>
 
     [Test]
-    public void WriteTag_writes_unnamed_<#=nbtName.ToLower()#>_tag()
+    public void WriteTag_writes_unnamed_<#=nbtName.ToLower() #>_tag()
     {
       using (MemoryStream stream = new MemoryStream())
       {

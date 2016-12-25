@@ -7,15 +7,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 {
   partial class XmlTagWriterTests
   {
-    private TagReader CreateReader(Stream stream)
-    {
-      return new XmlTagReader(stream);
-    }
-
-    private TagWriter CreateWriter(Stream stream)
-    {
-      return new XmlTagWriter(stream);
-    }
     #region  Tests
 
     [Test]
@@ -53,6 +44,20 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // assert
       this.CompareTags(expected, actual);
+    }
+
+    #endregion
+
+    #region Test Helpers
+
+    private TagReader CreateReader(Stream stream)
+    {
+      return new XmlTagReader(stream);
+    }
+
+    private TagWriter CreateWriter(Stream stream)
+    {
+      return new XmlTagWriter(stream);
     }
 
     #endregion

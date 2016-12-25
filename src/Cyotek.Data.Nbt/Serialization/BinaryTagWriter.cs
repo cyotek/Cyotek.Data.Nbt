@@ -98,8 +98,10 @@ namespace Cyotek.Data.Nbt.Serialization
       _openContainers = new Stack<TagState>();
     }
 
-    public override void WriteStartTag(TagType type, string name, WriteTagOptions options)
+    public override void WriteStartTag(TagType type, string name)
     {
+      TagState currentState;
+
       if (_openTags == null)
       {
         throw new InvalidOperationException("No document is currently open");
@@ -107,16 +109,18 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if (_openTags.Count != 0)
       {
-        TagState state;
+        currentState = _openContainers.Peek();
 
-        state = _openContainers.Peek();
-
-        if (state.Type == TagType.List && state.ChildType != TagType.End && type != state.ChildType)
+        if (currentState.Type == TagType.List && currentState.ChildType != TagType.End && type != currentState.ChildType)
         {
-          throw new InvalidOperationException($"Attempted to add tag of type '{type}' to container that only accepts '{state.ChildType}'");
+          throw new InvalidOperationException($"Attempted to add tag of type '{type}' to container that only accepts '{currentState.ChildType}'");
         }
 
-        state.ChildCount++;
+        currentState.ChildCount++;
+      }
+      else
+      {
+        currentState = null;
       }
 
       _openTags.Push(type);
@@ -129,7 +133,7 @@ namespace Cyotek.Data.Nbt.Serialization
                              });
       }
 
-      if (type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      if (type != TagType.End && (currentState == null || currentState.Type != TagType.List))
       {
         this.WriteValue((byte)type);
         this.WriteValue(name);
@@ -144,16 +148,20 @@ namespace Cyotek.Data.Nbt.Serialization
 
       TagState state;
 
-      state = _openContainers.Pop();
+      state = _openContainers.Peek();
       state.ChildType = listType;
       state.ExpectedCount = count;
-      _openContainers.Push(state);
 
       _stream.WriteByte((byte)listType);
       this.WriteValue(count);
     }
 
-    public override void WriteValue(string value)
+    protected override void WriteEnd()
+    {
+      _stream.WriteByte((byte)TagType.End);
+    }
+
+    protected override void WriteValue(string value)
     {
       if (string.IsNullOrEmpty(value))
       {
@@ -175,7 +183,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public override void WriteValue(short value)
+    protected override void WriteValue(short value)
     {
       byte[] buffer;
 
@@ -189,7 +197,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.ShortSize);
     }
 
-    public override void WriteValue(long value)
+    protected override void WriteValue(long value)
     {
       byte[] buffer;
 
@@ -203,7 +211,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.LongSize);
     }
 
-    public override void WriteValue(int[] value)
+    protected override void WriteValue(int[] value)
     {
       if (value != null && value.Length != 0)
       {
@@ -219,7 +227,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public override void WriteValue(int value)
+    protected override void WriteValue(int value)
     {
       byte[] buffer;
 
@@ -233,7 +241,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.IntSize);
     }
 
-    public override void WriteValue(float value)
+    protected override void WriteValue(float value)
     {
       byte[] buffer;
 
@@ -247,7 +255,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.FloatSize);
     }
 
-    public override void WriteValue(double value)
+    protected override void WriteValue(double value)
     {
       byte[] buffer;
 
@@ -261,12 +269,12 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Write(buffer, 0, BitHelper.DoubleSize);
     }
 
-    public override void WriteValue(byte value)
+    protected override void WriteValue(byte value)
     {
       _stream.WriteByte(value);
     }
 
-    public override void WriteValue(byte[] value)
+    protected override void WriteValue(byte[] value)
     {
       if (value != null && value.Length != 0)
       {
@@ -279,7 +287,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public override void WriteValue(TagCollection value)
+    protected override void WriteValue(TagCollection value)
     {
       TagState state;
 
@@ -293,40 +301,16 @@ namespace Cyotek.Data.Nbt.Serialization
 
       foreach (Tag item in value)
       {
-        this.WriteTag(item, WriteTagOptions.IgnoreName);
+        this.WriteTag(item);
       }
     }
 
-    public override void WriteValue(TagDictionary value)
+    protected override void WriteValue(TagDictionary value)
     {
       foreach (Tag item in value)
       {
-        this.WriteTag(item, WriteTagOptions.None);
+        this.WriteTag(item);
       }
-    }
-
-    protected override void WriteEnd()
-    {
-      _stream.WriteByte((byte)TagType.End);
-    }
-
-    #endregion
-
-    #region Nested type: TagState
-
-    private class TagState
-    {
-      #region Fields
-
-      public int ChildCount;
-
-      public TagType ChildType;
-
-      public int ExpectedCount;
-
-      public TagType Type;
-
-      #endregion
     }
 
     #endregion

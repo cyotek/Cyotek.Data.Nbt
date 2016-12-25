@@ -1,13 +1,13 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ include file="NbtGeneratorTestData.t4" #>
 <#
-  string nbtName      = "String";
-  string typeName     = "string";
-  object testValue    = tagTestData[tagTypeString];
-  object altTestValue = altTagTestData[tagTypeString];
-  object defaultValue = "string.Empty";
-  string valueString  = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
-  int    listCount    = 0;
-#>
+    string nbtName = "String";
+    string typeName = "string";
+    object testValue = tagTestData[tagTypeString];
+    object altTestValue = altTagTestData[tagTypeString];
+    object defaultValue = "string.Empty";
+    string valueString = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
+    int listCount = 0;
+    #>
 <#@ output extension=".cs" #>
 <#@ include file="TagTests.t4" #>

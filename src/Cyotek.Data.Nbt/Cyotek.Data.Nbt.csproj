@@ -56,6 +56,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TagReader.generated.tt</DependentUpon>
     </Compile>
+    <Compile Include="Serialization\TagState.cs" />
     <Compile Include="Serialization\TagWriter.cs" />
     <Compile Include="Serialization\ReadTagOptions.cs" />
     <Compile Include="Serialization\TagWriter.generated.cs">
@@ -63,7 +64,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TagWriter.generated.tt</DependentUpon>
     </Compile>
-    <Compile Include="Serialization\WriteTagOptions.cs" />
     <Compile Include="Serialization\XmlTagReader.cs" />
     <Compile Include="Serialization\XmlTagWriter.cs" />
     <Compile Include="StreamExtensions.cs" />

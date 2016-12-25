@@ -1,8 +1,5 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ import namespace="System.Linq" #>
-<#@ import namespace="System.Text" #>
-<#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>using NUnit.Framework;
 
@@ -10,36 +7,36 @@ namespace Cyotek.Data.Nbt.Tests
 {
   partial class TagFactoryTests
   {
-<# for(var i = 0; i < netTypeNames.Length; i++)
-   {
-     string name;
-     string nbtName;
-     string tagName;
-     object testValue;
-     string tagClassName;
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
+      string tagName;
+      object testValue;
+      string tagClassName;
 
-     name = netTypeNames[i];
-     nbtName = nbtTypeNames[i];
-     tagName = nbtTagTypeNames[i];
-     testValue = testValues[i];
-     tagClassName = "Tag" + nbtName;
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
+      tagName = nbtTagTypeNames[i];
+      testValue = testValues[i];
+      tagClassName = "Tag" + nbtName;
 
-     if(name != null)
-     {
-#>
+      if (name != null)
+      {
+        #>
     [Test]
-    public void Create_with_type_sets_<#=nbtName.ToLower()#>_name()
+    public void Create_with_type_sets_<#=nbtName.ToLower() #>_name()
     {
       // arrange
       Tag actual;
       string expected;
-      <#=name#> value;
+      <#=name #> value;
       TagType type;
 
-      type = TagType.<#=nbtName#>;
+      type = TagType.<#=nbtName #>;
 
-      expected = "Alpha_<#=tagName#>";
-      value = default(<#=name#>);
+      expected = "Alpha_<#=tagName #>";
+      value = default(<#=name #>);
 
       // act
       actual = TagFactory.CreateTag(type, expected, value);
@@ -49,33 +46,33 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Create_with_type_creates_<#=nbtName.ToLower()#>()
+    public void Create_with_type_creates_<#=nbtName.ToLower() #>()
     {
       // arrange
       Tag actual;
       TagType type;
 
-      type = TagType.<#=nbtName#>;
+      type = TagType.<#=nbtName #>;
 
       // act
       actual = TagFactory.CreateTag(type);
 
       // assert
       Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<<#=tagClassName#>>(actual);
+      Assert.IsInstanceOf<<#=tagClassName #>>(actual);
     }
 
     [Test]
-    public void Create_with_type_sets_<#=nbtName.ToLower()#>_value()
+    public void Create_with_type_sets_<#=nbtName.ToLower() #>_value()
     {
       // arrange
       Tag actual;
       TagType type;
       object expected;
 
-      type = TagType.<#=nbtName#>;
+      type = TagType.<#=nbtName #>;
 
-      expected = <#=testValue#>;
+      expected = <#=testValue #>;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -85,30 +82,30 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Create_with_value_creates_<#=nbtName.ToLower()#>_type()
+    public void Create_with_value_creates_<#=nbtName.ToLower() #>_type()
     {
       // arrange
       Tag actual;
-      <#=name#> expected;
+      <#=name #> expected;
 
-      expected = <#=testValue#>;
+      expected = <#=testValue #>;
 
       // act
       actual = TagFactory.CreateTag(expected);
 
       // assert
       Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<<#=tagClassName#>>(actual);
+      Assert.IsInstanceOf<<#=tagClassName #>>(actual);
     }
 
     [Test]
-    public void Create_with_value_sets_<#=nbtName.ToLower()#>_value()
+    public void Create_with_value_sets_<#=nbtName.ToLower() #>_value()
     {
       // arrange
       Tag actual;
-      <#=name#> expected;
+      <#=name #> expected;
 
-      expected = <#=testValue#>;
+      expected = <#=testValue #>;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -118,15 +115,15 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Create_with_value_sets_<#=nbtName.ToLower()#>_name()
+    public void Create_with_value_sets_<#=nbtName.ToLower() #>_name()
     {
       // arrange
       Tag actual;
       string expected;
-      <#=name#> value;
+      <#=name #> value;
 
-      expected = "Alpha_<#=tagName#>";
-      value = <#=testValue#>;
+      expected = "Alpha_<#=tagName #>";
+      value = <#=testValue #>;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -136,8 +133,8 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
 <#
+      }
     }
-  }
 #>
   }
 }

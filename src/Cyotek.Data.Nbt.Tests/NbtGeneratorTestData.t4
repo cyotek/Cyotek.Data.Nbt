@@ -1,5 +1,4 @@
 ﻿<#
-
     const int tagTypeEnd = 0;
     const int tagTypeByte = 1;
     const int tagTypeShort = 2;

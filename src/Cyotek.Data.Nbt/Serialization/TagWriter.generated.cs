@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:byte" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:byte" /> value to write.</param>
-    public abstract void WriteValue(byte value);
+    protected abstract void WriteValue(byte value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:byte" /> value with the specified name.
@@ -38,7 +38,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:byte" /> value to write.</param>
     public void WriteTag(byte value)
     {
-      this.WriteStartTag(TagType.Byte, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Byte, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -47,7 +47,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:short" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:short" /> value to write.</param>
-    public abstract void WriteValue(short value);
+    protected abstract void WriteValue(short value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:short" /> value with the specified name.
@@ -67,7 +67,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:short" /> value to write.</param>
     public void WriteTag(short value)
     {
-      this.WriteStartTag(TagType.Short, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Short, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -76,7 +76,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:int" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:int" /> value to write.</param>
-    public abstract void WriteValue(int value);
+    protected abstract void WriteValue(int value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:int" /> value with the specified name.
@@ -96,7 +96,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:int" /> value to write.</param>
     public void WriteTag(int value)
     {
-      this.WriteStartTag(TagType.Int, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Int, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -105,7 +105,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:long" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:long" /> value to write.</param>
-    public abstract void WriteValue(long value);
+    protected abstract void WriteValue(long value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:long" /> value with the specified name.
@@ -125,7 +125,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:long" /> value to write.</param>
     public void WriteTag(long value)
     {
-      this.WriteStartTag(TagType.Long, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Long, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -134,7 +134,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:float" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:float" /> value to write.</param>
-    public abstract void WriteValue(float value);
+    protected abstract void WriteValue(float value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:float" /> value with the specified name.
@@ -154,7 +154,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:float" /> value to write.</param>
     public void WriteTag(float value)
     {
-      this.WriteStartTag(TagType.Float, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Float, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -163,7 +163,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:double" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:double" /> value to write.</param>
-    public abstract void WriteValue(double value);
+    protected abstract void WriteValue(double value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:double" /> value with the specified name.
@@ -183,7 +183,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:double" /> value to write.</param>
     public void WriteTag(double value)
     {
-      this.WriteStartTag(TagType.Double, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Double, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -192,7 +192,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:byte[]" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:byte[]" /> value to write.</param>
-    public abstract void WriteValue(byte[] value);
+    protected abstract void WriteValue(byte[] value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:byte[]" /> value with the specified name.
@@ -212,7 +212,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:byte[]" /> value to write.</param>
     public void WriteTag(byte[] value)
     {
-      this.WriteStartTag(TagType.ByteArray, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.ByteArray, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -221,7 +221,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:string" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:string" /> value to write.</param>
-    public abstract void WriteValue(string value);
+    protected abstract void WriteValue(string value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:string" /> value with the specified name.
@@ -241,7 +241,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:string" /> value to write.</param>
     public void WriteTag(string value)
     {
-      this.WriteStartTag(TagType.String, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.String, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -250,7 +250,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:TagCollection" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:TagCollection" /> value to write.</param>
-    public abstract void WriteValue(TagCollection value);
+    protected abstract void WriteValue(TagCollection value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:TagCollection" /> value with the specified name.
@@ -270,7 +270,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:TagCollection" /> value to write.</param>
     public void WriteTag(TagCollection value)
     {
-      this.WriteStartTag(TagType.List, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.List, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -279,7 +279,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:TagDictionary" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:TagDictionary" /> value to write.</param>
-    public abstract void WriteValue(TagDictionary value);
+    protected abstract void WriteValue(TagDictionary value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:TagDictionary" /> value with the specified name.
@@ -299,7 +299,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:TagDictionary" /> value to write.</param>
     public void WriteTag(TagDictionary value)
     {
-      this.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.Compound, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -308,7 +308,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes a <see cref="T:int[]" /> value.
     /// </summary>
     /// <param name="value">The <see cref="T:int[]" /> value to write.</param>
-    public abstract void WriteValue(int[] value);
+    protected abstract void WriteValue(int[] value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:int[]" /> value with the specified name.
@@ -328,7 +328,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:int[]" /> value to write.</param>
     public void WriteTag(int[] value)
     {
-      this.WriteStartTag(TagType.IntArray, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.IntArray, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }

@@ -8,16 +8,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
   {
     #region  Tests
 
-    private TagReader CreateReader(Stream stream)
-    {
-      return new BinaryTagReader(stream);
-    }
-
-    private TagWriter CreateWriter(Stream stream)
-    {
-      return new BinaryTagWriter(stream);
-    }
-
     [Test]
     public void WriteEmptyByteArrayTest()
     {
@@ -38,7 +28,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // act
       target.WriteStartDocument();
-      target.WriteTag(expected.DocumentRoot, WriteTagOptions.None);
+      target.WriteTag(expected.DocumentRoot);
       target.WriteEndDocument();
 
       // assert
@@ -49,8 +39,18 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
     #endregion
 
+    #region Test Helpers
 
+    private TagReader CreateReader(Stream stream)
+    {
+      return new BinaryTagReader(stream);
+    }
 
+    private TagWriter CreateWriter(Stream stream)
+    {
+      return new BinaryTagWriter(stream);
+    }
 
+    #endregion
   }
 }

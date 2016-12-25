@@ -1285,11 +1285,11 @@ namespace Cyotek.Data.Nbt.Tests
       target.WriteTag((long)15);
       target.WriteEndTag();
       target.WriteStartTag(TagType.List, "listTest (compound)", TagType.Compound, 2);
-      target.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
+      target.WriteStartTag(TagType.Compound);
       target.WriteTag("name", "Compound tag #0");
       target.WriteTag("created-on", 1264099775885);
       target.WriteEndTag();
-      target.WriteStartTag(TagType.Compound, string.Empty, WriteTagOptions.IgnoreName);
+      target.WriteStartTag(TagType.Compound);
       target.WriteTag("name", "Compound tag #1");
       target.WriteTag("created-on", 1264099775885);
       target.WriteEndTag();

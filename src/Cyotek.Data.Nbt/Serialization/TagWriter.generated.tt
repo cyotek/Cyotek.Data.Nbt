@@ -1,8 +1,5 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ import namespace="System.Linq" #>
-<#@ import namespace="System.Text" #>
-<#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#@ include file="..\NbtGeneratorData.t4" #>using System;
 
@@ -10,49 +7,49 @@ namespace Cyotek.Data.Nbt.Serialization
 {
   partial class TagWriter
   {
-<# for(var i = 0; i < netTypeNames.Length; i++)
-   {
-     string name;
-     string nbtName;
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
 
-     name = netTypeNames[i];
-     nbtName = nbtTypeNames[i];
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
 
-     if(name != null)
-     {
-#>
+      if (name != null)
+      {
+        #>
     /// <summary>
-    /// Writes a <see cref="T:<#=name#>" /> value.
+    /// Writes a <see cref="T:<#=name #>" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="T:<#=name#>" /> value to write.</param>
-    public abstract void WriteValue(<#=name#> value);
+    /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
+    protected abstract void WriteValue(<#=name #> value);
 
     /// <summary>
-    /// Writes a tag entry for a <see cref="T:<#=name#>" /> value with the specified name.
+    /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
     /// </summary>
     /// <param name="name">The name of the tag entry to write.</param>
-    /// <param name="value">The <see cref="T:<#=name#>" /> value to write.</param>
-    public void WriteTag(string name, <#=name#> value)
+    /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
+    public void WriteTag(string name, <#=name #> value)
     {
-      this.WriteStartTag(TagType.<#=nbtName#>, name);
+      this.WriteStartTag(TagType.<#=nbtName #>, name);
       this.WriteValue(value);
       this.WriteEndTag();
     }
 
     /// <summary>
-    /// Writes an unnamed tag entry for a <see cref="T:<#=name#>" /> value.
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
     /// </summary>
-    /// <param name="value">The <see cref="T:<#=name#>" /> value to write.</param>
-    public void WriteTag(<#=name#> value)
+    /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
+    public void WriteTag(<#=name #> value)
     {
-      this.WriteStartTag(TagType.<#=nbtName#>, string.Empty, WriteTagOptions.IgnoreName);
+      this.WriteStartTag(TagType.<#=nbtName #>, string.Empty);
       this.WriteValue(value);
       this.WriteEndTag();
     }
 
 <#
+      }
     }
-  }
 #>
 
     /// <summary>
@@ -64,24 +61,24 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       switch (tag.Type)
       {
-<# for(var i = 0; i < nbtTypeNames.Length; i++)
-   {
-     string tagName;
-     string nbtName;
+<# for (int i = 0; i < nbtTypeNames.Length; i++)
+    {
+      string tagName;
+      string nbtName;
 
-     nbtName = nbtTypeNames[i];
-     tagName = nbtTagTypeNames[i];
+      nbtName = nbtTypeNames[i];
+      tagName = nbtTagTypeNames[i];
 
-     if(tagName != "TagEnd")
-     {
-#>
-        case TagType.<#=nbtName#>:
-          this.WriteValue(((<#=tagName#>)tag).Value);
+      if (tagName != "TagEnd")
+      {
+        #>
+        case TagType.<#=nbtName #>:
+          this.WriteValue(((<#=tagName #>)tag).Value);
           break;
 
 <#
+      }
     }
-  }
 #>
 
         default:

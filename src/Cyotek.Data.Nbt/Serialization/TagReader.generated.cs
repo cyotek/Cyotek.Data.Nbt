@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.IO;
-
 namespace Cyotek.Data.Nbt.Serialization
 {
   partial class TagReader
@@ -70,69 +67,6 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     public abstract int[] ReadIntArray();
 
-    /// <summary>
-    /// Writes a tag value.
-    /// </summary>
-    /// <exception cref="ArgumentException">Thrown when the type of the tag is invalid.</exception>
-    /// <param name="tag">The <see cref="Tag"/> to write.</param>
-    public Tag ReadTag2()
-    {
-      Tag result;
-      TagType type;
 
-      type = this.ReadTagType();
-
-      switch (type)
-      {
-        case TagType.Byte:
-          result = TagFactory.CreateTag(string.Empty, this.ReadByte());
-          break;
-
-        case TagType.Short:
-          result = TagFactory.CreateTag(string.Empty, this.ReadShort());
-          break;
-
-        case TagType.Int:
-          result = TagFactory.CreateTag(string.Empty, this.ReadInt());
-          break;
-
-        case TagType.Long:
-          result = TagFactory.CreateTag(string.Empty, this.ReadLong());
-          break;
-
-        case TagType.Float:
-          result = TagFactory.CreateTag(string.Empty, this.ReadFloat());
-          break;
-
-        case TagType.Double:
-          result = TagFactory.CreateTag(string.Empty, this.ReadDouble());
-          break;
-
-        case TagType.ByteArray:
-          result = TagFactory.CreateTag(string.Empty, this.ReadByteArray());
-          break;
-
-        case TagType.String:
-          result = TagFactory.CreateTag(string.Empty, this.ReadString());
-          break;
-
-        case TagType.List:
-          result = TagFactory.CreateTag(string.Empty, this.ReadList());
-          break;
-
-        case TagType.Compound:
-          result = TagFactory.CreateTag(string.Empty, this.ReadCompound());
-          break;
-
-        case TagType.IntArray:
-          result = TagFactory.CreateTag(string.Empty, this.ReadIntArray());
-          break;
-
-        default:
-          throw new InvalidDataException($"Unrecognized or unsupported tag type '{type}''.");
-      }
-
-      return result;
-    }
   }
 }
