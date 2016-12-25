@@ -1,9 +1,10 @@
 # Named Binary Tag specification
 
-[Original specification used to be [here](http://www.minecraft.net/docs/NBT.txt ) but seems to be have been removed]
+[Original specification used to be [here](http://www.minecraft.net/docs/NBT.txt ) but has been removed. The version below also covers `TAG_IntArray` which the original didn't cover as it was added subsequently.]
 
 NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data.
-An NBT file consists of a single GZIPped Named Tag of type TAG_Compound.
+
+A NBT file consists of a single GZIPped Named Tag of type `TAG_Compound`.
 
 A Named Tag has the following format:
 
@@ -17,86 +18,126 @@ The name is a descriptive name, and can be anything (eg "cat", "banana", "Hello 
 
 The purpose for this name is to name tags so parsing is easier and can be made to only look for certain recognized tag names.
 
-> **Exception:** If tagType is *TAG_End*, the name is skipped and assumed to be "".
+> **Exception**: If tagType is `TAG_End`, the name is skipped and assumed to be "".
 
 The [payload] varies by tagType.
 
-Note that ONLY Named Tags carry the name and tagType data. Explicitly identified Tags (such as TAG_String above) only contains the payload. 
+Note that ONLY Named Tags carry the name and tagType data. Explicitly identified Tags (such as `TAG_String` above) only contains the payload. 
 
 
 The tag types and respective payloads are:
 
-* TYPE: 0  NAME: **TAG_End**
-Payload: None.
-> This tag is used to mark the end of a list.
->
-> Cannot be named! If type 0 appears where a Named Tag is expected, the name is assumed to be "".
->
-> (In other words, this Tag is always just a single 0 byte when named, and nothing in all other cases)
-    
-* TYPE: **1**  NAME: **TAG_Byte**
-Payload: A single signed byte (8 bits)
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Name</th>
+      <th>Payload</th>
+      <th>Notes</th>
+    </tr>
+  <thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>`TAG_End`</td>
+      <td>*None*</td>
+      <td>This tag is used to mark the end of a list.
 
-* TYPE: **2**  NAME: **TAG_Short**
-Payload: A signed short (16 bits, big endian)
+Cannot be named! If type 0 appears where a Named Tag is expected, the name is assumed to be "".
 
-* TYPE: **3**  NAME: **TAG_Int**
-Payload: A signed short (32 bits, big endian)
+(In other words, this Tag is always just a single 0 byte when named, and nothing in all other cases)</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>`TAG_Byte`</td>
+      <td>A single signed byte (8 bits)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>`TAG_Short`</td>
+      <td>A signed short (16 bits, big endian)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>`TAG_Int`</td>
+      <td>A signed short (32 bits, big endian)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>`TAG_Long`</td>
+      <td>A signed long (64 bits, big endian)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>`TAG_Float`</td>
+      <td>A floating point value (32 bits, big endian, IEEE 754-2008, binary32)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>`TAG_Double`</td>
+      <td>A floating point value (64 bits, big endian, IEEE 754-2008, binary64)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>`TAG_Byte_Array`</td>
+      <td>`TAG_Int` *length*
+An array of bytes of unspecified format. The length of this array is *length* bytes</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>`TAG_String`</td>
+      <td>`TAG_Short` *length*
+An array of bytes defining a string in UTF-8 format. The length of this array is *length* bytes</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>`TAG_List`</td>
+      <td>`TAG_Byte` *tagId*
+`TAG_Int` *length*
+A sequential list of Tags (not Named Tags), of type *typeId*. The length of this array is *length* Tags</td>
+      <td>All tags share the same type.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>`TAG_Compound`</td>
+      <td>A sequential list of Named Tags. This array keeps going until a `TAG_End` is found.
+`TAG_End` *end*</td>
+      <td>If there's a nested `TAG_Compound` within this tag, that one will also have a `TAG_End`, so simply reading until the next `TAG_End` will not work.
+      
+The names of the named tags have to be unique within each `TAG_Compound`
+      
+The order of the tags is not guaranteed.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>`TAG_Int_Array`</td>
+      <td>`TAG_Int` *length*
+An array of ints of unspecified format. The length of this array is *length* bytes</td>
+      <td></td>
+    </tr>
+  </tbody>
+<table>
 
-* TYPE: **4**  NAME: **TAG_Long**
-Payload: A signed long (64 bits, big endian)
-
-* TYPE: **5**  NAME: **TAG_Float**
-Payload: A floating point value (32 bits, big endian, IEEE 754-2008, binary32)
-
-* TYPE: **6**  NAME: **TAG_Double**
-Payload: A floating point value (64 bits, big endian, IEEE 754-2008, binary64)
-    
-* TYPE: **7**  NAME: **TAG___Byte___Array**
-Payload: TAG_Int *length* 
-An array of bytes of unspecified format. The length of this array is *length* bytes
-
-* TYPE: **8**  NAME: **TAG___String**
-Payload: TAG_Short *length* 
-An array of bytes defining a string in UTF-8 format. The length of this array is *length* bytes
-
-* TYPE: **9**  NAME: **TAG___List**
-Payload: TAG_Byte *tagId*
-TAG_Int *length*
-A sequential list of Tags (not Named Tags), of type *typeId*. The length of this array is *length* Tags
-> All tags share the same type.
-             
-* TYPE: **10** NAME: **TAG___Compound**
-Payload: A sequential list of Named Tags. This array keeps going until a **TAG___End** is found.
-TAG_End *end*
-> If there's a nested TAG_Compound within this tag, that one will also have a TAG_End, so simply reading until the next TAG_End will not work.
->
-> The names of the named tags have to be unique within each TAG_Compound
->
-> The order of the tags is not guaranteed.
-             
-             
-
-
-
-Decoding example:
+## Decoding example
 (Use http://www.minecraft.net/docs/test.nbt to test your implementation)
 
+First we start by reading a Named Tag. After unzipping the stream, the first byte is a `10`. That means the tag is a `TAG_Compound` (as expected by the specification).
 
-First we start by reading a Named Tag.
-After unzipping the stream, the first byte is a 10. That means the tag is a TAG_Compound (as expected by the specification).
+The next two bytes are `0` and `11`, meaning the name string consists of 11 UTF-8 characters. In this case, they happen to be "hello world". That means our root tag is named "hello world". We can now move on to the payload.
 
-The next two bytes are 0 and 11, meaning the name string consists of 11 UTF-8 characters. In this case, they happen to be "hello world".
-That means our root tag is named "hello world". We can now move on to the payload.
+From the specification, we see that `TAG_Compound` consists of a series of Named Tags, so we read another byte to find the tagType. It happens to be an `8`. The name is `4` letters long, and happens to be "name". Type `8` is `TAG_String`, meaning we read another two bytes to get the length, then read that many bytes to get the contents. In this case, it's "Bananrama".
 
-From the specification, we see that TAG_Compound consists of a series of Named Tags, so we read another byte to find the tagType.
-It happens to be an 8. The name is 4 letters long, and happens to be "name". Type 8 is TAG_String, meaning we read another two bytes to get the length,
-then read that many bytes to get the contents. In this case, it's "Bananrama".
+So now we know the `TAG_Compound` contains a `TAG_String` named "name" with the content "Bananrama".
 
-So now we know the TAG_Compound contains a TAG_String named "name" with the content "Bananrama"
-
-We move on to reading the next Named Tag, and get a 0. This is TAG_End, which always has an implied name of "". That means that the list of entries
-in the TAG_Compound is over, and indeed all of the NBT file.
+We move on to reading the next Named Tag, and get a `0`. This is `TAG_End`, which always has an implied name of "". That means that the list of entries in the `TAG_Compound` is over, and indeed all of the NBT file.
 
 So we ended up with this:
 
@@ -104,8 +145,6 @@ So we ended up with this:
 	{
 	   TAG_String("name"): Bananrama
 	}
-
-
 
 For a slightly longer test, download http://www.minecraft.net/docs/bigtest.nbt
 You should end up with this:
