@@ -2,6 +2,8 @@
 <#@ assembly name="System.Core" #>
 <#@ output extension=".cs" #>
 <#@ include file="..\NbtGeneratorData.t4" #>using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
@@ -42,11 +44,55 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
     public void WriteTag(<#=name #> value)
     {
-      this.WriteStartTag(TagType.<#=nbtName #>, string.Empty);
-      this.WriteValue(value);
+      this.WriteTag(string.Empty, value);
+    }
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+    public void WriteListTag(string name, <#=name #>[] values)
+    {
+      int length;
+
+      length = values.Length;
+
+      this.WriteStartTag(TagType.List, name, TagType.<#=nbtName #>, length);
+      for (int i = 0; i < length; i++)
+      {
+        this.WriteValue(values[i]);
+      }
       this.WriteEndTag();
     }
 
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+    public void WriteListTag(string name, IEnumerable<<#=name #>> values)
+    {
+      this.WriteListTag(values.ToArray());
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+    public void WriteListTag(IEnumerable<<#=name #>> values)
+    {
+      this.WriteListTag(string.Empty, values.ToArray());
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+    public void WriteListTag(<#=name #>[] values)
+    {
+      this.WriteListTag(string.Empty, values);
+    }
 <#
       }
     }
