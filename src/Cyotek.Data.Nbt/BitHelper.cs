@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Cyotek.Data.Nbt
 {
@@ -22,10 +23,9 @@ namespace Cyotek.Data.Nbt
 
     public static void SwapBytes(byte[] buffer, int offset, int length)
     {
-      if (offset + length > buffer.Length)
-      {
-        throw new ArgumentException("offset + length is larger than buffer");
-      }
+#if DEBUG
+      Debug.Assert(offset + length <= buffer.Length, "offset + length is larger than buffer");
+#endif
 
       if (length > 1)
       {

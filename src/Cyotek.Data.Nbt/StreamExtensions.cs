@@ -71,11 +71,6 @@ namespace Cyotek.Data.Nbt
       int result;
       long position;
 
-      if (!stream.CanSeek)
-      {
-        throw new NotImplementedException("Stream isn't seekable, peek not available.");
-      }
-
       position = stream.Position;
       result = stream.ReadByte();
       stream.Position = position;
