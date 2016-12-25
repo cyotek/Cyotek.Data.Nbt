@@ -4,21 +4,18 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
-  [TestFixture]
-  public class BinaryTagWriterTests : TestBase
+  partial class BinaryTagWriterTests
   {
     #region  Tests
 
-    [Test]
-    public void Document_serialization_deserialization_test()
+    private TagReader CreateReader(Stream stream)
     {
-      this.WriteDocumentTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream), stream => new BinaryTagReader(stream));
+      return new BinaryTagReader(stream);
     }
 
-    [Test]
-    public void Serialization_deserialization_test()
+    private TagWriter CreateWriter(Stream stream)
     {
-      this.WriteTest<BinaryTagWriter, BinaryTagReader>(stream => new BinaryTagWriter(stream), stream => new BinaryTagReader(stream));
+      return new BinaryTagWriter(stream);
     }
 
     [Test]
@@ -51,5 +48,9 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     #endregion
+
+
+
+
   }
 }

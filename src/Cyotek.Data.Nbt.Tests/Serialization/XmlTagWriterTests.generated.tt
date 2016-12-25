@@ -1,0 +1,6 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+  string writerTypeName = "XmlTagWriter";
+  string readerTypeName = "XmlTagReader";
+#>
+<#@ output extension=".cs" #><#@ include file="TagWriterTests.t4" #>

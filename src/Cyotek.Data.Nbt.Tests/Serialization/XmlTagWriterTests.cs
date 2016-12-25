@@ -5,9 +5,17 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
-  [TestFixture]
-  public class XmlTagWriterTests : TestBase
+  partial class XmlTagWriterTests
   {
+    private TagReader CreateReader(Stream stream)
+    {
+      return new XmlTagReader(stream);
+    }
+
+    private TagWriter CreateWriter(Stream stream)
+    {
+      return new XmlTagWriter(stream);
+    }
     #region  Tests
 
     [Test]
@@ -31,8 +39,9 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target = new XmlTagWriter(writer);
 
       // act
+      target.WriteStartDocument();
       target.WriteTag(expected);
-      writer.Flush();
+      target.WriteEndDocument();
 
       using (TextReader textReader = new StringReader(textWriter.ToString()))
       {
@@ -44,18 +53,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // assert
       this.CompareTags(expected, actual);
-    }
-
-    [Test]
-    public void Document_serialization_deserialization_test()
-    {
-      this.WriteDocumentTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream), stream => new XmlTagReader(stream));
-    }
-
-    [Test]
-    public void Serialization_deserialization_test()
-    {
-      this.WriteTest<XmlTagWriter, XmlTagReader>(stream => new XmlTagWriter(stream), stream => new XmlTagReader(stream));
     }
 
     #endregion

@@ -50,9 +50,19 @@
     <Compile Include="QueryTests.cs" />
     <Compile Include="Serialization\BinaryTagReaderTests.cs" />
     <Compile Include="Serialization\BinaryTagWriterTests.cs" />
+    <Compile Include="Serialization\BinaryTagWriterTests.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BinaryTagWriterTests.generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="Serialization\TagWriterTests.cs" />
     <Compile Include="Serialization\XmlTagReaderTests.cs" />
     <Compile Include="Serialization\XmlTagWriterTests.cs" />
+    <Compile Include="Serialization\XmlTagWriterTests.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XmlTagWriterTests.generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="TagByteArrayTests.cs" />
     <Compile Include="TagByteArrayTests.generated.cs">
       <DependentUpon>TagByteArrayTests.generated.tt</DependentUpon>
@@ -145,7 +155,9 @@
     <None Include="data\test.nbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="NbtGeneratorTestData.t4" />
     <None Include="packages.config" />
+    <None Include="Serialization\TagWriterTests.t4" />
     <None Include="TagTests.t4" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +187,14 @@
     <Content Include="data\project.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Serialization\BinaryTagWriterTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryTagWriterTests.generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="Serialization\XmlTagWriterTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlTagWriterTests.generated.cs</LastGenOutput>
     </Content>
     <Content Include="TagByteArrayTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

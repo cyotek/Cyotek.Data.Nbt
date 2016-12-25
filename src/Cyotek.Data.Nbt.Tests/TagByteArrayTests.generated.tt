@@ -1,9 +1,10 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="NbtGeneratorTestData.t4" #>
 <#
   string nbtName      = "ByteArray";
   string typeName     = "byte[]";
-  object testValue    = "new byte[] { 2, 4, 8, 16, 32, 64, 128 }";
-  object altTestValue = "new byte[] { 2, 4, 8, 16, 32, 48, 128 }";
+  object testValue    = tagTestData[tagTypeByteArray];
+  object altTestValue = altTagTestData[tagTypeByteArray];
   object defaultValue = "new byte[0]";
   string valueString  = "02, 04, 08, 10, 20, 40, 80";
   int    listCount    = 7;

@@ -1,9 +1,10 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="NbtGeneratorTestData.t4" #>
 <#
   string nbtName      = "Byte";
   string typeName     = "byte";
-  object testValue    = byte.MaxValue >> 1;
-  object altTestValue = byte.MaxValue >> 2;
+  object testValue    = tagTestData[tagTypeByte];
+  object altTestValue = altTagTestData[tagTypeByte];
   object defaultValue = 0;
   string valueString  = "127";
   int    listCount    = 0;

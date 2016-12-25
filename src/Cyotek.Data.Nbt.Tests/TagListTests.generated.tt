@@ -1,9 +1,10 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="NbtGeneratorTestData.t4" #>
 <#
   string nbtName      = "List";
   string typeName     = "TagCollection";
-  object testValue    = "new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 }";
-  object altTestValue = "new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 255 }";
+  object testValue    = tagTestData[tagTypeList];
+  object altTestValue = altTagTestData[tagTypeList];
   object defaultValue = "new TagCollection(TagType.Int)";
   string valueString  = "[2, 4, 8, 16, 32, 64, 128, 256]";
   int    listCount    = 8;

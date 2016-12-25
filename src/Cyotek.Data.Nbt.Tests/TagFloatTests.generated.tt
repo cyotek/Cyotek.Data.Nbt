@@ -1,9 +1,10 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="NbtGeneratorTestData.t4" #>
 <#
   string nbtName      = "Float";
   string typeName     = "float";
-  object testValue    = (float.MaxValue / 2) + "F";
-  object altTestValue = (float.MaxValue / 3) + "F";
+  object testValue    = tagTestData[tagTypeFloat];
+  object altTestValue = altTagTestData[tagTypeFloat];
   object defaultValue = 0;
   string valueString  = "1.701412E+38";
   int    listCount    = 0;

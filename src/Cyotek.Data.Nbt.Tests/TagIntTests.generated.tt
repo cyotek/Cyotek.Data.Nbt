@@ -1,9 +1,10 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="NbtGeneratorTestData.t4" #>
 <#
   string nbtName      = "Int";
   string typeName     = "int";
-  object testValue    = int.MaxValue >> 1;
-  object altTestValue = int.MaxValue >> 2;
+  object testValue    = tagTestData[tagTypeInt];
+  object altTestValue = altTagTestData[tagTypeInt];
   object defaultValue = 0;
   string valueString  = "1073741823";
   int    listCount    = 0;

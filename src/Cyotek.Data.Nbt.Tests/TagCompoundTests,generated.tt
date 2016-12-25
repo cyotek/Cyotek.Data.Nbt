@@ -1,9 +1,10 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="NbtGeneratorTestData.t4" #>
 <#
   string nbtName      = "Compound";
   string typeName     = "TagDictionary";
-  object testValue    = "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 8) }";
-  object altTestValue = "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 16) }";
+  object testValue    = tagTestData[tagTypeCompound];
+  object altTestValue = altTagTestData[tagTypeCompound];
   object defaultValue = "new TagDictionary()";
   string valueString  = "[2, 4, 8]";
   int    listCount    = 3;

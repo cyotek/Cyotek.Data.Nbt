@@ -1,0 +1,48 @@
+﻿<#
+
+    const int tagTypeEnd = 0;
+    const int tagTypeByte = 1;
+    const int tagTypeShort = 2;
+    const int tagTypeInt = 3;
+    const int tagTypeLong = 4;
+    const int tagTypeFloat = 5;
+    const int tagTypeDouble = 6;
+    const int tagTypeByteArray = 7;
+    const int tagTypeString = 8;
+    const int tagTypeList = 9;
+    const int tagTypeCompound = 10;
+    const int tagTypeIntArray = 11;
+
+    object[] tagTestData =
+    {
+      null,
+      byte.MaxValue >> 1,
+      short.MaxValue >> 1,
+      int.MaxValue >> 1,
+      long.MaxValue >> 1,
+      float.MaxValue / 2 + "F",
+      double.MaxValue / 2,
+      "new byte[] { 2, 4, 8, 16, 32, 64, 128 }",
+      "\"HELLO WORLD THIS IS A TEST STRING ÅÄÖ!\"",
+      "new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 }",
+      "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 8) }",
+      "new[] { 2190, 2994, 3248, 4294394 }"
+    };
+
+    object[] altTagTestData =
+    {
+      null,
+      byte.MaxValue >> 2,
+      short.MaxValue >> 2,
+      int.MaxValue >> 2,
+      long.MaxValue >> 2,
+      float.MaxValue / 3 + "F",
+      double.MaxValue / 3,
+      "new byte[] { 2, 4, 8, 16, 32, 48, 128 }",
+      "\"DIFFERENT\"",
+      "new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 255 }",
+      "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 16) }",
+      "new[] { 2190, 2994, 3248, 294394 }"
+    };
+    #>
+
