@@ -486,6 +486,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="name">The name of the tag entry to write.</param>
     /// <param name="values">The <see cref="T:byte[]" /> values to write.</param>
+    [CLSCompliant(false)]
     public void WriteListTag(string name, byte[][] values)
     {
       int length;
@@ -523,6 +524,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes an unnamed tag entry for a <see cref="T:byte[]" /> value.
     /// </summary>
     /// <param name="values">The <see cref="T:byte[]" /> values to write.</param>
+    [CLSCompliant(false)]
     public void WriteListTag(byte[][] values)
     {
       this.WriteListTag(string.Empty, values);
@@ -778,6 +780,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="name">The name of the tag entry to write.</param>
     /// <param name="values">The <see cref="T:int[]" /> values to write.</param>
+    [CLSCompliant(false)]
     public void WriteListTag(string name, int[][] values)
     {
       int length;
@@ -815,6 +818,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes an unnamed tag entry for a <see cref="T:int[]" /> value.
     /// </summary>
     /// <param name="values">The <see cref="T:int[]" /> values to write.</param>
+    [CLSCompliant(false)]
     public void WriteListTag(int[][] values)
     {
       this.WriteListTag(string.Empty, values);

@@ -52,6 +52,14 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="name">The name of the tag entry to write.</param>
     /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+<#
+if(name.EndsWith("[]"))
+{
+#>
+    [CLSCompliant(false)]
+<#
+}
+ #>
     public void WriteListTag(string name, <#=name #>[] values)
     {
       int length;
@@ -89,6 +97,14 @@ namespace Cyotek.Data.Nbt.Serialization
     /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
     /// </summary>
     /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+<#
+if(name.EndsWith("[]"))
+{
+#>
+    [CLSCompliant(false)]
+<#
+}
+ #>
     public void WriteListTag(<#=name #>[] values)
     {
       this.WriteListTag(string.Empty, values);

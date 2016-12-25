@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagDictionary : KeyedCollection<string, Tag>
+  public partial class TagDictionary : KeyedCollection<string, Tag>
   {
     #region Fields
 
@@ -51,115 +51,13 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
-    public Tag Add(string name, string value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
 
     public Tag Add(string name, bool value)
     {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, (byte)(value ? 1 : 0));
-
-      this.Add(tag);
-
-      return tag;
+      return this.Add(name, (byte)(value ? 1 : 0));
     }
 
-    public Tag Add(string name, float value)
-    {
-      Tag tag;
 
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, double value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, long value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, short value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, byte value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, int value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, int[] value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public Tag Add(string name, byte[] value)
-    {
-      Tag tag;
-
-      tag = TagFactory.CreateTag(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
 
     public Tag Add(string name, DateTime value)
     {
