@@ -45,6 +45,8 @@
       <Link>BitHelper.cs</Link>
     </Compile>
     <Compile Include="AnvilRegionTests.cs" />
+    <Compile Include="ComplexData.cs" />
+    <Compile Include="NbtAssert.cs" />
     <Compile Include="NbtDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
@@ -141,6 +143,8 @@
     <Compile Include="TagTests.cs" />
     <Compile Include="TagTypeTests.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="TR2.cs" />
+    <Compile Include="TR2Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\bigtest.nbt">
