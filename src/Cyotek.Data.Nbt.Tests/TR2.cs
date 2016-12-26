@@ -11,139 +11,140 @@ namespace Cyotek.Data.Nbt.Serialization
     public TR2(Stream stream)
     {
       _stream = stream;
+      _state = new TagState();
     }
 
     private Stream _stream;
 
     public bool Read()
     {
-      int value;
-
-      switch (_state)
+      switch (_readState)
       {
         case ReadState.NotInitialized:
+          int value;
           value = _stream.ReadByte();
           if (value != (int)TagType.Compound)
           {
             throw new InvalidDataException("Stream does not contain a NBT compound.");
           }
           _type = TagType.Compound;
-          _state = ReadState.Tag;
+          _readState = ReadState.Tag;
+          _state.Start();
+          _state.StartTag(_type);
           break;
+        case ReadState.TagEnd:
         case ReadState.TagType:
-          value = _stream.ReadByte();
-          this.SetType(value);
+          this.SetType(_stream.ReadByte());
           break;
         case ReadState.Tag:
-        case ReadState.TagName:
         case ReadState.TagValue:
           this.MoveToNextElement();
-          value = 0;
           break;
-        //  case ReadState.TagEnd:
-        //      break;
         case ReadState.End:
-          value = -1; // Done reading, nothing left to do
+          _state.SetComplete();
           break;
         default:
-          throw new InvalidOperationException($"Unexpected read state '{_state}'.");
+          throw new InvalidOperationException($"Unexpected read state '{_readState}'.");
       }
 
-      if (value == -1)
-      {
-        _state = ReadState.End;
-      }
-
-      return value != -1;
+      return _readState != ReadState.End;
     }
 
     private void SetType(int value)
     {
-      _type = (TagType)value;
-
-      if (_type < TagType.None || _type > TagType.IntArray)
+      if (value != -1)
       {
-        throw new InvalidDataException($"Unexpected type '{value}'.");
-      }
+        _type = (TagType)value;
 
-      _state = ReadState.Tag;
+        if (_type < TagType.None || _type > TagType.IntArray)
+        {
+          throw new InvalidDataException($"Unexpected type '{value}'.");
+        }
+
+        _state.StartTag(_type);
+        _readState = _type != TagType.End ? ReadState.Tag : ReadState.TagEnd;
+      }
+      else
+      {
+        _readState = ReadState.End;
+      }
     }
 
-    private void MoveToNextElement()
+    public bool MoveToNextElement()
     {
-      if (_state == ReadState.Tag)
+      if (_readState == ReadState.NotInitialized)
+      {
+        this.Read();
+      }
+
+      if (_readState == ReadState.TagEnd || _readState == ReadState.TagType)
+      {
+        this.SetType(_stream.ReadByte());
+      }
+
+      if (_readState == ReadState.Tag)
       {
         // skip past the name
+        this.ReadName();
+        _readState = ReadState.TagValue;
       }
 
-      if (_state == ReadState.TagName)
-      {
-        // skip past the value
-      }
-
-      if (_state == ReadState.TagValue)
+      if (_readState == ReadState.TagValue)
       {
         this.SkipValue();
       }
+
+      return _readState != ReadState.End;
     }
 
-    private static readonly byte[] _byteBuffer=new byte[1];
+    private static readonly byte[] _byteBuffer = new byte[1];
     private static readonly byte[] _shortBuffer = new byte[BitHelper.ShortSize];
     private static readonly byte[] _intBuffer = new byte[BitHelper.IntSize];
     private static readonly byte[] _longBuffer = new byte[BitHelper.LongSize];
     private static readonly byte[] _floatBuffer = new byte[BitHelper.FloatSize];
     private static readonly byte[] _doubleBuffer = new byte[BitHelper.DoubleSize];
-    private static readonly byte[] _stringBuffer=new byte[short.MaxValue];
+    private static readonly byte[] _stringBuffer = new byte[short.MaxValue];
 
     private void SkipValue()
     {
       switch (_type)
       {
-//        case TagType.None:
-  //        break;
-    //    case TagType.End:
-      //    break;
         case TagType.Byte:
           _stream.Read(_byteBuffer, 0, 1);
+          _readState = ReadState.TagType;
           break;
         case TagType.Short:
           _stream.Read(_shortBuffer, 0, BitHelper.ShortSize);
+          _readState = ReadState.TagType;
           break;
         case TagType.Int:
           _stream.Read(_intBuffer, 0, BitHelper.IntSize);
+          _readState = ReadState.TagType;
           break;
         case TagType.Long:
           _stream.Read(_longBuffer, 0, BitHelper.LongSize);
+          _readState = ReadState.TagType;
           break;
         case TagType.Float:
           _stream.Read(_floatBuffer, 0, BitHelper.FloatSize);
+          _readState = ReadState.TagType;
           break;
         case TagType.Double:
           _stream.Read(_doubleBuffer, 0, BitHelper.DoubleSize);
+          _readState = ReadState.TagType;
           break;
         case TagType.ByteArray:
           break;
         case TagType.String:
-          int length;
-          length = this.ReadShortImpl();
-          _stream.Read(_stringBuffer, 0, length);
-          _state = ReadState.TagType;
+          this.ReadStringData();
+          _readState = ReadState.TagType;
           break;
         case TagType.List:
+          _stream.Read(_intBuffer, 0, BitHelper.IntSize);
+          _readState = ReadState.TagType;
           break;
         case TagType.Compound:
-          int nextByte;
-          // peek the next byte?
-          nextByte = _stream.ReadByte();
-
-          if (nextByte == -1)
-          {
-            _state = ReadState.End;
-          }
-          else
-          {
-            this.SetType(nextByte);
-          }
+          this.SetType(_stream.ReadByte());
           break;
         case TagType.IntArray:
           break;
@@ -152,9 +153,21 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
+    private void ReadStringData()
+    {
+      int length;
+      length = this.ReadShortImpl();
+      _stream.Read(_stringBuffer, 0, length);
+    }
+
     public bool IsStartElement()
     {
-      return _state == ReadState.Tag;
+      return _readState == ReadState.Tag && _type != TagType.End;
+    }
+
+    public bool IsEndElement()
+    {
+      return _type == TagType.End;
     }
 
     private enum ReadState
@@ -162,13 +175,14 @@ namespace Cyotek.Data.Nbt.Serialization
       NotInitialized,
       TagType,
       Tag,
-      TagName,
       TagValue,
       TagEnd,
       End
     }
 
-    private ReadState _state;
+    private ReadState _readState;
+
+    private TagState _state;
 
     public string Name
     {
@@ -182,10 +196,13 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private void ReadName()
     {
-      if (_state == ReadState.Tag)
+      if (_readState == ReadState.Tag)
       {
-        _name = this.ReadStringImpl();
-        _state = ReadState.TagValue;
+        if (_type != TagType.End)
+        {
+          _name = this.ReadStringImpl();
+        }
+        _readState = ReadState.TagValue;
       }
     }
 
@@ -193,40 +210,47 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       short value;
 
-      if (_state != ReadState.TagValue)
+      this.InitializeValueRead(TagType.Short);
+
+      value = this.ReadShortImpl();
+
+      _readState = ReadState.TagType;
+
+      return value;
+    }
+
+    private void InitializeValueRead(TagType tagType)
+    {
+      if (_readState == ReadState.TagType)
+      {
+        this.SetType(_stream.ReadByte());
+      }
+
+      if (_readState == ReadState.Tag)
+      {
+        this.ReadName();
+      }
+
+      if (_readState != ReadState.TagValue)
       {
         throw new InvalidOperationException("Wrong state.");
       }
 
-      if (_type != TagType.Short)
+      if (_type != tagType)
       {
         throw new InvalidOperationException("Wrong value type.");
       }
-
-      value = this.ReadShortImpl();
-
-      _state = ReadState.TagType;
-
-      return value;
     }
 
     public long ReadLong2()
     {
       long value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
-
-      if (_type != TagType.Long)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
+      this.InitializeValueRead(TagType.Long);
 
       value = this.ReadLongImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -235,19 +259,11 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       int value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
-
-      if (_type != TagType.Int)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
+      this.InitializeValueRead(TagType.Int);
 
       value = this.ReadIntImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -256,19 +272,11 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       float value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
-
-      if (_type != TagType.Float)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
+      this.InitializeValueRead(TagType.Float);
 
       value = this.ReadFloatImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -276,19 +284,11 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       double value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
-
-      if (_type != TagType.Double)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
+      this.InitializeValueRead(TagType.Double);
 
       value = this.ReadDoubleImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -297,19 +297,11 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       string value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
-
-      if (_type != TagType.String)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
+      this.InitializeValueRead(TagType.String);
 
       value = this.ReadStringImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -317,19 +309,11 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       byte value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
-
-      if (_type != TagType.Byte)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
+      this.InitializeValueRead(TagType.Byte);
 
       value = this.ReadByteImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -338,19 +322,12 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       byte[] value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
+      this.InitializeValueRead(TagType.ByteArray);
 
-      if (_type != TagType.ByteArray)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
 
       value = this.ReadByteArrayImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }
@@ -359,19 +336,12 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       int[] value;
 
-      if (_state != ReadState.TagValue)
-      {
-        throw new InvalidOperationException("Wrong state.");
-      }
+      this.InitializeValueRead(TagType.IntArray);
 
-      if (_type != TagType.IntArray)
-      {
-        throw new InvalidOperationException("Wrong value type.");
-      }
 
       value = this.ReadIntArrayImpl();
 
-      _state = ReadState.TagType;
+      _readState = ReadState.TagType;
 
       return value;
     }

@@ -35,10 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\res\Cyotek.Data.Nbt.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Cyotek.Data.Nbt\BitHelper.cs">
@@ -147,6 +150,9 @@
     <Compile Include="TR2Tests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\res\Cyotek.Data.Nbt.snk">
+      <Link>Cyotek.Data.Nbt.snk</Link>
+    </None>
     <None Include="data\bigtest.nbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

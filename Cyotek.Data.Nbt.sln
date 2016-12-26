@@ -7,8 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.Data.Nbt", "src\Cyot
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{3D33379A-2DDB-40E1-A507-F49B6C131CA8}"
 	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
 		CHANGELOG.md = CHANGELOG.md
 		COPYING.txt = COPYING.txt
+		push.cmd = push.cmd
 		README.md = README.md
 		SPECIFICATION.md = SPECIFICATION.md
 	EndProjectSection
