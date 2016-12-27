@@ -146,8 +146,6 @@
     <Compile Include="TagTests.cs" />
     <Compile Include="TagTypeTests.cs" />
     <Compile Include="TestBase.cs" />
-    <Compile Include="TR2.cs" />
-    <Compile Include="TR2Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\res\Cyotek.Data.Nbt.snk">
