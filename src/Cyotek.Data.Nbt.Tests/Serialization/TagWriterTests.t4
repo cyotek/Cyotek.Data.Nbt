@@ -46,7 +46,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         target = this.CreateWriter(stream);
 
-        expected = <#=tagTestData[i]#>;
+        expected = <#=tagTestData[i] #>;
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
@@ -65,21 +65,21 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
-    public void WriteTag_writes_named_<#=nbtName.ToLower()#>_tag()
+    public void WriteTag_writes_named_<#=nbtName.ToLower() #>_tag()
     {
       using (MemoryStream stream = new MemoryStream())
       {
         // arrange
         TagWriter target;
         TagReader reader;
-        <#=name#> expectedValue;
+        <#=name #> expectedValue;
         string expectedName;
         Tag actual;
 
         target = this.CreateWriter(stream);
 
-        expectedName = "delta<#=name#>";
-        expectedValue = <#=tagTestData[i]#>;
+        expectedName = "delta<#=name #>";
+        expectedValue = <#=tagTestData[i] #>;
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);

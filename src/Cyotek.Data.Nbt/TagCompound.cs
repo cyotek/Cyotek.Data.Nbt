@@ -11,7 +11,8 @@ namespace Cyotek.Data.Nbt
 
     private static readonly char[] _queryDelimiters =
     {
-      '\\', '/'
+      '\\',
+      '/'
     };
 
     #endregion

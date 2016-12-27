@@ -39,6 +39,10 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private static readonly byte[] _shortBuffer = new byte[BitHelper.ShortSize];
 
+    private readonly TagState _state;
+
+    private readonly Stream _stream;
+
     private static readonly byte[] _stringBuffer = new byte[short.MaxValue];
 
     #endregion
@@ -52,10 +56,6 @@ namespace Cyotek.Data.Nbt.Serialization
     private string _name;
 
     private ReadState _readState;
-
-    private readonly TagState _state;
-
-    private readonly Stream _stream;
 
     private TagType _type;
 

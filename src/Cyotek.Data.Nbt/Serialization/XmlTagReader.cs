@@ -12,14 +12,13 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private static readonly char[] _arraySeparaters =
     {
-      ' ', '\t', '\n', '\r'
+      ' ',
+      '\t',
+      '\n',
+      '\r'
     };
 
     private readonly XmlReader _reader;
-
-    #endregion
-
-    #region Fields
 
     private readonly TagState _state;
 

@@ -10,7 +10,9 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private static readonly char[] _cDataTriggers =
     {
-      '<', '>', '&'
+      '<',
+      '>',
+      '&'
     };
 
     private readonly TagState _state;

@@ -24,7 +24,9 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.ReadTest(new byte[]
                     {
-                      0, 128, 255
+                      0,
+                      128,
+                      255
                     }, (writer, value) => writer.WriteTag(value), reader => reader.ReadByteArray2());
     }
 
@@ -51,7 +53,10 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.ReadTest(new int[]
                     {
-                      int.MinValue, short.MinValue, short.MaxValue, int.MaxValue
+                      int.MinValue,
+                      short.MinValue,
+                      short.MaxValue,
+                      int.MaxValue
                     }, (writer, value) => writer.WriteTag(value), reader => reader.ReadIntArray2());
     }
 
