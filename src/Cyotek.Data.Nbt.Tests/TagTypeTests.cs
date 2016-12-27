@@ -81,8 +81,11 @@ namespace Cyotek.Data.Nbt.Tests
       this.TestValue(8, TagType.String);
     }
 
-    [Test]
-    public void TestValue(int expected, TagType value)
+    #endregion
+
+    #region Test Helpers
+
+    private void TestValue(int expected, TagType value)
     {
       // arrange
       int actual;
