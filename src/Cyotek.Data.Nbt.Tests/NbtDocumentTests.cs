@@ -67,7 +67,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       // this test is essentially ensuring that an infinite loop when reloading an XML document is no longer present
-      this.CompareTags(target.DocumentRoot, reloaded.DocumentRoot);
+      NbtAssert.AreEqual(target.DocumentRoot, reloaded.DocumentRoot);
     }
 
     [Test]
@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.IsTrue(file1IsBinary);
       Assert.IsTrue(file2IsXml);
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(target1, target2);
     }
 
     [Test]
@@ -606,7 +606,7 @@ namespace Cyotek.Data.Nbt.Tests
       target2.Load();
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(target1, target2);
     }
 
     [Test]
@@ -625,7 +625,7 @@ namespace Cyotek.Data.Nbt.Tests
       target2.Load(fileName);
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(target1, target2);
     }
 
     [Test]
@@ -652,7 +652,7 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(target1, target2);
     }
 
     [Test]
@@ -678,7 +678,7 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(target1, target2);
     }
 
     #endregion

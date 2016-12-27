@@ -94,7 +94,6 @@ namespace Cyotek.Data.Nbt
     {
       Tag result;
 
-      // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
       if (value is byte)
       {
         result = this.Add(name, (byte)value);
@@ -147,7 +146,6 @@ namespace Cyotek.Data.Nbt
       {
         throw new ArgumentException("Invalid value type.", nameof(value));
       }
-      // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 
       return result;
     }

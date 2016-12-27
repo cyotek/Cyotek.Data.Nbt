@@ -29,7 +29,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       actual = target.ReadTag();
 
       // assert
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     [Test]
@@ -49,7 +49,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       actual = target.ReadDocument();
 
       // assert
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     [Test]
@@ -69,7 +69,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       actual = target.ReadDocument();
 
       // assert
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     [Test]
@@ -89,7 +89,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       actual = target.ReadDocument();
 
       // assert
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     #endregion

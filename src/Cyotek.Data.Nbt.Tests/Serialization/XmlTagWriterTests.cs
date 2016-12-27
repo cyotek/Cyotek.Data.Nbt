@@ -43,7 +43,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
 
       // assert
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     #endregion

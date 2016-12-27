@@ -7,6 +7,47 @@ namespace Cyotek.Data.Nbt.Tests
   {
     #region Static Methods
 
+    public static void AreEqual(TagCompound expected, TagCompound actual)
+    {
+      List<Tag> expectedChildValues;
+      List<Tag> actualChildValues;
+      ICollectionTag expectedChildren;
+      ICollectionTag actualChildren;
+
+      AreEqualBasic(expected, actual);
+
+      expectedChildren = expected;
+      actualChildren = actual;
+
+      Assert.AreEqual(expectedChildren.IsList, actualChildren.IsList);
+      Assert.AreEqual(expectedChildren.LimitToType, actualChildren.LimitToType);
+      Assert.AreEqual(expectedChildren.Values.Count, actualChildren.Values.Count);
+
+      expectedChildValues = new List<Tag>(expectedChildren.Values);
+      actualChildValues = new List<Tag>(actualChildren.Values);
+
+      for (int i = 0; i < expectedChildValues.Count; i++)
+      {
+        AreEqual(expectedChildValues[i], actualChildValues[i]);
+      }
+    }
+
+    public static void AreEqual(Tag expected, Tag actual)
+    {
+      TagCompound expectedCompound;
+      TagCompound actualCompound;
+
+      AreEqualBasic(expected, actual);
+
+      expectedCompound = expected as TagCompound;
+      actualCompound = actual as TagCompound;
+
+      if (expectedCompound != null && actualCompound != null)
+      {
+        AreEqual(expectedCompound, actualCompound);
+      }
+    }
+
     public static void AreEqual(ComplexData expected, ComplexData actual)
     {
       Assert.AreEqual(expected.LongValue, actual.LongValue);
@@ -20,6 +61,11 @@ namespace Cyotek.Data.Nbt.Tests
       CollectionAssert.AreEqual(expected.ByteArrayValue, actual.ByteArrayValue);
       Assert.AreEqual(expected.ByteValue, actual.ByteValue);
       Assert.AreEqual(expected.DoubleValue, actual.DoubleValue);
+    }
+
+    internal static void AreEqual(NbtDocument expected, NbtDocument actual)
+    {
+      AreEqual(expected.DocumentRoot, actual.DocumentRoot);
     }
 
     private static void AreEqual(List<ComplexData.Compound2> expected, List<ComplexData.Compound2> actual)
@@ -52,6 +98,22 @@ namespace Cyotek.Data.Nbt.Tests
     {
       Assert.AreEqual(expected.Name, actual.Name);
       Assert.AreEqual(expected.Value, actual.Value);
+    }
+
+    private static void AreEqualBasic(Tag expected, Tag actual)
+    {
+      Assert.AreEqual(expected.Type, actual.Type);
+      Assert.AreEqual(expected.Name, actual.Name);
+      Assert.AreEqual(expected.FullPath, actual.FullPath);
+
+      if (expected.Parent == null)
+      {
+        Assert.IsNull(actual.Parent);
+      }
+      else
+      {
+        Assert.AreEqual(expected.Parent.Name, actual.Parent.Name);
+      }
     }
 
     #endregion

@@ -34,7 +34,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       // assert
       stream.Seek(0, SeekOrigin.Begin);
       reader = new BinaryTagReader(stream);
-      this.CompareTags(expected.DocumentRoot, reader.ReadTag());
+      NbtAssert.AreEqual(expected.DocumentRoot, reader.ReadTag());
     }
 
     #endregion

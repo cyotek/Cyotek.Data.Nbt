@@ -70,54 +70,6 @@ namespace Cyotek.Data.Nbt.Tests
 
     #region Methods
 
-    protected void CompareTags(Tag expected, Tag actual)
-    {
-      ICollectionTag collection;
-
-      Assert.AreEqual(expected.Type, actual.Type);
-      Assert.AreEqual(expected.Name, actual.Name);
-      Assert.AreEqual(expected.FullPath, actual.FullPath);
-
-      if (expected.Parent == null)
-      {
-        Assert.IsNull(actual.Parent);
-      }
-      else
-      {
-        Assert.AreEqual(expected.Parent.Name, actual.Parent.Name);
-      }
-
-      collection = expected as ICollectionTag;
-      if (collection != null)
-      {
-        ICollectionTag expectedChildren;
-        ICollectionTag actualChildren;
-        List<Tag> expectedChildValues;
-        List<Tag> actualChildValues;
-
-        Assert.IsInstanceOf<ICollectionTag>(actual);
-
-        expectedChildren = collection;
-        actualChildren = (ICollectionTag)actual;
-
-        Assert.AreEqual(expectedChildren.IsList, actualChildren.IsList);
-        Assert.AreEqual(expectedChildren.LimitToType, actualChildren.LimitToType);
-        Assert.AreEqual(expectedChildren.Values.Count, actualChildren.Values.Count);
-
-        expectedChildValues = new List<Tag>(expectedChildren.Values);
-        actualChildValues = new List<Tag>(actualChildren.Values);
-
-        for (int i = 0; i < expectedChildValues.Count; i++)
-        {
-          this.CompareTags(expectedChildValues[i], actualChildValues[i]);
-        }
-      }
-      else
-      {
-        Assert.IsNotInstanceOf<ICollectionTag>(actual);
-      }
-    }
-
     protected TagCompound CreateComplexData()
     {
       TagCompound root;
@@ -235,7 +187,7 @@ namespace Cyotek.Data.Nbt.Tests
       stream.Seek(0, SeekOrigin.Begin);
       reader = createReader(stream);
       actual = reader.ReadDocument();
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     protected void WriteTest<T, T2>(Func<Stream, T> createWriter, Func<Stream, T2> createReader) where T : TagWriter where T2 : TagReader
@@ -296,7 +248,7 @@ namespace Cyotek.Data.Nbt.Tests
       stream.Seek(0, SeekOrigin.Begin);
       reader = createReader(stream);
       actual = reader.ReadDocument();
-      this.CompareTags(expected, actual);
+      NbtAssert.AreEqual(expected, actual);
     }
 
     #endregion
