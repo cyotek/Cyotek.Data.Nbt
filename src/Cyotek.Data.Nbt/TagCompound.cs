@@ -11,8 +11,7 @@ namespace Cyotek.Data.Nbt
 
     private static readonly char[] _queryDelimiters =
     {
-      '\\',
-      '/'
+      '\\', '/'
     };
 
     #endregion
@@ -47,6 +46,39 @@ namespace Cyotek.Data.Nbt
 
     #region Properties
 
+    /// <summary>
+    /// Gets the number of child <see cref="Tag"/> objects actually contained in the <see cref="TagCompound"/>.
+    /// </summary>
+    public int Count
+    {
+      get { return _value.Count; }
+    }
+
+    /// <summary>
+    /// Gets the <see cref="Tag"/> with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag to get.</param>
+    /// <returns>
+    /// The <see cref="Tag"/> with the specified name. If a tag with the specified name is not found, an exception is thrown.
+    /// </returns>
+    public Tag this[string name]
+    {
+      get { return _value[name]; }
+    }
+
+    /// <summary>
+    /// Gets the <see cref="Tag"/> at the specified index.
+    /// </summary>
+    /// <param name="index">Zero-based index of the entry to access.</param>
+    /// <returns>
+    /// The <see cref="Tag"/> at the specified index.
+    /// </returns>
+    public Tag this[int index]
+    {
+      get { return _value[index]; }
+    }
+
+    /// <inheritdoc cref="Tag.Type"/>
     public override TagType Type
     {
       get { return TagType.Compound; }
