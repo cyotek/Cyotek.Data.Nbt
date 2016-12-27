@@ -63,6 +63,11 @@ namespace Cyotek.Data.Nbt
 
       if (tagType != TagType.List)
       {
+        if(listType != TagType.None)
+        {
+          throw new ArgumentException("Only lists can have a list type.", nameof(listType));
+        }
+
         switch (tagType)
         {
   <# for (int i = 0; i < nbtTypeNames.Length; i++)
@@ -73,7 +78,7 @@ namespace Cyotek.Data.Nbt
       nbtName = nbtTypeNames[i];
       tagName = nbtTagTypeNames[i];
 
-      if (tagName != "TagEnd")
+      if (i != tagTypeEnd && !IsListType(i))
       {
         #>
         case TagType.<#=nbtName #>:
@@ -118,13 +123,11 @@ namespace Cyotek.Data.Nbt
       {
 <# for (int i = 0; i < nbtTypeNames.Length; i++)
     {
-      string tagName;
       string nbtName;
 
       nbtName = nbtTypeNames[i];
-      tagName = nbtTagTypeNames[i];
 
-      if (tagName != "TagEnd")
+      if (i != tagTypeEnd)
       {
         #>
         case TagType.<#=nbtName #>:
@@ -135,10 +138,6 @@ namespace Cyotek.Data.Nbt
       }
     }
 #>
-        case TagType.End:
-          result = new TagEnd();
-          break;
-
         default:
           throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tagType));
       }

@@ -20,11 +20,28 @@ namespace Cyotek.Data.Nbt.Tests
       tagName = nbtTagTypeNames[i];
       testValue = tagTestData[i];
       tagClassName = "Tag" + nbtName;
-
-      if (name != null)
-      {
-        #>
+      #>
     [Test]
+    public void Create_with_type_creates_<#=nbtName.ToLower() #>()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.<#=nbtName #>;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<<#=tagClassName #>>(actual);
+    }
+
+    <#
+      if (i != tagTypeEnd)
+      {
+#>[Test]
     public void Create_with_type_sets_<#=nbtName.ToLower() #>_name()
     {
       // arrange
@@ -43,23 +60,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_<#=nbtName.ToLower() #>()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.<#=nbtName #>;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<<#=tagClassName #>>(actual);
     }
 
     [Test]

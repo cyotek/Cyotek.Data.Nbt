@@ -20,7 +20,7 @@ namespace Cyotek.Data.Nbt.Tests
       actualChildren = actual;
 
       Assert.AreEqual(expectedChildren.IsList, actualChildren.IsList);
-      Assert.AreEqual(expectedChildren.LimitToType, actualChildren.LimitToType);
+      Assert.AreEqual(expectedChildren.ListType, actualChildren.ListType);
       Assert.AreEqual(expectedChildren.Values.Count, actualChildren.Values.Count);
 
       expectedChildValues = new List<Tag>(expectedChildren.Values);

@@ -52,19 +52,7 @@ namespace Cyotek.Data.Nbt
 
     public int Count
     {
-      get { return this.Value.Count; }
-    }
-
-    public TagType ListType
-    {
-      get { return this.Value?.LimitType ?? TagType.None; }
-      set
-      {
-        if (this.Value == null || this.Value.LimitType != value)
-        {
-          this.Value = new TagCollection(value);
-        }
-      }
+      get { return _value.Count; }
     }
 
     public override TagType Type
@@ -136,29 +124,35 @@ namespace Cyotek.Data.Nbt
     {
       int count;
 
-      count = _value?.Count ?? 0;
+      count = _value.Count;
 
       return string.Concat("[", this.Type, ": ", this.Name, "] (", count.ToString(CultureInfo.InvariantCulture), " items)");
     }
 
     public override string ToValueString()
     {
-      return _value?.ToString() ?? string.Empty;
+      return _value.ToString() ?? string.Empty;
     }
 
     #endregion
 
     #region ICollectionTag Interface
 
+    public TagType ListType
+    {
+      get { return this.Value?.LimitType ?? TagType.None; }
+      set
+      {
+        if (this.Value == null || _value.LimitType != value)
+        {
+          this.Value = new TagCollection(value);
+        }
+      }
+    }
+
     bool ICollectionTag.IsList
     {
       get { return true; }
-    }
-
-    TagType ICollectionTag.LimitToType
-    {
-      get { return this.ListType; }
-      set { this.ListType = value; }
     }
 
     IList<Tag> ICollectionTag.Values

@@ -131,7 +131,7 @@ if (name.EndsWith("[]"))
       nbtName = nbtTypeNames[i];
       tagName = nbtTagTypeNames[i];
 
-      if (tagName != "TagEnd")
+      if (i != tagTypeEnd)
       {
         #>
         case TagType.<#=nbtName #>:

@@ -32,6 +32,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagShort"/> with the specified name and value.
     /// </summary>
@@ -50,6 +51,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagInt"/> with the specified name and value.
     /// </summary>
@@ -68,6 +70,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagLong"/> with the specified name and value.
     /// </summary>
@@ -86,6 +89,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagFloat"/> with the specified name and value.
     /// </summary>
@@ -104,6 +108,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagDouble"/> with the specified name and value.
     /// </summary>
@@ -122,6 +127,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagByteArray"/> with the specified name and value.
     /// </summary>
@@ -140,6 +146,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagString"/> with the specified name and value.
     /// </summary>
@@ -158,6 +165,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagList"/> with the specified name and value.
     /// </summary>
@@ -176,6 +184,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagCompound"/> with the specified name and value.
     /// </summary>
@@ -194,6 +203,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
     /// <summary>
     /// Creates and adds a new <see cref="TagIntArray"/> with the specified name and value.
     /// </summary>
@@ -212,5 +222,6 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
   }
 }

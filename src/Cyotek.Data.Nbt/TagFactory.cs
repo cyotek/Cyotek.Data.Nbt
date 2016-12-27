@@ -23,12 +23,7 @@ namespace Cyotek.Data.Nbt
 
     public static TagList CreateTag(TagType tagType, TagType listType)
     {
-      if (tagType != TagType.List)
-      {
-        throw new ArgumentException("Only lists can have a list type.", nameof(tagType));
-      }
-
-      return new TagList(listType);
+      return (TagList)CreateTag(string.Empty, tagType, listType);
     }
 
     #endregion

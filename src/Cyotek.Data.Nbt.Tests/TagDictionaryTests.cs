@@ -232,7 +232,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(name, tag.Name);
       Assert.AreEqual(type, tag.Type);
       Assert.IsInstanceOf<ICollectionTag>(tag);
-      Assert.AreEqual(limitType, ((ICollectionTag)tag).LimitToType);
+      Assert.AreEqual(limitType, ((ICollectionTag)tag).ListType);
     }
 
     protected void AddTest<TValue, TTag>(string name, TValue value)

@@ -15,6 +15,40 @@ namespace Cyotek.Data.Nbt.Tests
   partial class TagFactoryTests
   {
     [Test]
+    public void Create_with_type_creates_end()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.End;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagEnd>(actual);
+    }
+
+        [Test]
+    public void Create_with_type_creates_byte()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Byte;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagByte>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_byte_name()
     {
       // arrange
@@ -33,23 +67,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_byte()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Byte;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagByte>(actual);
     }
 
     [Test]
@@ -123,6 +140,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_short()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Short;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagShort>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_short_name()
     {
       // arrange
@@ -141,23 +175,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_short()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Short;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagShort>(actual);
     }
 
     [Test]
@@ -231,6 +248,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_int()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Int;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagInt>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_int_name()
     {
       // arrange
@@ -249,23 +283,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_int()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Int;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagInt>(actual);
     }
 
     [Test]
@@ -339,6 +356,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_long()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Long;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagLong>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_long_name()
     {
       // arrange
@@ -357,23 +391,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_long()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Long;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagLong>(actual);
     }
 
     [Test]
@@ -447,6 +464,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_float()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Float;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagFloat>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_float_name()
     {
       // arrange
@@ -465,23 +499,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_float()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Float;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagFloat>(actual);
     }
 
     [Test]
@@ -555,6 +572,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_double()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Double;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagDouble>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_double_name()
     {
       // arrange
@@ -573,23 +607,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_double()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Double;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagDouble>(actual);
     }
 
     [Test]
@@ -663,6 +680,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_bytearray()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.ByteArray;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagByteArray>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_bytearray_name()
     {
       // arrange
@@ -681,23 +715,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_bytearray()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.ByteArray;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagByteArray>(actual);
     }
 
     [Test]
@@ -771,6 +788,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_string()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.String;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagString>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_string_name()
     {
       // arrange
@@ -789,23 +823,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_string()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.String;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagString>(actual);
     }
 
     [Test]
@@ -879,6 +896,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_list()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.List;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagList>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_list_name()
     {
       // arrange
@@ -897,23 +931,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_list()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.List;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagList>(actual);
     }
 
     [Test]
@@ -987,6 +1004,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_compound()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.Compound;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagCompound>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_compound_name()
     {
       // arrange
@@ -1005,23 +1039,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_compound()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.Compound;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagCompound>(actual);
     }
 
     [Test]
@@ -1095,6 +1112,23 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Create_with_type_creates_intarray()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.IntArray;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagIntArray>(actual);
+    }
+
+    [Test]
     public void Create_with_type_sets_intarray_name()
     {
       // arrange
@@ -1113,23 +1147,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual.Name);
-    }
-
-    [Test]
-    public void Create_with_type_creates_intarray()
-    {
-      // arrange
-      Tag actual;
-      TagType type;
-
-      type = TagType.IntArray;
-
-      // act
-      actual = TagFactory.CreateTag(type);
-
-      // assert
-      Assert.IsNotNull(actual);
-      Assert.IsInstanceOf<TagIntArray>(actual);
     }
 
     [Test]

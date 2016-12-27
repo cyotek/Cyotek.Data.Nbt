@@ -305,6 +305,11 @@ namespace Cyotek.Data.Nbt
 
       if (tagType != TagType.List)
       {
+        if(listType != TagType.None)
+        {
+          throw new ArgumentException("Only lists can have a list type.", nameof(listType));
+        }
+
         switch (tagType)
         {
           case TagType.Byte:
@@ -337,10 +342,6 @@ namespace Cyotek.Data.Nbt
 
           case TagType.String:
             result = new TagString(name);
-            break;
-
-          case TagType.List:
-            result = new TagList(name);
             break;
 
           case TagType.Compound:
@@ -425,10 +426,6 @@ namespace Cyotek.Data.Nbt
 
         case TagType.IntArray:
           result = CreateTag(name, (int[])value);
-          break;
-
-        case TagType.End:
-          result = new TagEnd();
           break;
 
         default:

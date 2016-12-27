@@ -38,6 +38,7 @@ namespace Cyotek.Data.Nbt
 
       return tag;
     }
+
 <#
       }
     }

@@ -8,7 +8,7 @@ namespace Cyotek.Data.Nbt
 
     bool IsList { get; }
 
-    TagType LimitToType { get; set; }
+    TagType ListType { get; set; }
 
     IList<Tag> Values { get; }
 

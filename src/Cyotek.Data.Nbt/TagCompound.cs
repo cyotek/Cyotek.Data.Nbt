@@ -508,7 +508,7 @@ namespace Cyotek.Data.Nbt
       get { return false; }
     }
 
-    TagType ICollectionTag.LimitToType
+    TagType ICollectionTag.ListType
     {
       get { return TagType.None; }
       set { }
