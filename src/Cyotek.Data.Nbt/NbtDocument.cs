@@ -75,7 +75,7 @@ namespace Cyotek.Data.Nbt
 
       if (!stream.CanSeek)
       {
-        throw new InvalidDataException("Stream is not seekable.");
+        throw new ArgumentException("Stream is not seekable.", nameof(stream));
       }
 
       position = stream.Position;
@@ -161,14 +161,7 @@ namespace Cyotek.Data.Nbt
 
       if (reader.IsNbtDocument())
       {
-        TagType type;
-
-        type = reader.ReadTagType();
-        if (type != TagType.Compound)
-        {
-          throw new InvalidDataException("Source document does not appear to be a NBT document.");
-        }
-
+        reader.ReadTagType(); // advance the reader
         result = reader.ReadTagName();
       }
       else
@@ -205,7 +198,6 @@ namespace Cyotek.Data.Nbt
     public TagCompound DocumentRoot
     {
       get { return _documentRoot; }
-      set { _documentRoot = value; }
     }
 
     public string FileName
@@ -365,6 +357,8 @@ namespace Cyotek.Data.Nbt
       ICollectionTag collection;
       ICollectionTag parentCollection;
 
+      collection = tag as ICollectionTag;
+
       indent++;
 
       result.Append(new string(' ', indent * 2));
@@ -374,23 +368,22 @@ namespace Cyotek.Data.Nbt
       parentCollection = tag.Parent as ICollectionTag;
       if (parentCollection != null && parentCollection.IsList)
       {
-        result.Append("#");
+        result.Append('#');
         result.Append(parentCollection.Values.IndexOf(tag));
       }
       else
       {
-        result.Append(":");
+        result.Append(':');
         result.Append(tag.Name);
       }
 
-      if (!(tag is ICollectionTag))
+      if (collection == null)
       {
-        result.AppendFormat(" [{0}]", tag.ToValueString());
+        result.Append(" [").Append(tag.ToValueString()).Append(']');
       }
 
       result.AppendLine();
 
-      collection = tag as ICollectionTag;
       if (collection != null)
       {
         foreach (Tag child in collection.Values)
