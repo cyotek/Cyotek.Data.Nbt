@@ -86,22 +86,22 @@ Cannot be named! If type 0 appears where a Named Tag is expected, the name is as
     <tr>
       <td>7</td>
       <td>`TAG_Byte_Array`</td>
-      <td>`TAG_Int` *length*
+      <td>`TAG_Int` *length*  
 An array of bytes of unspecified format. The length of this array is *length* bytes</td>
       <td></td>
     </tr>
     <tr>
       <td>8</td>
       <td>`TAG_String`</td>
-      <td>`TAG_Short` *length*
+      <td>`TAG_Short` *length*  
 An array of bytes defining a string in UTF-8 format. The length of this array is *length* bytes</td>
       <td></td>
     </tr>
     <tr>
       <td>9</td>
       <td>`TAG_List`</td>
-      <td>`TAG_Byte` *tagId*
-`TAG_Int` *length*
+      <td>`TAG_Byte` *tagId*  
+`TAG_Int` *length*  
 A sequential list of Tags (not Named Tags), of type *typeId*. The length of this array is *length* Tags</td>
       <td>All tags share the same type.</td>
     </tr>
@@ -119,7 +119,7 @@ The order of the tags is not guaranteed.</td>
     <tr>
       <td>11</td>
       <td>`TAG_Int_Array`</td>
-      <td>`TAG_Int` *length*
+      <td>`TAG_Int` *length*  
 An array of ints of unspecified format. The length of this array is *length* bytes</td>
       <td></td>
     </tr>
