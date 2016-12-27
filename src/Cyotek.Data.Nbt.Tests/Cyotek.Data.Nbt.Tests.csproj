@@ -163,7 +163,6 @@
     <None Include="data\test.nbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="NbtGeneratorTestData.t4" />
     <None Include="packages.config" />
     <None Include="Serialization\TagWriterTests.t4" />
     <None Include="TagTests.t4" />

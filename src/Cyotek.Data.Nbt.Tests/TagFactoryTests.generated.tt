@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt.Tests
       name = netTypeNames[i];
       nbtName = nbtTypeNames[i];
       tagName = nbtTagTypeNames[i];
-      testValue = testValues[i];
+      testValue = tagTestData[i];
       tagClassName = "Tag" + nbtName;
 
       if (name != null)

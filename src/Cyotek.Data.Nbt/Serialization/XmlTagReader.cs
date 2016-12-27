@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 
 namespace Cyotek.Data.Nbt.Serialization
@@ -80,7 +79,29 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override byte[] ReadByteArray()
     {
-      return this.ReadString().Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToByte(c)).ToArray();
+      byte[] result;
+      string value;
+
+      value = this.ReadString();
+
+      if (!string.IsNullOrEmpty(value))
+      {
+        string[] values;
+
+        values = value.Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries);
+        result = new byte[values.Length];
+
+        for (int i = 0; i < values.Length; i++)
+        {
+          result[i] = Convert.ToByte(values[i]);
+        }
+      }
+      else
+      {
+        result = TagByteArray.EmptyValue;
+      }
+
+      return result;
     }
 
     public override TagDictionary ReadCompound()
@@ -113,7 +134,29 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override int[] ReadIntArray()
     {
-      return this.ReadString().Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries).Select(c => Convert.ToInt32(c)).ToArray();
+      int[] result;
+      string value;
+
+      value = this.ReadString();
+
+      if (!string.IsNullOrEmpty(value))
+      {
+        string[] values;
+
+        values = value.Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries);
+        result = new int[values.Length];
+
+        for (int i = 0; i < values.Length; i++)
+        {
+          result[i] = Convert.ToInt32(values[i]);
+        }
+      }
+      else
+      {
+        result = TagIntArray.EmptyValue;
+      }
+
+      return result;
     }
 
     public override TagCollection ReadList()

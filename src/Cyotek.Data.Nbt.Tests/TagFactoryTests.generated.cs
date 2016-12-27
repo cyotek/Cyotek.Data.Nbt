@@ -62,7 +62,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Byte;
 
-      expected = 126;
+      expected = 127;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -78,7 +78,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       byte expected;
 
-      expected = 126;
+      expected = 127;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -95,7 +95,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       byte expected;
 
-      expected = 126;
+      expected = 127;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -113,7 +113,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte value;
 
       expected = "Alpha_TagByte";
-      value = 126;
+      value = 127;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -170,7 +170,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Short;
 
-      expected = (short)4343;
+      expected = 16383;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -186,7 +186,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       short expected;
 
-      expected = (short)4343;
+      expected = 16383;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -203,7 +203,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       short expected;
 
-      expected = (short)4343;
+      expected = 16383;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -221,7 +221,7 @@ namespace Cyotek.Data.Nbt.Tests
       short value;
 
       expected = "Alpha_TagShort";
-      value = (short)4343;
+      value = 16383;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -278,7 +278,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Int;
 
-      expected = 48943848;
+      expected = 1073741823;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -294,7 +294,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       int expected;
 
-      expected = 48943848;
+      expected = 1073741823;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -311,7 +311,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       int expected;
 
-      expected = 48943848;
+      expected = 1073741823;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -329,7 +329,7 @@ namespace Cyotek.Data.Nbt.Tests
       int value;
 
       expected = "Alpha_TagInt";
-      value = 48943848;
+      value = 1073741823;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -386,7 +386,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Long;
 
-      expected = 49308638948329;
+      expected = 4611686018427387903;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -402,7 +402,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       long expected;
 
-      expected = 49308638948329;
+      expected = 4611686018427387903;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -419,7 +419,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       long expected;
 
-      expected = 49308638948329;
+      expected = 4611686018427387903;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -437,7 +437,7 @@ namespace Cyotek.Data.Nbt.Tests
       long value;
 
       expected = "Alpha_TagLong";
-      value = 49308638948329;
+      value = 4611686018427387903;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -494,7 +494,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Float;
 
-      expected = 12.4535F;
+      expected = 1.701412E+38F;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -510,7 +510,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       float expected;
 
-      expected = 12.4535F;
+      expected = 1.701412E+38F;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -527,7 +527,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       float expected;
 
-      expected = 12.4535F;
+      expected = 1.701412E+38F;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -545,7 +545,7 @@ namespace Cyotek.Data.Nbt.Tests
       float value;
 
       expected = "Alpha_TagFloat";
-      value = 12.4535F;
+      value = 1.701412E+38F;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -602,7 +602,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Double;
 
-      expected = 290.495494D;
+      expected = 8.98846567431158E+307;
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -618,7 +618,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       double expected;
 
-      expected = 290.495494D;
+      expected = 8.98846567431158E+307;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -635,7 +635,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       double expected;
 
-      expected = 290.495494D;
+      expected = 8.98846567431158E+307;
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -653,7 +653,7 @@ namespace Cyotek.Data.Nbt.Tests
       double value;
 
       expected = "Alpha_TagDouble";
-      value = 290.495494D;
+      value = 8.98846567431158E+307;
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -710,7 +710,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.ByteArray;
 
-      expected = new byte[] {2,4,8};
+      expected = new byte[] { 2, 4, 8, 16, 32, 64, 128 };
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -726,7 +726,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       byte[] expected;
 
-      expected = new byte[] {2,4,8};
+      expected = new byte[] { 2, 4, 8, 16, 32, 64, 128 };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -743,7 +743,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       byte[] expected;
 
-      expected = new byte[] {2,4,8};
+      expected = new byte[] { 2, 4, 8, 16, 32, 64, 128 };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -761,7 +761,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte[] value;
 
       expected = "Alpha_TagByteArray";
-      value = new byte[] {2,4,8};
+      value = new byte[] { 2, 4, 8, 16, 32, 64, 128 };
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -818,7 +818,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.String;
 
-      expected = "Alpha";
+      expected = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -834,7 +834,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       string expected;
 
-      expected = "Alpha";
+      expected = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -851,7 +851,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       string expected;
 
-      expected = "Alpha";
+      expected = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -869,7 +869,7 @@ namespace Cyotek.Data.Nbt.Tests
       string value;
 
       expected = "Alpha_TagString";
-      value = "Alpha";
+      value = "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!";
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -926,7 +926,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.List;
 
-      expected = new TagCollection();
+      expected = new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 };
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -942,7 +942,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       TagCollection expected;
 
-      expected = new TagCollection();
+      expected = new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -959,7 +959,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       TagCollection expected;
 
-      expected = new TagCollection();
+      expected = new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -977,7 +977,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagCollection value;
 
       expected = "Alpha_TagList";
-      value = new TagCollection();
+      value = new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 };
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -1034,7 +1034,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Compound;
 
-      expected = new TagDictionary();
+      expected = new TagDictionary { new TagByte("A", 2), new TagShort("B", 4), new TagInt("C", 8) };
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -1050,7 +1050,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       TagDictionary expected;
 
-      expected = new TagDictionary();
+      expected = new TagDictionary { new TagByte("A", 2), new TagShort("B", 4), new TagInt("C", 8) };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -1067,7 +1067,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       TagDictionary expected;
 
-      expected = new TagDictionary();
+      expected = new TagDictionary { new TagByte("A", 2), new TagShort("B", 4), new TagInt("C", 8) };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -1085,7 +1085,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagDictionary value;
 
       expected = "Alpha_TagCompound";
-      value = new TagDictionary();
+      value = new TagDictionary { new TagByte("A", 2), new TagShort("B", 4), new TagInt("C", 8) };
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -1142,7 +1142,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.IntArray;
 
-      expected = new int[] {16,32,64};
+      expected = new[] { 2190, 2994, 3248, 4294394 };
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -1158,7 +1158,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       int[] expected;
 
-      expected = new int[] {16,32,64};
+      expected = new[] { 2190, 2994, 3248, 4294394 };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -1175,7 +1175,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       int[] expected;
 
-      expected = new int[] {16,32,64};
+      expected = new[] { 2190, 2994, 3248, 4294394 };
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -1193,7 +1193,7 @@ namespace Cyotek.Data.Nbt.Tests
       int[] value;
 
       expected = "Alpha_TagIntArray";
-      value = new int[] {16,32,64};
+      value = new[] { 2190, 2994, 3248, 4294394 };
 
       // act
       actual = TagFactory.CreateTag(expected, value);

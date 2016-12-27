@@ -1,5 +1,5 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
-<#@ include file="NbtGeneratorTestData.t4" #>
+<#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>
 <#
     string nbtName = "Int";
     string typeName = "int";

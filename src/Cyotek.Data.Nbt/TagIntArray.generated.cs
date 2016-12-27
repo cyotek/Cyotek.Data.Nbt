@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt
   {
     #region Constants
 
-    private static readonly int[] _empty = new int[0];
+    internal static readonly int[] EmptyValue = new int[0];
 
     #endregion
 
@@ -31,11 +31,11 @@ namespace Cyotek.Data.Nbt
     #region Constructors
 
     public TagIntArray()
-      : this(string.Empty, _empty)
+      : this(string.Empty, EmptyValue)
     { }
 
     public TagIntArray(string name)
-      : this(name, _empty)
+      : this(name, EmptyValue)
     { }
 
     public TagIntArray(int[] value)
