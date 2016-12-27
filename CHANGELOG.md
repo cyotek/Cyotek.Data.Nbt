@@ -34,7 +34,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Removed all events from the `Tag` object as they added overhead without being used in most use cases
 * Removed the `TagException` class as it was unused
 * Removed `Tag.ToString(string)` overloads
-* Removed `Tag.CanRemove`
+* Removed `Tag.CanRemove` and `Tag.Remove()`, as they are too suitational
 * `Tag` properties are no longer `virtual`
 * Removed the `CompressionOptions` enum and related support from `NbtDocument`. When saving to a file, XML will be uncompressed, binary will be gzipped. When saving to a `Stream`, you can pass in your own `GZipStream`, `DeflateStream` or equivalent
 
