@@ -29,7 +29,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(byte);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -137,7 +137,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(short);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -245,7 +245,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(int);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -353,7 +353,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(long);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -461,7 +461,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(float);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -569,7 +569,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(double);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -677,7 +677,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(byte[]);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -785,7 +785,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(string);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -893,7 +893,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(TagCollection);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -1001,7 +1001,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(TagDictionary);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);
@@ -1109,7 +1109,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(int[]);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);

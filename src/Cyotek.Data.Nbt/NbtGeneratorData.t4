@@ -158,4 +158,9 @@
     return type == tagTypeByteArray || type == tagTypeIntArray;
   }
 
+  private bool IsListType(int type)
+  {
+    return type == tagTypeList;
+  }
+
   #>

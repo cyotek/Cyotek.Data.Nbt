@@ -26,6 +26,8 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 ### Changed
 * Tag names should now be empty when not set rather than `null`
 * `TagReader.ReadCollection` and `ReadDictionary` renamed to `ReadList` and `ReadCompound` to match their NBT types.
+* `TagFactory.Create` methods have had their parameters shuffled so that `name` comes first, mirroring `TagDictionary` and other `TagFactory` methods
+* `TagCollection` contents will automatically set the `LimitType` based on the first value added when no explicit type is defined
 
 ### Removed
 * Removed the `WriteTagOptions` and `ReadTagOptions` enumerations, plus removed any overloaded method supplying these options. Each reader and writer now maintains its own state to know when it should or should not be doing things without having to be told

@@ -31,7 +31,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       {
         if (this.IsArrayType(i))
         {
-        #>
+          #>
     [Test]
     public void WriteTag_writes_empty_<#=nbtName.ToLower() #>_array()
     {
@@ -45,7 +45,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         target = this.CreateWriter(stream);
 
-        expected = <#=defaultValues[i]#>;
+        expected = <#=defaultValues[i] #>;
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);

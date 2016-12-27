@@ -61,9 +61,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       fileName = this.GetWorkFile();
       target = new NbtDocument
-      {
-        Format = NbtFormat.Xml
-      };
+               {
+                 Format = NbtFormat.Xml
+               };
       target.DocumentRoot.Name = "Test";
       target.DocumentRoot.Value.Add("EmptyList", TagType.List, TagType.Compound);
 

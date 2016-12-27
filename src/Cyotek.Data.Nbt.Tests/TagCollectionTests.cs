@@ -10,6 +10,26 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
+    public void Add_sets_limit_type()
+    {
+      // arrange
+      TagCollection target;
+      TagType expected;
+      TagType actual;
+
+      target = new TagCollection();
+
+      expected = TagType.Byte;
+
+      // act
+      target.Add((byte)127);
+
+      // assert
+      actual = target.LimitType;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
     public void AddBoolWithNameTest()
     {
       this.AddTest<bool, TagByte>(Guid.NewGuid().ToString(), true, 1);
@@ -185,6 +205,42 @@ namespace Cyotek.Data.Nbt.Tests
     public void AddStringWithNameTest()
     {
       this.AddTest<string, TagString>(Guid.NewGuid().ToString(), "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+    }
+
+    [Test]
+    public void Constructor_sets_default_limit_type()
+    {
+      // arrange
+      TagCollection target;
+      TagType expected;
+      TagType actual;
+
+      expected = TagType.None;
+
+      // act
+      target = new TagCollection();
+
+      // assert
+      actual = target.LimitType;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Constructor_sets_limit_type()
+    {
+      // arrange
+      TagCollection target;
+      TagType expected;
+      TagType actual;
+
+      expected = TagType.Byte;
+
+      // act
+      target = new TagCollection(expected);
+
+      // assert
+      actual = target.LimitType;
+      Assert.AreEqual(expected, actual);
     }
 
     #endregion

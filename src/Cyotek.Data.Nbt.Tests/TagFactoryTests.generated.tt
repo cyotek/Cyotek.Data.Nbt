@@ -39,7 +39,7 @@ namespace Cyotek.Data.Nbt.Tests
       value = default(<#=name #>);
 
       // act
-      actual = TagFactory.CreateTag(type, expected, value);
+      actual = TagFactory.CreateTag(expected, type, value);
 
       // assert
       Assert.AreEqual(expected, actual.Name);

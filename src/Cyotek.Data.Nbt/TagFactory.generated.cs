@@ -289,6 +289,83 @@ namespace Cyotek.Data.Nbt
       return new TagIntArray(name, value);
     }
 
+    /// <summary>
+    /// Creates a tag for the specified parameters.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="tagType"/> is not valid.</exception>
+    /// <param name="tagType">Type of the tag to create.</param>
+    /// <param name="name">The name of the tag create.</param>
+    /// <param name="listType">The type of items a list holds.</param>
+    /// <returns>
+    /// A new tag using the specified parameters.
+    /// </returns>
+    public static Tag CreateTag(string name, TagType tagType, TagType listType)
+    {
+      Tag result;
+
+      if (tagType != TagType.List)
+      {
+        switch (tagType)
+        {
+          case TagType.Byte:
+            result = new TagByte(name);
+            break;
+
+          case TagType.Short:
+            result = new TagShort(name);
+            break;
+
+          case TagType.Int:
+            result = new TagInt(name);
+            break;
+
+          case TagType.Long:
+            result = new TagLong(name);
+            break;
+
+          case TagType.Float:
+            result = new TagFloat(name);
+            break;
+
+          case TagType.Double:
+            result = new TagDouble(name);
+            break;
+
+          case TagType.ByteArray:
+            result = new TagByteArray(name);
+            break;
+
+          case TagType.String:
+            result = new TagString(name);
+            break;
+
+          case TagType.List:
+            result = new TagList(name);
+            break;
+
+          case TagType.Compound:
+            result = new TagCompound(name);
+            break;
+
+          case TagType.IntArray:
+            result = new TagIntArray(name);
+            break;
+
+            case TagType.End:
+            result = new TagEnd();
+            break;
+
+          default:
+            throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tagType));
+        }
+      }
+      else
+      {
+        result = new TagList(name, listType);
+      }
+
+      return result;
+    }
 
     /// <summary>
     /// Creates a tag for the specified value.
@@ -300,7 +377,7 @@ namespace Cyotek.Data.Nbt
     /// <returns>
     /// A tag instance containing the specified value.
     /// </returns>
-    public static Tag CreateTag(TagType tagType, string name, object value)
+    public static Tag CreateTag(string name, TagType tagType, object value)
     {
       Tag result;
 

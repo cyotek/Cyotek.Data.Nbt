@@ -10,6 +10,8 @@ namespace Cyotek.Data.Nbt
   {
     #region Fields
 
+    private TagType _limitType;
+
     private Tag _owner;
 
     #endregion
@@ -18,29 +20,22 @@ namespace Cyotek.Data.Nbt
 
     public TagCollection()
     {
-      this.LimitType = TagType.None;
+      _limitType = TagType.None;
     }
 
-    public TagCollection(Tag owner)
-      : this(owner, TagType.None)
-    { }
-
     public TagCollection(TagType limitType)
-      : this(null, limitType)
-    { }
-
-    public TagCollection(Tag owner, TagType limitType)
-      : this()
     {
-      this.Owner = owner;
-      this.LimitType = limitType;
+      _limitType = limitType;
     }
 
     #endregion
 
     #region Properties
 
-    public TagType LimitType { get; set; }
+    public TagType LimitType
+    {
+      get { return _limitType; }
+    }
 
     public Tag Owner
     {
@@ -248,16 +243,8 @@ namespace Cyotek.Data.Nbt
     public Tag Add(string name, TagType tagType, TagType limitToType)
     {
       Tag tag;
-      ICollectionTag collectionTag;
 
-      tag = TagFactory.CreateTag(tagType);
-      tag.Name = name;
-
-      collectionTag = tag as ICollectionTag;
-      if (collectionTag != null)
-      {
-        collectionTag.LimitToType = limitToType;
-      }
+      tag = TagFactory.CreateTag(name, tagType, limitToType);
 
       this.Add(tag);
 
@@ -266,6 +253,11 @@ namespace Cyotek.Data.Nbt
 
     public new void Add(Tag value)
     {
+      if (_limitType == TagType.None)
+      {
+        _limitType = value.Type;
+      }
+
       base.Add(value);
     }
 

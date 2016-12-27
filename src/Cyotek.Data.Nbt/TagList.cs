@@ -62,7 +62,7 @@ namespace Cyotek.Data.Nbt
       {
         if (this.Value == null || this.Value.LimitType != value)
         {
-          this.Value = new TagCollection(this, value);
+          this.Value = new TagCollection(value);
         }
       }
     }

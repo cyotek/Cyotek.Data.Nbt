@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Cyotek.Data.Nbt.Serialization;
-using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {

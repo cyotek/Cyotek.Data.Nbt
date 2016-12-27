@@ -1,3 +1,5 @@
+using System;
+
 namespace Cyotek.Data.Nbt
 {
   public static partial class TagFactory
@@ -6,12 +8,27 @@ namespace Cyotek.Data.Nbt
 
     public static Tag CreateTag(TagType tagType)
     {
-      return CreateTag(tagType, null);
+      return CreateTag(string.Empty, tagType);
+    }
+
+    public static Tag CreateTag(string name, TagType tagType)
+    {
+      return CreateTag(name, tagType, TagType.None);
     }
 
     public static Tag CreateTag(TagType tagType, object value)
     {
-      return CreateTag(tagType, string.Empty, value);
+      return CreateTag(string.Empty, tagType, value);
+    }
+
+    public static TagList CreateTag(TagType tagType, TagType listType)
+    {
+      if (tagType != TagType.List)
+      {
+        throw new ArgumentException("Only lists can have a list type.", nameof(tagType));
+      }
+
+      return new TagList(listType);
     }
 
     #endregion

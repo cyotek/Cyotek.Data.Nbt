@@ -74,16 +74,8 @@ namespace Cyotek.Data.Nbt
     public Tag Add(string name, TagType tagType, TagType limitToType)
     {
       Tag tag;
-      ICollectionTag collectionTag;
 
-      tag = TagFactory.CreateTag(tagType);
-      tag.Name = name;
-
-      collectionTag = tag as ICollectionTag;
-      if (collectionTag != null)
-      {
-        collectionTag.LimitToType = limitToType;
-      }
+      tag = TagFactory.CreateTag(name, tagType, limitToType);
 
       this.Add(tag);
 

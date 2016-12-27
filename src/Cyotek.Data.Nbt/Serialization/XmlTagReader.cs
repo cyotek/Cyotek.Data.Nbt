@@ -304,47 +304,47 @@ namespace Cyotek.Data.Nbt.Serialization
       switch (type)
       {
         case TagType.Byte:
-          result = TagFactory.CreateTag(type, name, this.ReadByte());
+          result = TagFactory.CreateTag(name, this.ReadByte());
           break;
 
         case TagType.Short:
-          result = TagFactory.CreateTag(type, name, this.ReadShort());
+          result = TagFactory.CreateTag(name, this.ReadShort());
           break;
 
         case TagType.Int:
-          result = TagFactory.CreateTag(type, name, this.ReadInt());
+          result = TagFactory.CreateTag(name, this.ReadInt());
           break;
 
         case TagType.Long:
-          result = TagFactory.CreateTag(type, name, this.ReadLong());
+          result = TagFactory.CreateTag(name, this.ReadLong());
           break;
 
         case TagType.Float:
-          result = TagFactory.CreateTag(type, name, this.ReadFloat());
+          result = TagFactory.CreateTag(name, this.ReadFloat());
           break;
 
         case TagType.Double:
-          result = TagFactory.CreateTag(type, name, this.ReadDouble());
+          result = TagFactory.CreateTag(name, this.ReadDouble());
           break;
 
         case TagType.ByteArray:
-          result = TagFactory.CreateTag(type, name, this.ReadByteArray());
+          result = TagFactory.CreateTag(name, this.ReadByteArray());
           break;
 
         case TagType.String:
-          result = TagFactory.CreateTag(type, name, this.ReadString());
+          result = TagFactory.CreateTag(name, this.ReadString());
           break;
 
         case TagType.List:
-          result = TagFactory.CreateTag(type, name, this.ReadList());
+          result = TagFactory.CreateTag(name, this.ReadList());
           break;
 
         case TagType.Compound:
-          result = TagFactory.CreateTag(type, name, this.ReadCompound());
+          result = TagFactory.CreateTag(name, this.ReadCompound());
           break;
 
         case TagType.IntArray:
-          result = TagFactory.CreateTag(type, name, this.ReadIntArray());
+          result = TagFactory.CreateTag(name, this.ReadIntArray());
           break;
 
         default:

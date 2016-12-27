@@ -10,11 +10,9 @@ namespace Cyotek.Data.Nbt
 <# for (int i = 0; i < netTypeNames.Length; i++)
     {
       string name;
-      string nbtName;
       string tagName;
 
       name = netTypeNames[i];
-      nbtName = nbtTypeNames[i];
       tagName = nbtTagTypeNames[i];
 
       if (name != null)
@@ -49,6 +47,58 @@ namespace Cyotek.Data.Nbt
       }
     }
 #>
+    /// <summary>
+    /// Creates a tag for the specified parameters.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="tagType"/> is not valid.</exception>
+    /// <param name="tagType">Type of the tag to create.</param>
+    /// <param name="name">The name of the tag create.</param>
+    /// <param name="listType">The type of items a list holds.</param>
+    /// <returns>
+    /// A new tag using the specified parameters.
+    /// </returns>
+    public static Tag CreateTag(string name, TagType tagType, TagType listType)
+    {
+      Tag result;
+
+      if (tagType != TagType.List)
+      {
+        switch (tagType)
+        {
+  <# for (int i = 0; i < nbtTypeNames.Length; i++)
+    {
+      string tagName;
+      string nbtName;
+
+      nbtName = nbtTypeNames[i];
+      tagName = nbtTagTypeNames[i];
+
+      if (tagName != "TagEnd")
+      {
+        #>
+        case TagType.<#=nbtName #>:
+            result = new <#=tagName #>(name);
+            break;
+
+  <#
+      }
+    }
+  #>
+          case TagType.End:
+            result = new TagEnd();
+            break;
+
+          default:
+            throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tagType));
+        }
+      }
+      else
+      {
+        result = new TagList(name, listType);
+      }
+
+      return result;
+    }
 
     /// <summary>
     /// Creates a tag for the specified value.
@@ -60,7 +110,7 @@ namespace Cyotek.Data.Nbt
     /// <returns>
     /// A tag instance containing the specified value.
     /// </returns>
-    public static Tag CreateTag(TagType tagType, string name, object value)
+    public static Tag CreateTag(string name, TagType tagType, object value)
     {
       Tag result;
 
