@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 using System.Xml;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
@@ -30,6 +31,27 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // assert
       NbtAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void IsNbtDocument_returns_false_for_non_compound_type()
+    {
+      // arrange
+      XmlTagReader target;
+      MemoryStream stream;
+      bool actual;
+
+      stream = new MemoryStream(Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>
+<Level type=""Int"" />
+"));
+
+      target = new XmlTagReader(stream);
+
+      // act
+      actual = target.IsNbtDocument();
+
+      // assert
+      Assert.IsFalse(actual);
     }
 
     [Test]

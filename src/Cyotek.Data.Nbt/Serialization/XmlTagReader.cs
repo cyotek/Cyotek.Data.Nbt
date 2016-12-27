@@ -62,7 +62,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
         typeName = _reader.GetAttribute("type");
 
-        result = typeName != null;
+        result = !string.IsNullOrEmpty(typeName) && (TagType)Enum.Parse(typeof(TagType), typeName, true) == TagType.Compound;
       }
       catch
       {
@@ -220,6 +220,7 @@ namespace Cyotek.Data.Nbt.Serialization
       string typeName;
 
       typeName = _reader.GetAttribute("type");
+
       if (string.IsNullOrEmpty(typeName))
       {
         throw new InvalidDataException("Missing type attribute, unable to determine tag type.");

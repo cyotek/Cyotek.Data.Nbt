@@ -21,6 +21,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 ### Fixed
 * All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version
 * `XmlTagReader` crashed if empty byte or int array values were present
+* Calling `XmlTagReader.IsNbtDocument` would return `true` if a `type` attribute was found, regardless of if the value was `TagCompound` or not
 
 ### Changed
 * Tag names should now be empty when not set rather than `null`
