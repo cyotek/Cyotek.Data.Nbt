@@ -19,7 +19,8 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument` 
 
 ### Fixed
-* All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version 
+* All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version
+* `XmlTagReader` crashed if empty byte or int array values were present
 
 ### Changed
 * Tag names should now be empty when not set rather than `null`
