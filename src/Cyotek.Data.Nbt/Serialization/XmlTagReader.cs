@@ -12,10 +12,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private static readonly char[] _arraySeparaters =
     {
-      ' ',
-      '\t',
-      '\n',
-      '\r'
+      ' ', '\t', '\n', '\r'
     };
 
     private readonly XmlReader _reader;
@@ -179,6 +176,11 @@ namespace Cyotek.Data.Nbt.Serialization
       return this.ReadTag(options, TagType.None);
     }
 
+    public override string ReadTagName()
+    {
+      return _reader.Name;
+    }
+
     public override TagType ReadTagType()
     {
       TagType type;
@@ -210,7 +212,7 @@ namespace Cyotek.Data.Nbt.Serialization
         name = _reader.GetAttribute("name");
         if (string.IsNullOrEmpty(name))
         {
-          name = _reader.Name;
+          name = this.ReadTagName();
         }
       }
       else

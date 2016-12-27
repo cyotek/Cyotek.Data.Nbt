@@ -34,6 +34,8 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public abstract Tag ReadTag(ReadTagOptions options);
 
+    public abstract string ReadTagName();
+
     public abstract TagType ReadTagType();
 
     /// <summary>
@@ -63,7 +65,5 @@ namespace Cyotek.Data.Nbt.Serialization
     }
 
     #endregion
-
-
   }
 }

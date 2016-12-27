@@ -7,11 +7,11 @@ namespace Cyotek.Data.Nbt.Serialization
 {
   public class BinaryTagReader : TagReader
   {
-    #region Fields
+    #region Constants
 
-    private Stream _stream;
+    private readonly Stream _originalStream;
 
-    private Stream _originalStream;
+    private readonly Stream _stream;
 
     #endregion
 
@@ -38,8 +38,6 @@ namespace Cyotek.Data.Nbt.Serialization
         {
           _stream = stream;
         }
-
-
       }
       else
       {
@@ -161,7 +159,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       TagCompound tag;
 
-        tag = (TagCompound)this.ReadTag(options);
+      tag = (TagCompound)this.ReadTag(options);
 
       return tag;
     }
@@ -393,7 +391,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if (type != TagType.End && (options & ReadTagOptions.IgnoreName) == 0)
       {
-        name = this.ReadString();
+        name = this.ReadTagName();
       }
       else
       {
@@ -463,6 +461,11 @@ namespace Cyotek.Data.Nbt.Serialization
       }
 
       return result;
+    }
+
+    public override string ReadTagName()
+    {
+      return this.ReadString();
     }
 
     public override TagType ReadTagType()
