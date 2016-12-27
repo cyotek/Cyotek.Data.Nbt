@@ -196,74 +196,74 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Serialization\BinaryTagWriterTests.generated.tt">
+    <None Include="Serialization\BinaryTagWriterTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryTagWriterTests.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Serialization\XmlTagWriterTests.generated.tt">
+    </None>
+    <None Include="Serialization\XmlTagWriterTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XmlTagWriterTests.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="TagByteArrayTests.generated.tt">
+    </None>
+    <None Include="TagByteArrayTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagByteArrayTests.generated.cs</LastGenOutput>
       <DependentUpon>TagByteArrayTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagByteTests.generated.tt">
+    </None>
+    <None Include="TagByteTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagByteTests.generated.cs</LastGenOutput>
       <DependentUpon>TagByteTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagCompoundTests,generated.tt">
+    </None>
+    <None Include="TagCompoundTests,generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagCompoundTests,generated.cs</LastGenOutput>
       <DependentUpon>TagCompoundTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagDoubleTests.generated.tt">
+    </None>
+    <None Include="TagDoubleTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagDoubleTests.generated.cs</LastGenOutput>
       <DependentUpon>TagDoubleTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagFactoryTests.generated.tt">
+    </None>
+    <None Include="TagFactoryTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFactoryTests.generated.cs</LastGenOutput>
       <DependentUpon>TagFactoryTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagFloatTests.generated.tt">
+    </None>
+    <None Include="TagFloatTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFloatTests.generated.cs</LastGenOutput>
       <DependentUpon>TagFloatTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagIntArrayTests.generated.tt">
+    </None>
+    <None Include="TagIntArrayTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagIntArrayTests.generated.cs</LastGenOutput>
       <DependentUpon>TagIntArrayTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagIntTests.generated.tt">
+    </None>
+    <None Include="TagIntTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagIntTests.generated.cs</LastGenOutput>
       <DependentUpon>TagIntTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagListTests.generated.tt">
+    </None>
+    <None Include="TagListTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagListTests.generated.cs</LastGenOutput>
       <DependentUpon>TagListTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagLongTests.generated.tt">
+    </None>
+    <None Include="TagLongTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagLongTests.generated.cs</LastGenOutput>
       <DependentUpon>TagLongTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagShortTests.generated.tt">
+    </None>
+    <None Include="TagShortTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagShortTests.generated.cs</LastGenOutput>
       <DependentUpon>TagShortTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagStringTests.generated.tt">
+    </None>
+    <None Include="TagStringTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagStringTests.generated.cs</LastGenOutput>
       <DependentUpon>TagStringTests.cs</DependentUpon>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
