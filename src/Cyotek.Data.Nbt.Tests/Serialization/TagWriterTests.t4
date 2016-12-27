@@ -49,15 +49,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected = <#=tagTestData[i]#>;
 
         target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
 
         // act
         target.WriteTag(expected);
 
         // assert
+        target.WriteEndTag();
         target.WriteEndDocument();
         stream.Position = 0;
         reader = this.CreateReader(stream);
-        actual = reader.ReadTag();
+        actual = ((TagCompound)reader.ReadTag())[0];
         Assert.AreEqual(expected, actual.GetValue());
       }
     }
@@ -80,15 +82,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expectedValue = <#=tagTestData[i]#>;
 
         target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
 
         // act
         target.WriteTag(expectedName, expectedValue);
 
         // assert
+        target.WriteEndTag();
         target.WriteEndDocument();
         stream.Position = 0;
         reader = this.CreateReader(stream);
-        actual = reader.ReadTag();
+        actual = ((TagCompound)reader.ReadTag())[0];
         Assert.AreEqual(expectedName, actual.Name);
         Assert.AreEqual(expectedValue, actual.GetValue());
       }

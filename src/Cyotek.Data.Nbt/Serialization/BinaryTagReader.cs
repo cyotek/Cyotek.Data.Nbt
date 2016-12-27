@@ -11,6 +11,8 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private Stream _stream;
 
+    private Stream _originalStream;
+
     #endregion
 
     #region Constructors
@@ -20,7 +22,29 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public BinaryTagReader(Stream stream)
     {
-      _stream = stream;
+      if (stream.CanSeek)
+      {
+        if (stream.IsGzipCompressed())
+        {
+          _originalStream = stream;
+          _stream = new GZipStream(_originalStream, CompressionMode.Decompress);
+        }
+        else if (stream.IsDeflateCompressed())
+        {
+          _originalStream = stream;
+          _stream = new DeflateStream(_originalStream, CompressionMode.Decompress);
+        }
+        else
+        {
+          _stream = stream;
+        }
+
+
+      }
+      else
+      {
+        _stream = stream;
+      }
     }
 
     #endregion
@@ -30,27 +54,37 @@ namespace Cyotek.Data.Nbt.Serialization
     public override bool IsNbtDocument()
     {
       bool result;
+      Stream stream;
       long position;
 
-      position = _stream.Position;
+      stream = _originalStream ?? _stream;
+
+      if (stream.CanSeek)
+      {
+        position = stream.Position;
+      }
+      else
+      {
+        position = -1;
+      }
 
       try
       {
-        if (_stream.IsGzipCompressed())
+        if (stream.IsGzipCompressed())
         {
-          using (Stream decompressionStream = new GZipStream(_stream, CompressionMode.Decompress, true))
+          using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
           {
             result = decompressionStream.ReadByte() == (int)TagType.Compound;
           }
         }
-        else if (_stream.IsDeflateCompressed())
+        else if (stream.IsDeflateCompressed())
         {
-          using (Stream decompressionStream = new DeflateStream(_stream, CompressionMode.Decompress, true))
+          using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
           {
             result = decompressionStream.ReadByte() == (int)TagType.Compound;
           }
         }
-        else if (_stream.ReadByte() == (int)TagType.Compound)
+        else if (stream.ReadByte() == (int)TagType.Compound)
         {
           result = true;
         }
@@ -64,7 +98,10 @@ namespace Cyotek.Data.Nbt.Serialization
         result = false;
       }
 
-      _stream.Position = position;
+      if (stream.CanSeek)
+      {
+        stream.Position = position;
+      }
 
       return result;
     }
@@ -124,30 +161,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       TagCompound tag;
 
-      if (_stream.IsGzipCompressed())
-      {
-        using (Stream decompressionStream = new GZipStream(_stream, CompressionMode.Decompress))
-        {
-          _stream = decompressionStream;
-          tag = (TagCompound)this.ReadTag(options);
-        }
-      }
-      else if (_stream.IsDeflateCompressed())
-      {
-        using (Stream decompressionStream = new DeflateStream(_stream, CompressionMode.Decompress))
-        {
-          _stream = decompressionStream;
-          tag = (TagCompound)this.ReadTag(options);
-        }
-      }
-      else if (_stream.PeekNextByte() == (int)TagType.Compound)
-      {
         tag = (TagCompound)this.ReadTag(options);
-      }
-      else
-      {
-        throw new InvalidDataException("Source stream does not contain a NBT document.");
-      }
 
       return tag;
     }
