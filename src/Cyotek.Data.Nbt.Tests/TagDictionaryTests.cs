@@ -26,8 +26,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.AddTest<byte[], TagByteArray>(Guid.NewGuid().ToString(), new[]
                                                                     {
-                                                                      byte.MinValue,
-                                                                      byte.MaxValue
+                                                                      byte.MinValue, byte.MaxValue
                                                                     });
     }
 
@@ -100,8 +99,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.AddTest<int[], TagIntArray>(Guid.NewGuid().ToString(), new[]
                                                                   {
-                                                                    int.MinValue,
-                                                                    int.MaxValue
+                                                                    int.MinValue, int.MaxValue
                                                                   });
     }
 
@@ -161,8 +159,7 @@ namespace Cyotek.Data.Nbt.Tests
       // act
       target.AddRange(new[]
                       {
-                        new KeyValuePair<string, object>(key1, value1),
-                        new KeyValuePair<string, object>(key2, value2)
+                        new KeyValuePair<string, object>(key1, value1), new KeyValuePair<string, object>(key2, value2)
                       });
 
       // assert

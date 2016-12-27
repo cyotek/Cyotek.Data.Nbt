@@ -11,13 +11,9 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private readonly Stream _originalStream;
 
-    private readonly Stream _stream;
-
-    #endregion
-
-    #region Fields
-
     private readonly TagState _state;
+
+    private readonly Stream _stream;
 
     #endregion
 

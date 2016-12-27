@@ -41,7 +41,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         // arrange
         TagWriter target;
         TagReader reader;
-        <#=name#> expected;
+        <#=name #> expected;
         Tag actual;
 
         target = this.CreateWriter(stream);

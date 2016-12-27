@@ -51,13 +51,10 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
-
     public Tag Add(string name, bool value)
     {
       return this.Add(name, (byte)(value ? 1 : 0));
     }
-
-
 
     public Tag Add(string name, DateTime value)
     {

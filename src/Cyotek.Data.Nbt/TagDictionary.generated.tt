@@ -21,16 +21,16 @@ namespace Cyotek.Data.Nbt
       {
         #>
     /// <summary>
-    /// Creates and adds a new <see cref="<#=className#>"/> with the specified name and value.
+    /// Creates and adds a new <see cref="<#=className #>"/> with the specified name and value.
     /// </summary>
     /// <param name="name">The name of the tag to add.</param>
     /// <param name="value">The value of the tag.</param>
     /// <returns>
-    /// A <see cref="<#=className#>"/> containing the specified name and value.
+    /// A <see cref="<#=className #>"/> containing the specified name and value.
     /// </returns>
-    public <#=className#> Add(string name, <#=name#> value)
+    public <#=className #> Add(string name, <#=name #> value)
     {
-      <#=className#> tag;
+      <#=className #> tag;
 
       tag = TagFactory.CreateTag(name, value);
 

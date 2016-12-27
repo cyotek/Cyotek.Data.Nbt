@@ -18,14 +18,14 @@
     public TagType ChildType;
 
     /// <summary>
-    /// Expected number of children.
-    /// </summary>
-    public int ExpectedCount;
-
-    /// <summary>
     /// Container type.
     /// </summary>
     public TagType ContainerType;
+
+    /// <summary>
+    /// Expected number of children.
+    /// </summary>
+    public int ExpectedCount;
 
     #endregion
   }

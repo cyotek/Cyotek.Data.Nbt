@@ -8,10 +8,6 @@ namespace Cyotek.Data.Nbt.Tests
 {
   public class TestBase
   {
-    #region Constants
-
-    #endregion
-
     #region Constructors
 
     protected TestBase()

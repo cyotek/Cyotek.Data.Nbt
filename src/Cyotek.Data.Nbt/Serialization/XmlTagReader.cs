@@ -17,7 +17,11 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private readonly XmlReader _reader;
 
-    private TagState _state;
+    #endregion
+
+    #region Fields
+
+    private readonly TagState _state;
 
     #endregion
 
@@ -158,6 +162,11 @@ namespace Cyotek.Data.Nbt.Serialization
       return value;
     }
 
+    public override Tag ReadTag()
+    {
+      return this.ReadTag(TagType.None);
+    }
+
     public override string ReadTagName()
     {
       return _reader.Name;
@@ -179,9 +188,48 @@ namespace Cyotek.Data.Nbt.Serialization
       return type;
     }
 
-    public override Tag ReadTag()
+    private void InitializeReader()
     {
-      return this.ReadTag(TagType.None);
+      if (_reader.ReadState == ReadState.Initial)
+      {
+        while (!_reader.IsStartElement())
+        {
+          _reader.Read();
+        }
+      }
+    }
+
+    private void ReadChildValues(ICollection<Tag> value, TagType listType)
+    {
+      int depth;
+
+      this.SkipWhitespace();
+
+      depth = _reader.Depth;
+
+      if (_reader.NodeType != XmlNodeType.EndElement)
+      {
+        do
+        {
+          if (_reader.NodeType == XmlNodeType.Element)
+          {
+            Tag child;
+
+            child = this.ReadTag(listType);
+
+            value.Add(child);
+          }
+          else
+          {
+            _reader.Read();
+          }
+        } while (_reader.Depth == depth);
+      }
+      else
+      {
+        _reader.Read();
+        this.SkipWhitespace();
+      }
     }
 
     private Tag ReadTag(TagType defaultTagType)
@@ -263,50 +311,6 @@ namespace Cyotek.Data.Nbt.Serialization
       _state.EndTag();
 
       return result;
-    }
-
-    private void InitializeReader()
-    {
-      if (_reader.ReadState == ReadState.Initial)
-      {
-        while (!_reader.IsStartElement())
-        {
-          _reader.Read();
-        }
-      }
-    }
-
-    private void ReadChildValues(ICollection<Tag> value, TagType listType)
-    {
-      int depth;
-
-      this.SkipWhitespace();
-
-      depth = _reader.Depth;
-
-      if (_reader.NodeType != XmlNodeType.EndElement)
-      {
-        do
-        {
-          if (_reader.NodeType == XmlNodeType.Element)
-          {
-            Tag child;
-
-            child = this.ReadTag(listType);
-
-            value.Add(child);
-          }
-          else
-          {
-            _reader.Read();
-          }
-        } while (_reader.Depth == depth);
-      }
-      else
-      {
-        _reader.Read();
-        this.SkipWhitespace();
-      }
     }
 
     private TagType ReadTagType(TagType defaultTagType)

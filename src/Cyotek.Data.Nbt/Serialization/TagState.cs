@@ -9,9 +9,13 @@ namespace Cyotek.Data.Nbt.Serialization
   /// </summary>
   internal sealed class TagState
   {
-    #region Fields
+    #region Constants
 
     private readonly FileAccess _mode;
+
+    #endregion
+
+    #region Fields
 
     private Stack<TagContainerState> _openContainers;
 

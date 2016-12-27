@@ -53,12 +53,12 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="name">The name of the tag entry to write.</param>
     /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
 <#
-if(name.EndsWith("[]"))
-{
-#>
+if (name.EndsWith("[]"))
+        {
+          #>
     [CLSCompliant(false)]
 <#
-}
+        }
  #>
     public void WriteListTag(string name, <#=name #>[] values)
     {
@@ -98,12 +98,12 @@ if(name.EndsWith("[]"))
     /// </summary>
     /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
 <#
-if(name.EndsWith("[]"))
-{
-#>
+if (name.EndsWith("[]"))
+        {
+          #>
     [CLSCompliant(false)]
 <#
-}
+        }
  #>
     public void WriteListTag(<#=name #>[] values)
     {

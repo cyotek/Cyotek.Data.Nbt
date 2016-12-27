@@ -164,7 +164,7 @@ namespace Cyotek.Data.Nbt
         TagType type;
 
         type = reader.ReadTagType();
-        if(type!= TagType.Compound)
+        if (type != TagType.Compound)
         {
           throw new InvalidDataException("Source document does not appear to be a NBT document.");
         }

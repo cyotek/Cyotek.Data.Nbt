@@ -24,9 +24,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.ReadTest(new byte[]
                     {
-                      0,
-                      128,
-                      255
+                      0, 128, 255
                     }, (writer, value) => writer.WriteTag(value), reader => reader.ReadByteArray2());
     }
 
@@ -53,10 +51,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.ReadTest(new int[]
                     {
-                      int.MinValue,
-                      short.MinValue,
-                      short.MaxValue,
-                      int.MaxValue
+                      int.MinValue, short.MinValue, short.MaxValue, int.MaxValue
                     }, (writer, value) => writer.WriteTag(value), reader => reader.ReadIntArray2());
     }
 
@@ -77,38 +72,6 @@ namespace Cyotek.Data.Nbt.Tests
     {
       this.ReadTest<string>("HELLO WORLD THIS IS A TEST STRING ÅÄÖ!", (writer, value) => writer.WriteTag(value), reader => reader.ReadString2());
     }
-
-    [Test]
-    [Ignore]
-    public void Types_load_in_correct_order()
-    {
-      using (Stream stream = File.OpenRead(this.ComplexDataFileName))
-      {
-        using (Stream decompressorStream = new GZipStream(stream, CompressionMode.Decompress))
-        {
-          // arrange
-          TR2 target;
-          List<TagType> actual;
-          TagType[] expected;
-
-          expected = new TagType[0];
-          actual = new List<TagType>();
-
-          target = new TR2(decompressorStream);
-
-          // act
-          while (target.MoveToNextElement())
-          {
-            Debug.WriteLine(target.Name);
-            actual.Add(target.Type);
-          } 
-
-          // assert
-          Assert.AreEqual(expected, actual);
-        }
-      }    }
-
-
 
     [Test]
     [Ignore]
@@ -264,6 +227,37 @@ namespace Cyotek.Data.Nbt.Tests
 
           // assert
           NbtAssert.AreEqual(expected, actual);
+        }
+      }
+    }
+
+    [Test]
+    [Ignore]
+    public void Types_load_in_correct_order()
+    {
+      using (Stream stream = File.OpenRead(this.ComplexDataFileName))
+      {
+        using (Stream decompressorStream = new GZipStream(stream, CompressionMode.Decompress))
+        {
+          // arrange
+          TR2 target;
+          List<TagType> actual;
+          TagType[] expected;
+
+          expected = new TagType[0];
+          actual = new List<TagType>();
+
+          target = new TR2(decompressorStream);
+
+          // act
+          while (target.MoveToNextElement())
+          {
+            Debug.WriteLine(target.Name);
+            actual.Add(target.Type);
+          }
+
+          // assert
+          Assert.AreEqual(expected, actual);
         }
       }
     }

@@ -2,93 +2,27 @@
 
     string[] nbtTypeNames = new[]
                             {
-                              "End",
-                              "Byte",
-                              "Short",
-                              "Int",
-                              "Long",
-                              "Float",
-                              "Double",
-                              "ByteArray",
-                              "String",
-                              "List",
-                              "Compound",
-                              "IntArray"
+                              "End", "Byte", "Short", "Int", "Long", "Float", "Double", "ByteArray", "String", "List", "Compound", "IntArray"
                             };
     string[] nbtTagTypeNames = new[]
                                {
-                                 "TagEnd",
-                                 "TagByte",
-                                 "TagShort",
-                                 "TagInt",
-                                 "TagLong",
-                                 "TagFloat",
-                                 "TagDouble",
-                                 "TagByteArray",
-                                 "TagString",
-                                 "TagList",
-                                 "TagCompound",
-                                 "TagIntArray"
+                                 "TagEnd", "TagByte", "TagShort", "TagInt", "TagLong", "TagFloat", "TagDouble", "TagByteArray", "TagString", "TagList", "TagCompound", "TagIntArray"
                                };
     string[] netTypeNames = new[]
                             {
-                              null,
-                              "byte",
-                              "short",
-                              "int",
-                              "long",
-                              "float",
-                              "double",
-                              "byte[]",
-                              "string",
-                              "TagCollection",
-                              "TagDictionary",
-                              "int[]"
+                              null, "byte", "short", "int", "long", "float", "double", "byte[]", "string", "TagCollection", "TagDictionary", "int[]"
                             };
     string[] objectConversions = new[]
                                  {
-                                   null,
-                                   "Convert.ToByte(value)",
-                                   "Convert.ToInt16(value)",
-                                   "Convert.ToInt32(value)",
-                                   "Convert.ToInt64(value)",
-                                   "Convert.ToSingle(value)",
-                                   "Convert.ToDouble(value)",
-                                   "(byte[])value",
-                                   "Convert.ToString(value)",
-                                   "(TagCollection)value ?? new TagCollection()",
-                                   "(TagDictionary)value ?? new TagDictionary()",
-                                   "(int[])value"
+                                   null, "Convert.ToByte(value)", "Convert.ToInt16(value)", "Convert.ToInt32(value)", "Convert.ToInt64(value)", "Convert.ToSingle(value)", "Convert.ToDouble(value)", "(byte[])value", "Convert.ToString(value)", "(TagCollection)value ?? new TagCollection()", "(TagDictionary)value ?? new TagDictionary()", "(int[])value"
                                  };
     string[] nbtTypeDescriptions = new[]
                                    {
-                                     "Used to mark the end of a list",
-                                     "A single signed byte",
-                                     "A signed 16bit short",
-                                     "A signed 32bit integer",
-                                     "A signed 64bit long",
-                                     "A 32bit floating point value",
-                                     "A 64bit floating point value",
-                                     "An array of bytes of unspecified format",
-                                     "An array of bytes defining a string in UTF-8 format",
-                                     "A sequential list of unnamed tags of a specific type",
-                                     "A sequential list of named tags of variable types",
-                                     "An array of integers of unspecified format"
+                                     "Used to mark the end of a list", "A single signed byte", "A signed 16bit short", "A signed 32bit integer", "A signed 64bit long", "A 32bit floating point value", "A 64bit floating point value", "An array of bytes of unspecified format", "An array of bytes defining a string in UTF-8 format", "A sequential list of unnamed tags of a specific type", "A sequential list of named tags of variable types", "An array of integers of unspecified format"
                                    };
     string[] testValues = new[]
                           {
-                            null,
-                            "126",
-                            "(short)4343",
-                            "48943848",
-                            "49308638948329",
-                            "12.4535F",
-                            "290.495494D",
-                            "new byte[] {2,4,8}",
-                            "\"Alpha\"",
-                            "new TagCollection()",
-                            "new TagDictionary()",
-                            "new int[] {16,32,64}"
+                            null, "126", "(short)4343", "48943848", "49308638948329", "12.4535F", "290.495494D", "new byte[] {2,4,8}", "\"Alpha\"", "new TagCollection()", "new TagDictionary()", "new int[] {16,32,64}"
                           };
     #>
 <#@ include file="AutoGenerated.t4" #>

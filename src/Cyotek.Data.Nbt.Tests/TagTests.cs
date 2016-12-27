@@ -91,24 +91,7 @@ namespace Cyotek.Data.Nbt.Tests
       expectedCount = 29;
       expectedNames = new[]
                       {
-                        "Level",
-                        "longTest",
-                        "shortTest",
-                        "stringTest",
-                        "floatTest",
-                        "intTest",
-                        "nested compound test",
-                        "ham",
-                        "name",
-                        "value",
-                        "egg",
-                        "listTest (long)",
-                        "",
-                        "listTest (compound)",
-                        "created-on",
-                        "byteTest",
-                        "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
-                        "doubleTest"
+                        "Level", "longTest", "shortTest", "stringTest", "floatTest", "intTest", "nested compound test", "ham", "name", "value", "egg", "listTest (long)", "", "listTest (compound)", "created-on", "byteTest", "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", "doubleTest"
                       };
 
       // act
@@ -171,9 +154,7 @@ namespace Cyotek.Data.Nbt.Tests
       target = data.Query(@"listTest (compound)\0\name");
       expected = new[]
                  {
-                   data,
-                   data.Value["listTest (compound)"],
-                   data.Query(@"listTest (compound)\0")
+                   data, data.Value["listTest (compound)"], data.Query(@"listTest (compound)\0")
                  };
 
       // act
