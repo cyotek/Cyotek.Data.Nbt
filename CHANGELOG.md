@@ -1,14 +1,43 @@
 Cyotek.Data.Nbt Change Log
 ==========================
 
-[3.0]
------
+[3.0.0-alpha] - 2016-12-27
+------------------------
 
-Removed ITag.Value. Each Tag implementation has a strongly typed Value property without boxing.
-Added ITag.SetValue and ITag.GetValue methods that allow access to a value when you don't know the concrete type - these method box.
-Concrete tag classes are now sealed
-Reworked TagFactory to try and avoid boxing
-Removed boxing implementation of ToValueString. All concerete classes now explicitly implement.
+This release concentrates on cleaning up the code by removing unused or rarely used features, solving boxing issues, removing some hacks and generally reworking the API. Some code changes may be required due to the level of (breaking) change this release introduces.
+
+A fair chunk of both the library code and test code are now generated via T4 templates.
+
+### Added
+* With the base `Tag` class no longer offering a `Value` property, `GetValue` and `SetValue` methods are available. However, it's recommended these are not used as they will box value types
+* The `TagWriter` class can now be used to directly write NBT data to a stream without having to first create concrete `Tag` classes (e.g. similar to using `XmlWriter` over `XmlDocument.Save()`)
+* The base `Tag` class now implements `IEquatable<Tag>` (boxing)
+* Each concrete tag class now implements `IEquatable<>` (non-boxing)
+* Lots of additional tests
+* Added indexers to `TagCompound`
+* Added `TagCompound.Count`
+* Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument` 
+
+### Fixed
+* All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version 
+
+### Changed
+* Tag names should now be empty when not set rather than `null`
+* `TagReader.ReadCollection` and `ReadDictionary` renamed to `ReadList` and `ReadCompound` to match their NBT types.
+
+### Removed
+* Removed the `WriteTagOptions` and `ReadTagOptions` enumerations, plus removed any overloaded method supplying these options. Each reader and writer now maintains its own state to know when it should or should not be doing things without having to be told
+* Removed the `ITag` interface as it was a pointless level of abstraction and there is already an abstract `Tag` class
+* Similarly, `ITagReader` and `ITagWriter` have also been removed
+* Removed the default constructors from tag readers and writers
+* Removed the default `Tag.Value` implementation. Each `Tag` implementation has a strongly typed `Value` property without boxing.
+* Removed all events from the `Tag` object as they added overhead without being used in most use cases
+* Removed the `TagException` class as it was unused
+* Removed `Tag.ToString(string)` overloads
+* Removed `Tag.CanRemove`
+* `Tag` properties are no longer `virtual`
+* Removed the `CompressionOptions` enum and related support from `NbtDocument`. When saving to a file, XML will be uncompressed, binary will be gzipped. When saving to a `Stream`, you can pass in your own `GZipStream`, `DeflateStream` or equivalent
+
 
 [2.1.0] - 2016-02-24
 --------------------
