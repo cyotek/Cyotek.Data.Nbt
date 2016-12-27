@@ -23,16 +23,16 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public abstract bool IsNbtDocument();
 
-    public abstract TagCompound ReadDocument();
-
-    public abstract TagCompound ReadDocument(ReadTagOptions options);
-
-    public Tag ReadTag()
+    public virtual TagCompound ReadDocument()
     {
-      return this.ReadTag(ReadTagOptions.None);
+      TagCompound tag;
+
+      tag = (TagCompound)this.ReadTag();
+
+      return tag;
     }
 
-    public abstract Tag ReadTag(ReadTagOptions options);
+    public abstract Tag ReadTag();
 
     public abstract string ReadTagName();
 

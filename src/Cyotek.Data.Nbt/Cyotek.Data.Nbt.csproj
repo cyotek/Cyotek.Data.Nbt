@@ -59,7 +59,6 @@
     <Compile Include="Serialization\TagContainerState.cs" />
     <Compile Include="Serialization\TagState.cs" />
     <Compile Include="Serialization\TagWriter.cs" />
-    <Compile Include="Serialization\ReadTagOptions.cs" />
     <Compile Include="Serialization\TagWriter.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -15,6 +15,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #endregion
 
+    #region Fields
+
+    private readonly TagState _state;
+
+    #endregion
+
     #region Constructors
 
     public BinaryTagReader()
@@ -43,6 +49,9 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         _stream = stream;
       }
+
+      _state = new TagState(FileAccess.Read);
+      _state.Start();
     }
 
     #endregion
@@ -109,6 +118,7 @@ namespace Cyotek.Data.Nbt.Serialization
       int data;
 
       data = _stream.ReadByte();
+
       if (data != (data & 0xFF))
       {
         throw new InvalidDataException();
@@ -123,8 +133,8 @@ namespace Cyotek.Data.Nbt.Serialization
       byte[] data;
 
       length = this.ReadInt();
-
       data = new byte[length];
+
       if (length != _stream.Read(data, 0, length))
       {
         throw new InvalidDataException();
@@ -141,6 +151,7 @@ namespace Cyotek.Data.Nbt.Serialization
       results = new TagDictionary();
 
       tag = this.ReadTag();
+
       while (tag.Type != TagType.End)
       {
         results.Add(tag);
@@ -150,25 +161,12 @@ namespace Cyotek.Data.Nbt.Serialization
       return results;
     }
 
-    public override TagCompound ReadDocument()
-    {
-      return this.ReadDocument(ReadTagOptions.None);
-    }
-
-    public override TagCompound ReadDocument(ReadTagOptions options)
-    {
-      TagCompound tag;
-
-      tag = (TagCompound)this.ReadTag(options);
-
-      return tag;
-    }
-
     public override double ReadDouble()
     {
       byte[] data;
 
       data = new byte[BitHelper.DoubleSize];
+
       if (BitHelper.DoubleSize != _stream.Read(data, 0, BitHelper.DoubleSize))
       {
         throw new InvalidDataException();
@@ -187,6 +185,7 @@ namespace Cyotek.Data.Nbt.Serialization
       byte[] data;
 
       data = new byte[BitHelper.FloatSize];
+
       if (BitHelper.FloatSize != _stream.Read(data, 0, BitHelper.FloatSize))
       {
         throw new InvalidDataException();
@@ -205,6 +204,7 @@ namespace Cyotek.Data.Nbt.Serialization
       byte[] data;
 
       data = new byte[BitHelper.IntSize];
+
       if (BitHelper.IntSize != _stream.Read(data, 0, BitHelper.IntSize))
       {
         throw new InvalidDataException();
@@ -223,20 +223,21 @@ namespace Cyotek.Data.Nbt.Serialization
       int length;
       int bufferLength;
       byte[] buffer;
-      int[] ints;
+      int[] values;
       bool isLittleEndian;
 
       isLittleEndian = TagWriter.IsLittleEndian;
       length = this.ReadInt();
       bufferLength = length * BitHelper.IntSize;
-
       buffer = new byte[bufferLength];
+
       if (bufferLength != _stream.Read(buffer, 0, bufferLength))
       {
         throw new InvalidDataException();
       }
 
-      ints = new int[length];
+      values = new int[length];
+
       for (int i = 0; i < length; i++)
       {
         if (isLittleEndian)
@@ -244,10 +245,10 @@ namespace Cyotek.Data.Nbt.Serialization
           BitHelper.SwapBytes(buffer, i * 4, 4);
         }
 
-        ints[i] = BitConverter.ToInt32(buffer, i * 4);
+        values[i] = BitConverter.ToInt32(buffer, i * 4);
       }
 
-      return ints;
+      return values;
     }
 
     public override TagCollection ReadList()
@@ -263,6 +264,8 @@ namespace Cyotek.Data.Nbt.Serialization
       for (int i = 0; i < length; i++)
       {
         Tag tag;
+
+        _state.StartTag(listType);
 
         switch (listType)
         {
@@ -318,6 +321,8 @@ namespace Cyotek.Data.Nbt.Serialization
             throw new InvalidDataException("Invalid list type.");
         }
 
+        _state.EndTag();
+
         tags.Add(tag);
       }
 
@@ -329,6 +334,7 @@ namespace Cyotek.Data.Nbt.Serialization
       byte[] data;
 
       data = new byte[BitHelper.LongSize];
+
       if (BitHelper.LongSize != _stream.Read(data, 0, BitHelper.LongSize))
       {
         throw new InvalidDataException();
@@ -347,6 +353,7 @@ namespace Cyotek.Data.Nbt.Serialization
       byte[] data;
 
       data = new byte[BitHelper.ShortSize];
+
       if (BitHelper.ShortSize != _stream.Read(data, 0, BitHelper.ShortSize))
       {
         throw new InvalidDataException();
@@ -376,11 +383,12 @@ namespace Cyotek.Data.Nbt.Serialization
       return data.Length != 0 ? Encoding.UTF8.GetString(data) : null;
     }
 
-    public override Tag ReadTag(ReadTagOptions options)
+    public override Tag ReadTag()
     {
       Tag result;
       TagType type;
       string name;
+      TagContainerState state;
 
       type = this.ReadTagType();
 
@@ -389,7 +397,9 @@ namespace Cyotek.Data.Nbt.Serialization
         throw new InvalidDataException($"Unrecognized tag type: {type}.");
       }
 
-      if (type != TagType.End && (options & ReadTagOptions.IgnoreName) == 0)
+      state = _state.StartTag(type);
+
+      if (type != TagType.End && (state == null || state.ContainerType != TagType.List))
       {
         name = this.ReadTagName();
       }
@@ -398,67 +408,60 @@ namespace Cyotek.Data.Nbt.Serialization
         name = string.Empty;
       }
 
-      if ((options & ReadTagOptions.IgnoreValue) == 0)
+      result = null;
+
+      switch (type)
       {
-        result = null;
+        case TagType.End:
+          result = TagFactory.CreateTag(TagType.End);
+          break;
 
-        switch (type)
-        {
-          case TagType.End:
-            result = TagFactory.CreateTag(TagType.End);
-            break;
+        case TagType.Byte:
+          result = TagFactory.CreateTag(name, this.ReadByte());
+          break;
 
-          case TagType.Byte:
-            result = TagFactory.CreateTag(name, this.ReadByte());
-            break;
+        case TagType.Short:
+          result = TagFactory.CreateTag(name, this.ReadShort());
+          break;
 
-          case TagType.Short:
-            result = TagFactory.CreateTag(name, this.ReadShort());
-            break;
+        case TagType.Int:
+          result = TagFactory.CreateTag(name, this.ReadInt());
+          break;
 
-          case TagType.Int:
-            result = TagFactory.CreateTag(name, this.ReadInt());
-            break;
+        case TagType.IntArray:
+          result = TagFactory.CreateTag(name, this.ReadIntArray());
+          break;
 
-          case TagType.IntArray:
-            result = TagFactory.CreateTag(name, this.ReadIntArray());
-            break;
+        case TagType.Long:
+          result = TagFactory.CreateTag(name, this.ReadLong());
+          break;
 
-          case TagType.Long:
-            result = TagFactory.CreateTag(name, this.ReadLong());
-            break;
+        case TagType.Float:
+          result = TagFactory.CreateTag(name, this.ReadFloat());
+          break;
 
-          case TagType.Float:
-            result = TagFactory.CreateTag(name, this.ReadFloat());
-            break;
+        case TagType.Double:
+          result = TagFactory.CreateTag(name, this.ReadDouble());
+          break;
 
-          case TagType.Double:
-            result = TagFactory.CreateTag(name, this.ReadDouble());
-            break;
+        case TagType.ByteArray:
+          result = TagFactory.CreateTag(name, this.ReadByteArray());
+          break;
 
-          case TagType.ByteArray:
-            result = TagFactory.CreateTag(name, this.ReadByteArray());
-            break;
+        case TagType.String:
+          result = TagFactory.CreateTag(name, this.ReadString());
+          break;
 
-          case TagType.String:
-            result = TagFactory.CreateTag(name, this.ReadString());
-            break;
+        case TagType.List:
+          result = TagFactory.CreateTag(name, this.ReadList());
+          break;
 
-          case TagType.List:
-            result = TagFactory.CreateTag(name, this.ReadList());
-            break;
-
-          case TagType.Compound:
-            result = TagFactory.CreateTag(name, this.ReadCompound());
-            break;
-        }
+        case TagType.Compound:
+          result = TagFactory.CreateTag(name, this.ReadCompound());
+          break;
       }
-      else
-      {
-        // just create a tag with the right name
-        result = TagFactory.CreateTag(type);
-        result.Name = name;
-      }
+
+      _state.EndTag();
 
       return result;
     }

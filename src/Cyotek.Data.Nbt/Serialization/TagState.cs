@@ -11,13 +11,67 @@ namespace Cyotek.Data.Nbt.Serialization
   {
     #region Fields
 
+    private readonly FileAccess _mode;
+
     private Stack<TagContainerState> _openContainers;
 
     private Stack<TagType> _openTags;
 
     #endregion
 
+    #region Constructors
+
+    public TagState(FileAccess mode)
+    {
+      if (mode != FileAccess.Read && mode != FileAccess.Write)
+      {
+        throw new ArgumentException("Mode can either be Read or Write.", nameof(mode));
+      }
+
+      _mode = mode;
+    }
+
+    #endregion
+
     #region Methods
+
+    public void EndTag()
+    {
+      this.EndTag(null);
+    }
+
+    public void EndTag(Action writeEnd)
+    {
+      TagType type;
+
+      if (_openTags == null)
+      {
+        throw new InvalidOperationException("No document is currently open");
+      }
+
+      if (_openTags.Count == 0)
+      {
+        throw new InvalidOperationException("No tag is currently open");
+      }
+
+      type = _openTags.Pop();
+
+      if (type == TagType.List || type == TagType.Compound)
+      {
+        TagContainerState state;
+
+        state = _openContainers.Pop();
+
+        if (type == TagType.Compound)
+        {
+          writeEnd?.Invoke();
+        }
+        else if (_mode == FileAccess.Write && state.ChildCount != state.ExpectedCount)
+        {
+          throw new InvalidDataException($"Expected {state.ExpectedCount} children, but {state.ChildCount} were written.");
+        }
+      }
+    }
 
     public void SetComplete()
     {
@@ -86,39 +140,6 @@ namespace Cyotek.Data.Nbt.Serialization
       }
 
       return currentState;
-    }
-
-    public void WriteEnd(Action writeEnd)
-    {
-      TagType type;
-
-      if (_openTags == null)
-      {
-        throw new InvalidOperationException("No document is currently open");
-      }
-
-      if (_openTags.Count == 0)
-      {
-        throw new InvalidOperationException("No tag is currently open");
-      }
-
-      type = _openTags.Pop();
-
-      if (type == TagType.List || type == TagType.Compound)
-      {
-        TagContainerState state;
-
-        state = _openContainers.Pop();
-
-        if (type == TagType.Compound)
-        {
-          writeEnd?.Invoke();
-        }
-        else if (state.ChildCount != state.ExpectedCount)
-        {
-          throw new InvalidDataException($"Expected {state.ExpectedCount} children, but {state.ChildCount} were written.");
-        }
-      }
     }
 
     #endregion

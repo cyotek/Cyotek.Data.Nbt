@@ -17,6 +17,8 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private readonly XmlReader _reader;
 
+    private TagState _state;
+
     #endregion
 
     #region Constructors
@@ -24,14 +26,13 @@ namespace Cyotek.Data.Nbt.Serialization
     public XmlTagReader(XmlReader reader)
     {
       _reader = reader;
+
+      _state = new TagState(FileAccess.Read);
+      _state.Start();
     }
 
     public XmlTagReader(Stream stream)
-    {
-      _reader = XmlReader.Create(stream);
-    }
-
-    public XmlTagReader()
+      : this(XmlReader.Create(stream))
     { }
 
     #endregion
@@ -87,23 +88,9 @@ namespace Cyotek.Data.Nbt.Serialization
 
       _reader.Read();
 
-      this.ReadChildValues(value, ReadTagOptions.None, TagType.None);
+      this.ReadChildValues(value, TagType.None);
 
       return value;
-    }
-
-    public override TagCompound ReadDocument()
-    {
-      return this.ReadDocument(ReadTagOptions.None);
-    }
-
-    public override TagCompound ReadDocument(ReadTagOptions options)
-    {
-      TagCompound result;
-
-      result = (TagCompound)this.ReadTag(options);
-
-      return result;
     }
 
     public override double ReadDouble()
@@ -143,7 +130,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       _reader.Read();
 
-      this.ReadChildValues(value, ReadTagOptions.IgnoreName, listType);
+      this.ReadChildValues(value, listType);
 
       return value;
     }
@@ -171,11 +158,6 @@ namespace Cyotek.Data.Nbt.Serialization
       return value;
     }
 
-    public override Tag ReadTag(ReadTagOptions options)
-    {
-      return this.ReadTag(options, TagType.None);
-    }
-
     public override string ReadTagName()
     {
       return _reader.Name;
@@ -197,17 +179,25 @@ namespace Cyotek.Data.Nbt.Serialization
       return type;
     }
 
-    protected Tag ReadTag(ReadTagOptions options, TagType defaultTagType)
+    public override Tag ReadTag()
+    {
+      return this.ReadTag(TagType.None);
+    }
+
+    private Tag ReadTag(TagType defaultTagType)
     {
       Tag result;
       TagType type;
       string name;
+      TagContainerState state;
 
       this.InitializeReader();
 
       type = this.ReadTagType(defaultTagType);
 
-      if ((options & ReadTagOptions.IgnoreName) == 0)
+      state = _state.StartTag(type);
+
+      if (type != TagType.End && (state == null || state.ContainerType != TagType.List))
       {
         name = _reader.GetAttribute("name");
         if (string.IsNullOrEmpty(name))
@@ -220,63 +210,57 @@ namespace Cyotek.Data.Nbt.Serialization
         name = string.Empty;
       }
 
-      if ((options & ReadTagOptions.IgnoreValue) == 0)
+      switch (type)
       {
-        switch (type)
-        {
-          case TagType.Byte:
-            result = TagFactory.CreateTag(type, name, this.ReadByte());
-            break;
+        case TagType.Byte:
+          result = TagFactory.CreateTag(type, name, this.ReadByte());
+          break;
 
-          case TagType.Short:
-            result = TagFactory.CreateTag(type, name, this.ReadShort());
-            break;
+        case TagType.Short:
+          result = TagFactory.CreateTag(type, name, this.ReadShort());
+          break;
 
-          case TagType.Int:
-            result = TagFactory.CreateTag(type, name, this.ReadInt());
-            break;
+        case TagType.Int:
+          result = TagFactory.CreateTag(type, name, this.ReadInt());
+          break;
 
-          case TagType.Long:
-            result = TagFactory.CreateTag(type, name, this.ReadLong());
-            break;
+        case TagType.Long:
+          result = TagFactory.CreateTag(type, name, this.ReadLong());
+          break;
 
-          case TagType.Float:
-            result = TagFactory.CreateTag(type, name, this.ReadFloat());
-            break;
+        case TagType.Float:
+          result = TagFactory.CreateTag(type, name, this.ReadFloat());
+          break;
 
-          case TagType.Double:
-            result = TagFactory.CreateTag(type, name, this.ReadDouble());
-            break;
+        case TagType.Double:
+          result = TagFactory.CreateTag(type, name, this.ReadDouble());
+          break;
 
-          case TagType.ByteArray:
-            result = TagFactory.CreateTag(type, name, this.ReadByteArray());
-            break;
+        case TagType.ByteArray:
+          result = TagFactory.CreateTag(type, name, this.ReadByteArray());
+          break;
 
-          case TagType.String:
-            result = TagFactory.CreateTag(type, name, this.ReadString());
-            break;
+        case TagType.String:
+          result = TagFactory.CreateTag(type, name, this.ReadString());
+          break;
 
-          case TagType.List:
-            result = TagFactory.CreateTag(type, name, this.ReadList());
-            break;
+        case TagType.List:
+          result = TagFactory.CreateTag(type, name, this.ReadList());
+          break;
 
-          case TagType.Compound:
-            result = TagFactory.CreateTag(type, name, this.ReadCompound());
-            break;
+        case TagType.Compound:
+          result = TagFactory.CreateTag(type, name, this.ReadCompound());
+          break;
 
-          case TagType.IntArray:
-            result = TagFactory.CreateTag(type, name, this.ReadIntArray());
-            break;
+        case TagType.IntArray:
+          result = TagFactory.CreateTag(type, name, this.ReadIntArray());
+          break;
 
-          default:
-            throw new InvalidDataException($"Unrecognized tag type: {type}");
-        }
+        default:
+          throw new InvalidDataException($"Unrecognized tag type: {type}");
       }
-      else
-      {
-        result = TagFactory.CreateTag(type);
-        result.Name = name;
-      }
+
+      _state.EndTag();
 
       return result;
     }
@@ -292,7 +276,7 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    private void ReadChildValues(ICollection<Tag> value, ReadTagOptions options, TagType listType)
+    private void ReadChildValues(ICollection<Tag> value, TagType listType)
     {
       int depth;
 
@@ -308,7 +292,7 @@ namespace Cyotek.Data.Nbt.Serialization
           {
             Tag child;
 
-            child = this.ReadTag(options, listType);
+            child = this.ReadTag(listType);
 
             value.Add(child);
           }

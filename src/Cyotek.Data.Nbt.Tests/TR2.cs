@@ -11,7 +11,7 @@ namespace Cyotek.Data.Nbt.Serialization
     public TR2(Stream stream)
     {
       _stream = stream;
-      _state = new TagState();
+      _state = new TagState(FileAccess.Read);
     }
 
     private Stream _stream;

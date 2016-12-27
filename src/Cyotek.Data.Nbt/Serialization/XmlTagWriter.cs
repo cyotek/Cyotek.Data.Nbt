@@ -29,7 +29,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="writer">The writer.</param>
     public XmlTagWriter(XmlWriter writer)
     {
-      _state = new TagState();
+      _state = new TagState(FileAccess.Write);
       _writer = writer;
     }
 
@@ -43,7 +43,7 @@ namespace Cyotek.Data.Nbt.Serialization
                    Encoding = Encoding.UTF8
                  };
 
-      _state = new TagState();
+      _state = new TagState(FileAccess.Write);
       _writer = XmlWriter.Create(stream, settings);
     }
 
@@ -72,7 +72,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override void WriteEndTag()
     {
-      _state.WriteEnd(null);
+      _state.EndTag();
 
       _writer.WriteEndElement();
     }

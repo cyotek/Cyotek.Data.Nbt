@@ -18,7 +18,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public BinaryTagWriter(Stream stream)
     {
-      _state = new TagState();
+      _state = new TagState(FileAccess.Write);
       _stream = stream;
     }
 
@@ -44,7 +44,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override void WriteEndTag()
     {
-      _state.WriteEnd(this.WriteEnd);
+      _state.EndTag(this.WriteEnd);
     }
 
     public override void WriteStartDocument()
