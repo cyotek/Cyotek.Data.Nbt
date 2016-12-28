@@ -19,12 +19,13 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #region Constructors
 
-    public BinaryTagReader()
+    public BinaryTagReader(Stream stream)
+      : this(stream, true)
     { }
 
-    public BinaryTagReader(Stream stream)
+    public BinaryTagReader(Stream stream, bool autoDetectCompression)
     {
-      if (stream.CanSeek)
+      if (stream.CanSeek && autoDetectCompression)
       {
         if (stream.IsGzipCompressed())
         {
@@ -71,32 +72,25 @@ namespace Cyotek.Data.Nbt.Serialization
         position = -1;
       }
 
-      try
+      if (stream.IsGzipCompressed())
       {
-        if (stream.IsGzipCompressed())
+        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
         {
-          using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
-          {
-            result = decompressionStream.ReadByte() == (int)TagType.Compound;
-          }
-        }
-        else if (stream.IsDeflateCompressed())
-        {
-          using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
-          {
-            result = decompressionStream.ReadByte() == (int)TagType.Compound;
-          }
-        }
-        else if (stream.ReadByte() == (int)TagType.Compound)
-        {
-          result = true;
-        }
-        else
-        {
-          result = false;
+          result = decompressionStream.ReadByte() == (int)TagType.Compound;
         }
       }
-      catch
+      else if (stream.IsDeflateCompressed())
+      {
+        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
+        {
+          result = decompressionStream.ReadByte() == (int)TagType.Compound;
+        }
+      }
+      else if (stream.ReadByte() == (int)TagType.Compound)
+      {
+        result = true;
+      }
+      else
       {
         result = false;
       }
@@ -254,12 +248,20 @@ namespace Cyotek.Data.Nbt.Serialization
       TagType listType;
 
       listType = (TagType)this.ReadByte();
+
+      if (listType < TagType.Byte || listType > TagType.IntArray)
+      {
+        throw new InvalidDataException($"Unexpected list type '{listType}' found.");
+      }
+
       tags = new TagCollection(listType);
       length = this.ReadInt();
 
       for (int i = 0; i < length; i++)
       {
         Tag tag;
+
+        tag = null;
 
         _state.StartTag(listType);
 
@@ -279,10 +281,6 @@ namespace Cyotek.Data.Nbt.Serialization
 
           case TagType.Double:
             tag = TagFactory.CreateTag(this.ReadDouble());
-            break;
-
-          case TagType.End:
-            tag = TagFactory.CreateTag(TagType.End);
             break;
 
           case TagType.Float:
@@ -313,8 +311,9 @@ namespace Cyotek.Data.Nbt.Serialization
             tag = TagFactory.CreateTag(this.ReadString());
             break;
 
-          default:
-            throw new InvalidDataException("Invalid list type.");
+          // Can never be hit due to the type check above
+          //default:
+          //  throw new InvalidDataException("Invalid list type.");
         }
 
         _state.EndTag();
@@ -469,7 +468,11 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override TagType ReadTagType()
     {
-      return (TagType)_stream.ReadByte();
+      int type;
+
+      type = _stream.ReadByte();
+
+      return (TagType)type;
     }
 
     #endregion

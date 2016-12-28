@@ -1,11 +1,13 @@
-﻿<#@ include file="..\..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>using System.IO;
+﻿<#@ include file="..\..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using Cyotek.Data.Nbt.Serialization;
 
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
-  [TestFixture]
-  public partial class <#=writerTypeName #>Tests : TestBase
+  partial class <#=writerTypeName #>Tests
   {
     [Test]
     public void Document_serialization_deserialization_test()
@@ -19,13 +21,117 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       this.WriteTest(this.CreateWriter, this.CreateReader);
     }
 
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
+    public void WriteEndDocument_throws_exception_if_document_is_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      // act
+      target.WriteEndDocument();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
+    public void End_throws_exception_if_document_is_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      // act
+      target.WriteEndTag();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No tag is currently open.")]
+    public void End_throws_exception_if_tag_is_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+      target.WriteStartDocument();
+
+      // act
+      target.WriteEndTag();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Expected 3 children, but 2 were written.")]
+    public void End_throws_exception_if_child_count_does_not_match()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.List, "alpha", TagType.Int, 3);
+      target.WriteTag(1);
+      target.WriteTag(2);
+
+      // act
+      target.WriteEndTag();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Attempted to add tag of type 'Byte' to container that only accepts 'List'.")]
+    public void WriteStartTag_throws_exception_if_invalid_list_item_specified()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.List, "alpha", TagType.List, 1);
+
+      // act
+      target.WriteStartTag(TagType.Byte);
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
+    public void WriteStartTag_throws_exception_if_document_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      // act
+      target.WriteStartTag(TagType.Compound);
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Document is already open.")]
+    public void WriteDocumentStart_throws_exception_on_subsequent_call()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+      target.WriteStartDocument();
+
+      // act
+      target.WriteStartDocument();
+    }
+
 <# for (int i = 0; i < netTypeNames.Length; i++)
     {
       string name;
       string nbtName;
+      object testData;
+      string tagName;
 
       name = netTypeNames[i];
       nbtName = nbtTypeNames[i];
+      tagName = "Tag" + nbtName;
+      testData = tagTestData[i];
 
       if (name != null)
       {
@@ -79,7 +185,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         target = this.CreateWriter(stream);
 
-        expected = <#=tagTestData[i] #>;
+        expected = <#=testData #>;
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
@@ -112,7 +218,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         target = this.CreateWriter(stream);
 
         expectedName = "delta<#=name #>";
-        expectedValue = <#=tagTestData[i] #>;
+        expectedValue = <#=testData #>;
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
@@ -131,9 +237,201 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
-<#
+    [Test]
+    public void WriteListTag_writes_list_of_<#=nbtName.ToLower() #>()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        <#=name #>[] expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = <#=tagListTestData[i] #>;
+        expectedName = "ListOf<#=nbtName #>";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_<#=nbtName.ToLower() #>()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        <#=name #>[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = <#=tagListTestData[i] #>;
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_<#=nbtName.ToLower() #>()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<<#=name #>> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = <#=tagListTestData[i] #>;
+        expectedName = "ListOf<#=nbtName #>";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_<#=nbtName.ToLower() #>()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<<#=name #>> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = <#=tagListTestData[i] #>;
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_<#=nbtName.ToLower() #>_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        <#=tagName #> expected;
+        <#=tagName #> actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilon<#=name #>", <#=testData #>);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (<#=tagName #>)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    <#
       }
     }
 #>
+
+    [Test]
+    [ExpectedException(typeof(ArgumentException),ExpectedMessage = "Unrecognized or unsupported tag type.\r\nParameter name: tag")]
+    public void WriteTag_throws_exception_for_invalid_tag_type()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+
+        target = this.CreateWriter(stream);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(new BadTag("bad"));
+      }
+    }
   }
 }

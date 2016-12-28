@@ -5,9 +5,33 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
-  partial class XmlTagWriterTests
+  [TestFixture]
+  public partial class XmlTagWriterTests : TestBase
   {
     #region  Tests
+
+    [Test]
+    public void Close_should_close_writer()
+    {
+      // arrange
+      TagWriter target;
+      XmlWriter writer;
+      MemoryStream stream;
+      WriteState expected;
+
+      stream = new MemoryStream();
+      writer = XmlWriter.Create(stream);
+
+      target = new XmlTagWriter(writer);
+
+      expected = WriteState.Closed;
+
+      // act
+      target.Close();
+
+      // assert
+      Assert.AreEqual(expected, writer.WriteState);
+    }
 
     [Test]
     public void Constructor_allows_external_writer()
@@ -44,6 +68,35 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // assert
       NbtAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void WriteValue_should_use_cdata_if_required()
+    {
+      // arrange
+      XmlTagWriter target;
+      TextWriter writer;
+      XmlWriter xmlWriter;
+      string actual;
+      string expected;
+
+      writer = new StringWriter();
+      xmlWriter = XmlWriter.Create(writer);
+
+      expected = "<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><tag type=\"Compound\"><alpha type=\"String\"><![CDATA[<BAD>]]></alpha></tag>";
+
+      target = new XmlTagWriter(xmlWriter);
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.Compound);
+
+      // act
+      target.WriteTag("alpha", "<BAD>");
+
+      // assert
+      target.WriteEndTag();
+      target.WriteEndDocument();
+      actual = writer.ToString();
+      Assert.AreEqual(expected, actual);
     }
 
     #endregion

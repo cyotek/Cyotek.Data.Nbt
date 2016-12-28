@@ -1,0 +1,6 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#
+    string readerTypeName = "BinaryTagReader";
+    #>
+<#@ output extension=".cs" #>
+<#@ include file="TagReaderTests.t4" #>

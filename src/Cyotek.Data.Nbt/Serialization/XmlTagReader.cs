@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class XmlTagReader : TagReader
+  public partial class XmlTagReader : TagReader
   {
     #region Constants
 
@@ -55,10 +55,7 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         string typeName;
 
-        while (!_reader.IsStartElement())
-        {
-          _reader.Read();
-        }
+        this.InitializeReader();
 
         typeName = _reader.GetAttribute("type");
 
@@ -216,35 +213,22 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override TagType ReadTagType()
     {
-      TagType type;
-      string typeName;
-
-      typeName = _reader.GetAttribute("type");
-
-      if (string.IsNullOrEmpty(typeName))
-      {
-        throw new InvalidDataException("Missing type attribute, unable to determine tag type.");
-      }
-
-      type = (TagType)Enum.Parse(typeof(TagType), typeName, true);
-
-      return type;
+      return this.ReadTagType(TagType.None);
     }
 
     private void InitializeReader()
     {
       if (_reader.ReadState == ReadState.Initial)
       {
-        while (!_reader.IsStartElement())
-        {
-          _reader.Read();
-        }
+        _reader.MoveToContent();
       }
     }
 
     private void ReadChildValues(ICollection<Tag> value, TagType listType)
     {
       int depth;
+
+      _state.StartList(listType, 0);
 
       this.SkipWhitespace();
 
@@ -259,6 +243,13 @@ namespace Cyotek.Data.Nbt.Serialization
             Tag child;
 
             child = this.ReadTag(listType);
+            if (listType != TagType.None)
+            {
+              // sanity check as depending how you
+              // decided to load documents it is
+              // currently possible to skip some checks
+              child.Name = string.Empty;
+            }
 
             value.Add(child);
           }
@@ -282,8 +273,6 @@ namespace Cyotek.Data.Nbt.Serialization
       string name;
       TagContainerState state;
 
-      this.InitializeReader();
-
       type = this.ReadTagType(defaultTagType);
 
       state = _state.StartTag(type);
@@ -300,6 +289,8 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         name = string.Empty;
       }
+
+      result = null;
 
       switch (type)
       {
@@ -347,8 +338,10 @@ namespace Cyotek.Data.Nbt.Serialization
           result = TagFactory.CreateTag(name, this.ReadIntArray());
           break;
 
-        default:
-          throw new InvalidDataException($"Unrecognized tag type: {type}");
+        // Can't be hit as ReadTagType will throw
+        // an exception for unsupported types
+        // default:
+        //   throw new InvalidDataException($"Unrecognized tag type: {type}");
       }
 
       _state.EndTag();
@@ -360,6 +353,8 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       TagType type;
 
+      this.InitializeReader();
+
       if (defaultTagType != TagType.None)
       {
         type = defaultTagType;
@@ -369,12 +364,16 @@ namespace Cyotek.Data.Nbt.Serialization
         string typeName;
 
         typeName = _reader.GetAttribute("type");
+
         if (string.IsNullOrEmpty(typeName))
         {
           throw new InvalidDataException("Missing type attribute, unable to determine tag type.");
         }
 
-        type = (TagType)Enum.Parse(typeof(TagType), typeName, true);
+        if (!_tagTypeEnumLookup.TryGetValue(typeName, out type))
+        {
+          throw new InvalidDataException($"Unrecognized or unsupported tag type '{typeName}'.");
+        }
       }
 
       return type;

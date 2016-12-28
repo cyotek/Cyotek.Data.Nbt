@@ -13,11 +13,11 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * The `TagWriter` class can now be used to directly write NBT data to a stream without having to first create concrete `Tag` classes (e.g. similar to using `XmlWriter` over `XmlDocument.Save()`)
 * The base `Tag` class now implements `IEquatable<Tag>` (boxing)
 * Each concrete tag class now implements `IEquatable<>` (non-boxing)
-* Lots of additional tests
 * Added indexers to `TagCompound`
 * Added `TagCompound.Count`
 * Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument` 
 * Added new `TagDictionary.AddRange` overloads
+* All library code is now covered by tests
 
 ### Fixed
 * All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version

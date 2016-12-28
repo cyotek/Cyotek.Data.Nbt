@@ -77,11 +77,6 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteValue(count);
     }
 
-    protected override void WriteEnd()
-    {
-      _stream.WriteByte((byte)TagType.End);
-    }
-
     protected override void WriteValue(string value)
     {
       if (string.IsNullOrEmpty(value))
@@ -228,6 +223,11 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         this.WriteTag(item);
       }
+    }
+
+    private void WriteEnd()
+    {
+      _stream.WriteByte((byte)TagType.End);
     }
 
     #endregion

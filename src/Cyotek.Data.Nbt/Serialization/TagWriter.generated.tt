@@ -69,7 +69,7 @@ if (name.EndsWith("[]"))
       this.WriteStartTag(TagType.List, name, TagType.<#=nbtName #>, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -81,7 +81,7 @@ if (name.EndsWith("[]"))
     /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<<#=name #>> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -109,6 +109,7 @@ if (name.EndsWith("[]"))
     {
       this.WriteListTag(string.Empty, values);
     }
+
 <#
       }
     }

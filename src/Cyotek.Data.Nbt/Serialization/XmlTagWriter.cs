@@ -53,6 +53,8 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override void Close()
     {
+      base.Close();
+
       _writer.Flush();
       _writer.Close();
     }
@@ -118,11 +120,6 @@ namespace Cyotek.Data.Nbt.Serialization
       _state.StartList(listType, count);
 
       _writer.WriteAttributeString("limitType", listType.ToString());
-    }
-
-    protected override void WriteEnd()
-    {
-      // no op
     }
 
     protected override void WriteValue(string value)

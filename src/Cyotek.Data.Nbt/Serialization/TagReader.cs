@@ -1,29 +1,24 @@
-using System;
-using System.ComponentModel;
-
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public abstract partial class TagReader : IDisposable
+  public abstract partial class TagReader
   {
-    #region Properties
-
-    /// <summary>
-    /// Gets a value indicating whether this instance is disposed.
-    /// </summary>
-    /// <value><c>true</c> if this instance is disposed; otherwise, <c>false</c>.</value>
-    [Browsable(false)]
-    public bool IsDisposed { get; private set; }
-
-    #endregion
-
     #region Methods
 
+    /// <summary>
+    /// Closes the reader.
+    /// </summary>
     public virtual void Close()
     { }
 
     public abstract bool IsNbtDocument();
 
-    public virtual TagCompound ReadDocument()
+    /// <summary>
+    /// Reads a complete NBT document.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="TagCompound"/> containing the document contents.
+    /// </returns>
+    public TagCompound ReadDocument()
     {
       TagCompound tag;
 
@@ -34,35 +29,15 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public abstract Tag ReadTag();
 
+    /// <summary>
+    /// Reads the name of the next tag.
+    /// </summary>
     public abstract string ReadTagName();
 
+    /// <summary>
+    /// Reads the type <see cref="TagType"/> of the next tag.
+    /// </summary>
     public abstract TagType ReadTagType();
-
-    /// <summary>
-    /// Releases unmanaged and - optionally - managed resources.
-    /// </summary>
-    /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!this.IsDisposed)
-      {
-        this.IsDisposed = true;
-      }
-    }
-
-    #endregion
-
-    #region IDisposable Interface
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
-    {
-      this.Dispose(true);
-
-      GC.SuppressFinalize(this);
-    }
 
     #endregion
   }

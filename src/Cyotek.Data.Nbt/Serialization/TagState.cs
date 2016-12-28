@@ -27,11 +27,6 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public TagState(FileAccess mode)
     {
-      if (mode != FileAccess.Read && mode != FileAccess.Write)
-      {
-        throw new ArgumentException("Mode can either be Read or Write.", nameof(mode));
-      }
-
       _mode = mode;
     }
 
@@ -50,12 +45,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if (_openTags == null)
       {
-        throw new InvalidOperationException("No document is currently open");
+        throw new InvalidOperationException("No document is currently open.");
       }
 
       if (_openTags.Count == 0)
       {
-        throw new InvalidOperationException("No tag is currently open");
+        throw new InvalidOperationException("No tag is currently open.");
       }
 
       type = _openTags.Pop();
@@ -72,7 +67,7 @@ namespace Cyotek.Data.Nbt.Serialization
         }
         else if (_mode == FileAccess.Write && state.ChildCount != state.ExpectedCount)
         {
-          throw new InvalidDataException($"Expected {state.ExpectedCount} children, but {state.ChildCount} were written.");
+          throw new InvalidOperationException($"Expected {state.ExpectedCount} children, but {state.ChildCount} were written.");
         }
       }
     }
@@ -81,7 +76,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       if (_openTags == null)
       {
-        throw new InvalidOperationException("No document is currently open");
+        throw new InvalidOperationException("No document is currently open.");
       }
 
       _openTags = null;
@@ -101,11 +96,14 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public void StartList(TagType listType, int expectedCount)
     {
-      TagContainerState state;
+      if (_openContainers.Count != 0)
+      {
+        TagContainerState state;
 
-      state = _openContainers.Peek();
-      state.ChildType = listType;
-      state.ExpectedCount = expectedCount;
+        state = _openContainers.Peek();
+        state.ChildType = listType;
+        state.ExpectedCount = expectedCount;
+      }
     }
 
     public TagContainerState StartTag(TagType type)
@@ -114,7 +112,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if (_openTags == null)
       {
-        throw new InvalidOperationException("No document is currently open");
+        throw new InvalidOperationException("No document is currently open.");
       }
 
       if (_openTags.Count != 0)
@@ -123,7 +121,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
         if (currentState.ContainerType == TagType.List && currentState.ChildType != TagType.End && type != currentState.ChildType)
         {
-          throw new InvalidOperationException($"Attempted to add tag of type '{type}' to container that only accepts '{currentState.ChildType}'");
+          throw new InvalidOperationException($"Attempted to add tag of type '{type}' to container that only accepts '{currentState.ChildType}'.");
         }
 
         currentState.ChildCount++;

@@ -316,19 +316,19 @@ namespace Cyotek.Data.Nbt
 
     public void Save(Stream stream)
     {
+      TagWriter writer;
+
       if (stream == null)
       {
         throw new ArgumentNullException(nameof(stream));
       }
 
-      using (TagWriter writer = this.GetTagWriter(_format, stream))
-      {
-        writer.WriteStartDocument();
-        writer.WriteTag(_documentRoot);
-        writer.WriteEndDocument();
-        writer.Flush();
-        writer.Close();
-      }
+      writer = this.GetTagWriter(_format, stream);
+      writer.WriteStartDocument();
+      writer.WriteTag(_documentRoot);
+      writer.WriteEndDocument();
+      writer.Flush();
+      writer.Close();
     }
 
     public override string ToString()

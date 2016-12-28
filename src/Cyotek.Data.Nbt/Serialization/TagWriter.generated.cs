@@ -57,7 +57,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Byte, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -69,7 +69,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:byte" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<byte> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -89,6 +89,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:short" /> value.
     /// </summary>
@@ -130,7 +131,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Short, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -142,7 +143,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:short" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<short> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -162,6 +163,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:int" /> value.
     /// </summary>
@@ -203,7 +205,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Int, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -215,7 +217,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:int" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<int> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -235,6 +237,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:long" /> value.
     /// </summary>
@@ -276,7 +279,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Long, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -288,7 +291,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:long" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<long> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -308,6 +311,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:float" /> value.
     /// </summary>
@@ -349,7 +353,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Float, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -361,7 +365,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:float" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<float> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -381,6 +385,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:double" /> value.
     /// </summary>
@@ -422,7 +427,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Double, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -434,7 +439,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:double" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<double> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -454,6 +459,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:byte[]" /> value.
     /// </summary>
@@ -496,7 +502,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.ByteArray, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -508,7 +514,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:byte[]" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<byte[]> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -529,6 +535,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:string" /> value.
     /// </summary>
@@ -570,7 +577,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.String, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -582,7 +589,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:string" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<string> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -602,6 +609,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:TagCollection" /> value.
     /// </summary>
@@ -643,7 +651,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.List, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -655,7 +663,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:TagCollection" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<TagCollection> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -675,6 +683,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:TagDictionary" /> value.
     /// </summary>
@@ -716,7 +725,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.Compound, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -728,7 +737,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:TagDictionary" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<TagDictionary> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -748,6 +757,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
     /// <summary>
     /// Writes a <see cref="T:int[]" /> value.
     /// </summary>
@@ -790,7 +800,7 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteStartTag(TagType.List, name, TagType.IntArray, length);
       for (int i = 0; i < length; i++)
       {
-        this.WriteValue(values[i]);
+        this.WriteTag(values[i]);
       }
       this.WriteEndTag();
     }
@@ -802,7 +812,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="values">The <see cref="T:int[]" /> values to write.</param>
     public void WriteListTag(string name, IEnumerable<int[]> values)
     {
-      this.WriteListTag(values.ToArray());
+      this.WriteListTag(name, values.ToArray());
     }
 
     /// <summary>
@@ -823,6 +833,7 @@ namespace Cyotek.Data.Nbt.Serialization
     {
       this.WriteListTag(string.Empty, values);
     }
+
 
     /// <summary>
     /// Writes a tag value.

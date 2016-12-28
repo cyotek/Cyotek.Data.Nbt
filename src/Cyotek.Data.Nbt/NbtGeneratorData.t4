@@ -188,6 +188,22 @@
     "new[] { 2190, 2994, 3248, 294394 }"
   };
 
+  object[] tagListTestData =
+  {
+    null,
+    "new byte[] { 0, byte.MaxValue >> 1, byte.MaxValue }",
+    "new short[] { 0, short.MaxValue >> 1, short.MaxValue }",
+    "new int[] { 0, int.MaxValue >> 1, int.MaxValue }",
+    "new long[] { 0, long.MaxValue >> 1, long.MaxValue }",
+    "new float[] { 0, float.MaxValue / 2, float.MaxValue }",
+    "new double[] { 0, double.MaxValue / 2, double.MaxValue }",
+    "new byte[][] { new byte[] { 2, 4, 8}, new byte[] { 16, 32, 64, 128 } }",
+    "new string[] { \"alpha\", \"beta\", \"gamma\"}",
+    "new TagCollection[] { new TagCollection { 2, 4, 8, 16, 32 }, new TagCollection { 64, 128, 256 } }",
+    "new TagDictionary[] { new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4) }, new TagDictionary { new TagInt(\"C\", 8) } }",
+    "new int[][] { new int[] { 2190, 2994 }, new int[] { 3248, 4294394 } }"
+  };
+
   private bool IsArrayType(int type)
   {
     return type == tagTypeByteArray || type == tagTypeIntArray;

@@ -1,40 +1,31 @@
+using System;
 using System.IO;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
-  partial class BinaryTagWriterTests
+  [TestFixture]
+  public partial class BinaryTagWriterTests : TestBase
   {
     #region  Tests
 
     [Test]
-    public void WriteEmptyByteArrayTest()
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "String data would be truncated.")]
+    public void WriteValue_throws_exception_for_long_strings()
     {
       // arrange
       TagWriter target;
-      NbtDocument expected;
       MemoryStream stream;
-      TagReader reader;
-
-      expected = new NbtDocument();
-      expected.DocumentRoot.Name = "WriteEmptyByteArrayTest";
-      expected.DocumentRoot.Value.Add("ByteArray", new byte[0]);
-      expected.DocumentRoot.Value.Add("Byte", 255);
 
       stream = new MemoryStream();
+      target = this.CreateWriter(stream);
 
-      target = new BinaryTagWriter(stream);
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.Compound);
 
       // act
-      target.WriteStartDocument();
-      target.WriteTag(expected.DocumentRoot);
-      target.WriteEndDocument();
-
-      // assert
-      stream.Seek(0, SeekOrigin.Begin);
-      reader = new BinaryTagReader(stream);
-      NbtAssert.AreEqual(expected.DocumentRoot, reader.ReadTag());
+      target.WriteTag(new string(' ', short.MaxValue + 1));
     }
 
     #endregion
@@ -43,7 +34,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
     private TagReader CreateReader(Stream stream)
     {
-      return new BinaryTagReader(stream);
+      return new BinaryTagReader(stream, false);
     }
 
     private TagWriter CreateWriter(Stream stream)

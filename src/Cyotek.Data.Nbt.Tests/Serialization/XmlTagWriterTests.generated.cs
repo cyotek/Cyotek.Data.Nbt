@@ -8,14 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using Cyotek.Data.Nbt.Serialization;
 
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
-  [TestFixture]
-  public partial class XmlTagWriterTests : TestBase
+  partial class XmlTagWriterTests
   {
     [Test]
     public void Document_serialization_deserialization_test()
@@ -27,6 +29,106 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     public void Serialization_deserialization_test()
     {
       this.WriteTest(this.CreateWriter, this.CreateReader);
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
+    public void WriteEndDocument_throws_exception_if_document_is_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      // act
+      target.WriteEndDocument();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
+    public void End_throws_exception_if_document_is_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      // act
+      target.WriteEndTag();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No tag is currently open.")]
+    public void End_throws_exception_if_tag_is_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+      target.WriteStartDocument();
+
+      // act
+      target.WriteEndTag();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Expected 3 children, but 2 were written.")]
+    public void End_throws_exception_if_child_count_does_not_match()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.List, "alpha", TagType.Int, 3);
+      target.WriteTag(1);
+      target.WriteTag(2);
+
+      // act
+      target.WriteEndTag();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Attempted to add tag of type 'Byte' to container that only accepts 'List'.")]
+    public void WriteStartTag_throws_exception_if_invalid_list_item_specified()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.List, "alpha", TagType.List, 1);
+
+      // act
+      target.WriteStartTag(TagType.Byte);
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
+    public void WriteStartTag_throws_exception_if_document_not_open()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+
+      // act
+      target.WriteStartTag(TagType.Compound);
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Document is already open.")]
+    public void WriteDocumentStart_throws_exception_on_subsequent_call()
+    {
+      // arrange
+      TagWriter target;
+
+      target = this.CreateWriter(new MemoryStream());
+      target.WriteStartDocument();
+
+      // act
+      target.WriteStartDocument();
     }
 
 
@@ -95,7 +197,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_byte()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        byte[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[] { 0, byte.MaxValue >> 1, byte.MaxValue };
+        expectedName = "ListOfByte";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_byte()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        byte[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[] { 0, byte.MaxValue >> 1, byte.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_byte()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<byte> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[] { 0, byte.MaxValue >> 1, byte.MaxValue };
+        expectedName = "ListOfByte";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_byte()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<byte> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[] { 0, byte.MaxValue >> 1, byte.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_byte_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagByte expected;
+        TagByte actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonbyte", (byte)(byte.MaxValue >> 1));
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagByte)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_short_tag()
     {
@@ -161,7 +436,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_short()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        short[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new short[] { 0, short.MaxValue >> 1, short.MaxValue };
+        expectedName = "ListOfShort";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_short()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        short[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new short[] { 0, short.MaxValue >> 1, short.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_short()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<short> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new short[] { 0, short.MaxValue >> 1, short.MaxValue };
+        expectedName = "ListOfShort";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_short()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<short> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new short[] { 0, short.MaxValue >> 1, short.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_short_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagShort expected;
+        TagShort actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonshort", (short)(short.MaxValue >> 1));
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagShort)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_int_tag()
     {
@@ -227,7 +675,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_int()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        int[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new int[] { 0, int.MaxValue >> 1, int.MaxValue };
+        expectedName = "ListOfInt";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_int()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        int[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[] { 0, int.MaxValue >> 1, int.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_int()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<int> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[] { 0, int.MaxValue >> 1, int.MaxValue };
+        expectedName = "ListOfInt";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_int()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<int> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[] { 0, int.MaxValue >> 1, int.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_int_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagInt expected;
+        TagInt actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonint", 1073741823);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagInt)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_long_tag()
     {
@@ -293,7 +914,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_long()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        long[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new long[] { 0, long.MaxValue >> 1, long.MaxValue };
+        expectedName = "ListOfLong";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_long()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        long[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new long[] { 0, long.MaxValue >> 1, long.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_long()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<long> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new long[] { 0, long.MaxValue >> 1, long.MaxValue };
+        expectedName = "ListOfLong";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_long()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<long> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new long[] { 0, long.MaxValue >> 1, long.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_long_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagLong expected;
+        TagLong actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonlong", 4611686018427387903);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagLong)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_float_tag()
     {
@@ -359,7 +1153,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_float()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        float[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new float[] { 0, float.MaxValue / 2, float.MaxValue };
+        expectedName = "ListOfFloat";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_float()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        float[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new float[] { 0, float.MaxValue / 2, float.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_float()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<float> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new float[] { 0, float.MaxValue / 2, float.MaxValue };
+        expectedName = "ListOfFloat";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_float()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<float> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new float[] { 0, float.MaxValue / 2, float.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_float_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagFloat expected;
+        TagFloat actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonfloat", 1.701412E+38F);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagFloat)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_double_tag()
     {
@@ -426,6 +1393,179 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
+    public void WriteListTag_writes_list_of_double()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        double[] expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new double[] { 0, double.MaxValue / 2, double.MaxValue };
+        expectedName = "ListOfDouble";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_double()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        double[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new double[] { 0, double.MaxValue / 2, double.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_double()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<double> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new double[] { 0, double.MaxValue / 2, double.MaxValue };
+        expectedName = "ListOfDouble";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_double()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<double> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new double[] { 0, double.MaxValue / 2, double.MaxValue };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_double_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagDouble expected;
+        TagDouble actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilondouble", 8.98846567431158E+307);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagDouble)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+        [Test]
     public void WriteTag_writes_empty_bytearray_array()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -521,7 +1661,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_bytearray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        byte[][] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[][] { new byte[] { 2, 4, 8}, new byte[] { 16, 32, 64, 128 } };
+        expectedName = "ListOfByteArray";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_bytearray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        byte[][] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[][] { new byte[] { 2, 4, 8}, new byte[] { 16, 32, 64, 128 } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_bytearray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<byte[]> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[][] { new byte[] { 2, 4, 8}, new byte[] { 16, 32, 64, 128 } };
+        expectedName = "ListOfByteArray";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_bytearray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<byte[]> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new byte[][] { new byte[] { 2, 4, 8}, new byte[] { 16, 32, 64, 128 } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_bytearray_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagByteArray expected;
+        TagByteArray actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonbyte[]", new byte[] { 2, 4, 8, 16, 32, 64, 128 });
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagByteArray)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_string_tag()
     {
@@ -587,7 +1900,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_string()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        string[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new string[] { "alpha", "beta", "gamma"};
+        expectedName = "ListOfString";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_string()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        string[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new string[] { "alpha", "beta", "gamma"};
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_string()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<string> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new string[] { "alpha", "beta", "gamma"};
+        expectedName = "ListOfString";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_string()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<string> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new string[] { "alpha", "beta", "gamma"};
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_string_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagString expected;
+        TagString actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonstring", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagString)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_list_tag()
     {
@@ -653,7 +2139,180 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_list()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        TagCollection[] expected;
+        string expectedName;
+        TagList actual;
 
+        writer = this.CreateWriter(stream);
+
+        expected = new TagCollection[] { new TagCollection { 2, 4, 8, 16, 32 }, new TagCollection { 64, 128, 256 } };
+        expectedName = "ListOfList";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_list()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        TagCollection[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagCollection[] { new TagCollection { 2, 4, 8, 16, 32 }, new TagCollection { 64, 128, 256 } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_list()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<TagCollection> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagCollection[] { new TagCollection { 2, 4, 8, 16, 32 }, new TagCollection { 64, 128, 256 } };
+        expectedName = "ListOfList";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_list()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<TagCollection> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagCollection[] { new TagCollection { 2, 4, 8, 16, 32 }, new TagCollection { 64, 128, 256 } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_list_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagList expected;
+        TagList actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonTagCollection", new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 });
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagList)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
     [Test]
     public void WriteTag_writes_unnamed_compound_tag()
     {
@@ -720,6 +2379,179 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
+    public void WriteListTag_writes_list_of_compound()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        TagDictionary[] expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagDictionary[] { new TagDictionary { new TagByte("A", 2), new TagShort("B", 4) }, new TagDictionary { new TagInt("C", 8) } };
+        expectedName = "ListOfCompound";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_compound()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        TagDictionary[] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagDictionary[] { new TagDictionary { new TagByte("A", 2), new TagShort("B", 4) }, new TagDictionary { new TagInt("C", 8) } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_compound()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<TagDictionary> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagDictionary[] { new TagDictionary { new TagByte("A", 2), new TagShort("B", 4) }, new TagDictionary { new TagInt("C", 8) } };
+        expectedName = "ListOfCompound";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_compound()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<TagDictionary> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new TagDictionary[] { new TagDictionary { new TagByte("A", 2), new TagShort("B", 4) }, new TagDictionary { new TagInt("C", 8) } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_compound_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagCompound expected;
+        TagCompound actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonTagDictionary", new TagDictionary { new TagByte("A", 2), new TagShort("B", 4), new TagInt("C", 8) });
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagCompound)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+        [Test]
     public void WriteTag_writes_empty_intarray_array()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -815,6 +2647,198 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void WriteListTag_writes_list_of_intarray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        int[][] expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[][] { new int[] { 2190, 2994 }, new int[] { 3248, 4294394 } };
+        expectedName = "ListOfIntArray";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_intarray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        int[][] expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[][] { new int[] { 2190, 2994 }, new int[] { 3248, 4294394 } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Length, actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_list_of_enumerable_intarray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<int[]> expected;
+        string expectedName;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[][] { new int[] { 2190, 2994 }, new int[] { 3248, 4294394 } };
+        expectedName = "ListOfIntArray";
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expectedName, expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[expectedName];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteListTag_writes_unnamed_list_of_enumerable_intarray()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        IEnumerable<int[]> expected;
+        TagList actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new int[][] { new int[] { 2190, 2994 }, new int[] { 3248, 4294394 } };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteListTag(expected);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        actual = (TagList)reader.ReadDocument()[0];
+
+        // assert
+        Assert.AreEqual(expected.Count(), actual.Count);
+        CollectionAssert.AreEqual(expected, actual.Value.Select(tag => tag.GetValue()).ToArray());
+      }
+    }
+
+    [Test]
+    public void WriteTag_writes_intarray_tag()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        TagIntArray expected;
+        TagIntArray actual;
+
+        target = this.CreateWriter(stream);
+
+        expected = TagFactory.CreateTag("epsilonint[]", new[] { 2190, 2994, 3248, 4294394 });
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(expected);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        actual = (TagIntArray)((TagCompound)reader.ReadTag())[0];
+        Assert.IsTrue(actual.Equals(expected));
+      }
+    }
+
+    
+    [Test]
+    [ExpectedException(typeof(ArgumentException),ExpectedMessage = "Unrecognized or unsupported tag type.\r\nParameter name: tag")]
+    public void WriteTag_throws_exception_for_invalid_tag_type()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+
+        target = this.CreateWriter(stream);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteTag(new BadTag("bad"));
+      }
+    }
   }
 }
 

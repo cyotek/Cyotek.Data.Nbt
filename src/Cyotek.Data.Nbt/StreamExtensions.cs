@@ -65,18 +65,6 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
-    public static int PeekNextByte(this Stream stream)
-    {
-      int result;
-      long position;
-
-      position = stream.Position;
-      result = stream.ReadByte();
-      stream.Position = position;
-
-      return result;
-    }
-
     #endregion
   }
 }

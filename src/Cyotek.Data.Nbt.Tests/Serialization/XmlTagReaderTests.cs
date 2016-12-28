@@ -7,9 +7,34 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests.Serialization
 {
   [TestFixture]
-  public class XmlTagReaderTests : TestBase
+  public partial class XmlTagReaderTests : TestBase
   {
     #region  Tests
+
+    [Test]
+    public void Close_should_close_reader()
+    {
+      // arrange
+      TagReader target;
+      XmlReader reader;
+      MemoryStream stream;
+      ReadState expected;
+
+      stream = new MemoryStream(Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>
+<Level type=""Int"" />
+"));
+      reader = XmlReader.Create(stream);
+
+      target = new XmlTagReader(reader);
+
+      expected = ReadState.Closed;
+
+      // act
+      target.Close();
+
+      // assert
+      Assert.AreEqual(expected, reader.ReadState);
+    }
 
     [Test]
     public void Constructor_allows_external_reader()
@@ -112,6 +137,98 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // assert
       NbtAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Missing limitType attribute, unable to determine list contents type.")]
+    public void ReadList_throws_exception_if_list_type_not_set()
+    {
+      // arrange
+      TagReader target;
+      XmlReader reader;
+      MemoryStream stream;
+
+      stream = new MemoryStream(Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>
+<Level type=""Compound"">
+   <tag name=""listTest (long)"" type=""List"">
+    <tag>11</tag>
+    <tag>12</tag>
+    <tag>13</tag>
+    <tag>14</tag>
+    <tag>15</tag>
+  </tag>
+</Level>"));
+      reader = XmlReader.Create(stream);
+      target = new XmlTagReader(reader);
+
+      // act
+      target.ReadDocument();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Missing type attribute, unable to determine tag type.")]
+    public void ReadTagType_throws_exception_if_list_type_not_set()
+    {
+      // arrange
+      TagReader target;
+      XmlReader reader;
+      MemoryStream stream;
+
+      stream = new MemoryStream(Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>
+<Level type=""Compound"">
+   <tag name=""listTest (long)"">
+    <tag>11</tag>
+    <tag>12</tag>
+    <tag>13</tag>
+    <tag>14</tag>
+    <tag>15</tag>
+  </tag>
+</Level>"));
+      reader = XmlReader.Create(stream);
+      target = new XmlTagReader(reader);
+
+      // act
+      target.ReadDocument();
+    }
+
+    [Test]
+    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Unrecognized or unsupported tag type 'NOTATAG'.")]
+    public void ReadTagType_throws_exception_tag_type_is_unknown()
+    {
+      // arrange
+      TagReader target;
+      XmlReader reader;
+      MemoryStream stream;
+
+      stream = new MemoryStream(Encoding.UTF8.GetBytes(@"<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>
+<Level type=""Compound"">
+   <tag name=""listTest (long)"" type=""NOTATAG"">
+    <tag>11</tag>
+    <tag>12</tag>
+    <tag>13</tag>
+    <tag>14</tag>
+    <tag>15</tag>
+  </tag>
+</Level>"));
+      reader = XmlReader.Create(stream);
+      target = new XmlTagReader(reader);
+
+      // act
+      target.ReadDocument();
+    }
+
+    #endregion
+
+    #region Test Helpers
+
+    private TagReader CreateReader(Stream stream)
+    {
+      return new XmlTagReader(stream);
+    }
+
+    private TagWriter CreateWriter(Stream stream)
+    {
+      return new XmlTagWriter(stream);
     }
 
     #endregion

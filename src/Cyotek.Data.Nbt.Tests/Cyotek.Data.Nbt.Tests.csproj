@@ -48,25 +48,42 @@
       <Link>BitHelper.cs</Link>
     </Compile>
     <Compile Include="AnvilRegionTests.cs" />
+    <Compile Include="BadTag.cs" />
     <Compile Include="ComplexData.cs" />
     <Compile Include="NbtAssert.cs" />
     <Compile Include="NbtDocumentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
+    <Compile Include="Serialization\BinaryTagReaderInvalidDataTests.generated.cs">
+      <DependentUpon>BinaryTagReaderInvalidDataTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="Serialization\BinaryTagReaderTests.cs" />
+    <Compile Include="Serialization\BinaryTagReaderTests.generated.cs">
+      <DependentUpon>BinaryTagReaderTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="Serialization\BinaryTagWriterTests.cs" />
     <Compile Include="Serialization\BinaryTagWriterTests.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>BinaryTagWriterTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="Serialization\NoSeekStream.cs" />
     <Compile Include="Serialization\TagWriterTests.cs" />
     <Compile Include="Serialization\XmlTagReaderTests.cs" />
+    <Compile Include="Serialization\XmlTagReaderTests.generated.cs">
+      <DependentUpon>XmlTagReaderTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="Serialization\XmlTagWriterTests.cs" />
     <Compile Include="Serialization\XmlTagWriterTests.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>XmlTagWriterTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="TagByteArrayTests.cs" />
     <Compile Include="TagByteArrayTests.generated.cs">
@@ -179,7 +196,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Serialization\BinaryTagWriterTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryTagWriterTests.generated.cs</LastGenOutput>
+      <DependentUpon>BinaryTagWriterTests.cs</DependentUpon>
+    </None>
+    <None Include="Serialization\TagReaderTests.t4" />
     <None Include="Serialization\TagWriterTests.t4" />
+    <None Include="Serialization\XmlTagWriterTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlTagWriterTests.generated.cs</LastGenOutput>
+      <DependentUpon>XmlTagWriterTests.cs</DependentUpon>
+    </None>
     <None Include="TagTests.t4" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +238,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Serialization\BinaryTagReaderInvalidDataTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryTagReaderInvalidDataTests.generated.cs</LastGenOutput>
+      <DependentUpon>BinaryTagReaderTests.cs</DependentUpon>
+    </Content>
+    <Content Include="Serialization\BinaryTagReaderTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryTagReaderTests.generated.cs</LastGenOutput>
+      <DependentUpon>BinaryTagReaderTests.cs</DependentUpon>
+    </Content>
+    <Content Include="Serialization\XmlTagReaderTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlTagReaderTests.generated.cs</LastGenOutput>
+      <DependentUpon>XmlTagReaderTests.cs</DependentUpon>
+    </Content>
     <Content Include="TagCollectionTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagCollectionTests.generated.cs</LastGenOutput>
@@ -225,14 +268,6 @@
       <LastGenOutput>TagDictionaryTests.generated.cs</LastGenOutput>
       <DependentUpon>TagDictionaryTests.cs</DependentUpon>
     </Content>
-    <None Include="Serialization\BinaryTagWriterTests.generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BinaryTagWriterTests.generated.cs</LastGenOutput>
-    </None>
-    <None Include="Serialization\XmlTagWriterTests.generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlTagWriterTests.generated.cs</LastGenOutput>
-    </None>
     <None Include="TagByteArrayTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagByteArrayTests.generated.cs</LastGenOutput>
