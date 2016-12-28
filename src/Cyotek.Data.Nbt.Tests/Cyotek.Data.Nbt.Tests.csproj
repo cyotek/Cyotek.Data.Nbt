@@ -87,6 +87,11 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="TagCompoundTests.cs" />
+    <Compile Include="TagCompoundValueTests.generated.cs">
+      <DependentUpon>TagCompoundValueTests.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="TagDictionaryTests.cs" />
     <Compile Include="TagDictionaryTests.generated.cs">
       <DependentUpon>TagDictionaryTests.generated.tt</DependentUpon>
@@ -199,6 +204,11 @@
     <Content Include="data\project.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </Content>
+    <Content Include="TagCompoundValueTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagCompoundValueTests.generated.cs</LastGenOutput>
+      <DependentUpon>TagCompoundTests.cs</DependentUpon>
     </Content>
     <Content Include="TagDictionaryTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

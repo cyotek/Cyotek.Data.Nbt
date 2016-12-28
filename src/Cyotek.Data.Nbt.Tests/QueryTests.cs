@@ -9,6 +9,60 @@ namespace Cyotek.Data.Nbt.Tests
     #region  Tests
 
     [Test]
+    public void Query_handles_attribute_mismatches()
+    {
+      // arrange
+      TagCompound target;
+      TagCompound actual;
+      string path;
+
+      target = this.CreateComplexData();
+      path = @"listTest (compound)/[name=NOMANS]";
+
+      // act
+      actual = target.Query<TagCompound>(path);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
+    [Test]
+    public void Query_handles_invalid_compound_name()
+    {
+      // arrange
+      TagCompound target;
+      Tag actual;
+      string path;
+
+      target = this.CreateComplexData();
+      path = @"nested compound test\Dilbert";
+
+      // act
+      actual = target.Query(path);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
+    [Test]
+    public void Query_handles_invalid_list_index()
+    {
+      // arrange
+      TagCompound target;
+      Tag actual;
+      string path;
+
+      target = this.CreateComplexData();
+      path = @"listTest (compound)\100\created-on";
+
+      // act
+      actual = target.Query(path);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
+    [Test]
     public void QueryValueTest()
     {
       // arrange

@@ -3,7 +3,8 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
-  partial class TagListTests
+  [TestFixture]
+  public partial class TagListTests : TestBase
   {
     #region  Tests
 

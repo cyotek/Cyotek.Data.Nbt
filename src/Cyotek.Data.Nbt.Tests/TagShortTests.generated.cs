@@ -13,8 +13,7 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
-  [TestFixture]
-  public partial class TagShortTests : TestBase
+  partial class TagShortTests
   {
     [Test]
     public void Constructor_sets_name()
@@ -78,7 +77,7 @@ namespace Cyotek.Data.Nbt.Tests
       short expected;
       short actual;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       // act
       target = new TagShort(string.Empty, expected);
@@ -96,7 +95,7 @@ namespace Cyotek.Data.Nbt.Tests
       short expected;
       short actual;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       // act
       target = new TagShort(expected);
@@ -116,7 +115,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagShort();
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       // act
       target.SetValue(expected);
@@ -134,7 +133,7 @@ namespace Cyotek.Data.Nbt.Tests
       short expected;
       object actual;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       target = TagFactory.CreateTag(expected);
 
@@ -153,8 +152,8 @@ namespace Cyotek.Data.Nbt.Tests
       TagShort other;
       bool actual;
 
-      target = new TagShort("alpha", 16383);
-      other = new TagShort("alpha", 16383);
+      target = new TagShort("alpha", (short)(short.MaxValue >> 1));
+      other = new TagShort("alpha", (short)(short.MaxValue >> 1));
 
       // act
       actual = target.Equals(other);
@@ -171,8 +170,8 @@ namespace Cyotek.Data.Nbt.Tests
       TagShort other;
       bool actual;
 
-      target = new TagShort("Alpha", 16383);
-      other = new TagShort("Beta", 16383);
+      target = new TagShort("Alpha", (short)(short.MaxValue >> 1));
+      other = new TagShort("Beta", (short)(short.MaxValue >> 1));
 
       // act
       actual = target.Equals(other);
@@ -189,7 +188,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagShort other;
       bool actual;
 
-      target = new TagShort(string.Empty, 16383);
+      target = new TagShort(string.Empty, (short)(short.MaxValue >> 1));
       other = new TagShort(string.Empty, 8191);
 
       // act
@@ -226,9 +225,9 @@ namespace Cyotek.Data.Nbt.Tests
       int actual;
       int expected;
 
-      target = new TagShort("beta", 16383);
+      target = new TagShort("beta", (short)(short.MaxValue >> 1));
 
-      expected = new TagShort("beta", 16383).GetHashCode();
+      expected = new TagShort("beta", (short)(short.MaxValue >> 1)).GetHashCode();
 
       // act
       actual = target.GetHashCode();
@@ -245,9 +244,9 @@ namespace Cyotek.Data.Nbt.Tests
       int actual;
       int notExpected;
 
-      target = new TagShort("Alpha", 16383);
+      target = new TagShort("Alpha", (short)(short.MaxValue >> 1));
 
-      notExpected = new TagShort("Beta", 16383).GetHashCode();
+      notExpected = new TagShort("Beta", (short)(short.MaxValue >> 1)).GetHashCode();
 
       // act
       actual = target.GetHashCode();
@@ -264,7 +263,7 @@ namespace Cyotek.Data.Nbt.Tests
       int actual;
       int notExpected;
 
-      target = new TagShort(string.Empty, 16383);
+      target = new TagShort(string.Empty, (short)(short.MaxValue >> 1));
 
       notExpected = new TagShort(string.Empty, 8191).GetHashCode();
 
@@ -283,7 +282,7 @@ namespace Cyotek.Data.Nbt.Tests
       short expected;
       short actual;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       target = new TagShort();
 
@@ -305,7 +304,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       expected = "16383";
 
-      target = new TagShort(string.Empty, 16383);
+      target = new TagShort(string.Empty, (short)(short.MaxValue >> 1));
 
       // act
       actual = target.ToValueString();
@@ -324,7 +323,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       expected = "[Short: gamma=16383]";
 
-      target = new TagShort("gamma", 16383);
+      target = new TagShort("gamma", (short)(short.MaxValue >> 1));
 
       // act
       actual = target.ToString();

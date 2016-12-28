@@ -13,8 +13,7 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
-  [TestFixture]
-  public partial class TagByteTests : TestBase
+  partial class TagByteTests
   {
     [Test]
     public void Constructor_sets_name()
@@ -78,7 +77,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte expected;
       byte actual;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       // act
       target = new TagByte(string.Empty, expected);
@@ -96,7 +95,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte expected;
       byte actual;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       // act
       target = new TagByte(expected);
@@ -116,7 +115,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagByte();
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       // act
       target.SetValue(expected);
@@ -134,7 +133,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte expected;
       object actual;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       target = TagFactory.CreateTag(expected);
 
@@ -153,8 +152,8 @@ namespace Cyotek.Data.Nbt.Tests
       TagByte other;
       bool actual;
 
-      target = new TagByte("alpha", 127);
-      other = new TagByte("alpha", 127);
+      target = new TagByte("alpha", (byte)(byte.MaxValue >> 1));
+      other = new TagByte("alpha", (byte)(byte.MaxValue >> 1));
 
       // act
       actual = target.Equals(other);
@@ -171,8 +170,8 @@ namespace Cyotek.Data.Nbt.Tests
       TagByte other;
       bool actual;
 
-      target = new TagByte("Alpha", 127);
-      other = new TagByte("Beta", 127);
+      target = new TagByte("Alpha", (byte)(byte.MaxValue >> 1));
+      other = new TagByte("Beta", (byte)(byte.MaxValue >> 1));
 
       // act
       actual = target.Equals(other);
@@ -189,7 +188,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagByte other;
       bool actual;
 
-      target = new TagByte(string.Empty, 127);
+      target = new TagByte(string.Empty, (byte)(byte.MaxValue >> 1));
       other = new TagByte(string.Empty, 63);
 
       // act
@@ -226,9 +225,9 @@ namespace Cyotek.Data.Nbt.Tests
       int actual;
       int expected;
 
-      target = new TagByte("beta", 127);
+      target = new TagByte("beta", (byte)(byte.MaxValue >> 1));
 
-      expected = new TagByte("beta", 127).GetHashCode();
+      expected = new TagByte("beta", (byte)(byte.MaxValue >> 1)).GetHashCode();
 
       // act
       actual = target.GetHashCode();
@@ -245,9 +244,9 @@ namespace Cyotek.Data.Nbt.Tests
       int actual;
       int notExpected;
 
-      target = new TagByte("Alpha", 127);
+      target = new TagByte("Alpha", (byte)(byte.MaxValue >> 1));
 
-      notExpected = new TagByte("Beta", 127).GetHashCode();
+      notExpected = new TagByte("Beta", (byte)(byte.MaxValue >> 1)).GetHashCode();
 
       // act
       actual = target.GetHashCode();
@@ -264,7 +263,7 @@ namespace Cyotek.Data.Nbt.Tests
       int actual;
       int notExpected;
 
-      target = new TagByte(string.Empty, 127);
+      target = new TagByte(string.Empty, (byte)(byte.MaxValue >> 1));
 
       notExpected = new TagByte(string.Empty, 63).GetHashCode();
 
@@ -283,7 +282,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte expected;
       byte actual;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       target = new TagByte();
 
@@ -305,7 +304,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       expected = "127";
 
-      target = new TagByte(string.Empty, 127);
+      target = new TagByte(string.Empty, (byte)(byte.MaxValue >> 1));
 
       // act
       actual = target.ToValueString();
@@ -324,7 +323,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       expected = "[Byte: gamma=127]";
 
-      target = new TagByte("gamma", 127);
+      target = new TagByte("gamma", (byte)(byte.MaxValue >> 1));
 
       // act
       actual = target.ToString();

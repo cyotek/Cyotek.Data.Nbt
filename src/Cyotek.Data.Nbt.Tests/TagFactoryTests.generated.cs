@@ -79,7 +79,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Byte;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -95,7 +95,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       byte expected;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -112,7 +112,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       byte expected;
 
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -130,7 +130,7 @@ namespace Cyotek.Data.Nbt.Tests
       byte value;
 
       expected = "Alpha_TagByte";
-      value = 127;
+      value = (byte)(byte.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(expected, value);
@@ -187,7 +187,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = TagType.Short;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(type, expected);
@@ -203,7 +203,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       short expected;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -220,7 +220,7 @@ namespace Cyotek.Data.Nbt.Tests
       Tag actual;
       short expected;
 
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(expected);
@@ -238,7 +238,7 @@ namespace Cyotek.Data.Nbt.Tests
       short value;
 
       expected = "Alpha_TagShort";
-      value = 16383;
+      value = (short)(short.MaxValue >> 1);
 
       // act
       actual = TagFactory.CreateTag(expected, value);

@@ -45,7 +45,7 @@
   {
     "Guid",
     "DateTime",
-    "bool"
+    "Boolean"
   };
 
   string[] secondaryDataTypeMappings =
@@ -159,8 +159,8 @@
   object[] tagTestData =
   {
     null,
-    byte.MaxValue >> 1,
-    short.MaxValue >> 1,
+    "(byte)(byte.MaxValue >> 1)",
+    "(short)(short.MaxValue >> 1)",
     int.MaxValue >> 1,
     long.MaxValue >> 1,
     float.MaxValue / 2 + "F",
@@ -196,6 +196,11 @@
   private bool IsListType(int type)
   {
     return type == tagTypeList;
+  }
+
+  private bool IsCompoundType(int type)
+  {
+    return type == tagTypeCompound;
   }
 
   #>

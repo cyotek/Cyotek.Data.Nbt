@@ -27,7 +27,7 @@ namespace Cyotek.Data.Nbt.Tests
       string expectedName;
 
       expectedName = "AlphaByte";
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       target = new TagDictionary();
 
@@ -51,7 +51,7 @@ namespace Cyotek.Data.Nbt.Tests
       string expectedName;
 
       expectedName = "BetaByte";
-      expected = 127;
+      expected = (byte)(byte.MaxValue >> 1);
 
       target = new TagDictionary();
 
@@ -75,7 +75,7 @@ namespace Cyotek.Data.Nbt.Tests
       string expectedName;
 
       expectedName = "AlphaShort";
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       target = new TagDictionary();
 
@@ -99,7 +99,7 @@ namespace Cyotek.Data.Nbt.Tests
       string expectedName;
 
       expectedName = "BetaShort";
-      expected = 16383;
+      expected = (short)(short.MaxValue >> 1);
 
       target = new TagDictionary();
 
@@ -651,13 +651,13 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
         [Test]
-    public void Add_adds_named_bool()
+    public void Add_adds_named_boolean()
     {
       // arrange
       TagDictionary target;
       TagByte actual;
       byte expected;
-      bool value;
+      Boolean value;
       string expectedName;
 
       expectedName = "AlphaByte";
@@ -677,14 +677,14 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Add_adds_named_bool_object()
+    public void Add_adds_named_boolean_object()
     {
       // arrange
       TagDictionary target;
       Tag actual;
       byte expected;
       string expectedName;
-      bool value;
+      Boolean value;
 
       expectedName = "BetaByte";
       expected = (byte)1;

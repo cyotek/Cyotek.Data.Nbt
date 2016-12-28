@@ -114,12 +114,12 @@ namespace Cyotek.Data.Nbt
       return this.Value.Contains(name);
     }
 
-    public bool GetBoolValue(string name)
+    public bool GetBooleanValue(string name)
     {
-      return this.GetBoolValue(name, false);
+      return this.GetBooleanValue(name, false);
     }
 
-    public bool GetBoolValue(string name, bool defaultValue)
+    public bool GetBooleanValue(string name, bool defaultValue)
     {
       TagByte value;
 
@@ -405,9 +405,11 @@ namespace Cyotek.Data.Nbt
     {
       string[] parts;
       Tag element;
+      bool failed;
 
       parts = query.Split(_queryDelimiters);
       element = this;
+      failed = false;
 
       // HACK: This is all quickly thrown together
 
@@ -415,55 +417,88 @@ namespace Cyotek.Data.Nbt
       {
         if (part.IndexOf('[') != -1)
         {
-          string[] subParts;
-          string name;
-          string value;
+          int attributePosition;
           bool matchFound;
-          TagList list;
 
-          subParts = part.Substring(1, part.Length - 2).Split('=');
-          name = subParts[0];
-          value = subParts[1];
+          attributePosition = part.IndexOf('=');
           matchFound = false;
 
-          list = element as TagList;
-
-          if (list != null)
+          if (attributePosition != -1)
           {
-            // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach (Tag tag in list.Value)
+            string name;
+            string value;
+            TagList list;
+
+            name = part.Substring(1, attributePosition - 1);
+            value = part.Substring(attributePosition + 1, part.Length - (attributePosition + 2));
+            list = element as TagList;
+
+            if (list != null)
             {
-              TagCompound compound;
-
-              compound = tag as TagCompound;
-
-              if (compound != null && compound.GetStringValue(name) == value)
+              // ReSharper disable once LoopCanBePartlyConvertedToQuery
+              foreach (Tag tag in list.Value)
               {
-                element = tag;
-                matchFound = true;
-                break;
+                TagCompound compound;
+
+                compound = tag as TagCompound;
+
+                if (compound != null && compound.GetStringValue(name) == value)
+                {
+                  element = tag;
+                  matchFound = true;
+                  break;
+                }
               }
             }
           }
 
           if (!matchFound)
           {
-            throw new ArgumentException($"Could not find element matching pattern '{part}'", nameof(query));
+            // attribute not found or not set
+            failed = true;
+            break;
           }
-        }
-        else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
-        {
-          // list entry
-          element = ((ICollectionTag)element).Values[Convert.ToInt32(part)];
         }
         else
         {
-          // standard item
-          element = ((TagCompound)element).Value[part];
+          ICollectionTag container;
+
+          container = element as ICollectionTag;
+
+          if (container != null && container.IsList)
+          {
+            // list entry
+            int index;
+
+            if (int.TryParse(part, out index) && index < container.Values.Count)
+            {
+              element = container.Values[Convert.ToInt32(part)];
+            }
+            else
+            {
+              // invalid index, or out of bounds
+              failed = true;
+              break;
+            }
+          }
+          else
+          {
+            // compoound
+            TagCompound compound;
+
+            compound = (TagCompound)element;
+
+            if (!compound.Value.TryGetValue(part, out element))
+            {
+              // didn't find a matching key
+              failed = true;
+              break;
+            }
+          }
         }
       }
 
-      return (T)element;
+      return !failed ? (T)element : null;
     }
 
     public T QueryValue<T>(string query)
@@ -511,7 +546,7 @@ namespace Cyotek.Data.Nbt
     TagType ICollectionTag.ListType
     {
       get { return TagType.None; }
-      set { }
+      set { throw new NotSupportedException("Compounds cannot be restricted to a single type."); }
     }
 
     IList<Tag> ICollectionTag.Values

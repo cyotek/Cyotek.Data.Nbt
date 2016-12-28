@@ -3,9 +3,50 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
-  partial class TagCompoundTests
+  [TestFixture]
+  public partial class TagCompoundTests : TestBase
   {
     #region  Tests
+
+    [Test]
+    public void Contains_returns_false_if_not_found()
+    {
+      // arrange
+      TagCompound target;
+      bool actual;
+
+      target = new TagCompound();
+
+      target.Value.Add("Beta", 10);
+      target.Value.Add("Alpha", 11);
+      target.Value.Add("Gamma", 12);
+
+      // act
+      actual = target.Contains("Delta");
+
+      // assert
+      Assert.IsFalse(actual);
+    }
+
+    [Test]
+    public void Contains_returns_true_if_found()
+    {
+      // arrange
+      TagCompound target;
+      bool actual;
+
+      target = new TagCompound();
+
+      target.Value.Add("Beta", 10);
+      target.Value.Add("Alpha", 11);
+      target.Value.Add("Gamma", 12);
+
+      // act
+      actual = target.Contains("Alpha");
+
+      // assert
+      Assert.IsTrue(actual);
+    }
 
     [Test]
     public void Count_returns_child_count()
@@ -44,6 +85,49 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       actual = target.Count;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetEnumValue_returns_default_value()
+    {
+      // arrange
+      TagCompound target;
+      AppDomainManagerInitializationOptions expected;
+      AppDomainManagerInitializationOptions actual;
+      string name;
+
+      expected = AppDomainManagerInitializationOptions.RegisterWithHost;
+      name = "alpha";
+
+      target = new TagCompound();
+
+      // act
+      actual = target.GetEnumValue(name, expected);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetEnumValue_returns_existing_value()
+    {
+      // arrange
+      TagCompound target;
+      AppDomainManagerInitializationOptions expected;
+      AppDomainManagerInitializationOptions actual;
+      string name;
+
+      expected = AppDomainManagerInitializationOptions.RegisterWithHost;
+      name = "alpha";
+
+      target = new TagCompound();
+      target.Value.Add(name, (int)expected);
+
+      // act
+      actual = target.GetEnumValue<AppDomainManagerInitializationOptions>(name);
 
       // assert
       Assert.AreEqual(expected, actual);
@@ -94,7 +178,20 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
+    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Compounds cannot be restricted to a single type.")]
+    public void ListType_throws_exception_if_set()
+    {
+      // arrange
+      TagCompound target;
+
+      target = new TagCompound();
+
+      // act
+      ((ICollectionTag)target).ListType = TagType.Byte;
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: value")]
     public void Value_throws_exception_if_set_to_null_value()
     {
       // arrange

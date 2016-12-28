@@ -31,6 +31,8 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * `TagFactory.Create` methods have had their parameters shuffled so that `name` comes first, mirroring `TagDictionary` and other `TagFactory` methods
 * `TagCollection` contents will automatically set the `LimitType` based on the first value added when no explicit type is defined
 * `TagDictionary.Add` methods now return the appropriate concrete `Tag` instance for the value's data type
+* `TagCompound.GetBoolValue` renamed to `GetBooleanValue`
+* `TagCompound.Query` should no longer throw exceptions when a match cannot be found, but instead returns `null`
 
 ### Removed
 * Removed the `WriteTagOptions` and `ReadTagOptions` enumerations, plus removed any overloaded method supplying these options. Each reader and writer now maintains its own state to know when it should or should not be doing things without having to be told

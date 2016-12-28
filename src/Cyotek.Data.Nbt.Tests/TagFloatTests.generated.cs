@@ -13,8 +13,7 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
-  [TestFixture]
-  public partial class TagFloatTests : TestBase
+  partial class TagFloatTests
   {
     [Test]
     public void Constructor_sets_name()

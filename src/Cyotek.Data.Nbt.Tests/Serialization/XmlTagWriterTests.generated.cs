@@ -43,7 +43,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         target = this.CreateWriter(stream);
 
-        expected = 127;
+        expected = (byte)(byte.MaxValue >> 1);
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
@@ -76,7 +76,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         target = this.CreateWriter(stream);
 
         expectedName = "deltabyte";
-        expectedValue = 127;
+        expectedValue = (byte)(byte.MaxValue >> 1);
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
@@ -109,7 +109,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         target = this.CreateWriter(stream);
 
-        expected = 16383;
+        expected = (short)(short.MaxValue >> 1);
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
@@ -142,7 +142,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         target = this.CreateWriter(stream);
 
         expectedName = "deltashort";
-        expectedValue = 16383;
+        expectedValue = (short)(short.MaxValue >> 1);
 
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);

@@ -1,5 +1,8 @@
+using NUnit.Framework;
+
 namespace Cyotek.Data.Nbt.Tests
 {
-  partial class TagIntArrayTests
+  [TestFixture]
+  public partial class TagIntArrayTests : TestBase
   { }
 }
