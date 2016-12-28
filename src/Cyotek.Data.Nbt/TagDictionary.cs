@@ -13,24 +13,6 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region Constructors
-
-    public TagDictionary()
-    { }
-
-    public TagDictionary(Tag owner)
-      : this()
-    {
-      if (owner == null)
-      {
-        throw new ArgumentNullException(nameof(owner));
-      }
-
-      this.Owner = owner;
-    }
-
-    #endregion
-
     #region Properties
 
     public Tag Owner
@@ -51,17 +33,17 @@ namespace Cyotek.Data.Nbt
 
     #region Methods
 
-    public Tag Add(string name, bool value)
+    public TagByte Add(string name, bool value)
     {
       return this.Add(name, (byte)(value ? 1 : 0));
     }
 
-    public Tag Add(string name, DateTime value)
+    public TagString Add(string name, DateTime value)
     {
       return this.Add(name, value.ToString("u"));
     }
 
-    public Tag Add(string name, Guid value)
+    public TagByteArray Add(string name, Guid value)
     {
       return this.Add(name, value.ToByteArray());
     }
@@ -134,6 +116,14 @@ namespace Cyotek.Data.Nbt
       {
         result = this.Add(name, (bool)value);
       }
+      else if (value is TagDictionary)
+      {
+        result = this.Add(name, (TagDictionary)value);
+      }
+      else if (value is TagCollection)
+      {
+        result = this.Add(name, (TagCollection)value);
+      }
       else
       {
         throw new ArgumentException("Invalid value type.", nameof(value));
@@ -142,11 +132,38 @@ namespace Cyotek.Data.Nbt
       return result;
     }
 
+    /// <summary>
+    /// Adds a range of existing <see cref="T:KeyValuePair{string,object}"/> objects to the <see cref="TagDictionary"/>.
+    /// </summary>
+    /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
     public void AddRange(IEnumerable<KeyValuePair<string, object>> values)
     {
       foreach (KeyValuePair<string, object> value in values)
       {
         this.Add(value.Key, value.Value);
+      }
+    }
+    /// <summary>
+    /// Adds the contents of an existing <see cref="T:IDictionary{string,object}"/> objects to the <see cref="TagDictionary"/>.
+    /// </summary>
+    /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
+    public void AddRange(IDictionary<string, object> values)
+    {
+      foreach (KeyValuePair<string, object> value in values)
+      {
+        this.Add(value.Key, value.Value);
+      }
+    }
+
+    /// <summary>
+    /// Adds a range of existing <see cref="Tag"/> objects to the <see cref="TagDictionary"/>.
+    /// </summary>
+    /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
+    public void AddRange(IEnumerable<Tag> values )
+    {
+      foreach (Tag value in values)
+      {
+        this.Add(value);
       }
     }
 
@@ -226,13 +243,6 @@ namespace Cyotek.Data.Nbt
       item.Parent = null;
 
       base.RemoveItem(index);
-    }
-
-    protected override void SetItem(int index, Tag item)
-    {
-      item.Parent = this.Owner;
-
-      base.SetItem(index, item);
     }
 
     internal void ChangeKey(Tag item, string newKey)

@@ -4,260 +4,201 @@ using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
-  [TestFixture]
-  public class TagDictionaryTests
+  partial class TagDictionaryTests
   {
     #region  Tests
 
     [Test]
-    public void AddBoolWithNameTest()
-    {
-      this.AddTest<bool, TagByte>(Guid.NewGuid().ToString(), true, 1);
-    }
-
-    [Test]
-    public void AddByteArrayTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.ByteArray);
-    }
-
-    [Test]
-    public void AddByteArrayWithNameTest()
-    {
-      this.AddTest<byte[], TagByteArray>(Guid.NewGuid().ToString(), new[]
-                                                                    {
-                                                                      byte.MinValue,
-                                                                      byte.MaxValue
-                                                                    });
-    }
-
-    [Test]
-    public void AddByteTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Byte);
-    }
-
-    [Test]
-    public void AddByteWithNameTest()
-    {
-      this.AddTest<byte, TagByte>(Guid.NewGuid().ToString(), byte.MaxValue);
-    }
-
-    [Test]
-    public void AddCompoundTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Compound);
-    }
-
-    [Test]
-    public void AddDateTimeWithNameTest()
-    {
-      this.AddTest<DateTime, TagString>(Guid.NewGuid().ToString(), DateTime.MaxValue, DateTime.MaxValue.ToString("u"));
-    }
-
-    [Test]
-    public void AddDoubleTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Double);
-    }
-
-    [Test]
-    public void AddDoubleWithNameTest()
-    {
-      this.AddTest<double, TagDouble>(Guid.NewGuid().ToString(), double.MaxValue);
-    }
-
-    [Test]
-    public void AddFloatTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Float);
-    }
-
-    [Test]
-    public void AddFloatWithNameTest()
-    {
-      this.AddTest<float, TagFloat>(Guid.NewGuid().ToString(), float.MaxValue);
-    }
-
-    [Test]
-    public void AddGuidWithNameTest()
-    {
-      Guid value;
-
-      value = Guid.NewGuid();
-
-      this.AddTest<Guid, TagByteArray>(Guid.NewGuid().ToString(), value, value.ToByteArray());
-    }
-
-    [Test]
-    public void AddIntArrayTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.IntArray);
-    }
-
-    [Test]
-    public void AddIntArrayWithNameTest()
-    {
-      this.AddTest<int[], TagIntArray>(Guid.NewGuid().ToString(), new[]
-                                                                  {
-                                                                    int.MinValue,
-                                                                    int.MaxValue
-                                                                  });
-    }
-
-    [Test]
-    public void AddIntTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Int);
-    }
-
-    [Test]
-    public void AddIntWithNameTest()
-    {
-      this.AddTest<int, TagInt>(Guid.NewGuid().ToString(), int.MaxValue);
-    }
-
-    [Test]
-    public void AddListTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.List, TagType.String);
-    }
-
-    [Test]
-    public void AddLongTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Long);
-    }
-
-    [Test]
-    public void AddLongWithNameTest()
-    {
-      this.AddTest<long, TagLong>(Guid.NewGuid().ToString(), long.MaxValue);
-    }
-
-    [Test]
-    [ExpectedException(typeof(ArgumentException))]
-    public void AddObjectWithNameTest()
-    {
-      this.AddTest<object, TagByte>(Guid.NewGuid().ToString(), 'c');
-    }
-
-    [Test]
-    public void AddRangeTest()
+    public void Add_sets_parent()
     {
       // arrange
+      TagCompound owner;
       TagDictionary target;
-      string key1;
-      string key2;
-      string value1;
-      string value2;
+      Tag actual;
 
-      target = new TagDictionary();
-      key1 = Guid.NewGuid().ToString();
-      key2 = Guid.NewGuid().ToString();
-      value1 = Guid.NewGuid().ToString();
-      value2 = Guid.NewGuid().ToString();
+      actual = new TagByte("alpha", 56);
+
+      owner = new TagCompound();
+      target = owner.Value;
 
       // act
-      target.AddRange(new[]
-                      {
-                        new KeyValuePair<string, object>(key1, value1),
-                        new KeyValuePair<string, object>(key2, value2)
-                      });
+      target.Add(actual);
 
       // assert
-      Assert.AreEqual(2, target.Count);
-      Assert.IsTrue(target.Contains(key1));
-      Assert.IsTrue(target.Contains(key2));
-      Assert.AreEqual(value1, target[key1].GetValue());
-      Assert.AreEqual(value2, target[key2].GetValue());
+      Assert.AreSame(owner, actual.Parent);
     }
 
     [Test]
-    public void AddShortTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().ToString(), TagType.Short);
-    }
-
-    [Test]
-    public void AddShortWithNameTest()
-    {
-      this.AddTest<short, TagShort>(Guid.NewGuid().ToString(), short.MaxValue);
-    }
-
-    [Test]
-    public void AddStringWithNameTest()
-    {
-      this.AddTest<string, TagString>(Guid.NewGuid().ToString(), "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
-    }
-
-    #endregion
-
-    #region Test Helpers
-
-    protected void AddTagByTypeTest(string name, TagType type)
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Invalid value type.\r\nParameter name: value")]
+    public void Add_throws_exception_for_unsupported_data_type()
     {
       // arrange
       TagDictionary target;
-      Tag tag;
 
       target = new TagDictionary();
 
       // act
-      tag = target.Add(name, type);
-
-      // assert
-      Assert.IsNotNull(tag);
-      Assert.IsTrue(target.Contains(name));
-      Assert.AreSame(tag, target[name]);
-      Assert.AreEqual(name, tag.Name);
-      Assert.AreEqual(type, tag.Type);
+      target.Add("alpha", TimeSpan.MinValue);
     }
 
-    protected void AddTagByTypeTest(string name, TagType type, TagType limitType)
+    [Test]
+    public void AddRange_adds_dictionary_contents()
     {
       // arrange
       TagDictionary target;
-      Tag tag;
+      Dictionary<string, object> expected;
 
       target = new TagDictionary();
 
+      expected = new Dictionary<string, object>
+                 {
+                   {
+                     "alpha", (byte)1
+                   },
+                   {
+                     "beta", (short)short.MaxValue
+                   },
+                   {
+                     "gamma", int.MaxValue
+                   }
+                 };
+
       // act
-      tag = target.Add(name, type, limitType);
+      target.AddRange(expected);
 
       // assert
-      Assert.IsNotNull(tag);
-      Assert.IsTrue(target.Contains(name));
-      Assert.AreSame(tag, target[name]);
-      Assert.AreEqual(name, tag.Name);
-      Assert.AreEqual(type, tag.Type);
-      Assert.IsInstanceOf<ICollectionTag>(tag);
-      Assert.AreEqual(limitType, ((ICollectionTag)tag).ListType);
+      Assert.AreEqual(expected.Count, target.Count);
+      Assert.IsInstanceOf<TagByte>(target["alpha"]);
+      Assert.AreEqual(1, target["alpha"].GetValue());
+      Assert.IsInstanceOf<TagShort>(target["beta"]);
+      Assert.AreEqual(short.MaxValue, target["beta"].GetValue());
+      Assert.IsInstanceOf<TagInt>(target["gamma"]);
+      Assert.AreEqual(int.MaxValue, target["gamma"].GetValue());
     }
 
-    protected void AddTest<TValue, TTag>(string name, TValue value)
-    {
-      this.AddTest<TValue, TTag>(name, value, null);
-    }
-
-    protected void AddTest<TValue, TTag>(string name, TValue value, object alternateValue)
+    [Test]
+    public void AddRange_adds_multiple__key_value_pairs()
     {
       // arrange
       TagDictionary target;
-      Tag tag;
+      KeyValuePair<string, object>[] expected;
 
       target = new TagDictionary();
 
+      expected = new[]
+                 {
+                   new KeyValuePair<string, object>("alpha", (byte)1),
+                   new KeyValuePair<string, object>("beta", (short)short.MaxValue),
+                   new KeyValuePair<string, object>("gamma", int.MaxValue)
+                 };
+
       // act
-      tag = target.Add(name, value);
+      target.AddRange(expected);
 
       // assert
-      Assert.IsNotNull(tag);
-      Assert.IsTrue(target.Contains(name));
-      Assert.AreSame(tag, target[name]);
-      Assert.AreEqual(name, tag.Name);
-      Assert.IsInstanceOf<TTag>(tag);
-      Assert.AreEqual(alternateValue ?? value, tag.GetValue());
+      Assert.AreEqual(expected.Length, target.Count);
+      Assert.IsInstanceOf<TagByte>(target["alpha"]);
+      Assert.AreEqual(1, target["alpha"].GetValue());
+      Assert.IsInstanceOf<TagShort>(target["beta"]);
+      Assert.AreEqual(short.MaxValue, target["beta"].GetValue());
+      Assert.IsInstanceOf<TagInt>(target["gamma"]);
+      Assert.AreEqual(int.MaxValue, target["gamma"].GetValue());
+    }
+
+    [Test]
+    public void AddRange_adds_tags()
+    {
+      // arrange
+      TagDictionary target;
+      Tag[] expected;
+
+      target = new TagDictionary();
+
+      expected = new Tag[]
+                 {
+                   new TagByte("alpha", (byte)1),
+                   new TagShort("beta", (short)short.MaxValue),
+                   new TagInt("gamma", int.MaxValue)
+                 };
+
+      // act
+      target.AddRange(expected);
+
+      // assert
+      Assert.AreEqual(expected.Length, target.Count);
+      Assert.AreSame(target["alpha"], expected[0]);
+      Assert.AreSame(target["beta"], expected[1]);
+      Assert.AreSame(target["gamma"], expected[2]);
+    }
+
+    [Test]
+    public void Changing_tag_name_updates_key()
+    {
+      // arrange
+      TagCompound owner;
+      TagDictionary target;
+      Tag actual;
+
+      actual = new TagByte("alpha", 56);
+
+      owner = new TagCompound();
+      target = owner.Value;
+
+      target.Add(actual);
+
+      // act
+      actual.Name = "beta";
+
+      // assert
+      Assert.IsFalse(target.Contains("alpha"));
+      Assert.IsTrue(target.Contains("beta"));
+      Assert.AreSame(actual, target["beta"]);
+    }
+
+    [Test]
+    public void Clear_removes_parents()
+    {
+      // arrange
+      TagCompound owner;
+      TagDictionary target;
+      Tag actual1;
+      Tag actual2;
+
+      actual1 = new TagByte("alpha", 56);
+      actual2 = new TagShort("beta", 56);
+
+      owner = new TagCompound();
+      target = owner.Value;
+
+      target.Add(actual1);
+      target.Add(actual2);
+
+      // act
+      target.Clear();
+
+      // assert
+      Assert.IsNull(actual1.Parent);
+      Assert.IsNull(actual2.Parent);
+    }
+
+    [Test]
+    public void Remove_clears_parent()
+    {
+      // arrange
+      TagCompound owner;
+      TagDictionary target;
+      Tag actual;
+
+      owner = new TagCompound();
+      target = owner.Value;
+
+      actual = target.Add("alpha", (byte)56);
+
+      // act
+      target.Remove(actual);
+
+      // assert
+      Assert.IsNull(actual.Parent);
     }
 
     #endregion

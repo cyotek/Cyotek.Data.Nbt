@@ -4,7 +4,7 @@ Cyotek.Data.Nbt Change Log
 [3.0.0-alpha] - 2016-12-27
 ------------------------
 
-This release concentrates on cleaning up the code by removing unused or rarely used features, solving boxing issues, removing some hacks and generally reworking the API. Some code changes may be required due to the level of (breaking) change this release introduces.
+This release concentrates on cleaning up the code by removing unused or rarely used features, solving boxing issues, removing some hacks, generally reworking the API and increasing the testing coverage. Some minor code changes may be required due to the level of (breaking) change this release introduces.
 
 A fair chunk of both the library code and test code are now generated via T4 templates.
 
@@ -17,17 +17,20 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Added indexers to `TagCompound`
 * Added `TagCompound.Count`
 * Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument` 
+* Added new `TagDictionary.AddRange` overloads
 
 ### Fixed
 * All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version
 * `XmlTagReader` crashed if empty byte or int array values were present
 * Calling `XmlTagReader.IsNbtDocument` would return `true` if a `type` attribute was found, regardless of if the value was `TagCompound` or not
+* `TagDictionary.Add(name, object)` didn't support `TagDictionary` or `TagCollection` values
 
 ### Changed
 * Tag names should now be empty when not set rather than `null`
 * `TagReader.ReadCollection` and `ReadDictionary` renamed to `ReadList` and `ReadCompound` to match their NBT types.
 * `TagFactory.Create` methods have had their parameters shuffled so that `name` comes first, mirroring `TagDictionary` and other `TagFactory` methods
 * `TagCollection` contents will automatically set the `LimitType` based on the first value added when no explicit type is defined
+* `TagDictionary.Add` methods now return the appropriate concrete `Tag` instance for the value's data type
 
 ### Removed
 * Removed the `WriteTagOptions` and `ReadTagOptions` enumerations, plus removed any overloaded method supplying these options. Each reader and writer now maintains its own state to know when it should or should not be doing things without having to be told
