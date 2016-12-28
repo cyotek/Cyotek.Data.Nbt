@@ -172,16 +172,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Serialization\XmlTagReader.generated.tt">
+    <None Include="Serialization\XmlTagReader.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XmlTagReader.generated.cs</LastGenOutput>
       <DependentUpon>XmlTagReader.cs</DependentUpon>
-    </Content>
-    <Content Include="TagCollection.generated.tt">
+    </None>
+    <None Include="TagCollection.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>TagCollection.cs</DependentUpon>
       <LastGenOutput>TagCollection.generated.cs</LastGenOutput>
-    </Content>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

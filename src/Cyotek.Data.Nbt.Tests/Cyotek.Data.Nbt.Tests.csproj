@@ -238,36 +238,36 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Serialization\BinaryTagReaderInvalidDataTests.generated.tt">
+    <None Include="Serialization\BinaryTagReaderInvalidDataTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryTagReaderInvalidDataTests.generated.cs</LastGenOutput>
       <DependentUpon>BinaryTagReaderTests.cs</DependentUpon>
-    </Content>
-    <Content Include="Serialization\BinaryTagReaderTests.generated.tt">
+    </None>
+    <None Include="Serialization\BinaryTagReaderTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryTagReaderTests.generated.cs</LastGenOutput>
       <DependentUpon>BinaryTagReaderTests.cs</DependentUpon>
-    </Content>
-    <Content Include="Serialization\XmlTagReaderTests.generated.tt">
+    </None>
+    <None Include="Serialization\XmlTagReaderTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XmlTagReaderTests.generated.cs</LastGenOutput>
       <DependentUpon>XmlTagReaderTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagCollectionTests.generated.tt">
+    </None>
+    <None Include="TagCollectionTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagCollectionTests.generated.cs</LastGenOutput>
       <DependentUpon>TagCollectionTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagCompoundValueTests.generated.tt">
+    </None>
+    <None Include="TagCompoundValueTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagCompoundValueTests.generated.cs</LastGenOutput>
       <DependentUpon>TagCompoundTests.cs</DependentUpon>
-    </Content>
-    <Content Include="TagDictionaryTests.generated.tt">
+    </None>
+    <None Include="TagDictionaryTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagDictionaryTests.generated.cs</LastGenOutput>
       <DependentUpon>TagDictionaryTests.cs</DependentUpon>
-    </Content>
+    </None>
     <None Include="TagByteArrayTests.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagByteArrayTests.generated.cs</LastGenOutput>
