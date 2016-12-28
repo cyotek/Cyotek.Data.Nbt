@@ -126,25 +126,24 @@ namespace Cyotek.Data.Nbt.Tests
       nbtName = secondaryDataTypeMappings[i];
       mappedType = secondaryDataTypeMappedTypes[i];
       testData = secondaryDataTypeTestData[i];
-
-        #>
+      #>
     [Test]
-    public void Get<#=name#>Value_returns_existing_value()
+    public void Get<#=name #>Value_returns_existing_value()
     {
       // arrange
       TagCompound target;
-      <#=name#> expected;
-      <#=name#> actual;
+      <#=name #> expected;
+      <#=name #> actual;
       string name;
 
-      expected = <#=testData#>;
+      expected = <#=testData #>;
       name = "alpha";
 
       target = new TagCompound();
       target.Value.Add(name, expected);
 
       // act
-      actual = target.Get<#=name#>Value(name);
+      actual = target.Get<#=name #>Value(name);
 
       // assert
       Assert.AreEqual(expected, actual);

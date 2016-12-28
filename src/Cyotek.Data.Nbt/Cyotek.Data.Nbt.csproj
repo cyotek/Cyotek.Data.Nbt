@@ -80,12 +80,17 @@
       <DependentUpon>TagByteArray.generated.tt</DependentUpon>
     </Compile>
     <Compile Include="TagCollection.cs" />
+    <Compile Include="TagCollection.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TagCollection.generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="TagCompound.cs" />
     <Compile Include="TagDictionary.cs" />
     <Compile Include="TagDictionary.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>TagDictionary.generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="TagDouble.cs" />
     <Compile Include="TagEnd.cs" />
@@ -143,6 +148,7 @@
     <None Include="TagDictionary.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagDictionary.generated.cs</LastGenOutput>
+      <DependentUpon>TagDictionary.cs</DependentUpon>
     </None>
     <None Include="TagFactory.generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -156,6 +162,13 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagType.generated.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TagCollection.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TagCollection.cs</DependentUpon>
+      <LastGenOutput>TagCollection.generated.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

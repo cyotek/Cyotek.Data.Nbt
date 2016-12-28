@@ -78,7 +78,7 @@ namespace Cyotek.Data.Nbt
       nbtName = nbtTypeNames[i];
       tagName = nbtTagTypeNames[i];
 
-      if (i != tagTypeEnd && !IsListType(i))
+      if (i != tagTypeEnd && !this.IsListType(i))
       {
         #>
         case TagType.<#=nbtName #>:

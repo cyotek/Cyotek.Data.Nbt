@@ -3,6 +3,6 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  public partial class TagStringTests:TestBase
+  public partial class TagStringTests : TestBase
   { }
 }

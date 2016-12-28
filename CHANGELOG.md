@@ -24,6 +24,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * `XmlTagReader` crashed if empty byte or int array values were present
 * Calling `XmlTagReader.IsNbtDocument` would return `true` if a `type` attribute was found, regardless of if the value was `TagCompound` or not
 * `TagDictionary.Add(name, object)` didn't support `TagDictionary` or `TagCollection` values
+* `TagCollection.Add(object)` now correctly supports `TagDictionary` and `TagCollection` values
 
 ### Changed
 * Tag names should now be empty when not set rather than `null`
@@ -43,9 +44,11 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Removed all events from the `Tag` object as they added overhead without being used in most use cases
 * Removed the `TagException` class as it was unused
 * Removed `Tag.ToString(string)` overloads
-* Removed `Tag.CanRemove` and `Tag.Remove()`, as they are too suitational
+* Removed `Tag.CanRemove` and `Tag.Remove()`, as they are too situational
 * `Tag` properties are no longer `virtual`
 * Removed the `CompressionOptions` enum and related support from `NbtDocument`. When saving to a file, XML will be uncompressed, binary will be gzipped. When saving to a `Stream`, you can pass in your own `GZipStream`, `DeflateStream` or equivalent
+* All `TagCollection.Add` method overloads that accepted a `name` argument have been removed
+* Removed secondary data type helpers from `TagCollection`
 
 
 [2.1.0] - 2016-02-24

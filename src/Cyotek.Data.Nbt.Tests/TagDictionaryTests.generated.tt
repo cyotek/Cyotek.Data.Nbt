@@ -26,12 +26,12 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagDictionary target;
-      <#=tagName#> actual;
-      <#=name#> expected;
+      <#=tagName #> actual;
+      <#=name #> expected;
       string expectedName;
 
-      expectedName = "Alpha<#=nbtName#>";
-      expected = <#=tagTestData[i]#>;
+      expectedName = "Alpha<#=nbtName #>";
+      expected = <#=tagTestData[i] #>;
 
       target = new TagDictionary();
 
@@ -46,16 +46,16 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Add_adds_named_<#=nbtName.ToLower()#>_object()
+    public void Add_adds_named_<#=nbtName.ToLower() #>_object()
     {
       // arrange
       TagDictionary target;
       Tag actual;
-      <#=name#> expected;
+      <#=name #> expected;
       string expectedName;
 
-      expectedName = "Beta<#=nbtName#>";
-      expected = <#=tagTestData[i]#>;
+      expectedName = "Beta<#=nbtName #>";
+      expected = <#=tagTestData[i] #>;
 
       target = new TagDictionary();
 
@@ -84,7 +84,7 @@ namespace Cyotek.Data.Nbt.Tests
       name = secondaryDataTypes[i];
       nbtName = secondaryDataTypeMappings[i];
       tagName = "Tag" + nbtName;
-      mappedType=secondaryDataTypeMappedTypes[i];
+      mappedType = secondaryDataTypeMappedTypes[i];
 
       if (name != null)
       {
@@ -94,14 +94,14 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagDictionary target;
-      <#=tagName#> actual;
-      <#=mappedType#> expected;
-      <#=name#> value;
+      <#=tagName #> actual;
+      <#=mappedType #> expected;
+      <#=name #> value;
       string expectedName;
 
-      expectedName = "Alpha<#=nbtName#>";
-      expected = <#=secondaryDataTypeTranslatedTestData[i]#>;
-      value = <#=secondaryDataTypeTestData[i]#>;
+      expectedName = "Alpha<#=nbtName #>";
+      expected = <#=secondaryDataTypeTranslatedTestData[i] #>;
+      value = <#=secondaryDataTypeTestData[i] #>;
 
       target = new TagDictionary();
 
@@ -116,18 +116,18 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Add_adds_named_<#=name.ToLower()#>_object()
+    public void Add_adds_named_<#=name.ToLower() #>_object()
     {
       // arrange
       TagDictionary target;
       Tag actual;
-      <#=mappedType#> expected;
+      <#=mappedType #> expected;
       string expectedName;
-      <#=name#> value;
+      <#=name #> value;
 
-      expectedName = "Beta<#=nbtName#>";
-      expected = <#=secondaryDataTypeTranslatedTestData[i]#>;
-      value = <#=secondaryDataTypeTestData[i]#>;
+      expectedName = "Beta<#=nbtName #>";
+      expected = <#=secondaryDataTypeTranslatedTestData[i] #>;
+      value = <#=secondaryDataTypeTestData[i] #>;
 
       target = new TagDictionary();
 

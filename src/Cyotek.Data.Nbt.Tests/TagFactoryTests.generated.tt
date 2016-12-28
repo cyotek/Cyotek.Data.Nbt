@@ -41,7 +41,7 @@ namespace Cyotek.Data.Nbt.Tests
     <#
       if (i != tagTypeEnd)
       {
-#>[Test]
+        #>[Test]
     public void Create_with_type_sets_<#=nbtName.ToLower() #>_name()
     {
       // arrange

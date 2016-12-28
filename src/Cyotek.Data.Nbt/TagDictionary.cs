@@ -143,6 +143,7 @@ namespace Cyotek.Data.Nbt
         this.Add(value.Key, value.Value);
       }
     }
+
     /// <summary>
     /// Adds the contents of an existing <see cref="T:IDictionary{string,object}"/> objects to the <see cref="TagDictionary"/>.
     /// </summary>
@@ -159,7 +160,7 @@ namespace Cyotek.Data.Nbt
     /// Adds a range of existing <see cref="Tag"/> objects to the <see cref="TagDictionary"/>.
     /// </summary>
     /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
-    public void AddRange(IEnumerable<Tag> values )
+    public void AddRange(IEnumerable<Tag> values)
     {
       foreach (Tag value in values)
       {

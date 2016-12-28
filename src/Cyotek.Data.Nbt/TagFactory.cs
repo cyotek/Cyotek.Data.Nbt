@@ -1,5 +1,3 @@
-using System;
-
 namespace Cyotek.Data.Nbt
 {
   public static partial class TagFactory
