@@ -204,20 +204,6 @@ namespace Cyotek.Data.Nbt
       return value?.Value ?? defaultValue;
     }
 
-    public T GetEnumValue<T>(string name) where T : struct
-    {
-      return this.GetEnumValue(name, default(T));
-    }
-
-    public T GetEnumValue<T>(string name, T defaultValue) where T : struct
-    {
-      TagInt value;
-
-      value = this.GetTag<TagInt>(name);
-
-      return value != null ? (T)Enum.ToObject(typeof(T), value.Value) : defaultValue;
-    }
-
     public TagFloat GetFloat(string name)
     {
       return this.GetTag<TagFloat>(name);

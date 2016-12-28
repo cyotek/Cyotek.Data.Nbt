@@ -15,7 +15,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Each concrete tag class now implements `IEquatable<>` (non-boxing)
 * Added indexers to `TagCompound`
 * Added `TagCompound.Count`
-* Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument` 
+* Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument`
 * Added new `TagDictionary.AddRange` overloads
 * All library code is now covered by tests
 
@@ -49,6 +49,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Removed the `CompressionOptions` enum and related support from `NbtDocument`. When saving to a file, XML will be uncompressed, binary will be gzipped. When saving to a `Stream`, you can pass in your own `GZipStream`, `DeflateStream` or equivalent
 * All `TagCollection.Add` method overloads that accepted a `name` argument have been removed
 * Removed secondary data type helpers from `TagCollection`
+* Removed `TagCompound.GetEnumValue`
 
 
 [2.1.0] - 2016-02-24

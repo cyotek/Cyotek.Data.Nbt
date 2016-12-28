@@ -91,49 +91,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void GetEnumValue_returns_default_value()
-    {
-      // arrange
-      TagCompound target;
-      AppDomainManagerInitializationOptions expected;
-      AppDomainManagerInitializationOptions actual;
-      string name;
-
-      expected = AppDomainManagerInitializationOptions.RegisterWithHost;
-      name = "alpha";
-
-      target = new TagCompound();
-
-      // act
-      actual = target.GetEnumValue(name, expected);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void GetEnumValue_returns_existing_value()
-    {
-      // arrange
-      TagCompound target;
-      AppDomainManagerInitializationOptions expected;
-      AppDomainManagerInitializationOptions actual;
-      string name;
-
-      expected = AppDomainManagerInitializationOptions.RegisterWithHost;
-      name = "alpha";
-
-      target = new TagCompound();
-      target.Value.Add(name, (int)expected);
-
-      // act
-      actual = target.GetEnumValue<AppDomainManagerInitializationOptions>(name);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
     public void Indexer_returns_item_by_index()
     {
       // arrange
