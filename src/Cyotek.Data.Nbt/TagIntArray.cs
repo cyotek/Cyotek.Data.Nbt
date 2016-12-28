@@ -1,5 +1,4 @@
-using System.Globalization;
-using System.Linq;
+using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
@@ -9,7 +8,22 @@ namespace Cyotek.Data.Nbt
 
     public override string ToValueString()
     {
-      return string.Join(", ", this.Value.Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
+      StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      // ReSharper disable once ForCanBeConvertedToForeach
+      for (int i = 0; i < _value.Length; i++)
+      {
+        if (sb.Length != 0)
+        {
+          sb.Append(", ");
+        }
+
+        sb.Append(_value[i].ToString());
+      }
+
+      return sb.ToString();
     }
 
     #endregion
