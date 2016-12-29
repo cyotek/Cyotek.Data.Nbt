@@ -4,13 +4,13 @@ Cyotek.Data.Nbt Change Log
 [3.0.0-alpha] - 2016-12-27
 ------------------------
 
-This release concentrates on cleaning up the code by removing unused or rarely used features, solving boxing issues, removing some hacks, generally reworking the API and increasing the testing coverage. Some minor code changes may be required due to the level of (breaking) change this release introduces.
+This release concentrates on cleaning up the code by removing unused or rarely used features, solving boxing issues, removing some hacks, generally reworking the API and increasing the testing coverage. Some minor code changes may be required due to the level of breaking change this release introduces.
 
 A fair chunk of both the library code and test code are now generated via T4 templates.
 
 ### Added
-* With the base `Tag` class no longer offering a `Value` property, `GetValue` and `SetValue` methods are available. However, it's recommended these are not used as they will box value types
-* The `TagWriter` class can now be used to directly write NBT data to a stream without having to first create concrete `Tag` classes (e.g. similar to using `XmlWriter` over `XmlDocument.Save()`)
+* With the base `Tag` class no longer offering a `Value` property, `GetValue` and `SetValue` methods are available. However, note that these methods will box value types
+* The `TagWriter` class can now be used to directly write NBT data to a stream without having to first create concrete `Tag` classes (e.g. similar to using `XmlWriter` over `XmlDocument`)
 * The base `Tag` class now implements `IEquatable<Tag>` (boxing)
 * Each concrete tag class now implements `IEquatable<>` (non-boxing)
 * Added indexers to `TagCompound`
@@ -20,17 +20,18 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * All library code is now covered by tests
 
 ### Fixed
-* All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous version
+* All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous versions
 * `XmlTagReader` crashed if empty byte or int array values were present
 * Calling `XmlTagReader.IsNbtDocument` would return `true` if a `type` attribute was found, regardless of if the value was `TagCompound` or not
 * `TagDictionary.Add(name, object)` didn't support `TagDictionary` or `TagCollection` values
 * `TagCollection.Add(object)` now correctly supports `TagDictionary` and `TagCollection` values
+* `TagCollection.Add` will now correctly throw exceptions if named tags are added
 
 ### Changed
 * Tag names should now be empty when not set rather than `null`
 * `TagReader.ReadCollection` and `ReadDictionary` renamed to `ReadList` and `ReadCompound` to match their NBT types.
 * `TagFactory.Create` methods have had their parameters shuffled so that `name` comes first, mirroring `TagDictionary` and other `TagFactory` methods
-* `TagCollection` contents will automatically set the `LimitType` based on the first value added when no explicit type is defined
+* `TagCollection` contents will automatically set the `ListType` based on the first value added when no explicit type is defined
 * `TagDictionary.Add` methods now return the appropriate concrete `Tag` instance for the value's data type
 * `TagCompound.GetBoolValue` renamed to `GetBooleanValue`
 * `TagCompound.Query` should no longer throw exceptions when a match cannot be found, but instead returns `null`
@@ -43,6 +44,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * Removed the default `Tag.Value` implementation. Each `Tag` implementation has a strongly typed `Value` property without boxing.
 * Removed all events from the `Tag` object as they added overhead without being used in most use cases
 * Removed the `TagException` class as it was unused
+* Removed the `TagEventArgs` class as it was unused
 * Removed `Tag.ToString(string)` overloads
 * Removed `Tag.CanRemove` and `Tag.Remove()`, as they are too situational
 * `Tag` properties are no longer `virtual`
