@@ -22,6 +22,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:byte" /> value to write.</param>
     protected abstract void WriteValue(byte value);
 
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:byte" /> value with the specified name.
     /// </summary>
@@ -95,6 +96,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="value">The <see cref="T:short" /> value to write.</param>
     protected abstract void WriteValue(short value);
+
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:short" /> value with the specified name.
@@ -170,6 +172,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:int" /> value to write.</param>
     protected abstract void WriteValue(int value);
 
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:int" /> value with the specified name.
     /// </summary>
@@ -243,6 +246,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="value">The <see cref="T:long" /> value to write.</param>
     protected abstract void WriteValue(long value);
+
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:long" /> value with the specified name.
@@ -318,6 +322,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:float" /> value to write.</param>
     protected abstract void WriteValue(float value);
 
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:float" /> value with the specified name.
     /// </summary>
@@ -392,6 +397,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:double" /> value to write.</param>
     protected abstract void WriteValue(double value);
 
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:double" /> value with the specified name.
     /// </summary>
@@ -465,6 +471,9 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="value">The <see cref="T:byte[]" /> value to write.</param>
     protected abstract void WriteValue(byte[] value);
+
+
+    public abstract void WriteArrayValue(byte value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:byte[]" /> value with the specified name.
@@ -542,6 +551,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:string" /> value to write.</param>
     protected abstract void WriteValue(string value);
 
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:string" /> value with the specified name.
     /// </summary>
@@ -615,6 +625,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="value">The <see cref="T:TagCollection" /> value to write.</param>
     protected abstract void WriteValue(TagCollection value);
+
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:TagCollection" /> value with the specified name.
@@ -690,6 +701,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:TagDictionary" /> value to write.</param>
     protected abstract void WriteValue(TagDictionary value);
 
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:TagDictionary" /> value with the specified name.
     /// </summary>
@@ -763,6 +775,9 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     /// <param name="value">The <see cref="T:int[]" /> value to write.</param>
     protected abstract void WriteValue(int[] value);
+
+
+    public abstract void WriteArrayValue(int value);
 
     /// <summary>
     /// Writes a tag entry for a <see cref="T:int[]" /> value with the specified name.

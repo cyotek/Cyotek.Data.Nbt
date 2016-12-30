@@ -59,6 +59,13 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public abstract void WriteEndTag();
 
+    public void WriteStartArray(TagType type, int count)
+    {
+      this.WriteStartArray(string.Empty, type, count);
+    }
+
+    public abstract void WriteStartArray(string name, TagType type, int count);
+
     public abstract void WriteStartDocument();
 
     public void WriteStartTag(Tag tag)

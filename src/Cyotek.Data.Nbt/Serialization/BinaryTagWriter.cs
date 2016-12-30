@@ -37,6 +37,16 @@ namespace Cyotek.Data.Nbt.Serialization
       _stream.Flush();
     }
 
+    public override void WriteArrayValue(byte value)
+    {
+      this.WriteValue(value);
+    }
+
+    public override void WriteArrayValue(int value)
+    {
+      this.WriteValue(value);
+    }
+
     public override void WriteEndDocument()
     {
       _state.SetComplete();
@@ -45,6 +55,26 @@ namespace Cyotek.Data.Nbt.Serialization
     public override void WriteEndTag()
     {
       _state.EndTag(this.WriteEnd);
+    }
+
+    public override void WriteStartArray(string name, TagType type, int count)
+    {
+      // ReSharper disable once ConvertIfStatementToSwitchStatement
+      if (type == TagType.Byte)
+      {
+        type = TagType.ByteArray;
+      }
+      else if (type == TagType.Int)
+      {
+        type = TagType.IntArray;
+      }
+      else if (type != TagType.ByteArray && type != TagType.IntArray)
+      {
+        throw new ArgumentException("Only byte or integer types are supported.", nameof(type));
+      }
+
+      this.WriteStartTag(name, type);
+      this.WriteValue(count);
     }
 
     public override void WriteStartDocument()

@@ -22,6 +22,12 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #endregion
 
+    #region Fields
+
+    private StringBuilder _arraySb;
+
+    #endregion
+
     #region Constructors
 
     /// <summary>
@@ -65,6 +71,26 @@ namespace Cyotek.Data.Nbt.Serialization
       _writer.Flush();
     }
 
+    public override void WriteArrayValue(byte value)
+    {
+      if (_arraySb.Length != 0)
+      {
+        _arraySb.Append(' ');
+      }
+
+      _arraySb.Append(value);
+    }
+
+    public override void WriteArrayValue(int value)
+    {
+      if (_arraySb.Length != 0)
+      {
+        _arraySb.Append(' ');
+      }
+
+      _arraySb.Append(value);
+    }
+
     public override void WriteEndDocument()
     {
       _state.SetComplete();
@@ -75,9 +101,43 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override void WriteEndTag()
     {
+      TagType currentTag;
+
+      currentTag = _state.CurrentTag;
+
+      if ((currentTag == TagType.ByteArray || currentTag == TagType.IntArray) && _arraySb != null && _arraySb.Length != 0)
+      {
+        _writer.WriteValue(_arraySb.ToString());
+        _arraySb.Length = 0;
+      }
+
       _state.EndTag();
 
       _writer.WriteEndElement();
+    }
+
+    public override void WriteStartArray(string name, TagType type, int count)
+    {
+      // ReSharper disable once ConvertIfStatementToSwitchStatement
+      if (type == TagType.Byte)
+      {
+        type = TagType.ByteArray;
+      }
+      else if (type == TagType.Int)
+      {
+        type = TagType.IntArray;
+      }
+      else if (type != TagType.ByteArray && type != TagType.IntArray)
+      {
+        throw new ArgumentException("Only byte or integer types are supported.", nameof(type));
+      }
+
+      if (_arraySb == null)
+      {
+        _arraySb = new StringBuilder();
+      }
+
+      this.WriteStartTag(name, type);
     }
 
     public override void WriteStartDocument()
@@ -158,13 +218,13 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         if (output.Length != 0)
         {
-          output.Append(" ");
+          output.Append(' ');
         }
 
         output.Append(i);
       }
 
-      this.WriteValue(output.ToString());
+      _writer.WriteValue(output.ToString());
     }
 
     protected override void WriteValue(int value)
@@ -197,13 +257,13 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         if (output.Length != 0)
         {
-          output.Append(" ");
+          output.Append(' ');
         }
 
         output.Append(i);
       }
 
-      this.WriteValue(output.ToString());
+      _writer.WriteValue(output.ToString());
     }
 
     protected override void WriteValue(TagCollection value)

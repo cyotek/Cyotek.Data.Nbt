@@ -137,7 +137,56 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       {
         if (this.IsArrayType(i))
         {
+          int baseType;
+          string baseName;
+
+          if (i == tagTypeByteArray)
+          {
+            baseType = tagTypeByte;
+          }
+          else
+          {
+            baseType = tagTypeInt;
+          }
+          baseName = nbtTypeNames[baseType];
           #>
+
+    [Test]
+    public void WriteArrayValue_populates_<#=nbtName.ToLower() #>_array()
+    {
+      using (Stream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        <#=tagName #> actual;
+        <#=name #> expected;
+
+        expected = <#=testData #>;
+
+        target = this.CreateWriter(stream);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+        target.WriteStartArray(TagType.<#=baseName #>, expected.Length);
+
+        // act
+        for (int i = 0; i < expected.Length; i++)
+        {
+          target.WriteArrayValue(expected[i]);
+        }
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndTag();
+        target.WriteEndDocument();
+        stream.Position = 0;
+        reader = this.CreateReader(stream);
+        actual = (<#=tagName #>)reader.ReadDocument()[0];
+        CollectionAssert.AreEqual(expected, actual.Value);
+      }
+    }
+
     [Test]
     public void WriteTag_writes_empty_<#=nbtName.ToLower() #>_array()
     {
@@ -431,6 +480,57 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         // act
         target.WriteTag(new BadTag("bad"));
+      }
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentException),ExpectedMessage = "Only byte or integer types are supported.\r\nParameter name: type")]
+    public void WriteStartArray_throws_exception_for_invalid_tag_type()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+
+        target = this.CreateWriter(stream);
+
+        // act
+        target.WriteStartArray(TagType.Compound, 0);
+      }
+    }
+
+    [Test]
+    public void WriteStartArray_creates_array_tag()
+    {
+      using (Stream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter target;
+        TagReader reader;
+        Tag actual;
+        string expectedName;
+        TagType expectedType;
+
+        expectedName = "zeta";
+        expectedType = TagType.ByteArray;
+
+        target = this.CreateWriter(stream);
+
+        target.WriteStartDocument();
+        target.WriteStartTag(TagType.Compound);
+
+        // act
+        target.WriteStartArray(expectedName, TagType.Byte, 0);
+
+        // assert
+        target.WriteEndTag();
+        target.WriteEndTag();
+        target.WriteEndDocument();
+        stream.Position = 0;
+        reader = this.CreateReader(stream);
+        actual = reader.ReadDocument()[0];
+        Assert.AreEqual(expectedName, actual.Name);
+        Assert.AreEqual(expectedType, actual.Type);
       }
     }
   }

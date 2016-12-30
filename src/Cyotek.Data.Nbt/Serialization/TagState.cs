@@ -32,6 +32,22 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #endregion
 
+    #region Properties
+
+    public TagType CurrentTag
+    {
+      get
+      {
+        TagType type;
+
+        type = _openTags != null && _openTags.Count != 0 ? _openTags.Peek() : TagType.None;
+
+        return type;
+      }
+    }
+
+    #endregion
+
     #region Methods
 
     public void EndTag()

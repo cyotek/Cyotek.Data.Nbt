@@ -26,6 +26,16 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
     protected abstract void WriteValue(<#=name #> value);
 
+<#
+if (this.IsArrayType(i))
+        {
+          #>
+
+    public abstract void WriteArrayValue(<#=name.Substring(0, name.Length - 2) #> value);
+<#
+        }
+ #>
+
     /// <summary>
     /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
     /// </summary>
