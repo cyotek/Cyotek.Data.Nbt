@@ -257,7 +257,7 @@ namespace Cyotek.Data.Nbt.Serialization
           {
             _reader.Read();
           }
-        } while (_reader.Depth == depth);
+        } while (_reader.Depth == depth && _reader.ReadState == ReadState.Interactive);
       }
       else
       {

@@ -231,6 +231,37 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       return new XmlTagWriter(stream);
     }
 
-   #endregion
+    [Test]
+    public void ReadDocument_stuck_in_infinite_loop_for_empty_root()
+    {
+      using (Stream stream = new MemoryStream())
+      {
+        // arrange
+        TagWriter writer;
+        TagReader target;
+        Tag actual;
+
+        writer = this.CreateWriter(stream);
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag(TagType.Compound);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        target = this.CreateReader(stream);
+
+        // act
+        // if the root element was empty, the statement below
+        // would get stuck in an infinite loop, causing the test
+        // time out after one minute
+        actual = target.ReadDocument();
+
+        // assert
+        Assert.IsNotNull(actual);
+      }
+    }
+    #endregion
   }
 }

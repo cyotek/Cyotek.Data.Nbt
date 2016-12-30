@@ -26,6 +26,7 @@ A fair chunk of both the library code and test code are now generated via T4 tem
 * `TagDictionary.Add(name, object)` didn't support `TagDictionary` or `TagCollection` values
 * `TagCollection.Add(object)` now correctly supports `TagDictionary` and `TagCollection` values
 * `TagCollection.Add` will now correctly throw exceptions if named tags are added
+* Resolved an infinite loop reading empty `TagCompound` or `TagList` data stored in XML files
 
 ### Changed
 * Tag names should now be empty when not set rather than `null`
