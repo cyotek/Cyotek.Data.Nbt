@@ -52,7 +52,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _state.Start();
     }
 
-    public override void WriteStartTag(TagType type, string name)
+    public override void WriteStartTag(string name, TagType type)
     {
       TagContainerState currentState;
 
@@ -65,11 +65,11 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public override void WriteStartTag(TagType type, string name, TagType listType, int count)
+    public override void WriteStartTag(string name, TagType type, TagType listType, int count)
     {
       // HACK: This is messy, rethink
 
-      this.WriteStartTag(type, name);
+      this.WriteStartTag(name, type);
 
       _state.StartList(listType, count);
 

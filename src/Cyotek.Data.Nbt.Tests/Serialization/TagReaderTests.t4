@@ -72,7 +72,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = <#=altTagTestData[i] #>;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.<#=nbtName #>, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.<#=nbtName #>, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();

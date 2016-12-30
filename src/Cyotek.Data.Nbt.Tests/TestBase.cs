@@ -203,30 +203,30 @@ namespace Cyotek.Data.Nbt.Tests
 
       // act
       target.WriteStartDocument();
-      target.WriteStartTag(TagType.Compound, "Level");
+      target.WriteStartTag("Level", TagType.Compound);
       target.WriteTag("longTest", 9223372036854775807);
       target.WriteTag("shortTest", (short)32767);
       target.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
       target.WriteTag("floatTest", (float)0.498231471);
       target.WriteTag("intTest", 2147483647);
-      target.WriteStartTag(TagType.Compound, "nested compound test");
-      target.WriteStartTag(TagType.Compound, "ham");
+      target.WriteStartTag("nested compound test", TagType.Compound);
+      target.WriteStartTag("ham", TagType.Compound);
       target.WriteTag("name", "Hampus");
       target.WriteTag("value", 0.75F);
       target.WriteEndTag();
-      target.WriteStartTag(TagType.Compound, "egg");
+      target.WriteStartTag("egg", TagType.Compound);
       target.WriteTag("name", "Eggbert");
       target.WriteTag("value", 0.5F);
       target.WriteEndTag();
       target.WriteEndTag();
-      target.WriteStartTag(TagType.List, "listTest (long)", TagType.Long, 5);
+      target.WriteStartTag("listTest (long)", TagType.List, TagType.Long, 5);
       target.WriteTag((long)11);
       target.WriteTag((long)12);
       target.WriteTag((long)13);
       target.WriteTag((long)14);
       target.WriteTag((long)15);
       target.WriteEndTag();
-      target.WriteStartTag(TagType.List, "listTest (compound)", TagType.Compound, 2);
+      target.WriteStartTag("listTest (compound)", TagType.List, TagType.Compound, 2);
       target.WriteStartTag(TagType.Compound);
       target.WriteTag("name", "Compound tag #0");
       target.WriteTag("created-on", 1264099775885);

@@ -231,6 +231,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       return new XmlTagWriter(stream);
     }
 
-    #endregion
+   #endregion
   }
 }

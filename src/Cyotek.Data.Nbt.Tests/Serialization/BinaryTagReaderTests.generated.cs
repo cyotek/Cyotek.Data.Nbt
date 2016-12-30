@@ -67,7 +67,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = 63;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Byte, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Byte, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -140,7 +140,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = 8191;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Short, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Short, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -213,7 +213,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = 536870911;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Int, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Int, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -286,7 +286,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = 2305843009213693951;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Long, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Long, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -359,7 +359,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = 1.134274E+38F;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Float, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Float, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -432,7 +432,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = 5.99231044954105E+307;
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Double, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Double, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -505,7 +505,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = new byte[] { 2, 4, 8, 16, 32, 48, 128 };
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.ByteArray, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.ByteArray, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -578,7 +578,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = "DIFFERENT";
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.String, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.String, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -651,7 +651,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 255 };
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.List, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.List, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -724,7 +724,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = new TagDictionary { new TagByte("A", 2), new TagShort("B", 4), new TagInt("C", 16) };
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.Compound, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.Compound, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();
@@ -797,7 +797,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         expected2 = new[] { 2190, 2994, 3248, 294394 };
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", TagType.IntArray, 2);
+        writer.WriteStartTag("list", TagType.List, TagType.IntArray, 2);
         writer.WriteTag(expected1);
         writer.WriteTag(expected2);
         writer.WriteEndTag();

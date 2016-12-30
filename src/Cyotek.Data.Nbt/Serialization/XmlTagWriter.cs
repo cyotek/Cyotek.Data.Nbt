@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -86,7 +87,7 @@ namespace Cyotek.Data.Nbt.Serialization
       _writer.WriteStartDocument(true);
     }
 
-    public override void WriteStartTag(TagType type, string name)
+    public override void WriteStartTag(string name, TagType type)
     {
       TagContainerState currentState;
 
@@ -113,9 +114,9 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public override void WriteStartTag(TagType type, string name, TagType listType, int count)
+    public override void WriteStartTag(string name, TagType type, TagType listType, int count)
     {
-      this.WriteStartTag(type, name);
+      this.WriteStartTag(name, type);
 
       _state.StartList(listType, count);
 

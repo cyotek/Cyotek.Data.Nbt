@@ -47,9 +47,9 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       textWriter = new StringWriter();
       writer = XmlWriter.Create(textWriter, new XmlWriterSettings
-                                            {
-                                              Indent = true
-                                            });
+      {
+        Indent = true
+      });
 
       target = new XmlTagWriter(writer);
 
@@ -113,6 +113,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       return new XmlTagWriter(stream);
     }
 
-    #endregion
+  #endregion
   }
 }

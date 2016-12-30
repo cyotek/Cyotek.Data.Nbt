@@ -70,7 +70,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       target = this.CreateWriter(new MemoryStream());
       target.WriteStartDocument();
-      target.WriteStartTag(TagType.List, "alpha", TagType.Int, 3);
+      target.WriteStartTag("alpha", TagType.List, TagType.Int, 3);
       target.WriteTag(1);
       target.WriteTag(2);
 
@@ -88,7 +88,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target = this.CreateWriter(new MemoryStream());
 
       target.WriteStartDocument();
-      target.WriteStartTag(TagType.List, "alpha", TagType.List, 1);
+      target.WriteStartTag("alpha", TagType.List, TagType.List, 1);
 
       // act
       target.WriteStartTag(TagType.Byte);

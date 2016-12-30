@@ -63,17 +63,17 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public void WriteStartTag(Tag tag)
     {
-      this.WriteStartTag(tag.Type, tag.Name);
+      this.WriteStartTag(tag.Name, tag.Type);
     }
 
     public void WriteStartTag(TagType type)
     {
-      this.WriteStartTag(type, string.Empty);
+      this.WriteStartTag(string.Empty, type);
     }
 
-    public abstract void WriteStartTag(TagType type, string name);
+    public abstract void WriteStartTag(string name, TagType type);
 
-    public abstract void WriteStartTag(TagType type, string name, TagType listType, int count);
+    public abstract void WriteStartTag(string name, TagType type, TagType listType, int count);
 
     public void WriteTag(Tag tag)
     {

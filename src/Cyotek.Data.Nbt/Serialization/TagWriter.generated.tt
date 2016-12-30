@@ -17,7 +17,7 @@ namespace Cyotek.Data.Nbt.Serialization
       name = netTypeNames[i];
       nbtName = nbtTypeNames[i];
 
-      if (name != null)
+      if (i != tagTypeEnd)
       {
         #>
     /// <summary>
@@ -33,7 +33,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
     public void WriteTag(string name, <#=name #> value)
     {
-      this.WriteStartTag(TagType.<#=nbtName #>, name);
+      this.WriteStartTag(name, TagType.<#=nbtName #>);
       this.WriteValue(value);
       this.WriteEndTag();
     }
@@ -53,7 +53,7 @@ namespace Cyotek.Data.Nbt.Serialization
     /// <param name="name">The name of the tag entry to write.</param>
     /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
 <#
-if (name.EndsWith("[]"))
+if (this.IsArrayType(i))
         {
           #>
     [CLSCompliant(false)]
@@ -66,7 +66,7 @@ if (name.EndsWith("[]"))
 
       length = values.Length;
 
-      this.WriteStartTag(TagType.List, name, TagType.<#=nbtName #>, length);
+      this.WriteStartTag(name, TagType.List, TagType.<#=nbtName #>, length);
       for (int i = 0; i < length; i++)
       {
         this.WriteTag(values[i]);

@@ -100,7 +100,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         writer = new BinaryTagWriter(stream);
 
         writer.WriteStartDocument();
-        writer.WriteStartTag(TagType.List, "list", (TagType)182, 0);
+        writer.WriteStartTag("list", TagType.List, (TagType)182, 0);
         writer.WriteEndTag();
         writer.WriteEndDocument();
 
