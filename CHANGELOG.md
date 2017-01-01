@@ -1,8 +1,62 @@
 Cyotek.Data.Nbt Change Log
 ==========================
 
+[3.0.0-alpha] - 2016-12-27
+------------------------
+
+This release concentrates on cleaning up the code by removing unused or rarely used features, solving boxing issues, removing some hacks, generally reworking the API and increasing the testing coverage. Some minor code changes may be required due to the level of breaking change this release introduces.
+
+A fair chunk of both the library code and test code are now generated via T4 templates.
+
+### Added
+* With the base `Tag` class no longer offering a `Value` property, `GetValue` and `SetValue` methods are available. However, note that these methods will box value types
+* The `TagWriter` class can now be used to directly write NBT data to a stream without having to first create concrete `Tag` classes (e.g. similar to using `XmlWriter` over `XmlDocument`)
+* The base `Tag` class now implements `IEquatable<Tag>` (boxing)
+* Each concrete tag class now implements `IEquatable<>` (non-boxing)
+* Added indexers to `TagCompound`
+* Added `TagCompound.Count`
+* Added Benchmarks project testing the different serialization methods. Unsurprisingly, XML is many times slower than binary, and writing NBT documents without constructing `Tag` objects is faster than creating and then saving a `NbtDocument`
+* Added new `TagDictionary.AddRange` overloads
+* All library code is now covered by tests
+
+### Fixed
+* All tags created internally by the library use `TagFactory` and avoid all of the boxing issues present in previous versions
+* `XmlTagReader` crashed if empty byte or int array values were present
+* Calling `XmlTagReader.IsNbtDocument` would return `true` if a `type` attribute was found, regardless of if the value was `TagCompound` or not
+* `TagDictionary.Add(name, object)` didn't support `TagDictionary` or `TagCollection` values
+* `TagCollection.Add(object)` now correctly supports `TagDictionary` and `TagCollection` values
+* `TagCollection.Add` will now correctly throw exceptions if named tags are added
+* Resolved an infinite loop reading empty `TagCompound` or `TagList` data stored in XML files
+
+### Changed
+* Tag names should now be empty when not set rather than `null`
+* `TagReader.ReadCollection` and `ReadDictionary` renamed to `ReadList` and `ReadCompound` to match their NBT types.
+* `TagFactory.Create` methods have had their parameters shuffled so that `name` comes first, mirroring `TagDictionary` and other `TagFactory` methods
+* `TagCollection` contents will automatically set the `ListType` based on the first value added when no explicit type is defined
+* `TagDictionary.Add` methods now return the appropriate concrete `Tag` instance for the value's data type
+* `TagCompound.GetBoolValue` renamed to `GetBooleanValue`
+* `TagCompound.Query` should no longer throw exceptions when a match cannot be found, but instead returns `null`
+
+### Removed
+* Removed the `WriteTagOptions` and `ReadTagOptions` enumerations, plus removed any overloaded method supplying these options. Each reader and writer now maintains its own state to know when it should or should not be doing things without having to be told
+* Removed the `ITag` interface as it was a pointless level of abstraction and there is already an abstract `Tag` class
+* Similarly, `ITagReader` and `ITagWriter` have also been removed
+* Removed the default constructors from tag readers and writers
+* Removed the default `Tag.Value` implementation. Each `Tag` implementation has a strongly typed `Value` property without boxing.
+* Removed all events from the `Tag` object as they added overhead without being used in most use cases
+* Removed the `TagException` class as it was unused
+* Removed the `TagEventArgs` class as it was unused
+* Removed `Tag.ToString(string)` overloads
+* Removed `Tag.CanRemove` and `Tag.Remove()`, as they are too situational
+* `Tag` properties are no longer `virtual`
+* Removed the `CompressionOptions` enum and related support from `NbtDocument`. When saving to a file, XML will be uncompressed, binary will be gzipped. When saving to a `Stream`, you can pass in your own `GZipStream`, `DeflateStream` or equivalent
+* All `TagCollection.Add` method overloads that accepted a `name` argument have been removed
+* Removed secondary data type helpers from `TagCollection`
+* Removed `TagCompound.GetEnumValue`
+
+
 [2.1.0] - 2016-02-24
-------------------
+--------------------
 
 ### Added
 * Added new constructor to `XmlTagWriter` allowing you to specify a `XmlWriter`. Useful for when calling `Write*` methods directly, without first using `WriteDocument`

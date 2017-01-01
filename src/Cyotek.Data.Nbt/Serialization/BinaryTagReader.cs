@@ -5,90 +5,110 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class BinaryTagReader : ITagReader
+  public class BinaryTagReader : TagReader
   {
     #region Constants
 
-    private const int _doubleSize = 8;
+    private readonly Stream _originalStream;
 
-    private const int _floatSize = 4;
+    private readonly TagState _state;
 
-    private const int _intSize = 4;
-
-    private const int _longSize = 8;
-
-    private const int _shortSize = 2;
-
-    #endregion
-
-    #region Fields
-
-    private Stream _stream;
+    private readonly Stream _stream;
 
     #endregion
 
     #region Constructors
 
-    public BinaryTagReader()
+    public BinaryTagReader(Stream stream)
+      : this(stream, true)
     { }
 
-    public BinaryTagReader(Stream stream)
-      : this()
+    public BinaryTagReader(Stream stream, bool autoDetectCompression)
     {
-      _stream = stream;
+      if (stream.CanSeek && autoDetectCompression)
+      {
+        if (stream.IsGzipCompressed())
+        {
+          _originalStream = stream;
+          _stream = new GZipStream(_originalStream, CompressionMode.Decompress);
+        }
+        else if (stream.IsDeflateCompressed())
+        {
+          _originalStream = stream;
+          _stream = new DeflateStream(_originalStream, CompressionMode.Decompress);
+        }
+        else
+        {
+          _stream = stream;
+        }
+      }
+      else
+      {
+        _stream = stream;
+      }
+
+      _state = new TagState(FileAccess.Read);
+      _state.Start();
     }
 
     #endregion
 
-    #region ITagReader Interface
+    #region Methods
 
-    public virtual bool IsNbtDocument(Stream stream)
+    public override bool IsNbtDocument()
     {
       bool result;
+      Stream stream;
       long position;
 
-      position = stream.Position;
+      stream = _originalStream ?? _stream;
 
-      try
+      if (stream.CanSeek)
       {
-        if (stream.IsGzipCompressed())
+        position = stream.Position;
+      }
+      else
+      {
+        position = -1;
+      }
+
+      if (stream.IsGzipCompressed())
+      {
+        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
         {
-          using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
-          {
-            result = decompressionStream.PeekNextByte() == (int)TagType.Compound;
-          }
-        }
-        else if (stream.IsDeflateCompressed())
-        {
-          using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
-          {
-            result = decompressionStream.PeekNextByte() == (int)TagType.Compound;
-          }
-        }
-        else if (stream.PeekNextByte() == (int)TagType.Compound)
-        {
-          result = true;
-        }
-        else
-        {
-          result = false;
+          result = decompressionStream.ReadByte() == (int)TagType.Compound;
         }
       }
-      catch
+      else if (stream.IsDeflateCompressed())
+      {
+        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
+        {
+          result = decompressionStream.ReadByte() == (int)TagType.Compound;
+        }
+      }
+      else if (stream.ReadByte() == (int)TagType.Compound)
+      {
+        result = true;
+      }
+      else
       {
         result = false;
       }
 
-      stream.Position = position;
+      if (stream.CanSeek)
+      {
+        stream.Position = position;
+      }
 
       return result;
     }
 
-    public virtual byte ReadByte()
+    public override byte ReadByte()
     {
       int data;
 
       data = _stream.ReadByte();
+
       if (data != (data & 0xFF))
       {
         throw new InvalidDataException();
@@ -97,14 +117,14 @@ namespace Cyotek.Data.Nbt.Serialization
       return (byte)data;
     }
 
-    public virtual byte[] ReadByteArray()
+    public override byte[] ReadByteArray()
     {
       int length;
       byte[] data;
 
       length = this.ReadInt();
-
       data = new byte[length];
+
       if (length != _stream.Read(data, 0, length))
       {
         throw new InvalidDataException();
@@ -113,89 +133,15 @@ namespace Cyotek.Data.Nbt.Serialization
       return data;
     }
 
-    public virtual TagCollection ReadCollection(TagList owner)
-    {
-      TagCollection tags;
-      int length;
-
-      owner.ListType = (TagType)this.ReadByte();
-      tags = new TagCollection(owner, owner.ListType);
-      length = this.ReadInt();
-
-      for (int i = 0; i < length; i++)
-      {
-        ITag tag;
-
-        switch (owner.ListType)
-        {
-          case TagType.Byte:
-            tag = TagFactory.CreateTag(TagType.Byte, this.ReadByte());
-            break;
-
-          case TagType.ByteArray:
-            tag = TagFactory.CreateTag(TagType.ByteArray, this.ReadByteArray());
-            break;
-
-          case TagType.Compound:
-            tag = TagFactory.CreateTag(TagType.Compound);
-            tag.Value = this.ReadDictionary((TagCompound)tag);
-            break;
-
-          case TagType.Double:
-            tag = TagFactory.CreateTag(TagType.Double, this.ReadDouble());
-            break;
-
-          case TagType.End:
-            tag = new TagEnd();
-            break;
-
-          case TagType.Float:
-            tag = TagFactory.CreateTag(TagType.Float, this.ReadFloat());
-            break;
-
-          case TagType.Int:
-            tag = TagFactory.CreateTag(TagType.Int, this.ReadInt());
-            break;
-
-          case TagType.IntArray:
-            tag = TagFactory.CreateTag(TagType.IntArray, this.ReadIntArray());
-            break;
-
-          case TagType.List:
-            tag = TagFactory.CreateTag(TagType.List);
-            tag.Value = this.ReadCollection((TagList)tag);
-            break;
-
-          case TagType.Long:
-            tag = TagFactory.CreateTag(TagType.Long, this.ReadLong());
-            break;
-
-          case TagType.Short:
-            tag = TagFactory.CreateTag(TagType.Short, this.ReadShort());
-            break;
-
-          case TagType.String:
-            tag = TagFactory.CreateTag(TagType.String, this.ReadString());
-            break;
-
-          default:
-            throw new InvalidDataException("Invalid list type.");
-        }
-
-        tags.Add(tag);
-      }
-
-      return tags;
-    }
-
-    public virtual TagDictionary ReadDictionary(TagCompound owner)
+    public override TagDictionary ReadCompound()
     {
       TagDictionary results;
-      ITag tag;
+      Tag tag;
 
-      results = new TagDictionary(owner);
+      results = new TagDictionary();
 
       tag = this.ReadTag();
+
       while (tag.Type != TagType.End)
       {
         results.Add(tag);
@@ -205,165 +151,218 @@ namespace Cyotek.Data.Nbt.Serialization
       return results;
     }
 
-    public virtual TagCompound ReadDocument(Stream stream)
-    {
-      return this.ReadDocument(stream, ReadTagOptions.None);
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
-    {
-      TagCompound tag;
-
-      if (stream.IsGzipCompressed())
-      {
-        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress))
-        {
-          _stream = decompressionStream;
-          tag = (TagCompound)this.ReadTag(options);
-        }
-      }
-      else if (stream.IsDeflateCompressed())
-      {
-        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress))
-        {
-          _stream = decompressionStream;
-          tag = (TagCompound)this.ReadTag(options);
-        }
-      }
-      else if (stream.PeekNextByte() == (int)TagType.Compound)
-      {
-        _stream = stream;
-        tag = (TagCompound)this.ReadTag(options);
-      }
-      else
-      {
-        throw new InvalidDataException("Source stream does not contain a NBT document.");
-      }
-
-      return tag;
-    }
-
-    public virtual double ReadDouble()
+    public override double ReadDouble()
     {
       byte[] data;
 
-      data = new byte[_doubleSize];
-      if (_doubleSize != _stream.Read(data, 0, _doubleSize))
+      data = new byte[BitHelper.DoubleSize];
+
+      if (BitHelper.DoubleSize != _stream.Read(data, 0, BitHelper.DoubleSize))
       {
         throw new InvalidDataException();
       }
 
-      if (BitConverter.IsLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, _doubleSize);
+        BitHelper.SwapBytes(data, 0, BitHelper.DoubleSize);
       }
 
       return BitConverter.ToDouble(data, 0);
     }
 
-    public virtual float ReadFloat()
+    public override float ReadFloat()
     {
       byte[] data;
 
-      data = new byte[_floatSize];
-      if (_floatSize != _stream.Read(data, 0, _floatSize))
+      data = new byte[BitHelper.FloatSize];
+
+      if (BitHelper.FloatSize != _stream.Read(data, 0, BitHelper.FloatSize))
       {
         throw new InvalidDataException();
       }
 
-      if (BitConverter.IsLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, _floatSize);
+        BitHelper.SwapBytes(data, 0, BitHelper.FloatSize);
       }
 
       return BitConverter.ToSingle(data, 0);
     }
 
-    public virtual int ReadInt()
+    public override int ReadInt()
     {
       byte[] data;
 
-      data = new byte[_intSize];
-      if (_intSize != _stream.Read(data, 0, _intSize))
+      data = new byte[BitHelper.IntSize];
+
+      if (BitHelper.IntSize != _stream.Read(data, 0, BitHelper.IntSize))
       {
         throw new InvalidDataException();
       }
 
-      if (BitConverter.IsLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, _intSize);
+        BitHelper.SwapBytes(data, 0, BitHelper.IntSize);
       }
 
       return BitConverter.ToInt32(data, 0);
     }
 
-    public virtual int[] ReadIntArray()
+    public override int[] ReadIntArray()
     {
       int length;
       int bufferLength;
       byte[] buffer;
-      int[] ints;
+      int[] values;
+      bool isLittleEndian;
 
+      isLittleEndian = TagWriter.IsLittleEndian;
       length = this.ReadInt();
-      bufferLength = length * _intSize;
-
+      bufferLength = length * BitHelper.IntSize;
       buffer = new byte[bufferLength];
+
       if (bufferLength != _stream.Read(buffer, 0, bufferLength))
       {
         throw new InvalidDataException();
       }
 
-      ints = new int[length];
+      values = new int[length];
+
       for (int i = 0; i < length; i++)
       {
-        if (BitConverter.IsLittleEndian)
+        if (isLittleEndian)
         {
           BitHelper.SwapBytes(buffer, i * 4, 4);
         }
 
-        ints[i] = BitConverter.ToInt32(buffer, i * 4);
+        values[i] = BitConverter.ToInt32(buffer, i * 4);
       }
 
-      return ints;
+      return values;
     }
 
-    public virtual long ReadLong()
+    public override TagCollection ReadList()
+    {
+      TagCollection tags;
+      int length;
+      TagType listType;
+
+      listType = (TagType)this.ReadByte();
+
+      if (listType < TagType.Byte || listType > TagType.IntArray)
+      {
+        throw new InvalidDataException($"Unexpected list type '{listType}' found.");
+      }
+
+      tags = new TagCollection(listType);
+      length = this.ReadInt();
+
+      for (int i = 0; i < length; i++)
+      {
+        Tag tag;
+
+        tag = null;
+
+        _state.StartTag(listType);
+
+        switch (listType)
+        {
+          case TagType.Byte:
+            tag = TagFactory.CreateTag(this.ReadByte());
+            break;
+
+          case TagType.ByteArray:
+            tag = TagFactory.CreateTag(this.ReadByteArray());
+            break;
+
+          case TagType.Compound:
+            tag = TagFactory.CreateTag(this.ReadCompound());
+            break;
+
+          case TagType.Double:
+            tag = TagFactory.CreateTag(this.ReadDouble());
+            break;
+
+          case TagType.Float:
+            tag = TagFactory.CreateTag(this.ReadFloat());
+            break;
+
+          case TagType.Int:
+            tag = TagFactory.CreateTag(this.ReadInt());
+            break;
+
+          case TagType.IntArray:
+            tag = TagFactory.CreateTag(this.ReadIntArray());
+            break;
+
+          case TagType.List:
+            tag = TagFactory.CreateTag(this.ReadList());
+            break;
+
+          case TagType.Long:
+            tag = TagFactory.CreateTag(this.ReadLong());
+            break;
+
+          case TagType.Short:
+            tag = TagFactory.CreateTag(this.ReadShort());
+            break;
+
+          case TagType.String:
+            tag = TagFactory.CreateTag(this.ReadString());
+            break;
+
+          // Can never be hit due to the type check above
+          //default:
+          //  throw new InvalidDataException("Invalid list type.");
+        }
+
+        _state.EndTag();
+
+        tags.Add(tag);
+      }
+
+      return tags;
+    }
+
+    public override long ReadLong()
     {
       byte[] data;
 
-      data = new byte[_longSize];
-      if (_longSize != _stream.Read(data, 0, _longSize))
+      data = new byte[BitHelper.LongSize];
+
+      if (BitHelper.LongSize != _stream.Read(data, 0, BitHelper.LongSize))
       {
         throw new InvalidDataException();
       }
 
-      if (BitConverter.IsLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, _longSize);
+        BitHelper.SwapBytes(data, 0, BitHelper.LongSize);
       }
 
       return BitConverter.ToInt64(data, 0);
     }
 
-    public virtual short ReadShort()
+    public override short ReadShort()
     {
       byte[] data;
 
-      data = new byte[_shortSize];
-      if (_shortSize != _stream.Read(data, 0, _shortSize))
+      data = new byte[BitHelper.ShortSize];
+
+      if (BitHelper.ShortSize != _stream.Read(data, 0, BitHelper.ShortSize))
       {
         throw new InvalidDataException();
       }
 
-      if (BitConverter.IsLittleEndian)
+      if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, _shortSize);
+        BitHelper.SwapBytes(data, 0, BitHelper.ShortSize);
       }
 
       return BitConverter.ToInt16(data, 0);
     }
 
-    public virtual string ReadString()
+    public override string ReadString()
     {
       short length;
       byte[] data;
@@ -379,86 +378,101 @@ namespace Cyotek.Data.Nbt.Serialization
       return data.Length != 0 ? Encoding.UTF8.GetString(data) : null;
     }
 
-    public virtual ITag ReadTag(ReadTagOptions options)
+    public override Tag ReadTag()
     {
-      int rawType;
-      ITag result;
+      Tag result;
+      TagType type;
+      string name;
+      TagContainerState state;
 
-      rawType = _stream.ReadByte();
-      result = TagFactory.CreateTag((TagType)rawType);
+      type = this.ReadTagType();
 
-      if (result.Type != TagType.End && (options & ReadTagOptions.IgnoreName) == 0)
+      if (type > TagType.IntArray)
       {
-        result.Name = this.ReadString();
+        throw new InvalidDataException($"Unrecognized tag type: {type}.");
       }
 
-      if ((options & ReadTagOptions.IgnoreValue) == 0)
+      state = _state.StartTag(type);
+
+      if (type != TagType.End && (state == null || state.ContainerType != TagType.List))
       {
-        object value;
-
-        switch (result.Type)
-        {
-          case TagType.End:
-            value = null;
-            break;
-
-          case TagType.Byte:
-            value = this.ReadByte();
-            break;
-
-          case TagType.Short:
-            value = this.ReadShort();
-            break;
-
-          case TagType.Int:
-            value = this.ReadInt();
-            break;
-
-          case TagType.IntArray:
-            value = this.ReadIntArray();
-            break;
-
-          case TagType.Long:
-            value = this.ReadLong();
-            break;
-
-          case TagType.Float:
-            value = this.ReadFloat();
-            break;
-
-          case TagType.Double:
-            value = this.ReadDouble();
-            break;
-
-          case TagType.ByteArray:
-            value = this.ReadByteArray();
-            break;
-
-          case TagType.String:
-            value = this.ReadString();
-            break;
-
-          case TagType.List:
-            value = this.ReadCollection((TagList)result);
-            break;
-
-          case TagType.Compound:
-            value = this.ReadDictionary((TagCompound)result);
-            break;
-
-          default:
-            throw new InvalidDataException($"Unrecognized tag type: {rawType}");
-        }
-
-        result.Value = value;
+        name = this.ReadTagName();
       }
+      else
+      {
+        name = string.Empty;
+      }
+
+      result = null;
+
+      switch (type)
+      {
+        case TagType.End:
+          result = TagFactory.CreateTag(TagType.End);
+          break;
+
+        case TagType.Byte:
+          result = TagFactory.CreateTag(name, this.ReadByte());
+          break;
+
+        case TagType.Short:
+          result = TagFactory.CreateTag(name, this.ReadShort());
+          break;
+
+        case TagType.Int:
+          result = TagFactory.CreateTag(name, this.ReadInt());
+          break;
+
+        case TagType.IntArray:
+          result = TagFactory.CreateTag(name, this.ReadIntArray());
+          break;
+
+        case TagType.Long:
+          result = TagFactory.CreateTag(name, this.ReadLong());
+          break;
+
+        case TagType.Float:
+          result = TagFactory.CreateTag(name, this.ReadFloat());
+          break;
+
+        case TagType.Double:
+          result = TagFactory.CreateTag(name, this.ReadDouble());
+          break;
+
+        case TagType.ByteArray:
+          result = TagFactory.CreateTag(name, this.ReadByteArray());
+          break;
+
+        case TagType.String:
+          result = TagFactory.CreateTag(name, this.ReadString());
+          break;
+
+        case TagType.List:
+          result = TagFactory.CreateTag(name, this.ReadList());
+          break;
+
+        case TagType.Compound:
+          result = TagFactory.CreateTag(name, this.ReadCompound());
+          break;
+      }
+
+      _state.EndTag();
 
       return result;
     }
 
-    public virtual ITag ReadTag()
+    public override string ReadTagName()
     {
-      return this.ReadTag(ReadTagOptions.None);
+      return this.ReadString();
+    }
+
+    public override TagType ReadTagType()
+    {
+      int type;
+
+      type = _stream.ReadByte();
+
+      return (TagType)type;
     }
 
     #endregion

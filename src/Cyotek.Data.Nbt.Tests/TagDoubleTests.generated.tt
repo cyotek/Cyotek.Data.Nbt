@@ -1,0 +1,13 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>
+<#
+    string nbtName = "Double";
+    string typeName = "double";
+    object testValue = tagTestData[tagTypeDouble];
+    object altTestValue = altTagTestData[tagTypeDouble];
+    object defaultValue = 0;
+    string valueString = "8.98846567431158E+307";
+    int listCount = 0;
+    #>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

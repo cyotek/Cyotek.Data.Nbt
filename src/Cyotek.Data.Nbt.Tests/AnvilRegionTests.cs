@@ -53,18 +53,17 @@ namespace Cyotek.Data.Nbt.Tests
         inputStream = new DeflateStream(new MemoryStream(buffer, 2, buffer.Length - 6), CompressionMode.Decompress);
       }
 
-      ITagReader reader;
+      TagReader reader;
       reader = new BinaryTagReader(inputStream);
       TagCompound tag = (TagCompound)reader.ReadTag();
       string strTag = tag.ToString();
 
       Assert.IsNotNull(tag);
 
-      Assert.AreEqual(TagType.Compound, tag.GetTag("Level").
-                                            Type);
+      Assert.AreEqual(TagType.Compound, tag.GetTag("Level").Type);
       TagCompound levelTag = tag.GetCompound("Level");
 
-      ITag aTag = levelTag.GetTag("Entities");
+      Tag aTag = levelTag.GetTag("Entities");
       Assert.AreEqual(TagType.List, aTag.Type);
       TagList entitiesTag = aTag as TagList;
       Assert.AreEqual(0, entitiesTag.Value.Count);

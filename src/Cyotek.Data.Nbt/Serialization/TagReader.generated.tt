@@ -1,0 +1,70 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\NbtGeneratorData.t4" #>namespace Cyotek.Data.Nbt.Serialization
+{
+  partial class TagReader
+  {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
+
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
+
+      if (name != null)
+      {
+        #>
+    /// <summary>
+    /// Reads a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    public abstract <#=name #> Read<#=nbtName #>();
+
+<#
+      }
+    }
+#>
+
+<# if (false)
+    { #>
+    /// <summary>
+    /// Writes a tag value.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the type of the tag is invalid.</exception>
+    /// <param name="tag">The <see cref="Tag"/> to write.</param>
+    public Tag ReadTag2()
+    {
+      Tag result;
+      TagType type;
+
+      type = this.ReadTagType();
+
+      switch (type)
+      {
+<# for (int i = 0; i < nbtTypeNames.Length; i++)
+      {
+        string nbtName;
+
+        nbtName = nbtTypeNames[i];
+
+        if (i != tagTypeEnd)
+        {
+          #>
+        case TagType.<#=nbtName #>:
+          result = TagFactory.CreateTag(string.Empty, this.Read<#=nbtName #>());
+          break;
+
+<#
+        }
+      }
+#>
+        default:
+          throw new InvalidDataException($"Unrecognized or unsupported tag type '{type}''.");
+      }
+
+      return result;
+    }
+<# } #>
+  }
+}

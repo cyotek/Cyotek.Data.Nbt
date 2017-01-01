@@ -1,283 +1,233 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  public class TagCollectionTests
+  public partial class TagCollectionTests : TestBase
   {
     #region  Tests
 
     [Test]
-    public void AddBoolWithNameTest()
-    {
-      this.AddTest<bool, TagByte>(Guid.NewGuid().
-                                       ToString(), true, 1);
-    }
-
-    [Test]
-    public void AddByteArrayTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.ByteArray);
-    }
-
-    [Test]
-    public void AddByteArrayWithNameTest()
-    {
-      this.AddTest<byte[], TagByteArray>(Guid.NewGuid().
-                                              ToString(), new[]
-                                                          {
-                                                            byte.MinValue,
-                                                            byte.MaxValue
-                                                          });
-    }
-
-    [Test]
-    public void AddByteTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Byte);
-    }
-
-    [Test]
-    public void AddByteWithNameTest()
-    {
-      this.AddTest<byte, TagByte>(Guid.NewGuid().
-                                       ToString(), byte.MaxValue);
-    }
-
-    [Test]
-    public void AddCompoundTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Compound);
-    }
-
-    [Test]
-    public void AddDateTimeWithNameTest()
-    {
-      this.AddTest<DateTime, TagString>(Guid.NewGuid().
-                                             ToString(), DateTime.MaxValue, DateTime.MaxValue.ToString("u"));
-    }
-
-    [Test]
-    public void AddDoubleTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Double);
-    }
-
-    [Test]
-    public void AddDoubleWithNameTest()
-    {
-      this.AddTest<double, TagDouble>(Guid.NewGuid().
-                                           ToString(), double.MaxValue);
-    }
-
-    [Test]
-    public void AddFloatTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Float);
-    }
-
-    [Test]
-    public void AddFloatWithNameTest()
-    {
-      this.AddTest<float, TagFloat>(Guid.NewGuid().
-                                         ToString(), float.MaxValue);
-    }
-
-    [Test]
-    public void AddGuidWithNameTest()
-    {
-      Guid value;
-
-      value = Guid.NewGuid();
-
-      this.AddTest<Guid, TagByteArray>(Guid.NewGuid().
-                                            ToString(), value, value.ToByteArray());
-    }
-
-    [Test]
-    public void AddIntArrayTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.IntArray);
-    }
-
-    [Test]
-    public void AddIntArrayWithNameTest()
-    {
-      this.AddTest<int[], TagIntArray>(Guid.NewGuid().
-                                            ToString(), new[]
-                                                        {
-                                                          int.MinValue,
-                                                          int.MaxValue
-                                                        });
-    }
-
-    [Test]
-    public void AddIntTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Int);
-    }
-
-    [Test]
-    public void AddIntWithNameTest()
-    {
-      this.AddTest<int, TagInt>(Guid.NewGuid().
-                                     ToString(), int.MaxValue);
-    }
-
-    [Test]
-    public void AddListTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.List, TagType.String);
-    }
-
-    [Test]
-    public void AddLongTypeTest()
-    {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Long);
-    }
-
-    [Test]
-    public void AddLongWithNameTest()
-    {
-      this.AddTest<long, TagLong>(Guid.NewGuid().
-                                       ToString(), long.MaxValue);
-    }
-
-    [Test]
-    [ExpectedException(typeof(ArgumentException))]
-    public void AddObjectWithNameTest()
-    {
-      this.AddTest<object, TagByte>(Guid.NewGuid().
-                                         ToString(), 'c');
-    }
-
-    [Test]
-    public void AddRangeTest()
+    public void Add_sets_limit_type()
     {
       // arrange
       TagCollection target;
-      string key1;
-      string key2;
-      string value1;
-      string value2;
+      TagType expected;
+      TagType actual;
 
       target = new TagCollection();
-      key1 = Guid.NewGuid().
-                  ToString();
-      key2 = Guid.NewGuid().
-                  ToString();
-      value1 = Guid.NewGuid().
-                    ToString();
-      value2 = Guid.NewGuid().
-                    ToString();
+
+      expected = TagType.Byte;
 
       // act
-      target.AddRange(new[]
-                      {
-                        new KeyValuePair<string, object>(key1, value1),
-                        new KeyValuePair<string, object>(key2, value2)
-                      });
+      target.Add((byte)127);
 
       // assert
-      Assert.AreEqual(2, target.Count);
+      actual = target.LimitType;
+      Assert.AreEqual(expected, actual);
     }
 
     [Test]
-    public void AddShortTypeTest()
+    public void Add_sets_parent()
     {
-      this.AddTagByTypeTest(Guid.NewGuid().
-                                 ToString(), TagType.Short);
+      // arrange
+      TagList owner;
+      TagCollection target;
+      Tag actual;
+
+      actual = new TagByte(56);
+
+      owner = new TagList();
+      target = owner.Value;
+
+      // act
+      target.Add(actual);
+
+      // assert
+      Assert.AreSame(owner, actual.Parent);
     }
 
     [Test]
-    public void AddShortWithNameTest()
-    {
-      this.AddTest<short, TagShort>(Guid.NewGuid().
-                                         ToString(), short.MaxValue);
-    }
-
-    [Test]
-    public void AddStringWithNameTest()
-    {
-      this.AddTest<string, TagString>(Guid.NewGuid().
-                                           ToString(), "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
-    }
-
-    #endregion
-
-    #region Test Helpers
-
-    protected void AddTagByTypeTest(string name, TagType type)
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only unnamed tags are supported.\r\nParameter name: item")]
+    public void Add_throws_exception_for_named_tags()
     {
       // arrange
       TagCollection target;
-      ITag tag;
+
+      target = new TagCollection(TagType.Byte);
+
+      // act
+      target.Add(new TagByte("alpha", 120));
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only items of type Byte can be added to this collection.\r\nParameter name: item")]
+    public void Add_throws_exception_for_tags_not_matching_list_type()
+    {
+      // arrange
+      TagCollection target;
+
+      target = new TagCollection(TagType.Byte);
+
+      // act
+      target.Add(int.MaxValue);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Invalid value type.\r\nParameter name: value")]
+    public void Add_throws_exception_for_unsupported_data_type()
+    {
+      // arrange
+      TagCollection target;
 
       target = new TagCollection();
 
       // act
-      tag = target.Add(name, type);
-
-      // assert
-      Assert.IsNotNull(tag);
-      Assert.Contains(tag, target);
-      Assert.AreEqual(name, tag.Name);
-      Assert.AreEqual(type, tag.Type);
+      target.Add(TimeSpan.MinValue);
     }
 
-    protected void AddTagByTypeTest(string name, TagType type, TagType limitType)
+    [Test]
+    public void AddRange_adds_values()
     {
       // arrange
       TagCollection target;
-      ITag tag;
+      object[] expected;
 
       target = new TagCollection();
 
+      expected = new object[]
+                 {
+                   8,
+                   16,
+                   32
+                 };
+
       // act
-      tag = target.Add(name, type, limitType);
+      target.AddRange(expected);
 
       // assert
-      Assert.IsNotNull(tag);
-      Assert.Contains(tag, target);
-      Assert.AreEqual(name, tag.Name);
-      Assert.AreEqual(type, tag.Type);
-      Assert.IsInstanceOf<ICollectionTag>(tag);
-      Assert.AreEqual(limitType, ((ICollectionTag)tag).LimitToType);
+      Assert.AreEqual(expected.Length, target.Count);
+      CollectionAssert.AreEqual(expected, target.Select(t => t.GetValue()).ToArray());
     }
 
-    protected void AddTest<TValue, TTag>(string name, TValue value)
+    [Test]
+    public void Clear_removes_parents()
     {
-      this.AddTest<TValue, TTag>(name, value, null);
+      // arrange
+      TagList owner;
+      TagCollection target;
+      Tag actual1;
+      Tag actual2;
+
+      actual1 = new TagByte(56);
+      actual2 = new TagByte(156);
+
+      owner = new TagList();
+      target = owner.Value;
+
+      target.Add(actual1);
+      target.Add(actual2);
+
+      // act
+      target.Clear();
+
+      // assert
+      Assert.IsNull(actual1.Parent);
+      Assert.IsNull(actual2.Parent);
     }
 
-    protected void AddTest<TValue, TTag>(string name, TValue value, object alternateValue)
+    [Test]
+    public void Constructor_sets_default_limit_type()
     {
       // arrange
       TagCollection target;
-      ITag tag;
+      TagType expected;
+      TagType actual;
 
-      target = new TagCollection();
+      expected = TagType.None;
 
       // act
-      tag = target.Add(name, value);
+      target = new TagCollection();
 
       // assert
-      Assert.IsNotNull(tag);
-      Assert.Contains(tag, target);
-      Assert.AreEqual(name, tag.Name);
-      Assert.IsInstanceOf<TTag>(tag);
-      Assert.AreEqual(alternateValue ?? value, tag.Value);
+      actual = target.LimitType;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Constructor_sets_limit_type()
+    {
+      // arrange
+      TagCollection target;
+      TagType expected;
+      TagType actual;
+
+      expected = TagType.Byte;
+
+      // act
+      target = new TagCollection(expected);
+
+      // assert
+      actual = target.LimitType;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Indexer_sets_parent()
+    {
+      // arrange
+      TagList owner;
+      TagCollection target;
+      Tag actual;
+
+      actual = new TagByte(56);
+
+      owner = new TagList();
+      target = owner.Value;
+
+      target.Add(byte.MaxValue);
+
+      // act
+      target[0] = actual;
+
+      // assert
+      Assert.AreSame(owner, actual.Parent);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only items of type Byte can be added to this collection.\r\nParameter name: item")]
+    public void Indexer_throws_exception_for_tags_not_matching_list_type()
+    {
+      // arrange
+      TagCollection target;
+
+      target = new TagCollection(TagType.Byte);
+      target.Add(byte.MaxValue);
+
+      // act
+      target[0] = new TagInt();
+    }
+
+    [Test]
+    public void Remove_clears_parent()
+    {
+      // arrange
+      TagList owner;
+      TagCollection target;
+      Tag actual;
+
+      owner = new TagList();
+      target = owner.Value;
+
+      actual = target.Add((byte)56);
+
+      // act
+      target.Remove(actual);
+
+      // assert
+      Assert.IsNull(actual.Parent);
     }
 
     #endregion

@@ -2,15 +2,15 @@ using System.Collections.Generic;
 
 namespace Cyotek.Data.Nbt
 {
-  public interface ICollectionTag : ITag
+  public interface ICollectionTag
   {
     #region Properties
 
     bool IsList { get; }
 
-    TagType LimitToType { get; set; }
+    TagType ListType { get; set; }
 
-    IList<ITag> Values { get; }
+    IList<Tag> Values { get; }
 
     #endregion
   }

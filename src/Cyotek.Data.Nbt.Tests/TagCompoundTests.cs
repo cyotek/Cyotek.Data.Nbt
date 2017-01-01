@@ -1,182 +1,163 @@
+using System;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  public class TagCompoundTests : TestBase
+  public partial class TagCompoundTests : TestBase
   {
     #region  Tests
 
     [Test]
-    public void ConstructorTest()
-    {
-      // arrange
-      TagCompound tag;
-
-      // act
-      tag = new TagCompound();
-
-      // assert
-      Assert.IsEmpty(tag.Name);
-      Assert.IsNotNull(tag.Value);
-      Assert.AreSame(tag, tag.Value.Owner);
-    }
-
-    [Test]
-    public void ConstructorWithNameTest()
-    {
-      // arrange
-      TagCompound tag;
-      string name;
-
-      name = "creationDate";
-
-      // act
-      tag = new TagCompound(name);
-
-      // assert
-      Assert.AreEqual(name, tag.Name);
-      Assert.IsNotNull(tag.Value);
-      Assert.AreSame(tag, tag.Value.Owner);
-    }
-
-    [Test]
-    public void NameTest()
+    public void Contains_returns_false_if_not_found()
     {
       // arrange
       TagCompound target;
-      string expected;
+      bool actual;
 
       target = new TagCompound();
-      expected = "newvalue";
+
+      target.Value.Add("Beta", 10);
+      target.Value.Add("Alpha", 11);
+      target.Value.Add("Gamma", 12);
 
       // act
-      target.Name = expected;
+      actual = target.Contains("Delta");
 
       // assert
-      Assert.AreEqual(expected, target.Name);
+      Assert.IsFalse(actual);
     }
 
     [Test]
-    public void ToStringEmptyTest()
+    public void Contains_returns_true_if_found()
     {
       // arrange
       TagCompound target;
-      string expected;
-      string actual;
-      string name;
-
-      name = "tagname";
-      expected = string.Format("[Compound: {0}] (0 entries)", name);
-      target = new TagCompound(name);
-
-      // act
-      actual = target.ToString();
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ToStringEmptyWithIndentTest()
-    {
-      // arrange
-      TagCompound target;
-      string expected;
-      string actual;
-      string name;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      expected = string.Format("{1}[Compound: {0}] (0 entries)", name, prefix);
-      target = new TagCompound(name);
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ToStringTest()
-    {
-      // arrange
-      TagCompound target;
-      string expected;
-      string actual;
-      string name;
-
-      name = "tagname";
-      expected = string.Format("[Compound: {0}] (2 entries)", name);
-      target = new TagCompound(name);
-      target.Value.Add("item 1", "value1");
-      target.Value.Add("item 2", 2.0F);
-
-      // act
-      actual = target.ToString();
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ToStringWithIndentTest()
-    {
-      // arrange
-      TagCompound target;
-      string expected;
-      string actual;
-      string name;
-      string prefix;
-
-      prefix = "test";
-      name = "tagname";
-      expected = string.Format("{1}[Compound: {0}] (2 entries)", name, prefix);
-      target = new TagCompound(name);
-      target.Value.Add("item 1", "value1");
-      target.Value.Add("item 2", 2.0F);
-
-      // act
-      actual = target.ToString(prefix);
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void TypeTest()
-    {
-      // arrange
-      TagType expected;
-      TagType actual;
-
-      expected = TagType.Compound;
-
-      // act
-      actual = new TagCompound().Type;
-
-      // assert
-      Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void ValueTest()
-    {
-      // arrange
-      TagCompound target;
-      TagDictionary expected;
+      bool actual;
 
       target = new TagCompound();
-      expected = new TagDictionary();
+
+      target.Value.Add("Beta", 10);
+      target.Value.Add("Alpha", 11);
+      target.Value.Add("Gamma", 12);
 
       // act
-      target.Value = expected;
+      actual = target.Contains("Alpha");
 
       // assert
-      Assert.AreEqual(expected, target.Value);
-      Assert.AreSame(target, expected.Owner);
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void Count_returns_child_count()
+    {
+      // arrange
+      TagCompound target;
+      int actual;
+      int expected;
+
+      target = new TagCompound();
+
+      target.Value.Add("Beta", 10);
+      target.Value.Add("Alpha", 11);
+      target.Value.Add("Gamma", 12);
+
+      expected = 3;
+
+      // act
+      actual = target.Count;
+
+      // assert
+      Assert.AreEqual(actual, expected);
+    }
+
+    [Test]
+    public void Count_returns_zero_for_new_compound()
+    {
+      // arrange
+      TagCompound target;
+      int expected;
+      int actual;
+
+      target = new TagCompound();
+
+      expected = 0;
+
+      // act
+      actual = target.Count;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Indexer_returns_item_by_index()
+    {
+      // arrange
+      TagCompound target;
+      Tag actual;
+      Tag expected;
+
+      target = new TagCompound();
+      expected = new TagByte("Alpha", 10);
+
+      target.Value.Add(new TagByte("Beta", 10));
+      target.Value.Add(expected);
+      target.Value.Add(new TagInt("Gamma"));
+
+      // act
+      actual = target[1];
+
+      // assert
+      Assert.AreSame(actual, expected);
+    }
+
+    [Test]
+    public void Indexer_returns_item_by_name()
+    {
+      // arrange
+      TagCompound target;
+      Tag actual;
+      Tag expected;
+
+      target = new TagCompound();
+      expected = new TagByte("Alpha", 10);
+
+      target.Value.Add(new TagByte("Beta", 10));
+      target.Value.Add(expected);
+      target.Value.Add(new TagInt("Gamma"));
+
+      // act
+      actual = target["Alpha"];
+
+      // assert
+      Assert.AreSame(actual, expected);
+    }
+
+    [Test]
+    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Compounds cannot be restricted to a single type.")]
+    public void ListType_throws_exception_if_set()
+    {
+      // arrange
+      TagCompound target;
+
+      target = new TagCompound();
+
+      // act
+      ((ICollectionTag)target).ListType = TagType.Byte;
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: value")]
+    public void Value_throws_exception_if_set_to_null_value()
+    {
+      // arrange
+      TagCompound target;
+
+      target = new TagCompound();
+
+      // act
+      target.Value = null;
     }
 
     #endregion

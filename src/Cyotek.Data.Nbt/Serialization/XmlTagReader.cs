@@ -1,254 +1,162 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class XmlTagReader : ITagReader
+  public partial class XmlTagReader : TagReader
   {
-    #region Fields
+    #region Constants
 
-    private XmlReader _reader;
+    private static readonly char[] _arraySeparaters =
+    {
+      ' ',
+      '\t',
+      '\n',
+      '\r'
+    };
+
+    private readonly XmlReader _reader;
+
+    private readonly TagState _state;
 
     #endregion
 
     #region Constructors
 
-    public XmlTagReader()
-    { }
-
     public XmlTagReader(XmlReader reader)
-      : this()
     {
       _reader = reader;
+
+      _state = new TagState(FileAccess.Read);
+      _state.Start();
     }
+
+    public XmlTagReader(Stream stream)
+      : this(XmlReader.Create(stream))
+    { }
 
     #endregion
 
     #region Methods
 
-    protected ITag ReadTag(ReadTagOptions options, TagType defaultTagType)
+    public override void Close()
     {
-      ITag result;
-      TagType type;
+      base.Close();
 
-      this.InitializeReader();
-
-      type = this.ReadTagType(defaultTagType);
-      result = TagFactory.CreateTag(type);
-
-      if ((options & ReadTagOptions.IgnoreName) == 0)
-      {
-        string name;
-
-        name = _reader.GetAttribute("name");
-        if (string.IsNullOrEmpty(name))
-        {
-          name = _reader.Name;
-        }
-
-        result.Name = name;
-      }
-
-      if ((options & ReadTagOptions.IgnoreValue) == 0)
-      {
-        result.Value = this.ReadTagValue(result);
-      }
-
-      return result;
+      _reader.Close();
     }
 
-    protected virtual object ReadTagValue(ITag tag)
-    {
-      object result;
-
-      switch (tag.Type)
-      {
-        case TagType.Byte:
-          result = this.ReadByte();
-          break;
-
-        case TagType.Short:
-          result = this.ReadShort();
-          break;
-
-        case TagType.Int:
-          result = this.ReadInt();
-          break;
-
-        case TagType.Long:
-          result = this.ReadLong();
-          break;
-
-        case TagType.Float:
-          result = this.ReadFloat();
-          break;
-
-        case TagType.Double:
-          result = this.ReadDouble();
-          break;
-
-        case TagType.ByteArray:
-          result = this.ReadByteArray();
-          break;
-
-        case TagType.String:
-          result = this.ReadString();
-          break;
-
-        case TagType.List:
-          result = this.ReadCollection((TagList)tag);
-          break;
-
-        case TagType.Compound:
-          result = this.ReadDictionary((TagCompound)tag);
-          break;
-
-        case TagType.IntArray:
-          result = this.ReadIntArray();
-          break;
-
-        default:
-          throw new InvalidDataException($"Unrecognized tag type: {tag.Type}");
-      }
-
-      return result;
-    }
-
-    private void InitializeReader()
-    {
-      if (_reader.ReadState == ReadState.Initial)
-      {
-        while (!_reader.IsStartElement())
-        {
-          _reader.Read();
-        }
-      }
-    }
-
-    private void ReadChildValues(ICollection<ITag> value, ReadTagOptions options, TagType listType)
-    {
-      int depth;
-
-      this.SkipWhitespace();
-
-      depth = _reader.Depth;
-
-      if (_reader.NodeType != XmlNodeType.EndElement)
-      {
-        do
-        {
-          if (_reader.NodeType == XmlNodeType.Element)
-          {
-            ITag child;
-
-            child = this.ReadTag(options, listType);
-
-            value.Add(child);
-          }
-          else
-          {
-            _reader.Read();
-          }
-        } while (_reader.Depth == depth);
-      }
-      else
-      {
-        _reader.Read();
-        this.SkipWhitespace();
-      }
-    }
-
-    private TagType ReadTagType(TagType defaultTagType)
-    {
-      TagType type;
-
-      if (defaultTagType != TagType.None)
-      {
-        type = defaultTagType;
-      }
-      else
-      {
-        string typeName;
-
-        typeName = _reader.GetAttribute("type");
-        if (string.IsNullOrEmpty(typeName))
-        {
-          throw new InvalidDataException("Missing type attribute, unable to determine tag type.");
-        }
-
-        type = (TagType)Enum.Parse(typeof(TagType), typeName, true);
-      }
-
-      return type;
-    }
-
-    private void SkipWhitespace()
-    {
-      while (_reader.NodeType == XmlNodeType.Whitespace)
-      {
-        _reader.Read();
-      }
-    }
-
-    #endregion
-
-    #region ITagReader Interface
-
-    public virtual bool IsNbtDocument(Stream stream)
+    public override bool IsNbtDocument()
     {
       bool result;
-      long position;
-
-      position = stream.Position;
-
       try
       {
         string typeName;
 
-        _reader = XmlReader.Create(stream);
-
-        while (!_reader.IsStartElement())
-        {
-          _reader.Read();
-        }
+        this.InitializeReader();
 
         typeName = _reader.GetAttribute("type");
 
-        result = typeName != null;
+        result = !string.IsNullOrEmpty(typeName) && (TagType)Enum.Parse(typeof(TagType), typeName, true) == TagType.Compound;
       }
       catch
       {
         result = false;
       }
 
-      stream.Position = position;
-
       return result;
     }
 
-    public virtual byte ReadByte()
+    public override byte ReadByte()
     {
       return (byte)_reader.ReadElementContentAsInt();
     }
 
-    public virtual byte[] ReadByteArray()
+    public override byte[] ReadByteArray()
     {
-      return this.ReadString().
-                  Split(new[]
-                        {
-                          " ",
-                          "\t",
-                          "\n",
-                          "\r"
-                        }, StringSplitOptions.RemoveEmptyEntries).
-                  Select(c => Convert.ToByte(c)).
-                  ToArray();
+      byte[] result;
+      string value;
+
+      value = this.ReadString();
+
+      if (!string.IsNullOrEmpty(value))
+      {
+        string[] values;
+
+        values = value.Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries);
+        result = new byte[values.Length];
+
+        for (int i = 0; i < values.Length; i++)
+        {
+          result[i] = Convert.ToByte(values[i]);
+        }
+      }
+      else
+      {
+        result = TagByteArray.EmptyValue;
+      }
+
+      return result;
     }
 
-    public virtual TagCollection ReadCollection(TagList owner)
+    public override TagDictionary ReadCompound()
+    {
+      TagDictionary value;
+
+      value = new TagDictionary();
+
+      _reader.Read();
+
+      this.ReadChildValues(value, TagType.None);
+
+      return value;
+    }
+
+    public override double ReadDouble()
+    {
+      return _reader.ReadElementContentAsDouble();
+    }
+
+    public override float ReadFloat()
+    {
+      return _reader.ReadElementContentAsFloat();
+    }
+
+    public override int ReadInt()
+    {
+      return _reader.ReadElementContentAsInt();
+    }
+
+    public override int[] ReadIntArray()
+    {
+      int[] result;
+      string value;
+
+      value = this.ReadString();
+
+      if (!string.IsNullOrEmpty(value))
+      {
+        string[] values;
+
+        values = value.Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries);
+        result = new int[values.Length];
+
+        for (int i = 0; i < values.Length; i++)
+        {
+          result[i] = Convert.ToInt32(values[i]);
+        }
+      }
+      else
+      {
+        result = TagIntArray.EmptyValue;
+      }
+
+      return result;
+    }
+
+    public override TagCollection ReadList()
     {
       TagCollection value;
       TagType listType;
@@ -261,96 +169,26 @@ namespace Cyotek.Data.Nbt.Serialization
       }
 
       listType = (TagType)Enum.Parse(typeof(TagType), listTypeName, true);
-      owner.ListType = listType;
-      value = new TagCollection(owner, listType);
+      value = new TagCollection(listType);
 
       _reader.Read();
 
-      this.ReadChildValues(value, ReadTagOptions.IgnoreName, listType);
+      this.ReadChildValues(value, listType);
 
       return value;
     }
 
-    public virtual TagDictionary ReadDictionary(TagCompound owner)
-    {
-      TagDictionary value;
-
-      value = new TagDictionary(owner);
-
-      _reader.Read();
-
-      this.ReadChildValues(value, ReadTagOptions.None, TagType.None);
-
-      return value;
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream)
-    {
-      return this.ReadDocument(stream, ReadTagOptions.None);
-    }
-
-    public virtual TagCompound ReadDocument(Stream stream, ReadTagOptions options)
-    {
-      TagCompound result;
-      bool createReader;
-
-      createReader = _reader == null;
-
-      if (createReader)
-      {
-        _reader = XmlReader.Create(stream);
-      }
-
-      result = (TagCompound)this.ReadTag(options);
-
-      if (createReader)
-      {
-        _reader = null;
-      }
-
-      return result;
-    }
-
-    public virtual double ReadDouble()
-    {
-      return _reader.ReadElementContentAsDouble();
-    }
-
-    public virtual float ReadFloat()
-    {
-      return _reader.ReadElementContentAsFloat();
-    }
-
-    public virtual int ReadInt()
-    {
-      return _reader.ReadElementContentAsInt();
-    }
-
-    public virtual int[] ReadIntArray()
-    {
-      return this.ReadString().
-                  Split(new[]
-                        {
-                          " ",
-                          "\t",
-                          "\n",
-                          "\r"
-                        }, StringSplitOptions.RemoveEmptyEntries).
-                  Select(c => Convert.ToInt32(c)).
-                  ToArray();
-    }
-
-    public virtual long ReadLong()
+    public override long ReadLong()
     {
       return _reader.ReadElementContentAsLong();
     }
 
-    public virtual short ReadShort()
+    public override short ReadShort()
     {
       return (short)_reader.ReadElementContentAsInt();
     }
 
-    public virtual string ReadString()
+    public override string ReadString()
     {
       string value;
 
@@ -363,14 +201,190 @@ namespace Cyotek.Data.Nbt.Serialization
       return value;
     }
 
-    public virtual ITag ReadTag()
+    public override Tag ReadTag()
     {
-      return this.ReadTag(ReadTagOptions.None);
+      return this.ReadTag(TagType.None);
     }
 
-    public virtual ITag ReadTag(ReadTagOptions options)
+    public override string ReadTagName()
     {
-      return this.ReadTag(options, TagType.None);
+      return _reader.Name;
+    }
+
+    public override TagType ReadTagType()
+    {
+      return this.ReadTagType(TagType.None);
+    }
+
+    private void InitializeReader()
+    {
+      if (_reader.ReadState == ReadState.Initial)
+      {
+        _reader.MoveToContent();
+      }
+    }
+
+    private void ReadChildValues(ICollection<Tag> value, TagType listType)
+    {
+      int depth;
+
+      _state.StartList(listType, 0);
+
+      this.SkipWhitespace();
+
+      depth = _reader.Depth;
+
+      if (_reader.NodeType != XmlNodeType.EndElement)
+      {
+        do
+        {
+          if (_reader.NodeType == XmlNodeType.Element)
+          {
+            Tag child;
+
+            child = this.ReadTag(listType);
+            if (listType != TagType.None)
+            {
+              // sanity check as depending how you
+              // decided to load documents it is
+              // currently possible to skip some checks
+              child.Name = string.Empty;
+            }
+
+            value.Add(child);
+          }
+          else
+          {
+            _reader.Read();
+          }
+        } while (_reader.Depth == depth && _reader.ReadState == ReadState.Interactive);
+      }
+      else
+      {
+        _reader.Read();
+        this.SkipWhitespace();
+      }
+    }
+
+    private Tag ReadTag(TagType defaultTagType)
+    {
+      Tag result;
+      TagType type;
+      string name;
+      TagContainerState state;
+
+      type = this.ReadTagType(defaultTagType);
+
+      state = _state.StartTag(type);
+
+      if (type != TagType.End && (state == null || state.ContainerType != TagType.List))
+      {
+        name = _reader.GetAttribute("name");
+        if (string.IsNullOrEmpty(name))
+        {
+          name = this.ReadTagName();
+        }
+      }
+      else
+      {
+        name = string.Empty;
+      }
+
+      result = null;
+
+      switch (type)
+      {
+        case TagType.Byte:
+          result = TagFactory.CreateTag(name, this.ReadByte());
+          break;
+
+        case TagType.Short:
+          result = TagFactory.CreateTag(name, this.ReadShort());
+          break;
+
+        case TagType.Int:
+          result = TagFactory.CreateTag(name, this.ReadInt());
+          break;
+
+        case TagType.Long:
+          result = TagFactory.CreateTag(name, this.ReadLong());
+          break;
+
+        case TagType.Float:
+          result = TagFactory.CreateTag(name, this.ReadFloat());
+          break;
+
+        case TagType.Double:
+          result = TagFactory.CreateTag(name, this.ReadDouble());
+          break;
+
+        case TagType.ByteArray:
+          result = TagFactory.CreateTag(name, this.ReadByteArray());
+          break;
+
+        case TagType.String:
+          result = TagFactory.CreateTag(name, this.ReadString());
+          break;
+
+        case TagType.List:
+          result = TagFactory.CreateTag(name, this.ReadList());
+          break;
+
+        case TagType.Compound:
+          result = TagFactory.CreateTag(name, this.ReadCompound());
+          break;
+
+        case TagType.IntArray:
+          result = TagFactory.CreateTag(name, this.ReadIntArray());
+          break;
+
+        // Can't be hit as ReadTagType will throw
+        // an exception for unsupported types
+        // default:
+        //   throw new InvalidDataException($"Unrecognized tag type: {type}");
+      }
+
+      _state.EndTag();
+
+      return result;
+    }
+
+    private TagType ReadTagType(TagType defaultTagType)
+    {
+      TagType type;
+
+      this.InitializeReader();
+
+      if (defaultTagType != TagType.None)
+      {
+        type = defaultTagType;
+      }
+      else
+      {
+        string typeName;
+
+        typeName = _reader.GetAttribute("type");
+
+        if (string.IsNullOrEmpty(typeName))
+        {
+          throw new InvalidDataException("Missing type attribute, unable to determine tag type.");
+        }
+
+        if (!_tagTypeEnumLookup.TryGetValue(typeName, out type))
+        {
+          throw new InvalidDataException($"Unrecognized or unsupported tag type '{typeName}'.");
+        }
+      }
+
+      return type;
+    }
+
+    private void SkipWhitespace()
+    {
+      while (_reader.NodeType == XmlNodeType.Whitespace)
+      {
+        _reader.Read();
+      }
     }
 
     #endregion

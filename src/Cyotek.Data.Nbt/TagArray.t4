@@ -1,0 +1,150 @@
+﻿<#
+    string className;
+
+    className = "Tag" + nbtTagName;
+    #>
+<#@ include file="NbtGeneratorData.t4" #>using System;
+using System.ComponentModel;
+using System.Globalization;
+
+namespace Cyotek.Data.Nbt
+{
+  public partial class <#=className #> : Tag, IEquatable<<#=className #>>
+  {
+    #region Constants
+
+    internal static readonly <#=dataType #>[] EmptyValue = new <#=dataType #>[0];
+
+    #endregion
+
+    #region Fields
+
+    private <#=dataType #>[] _value;
+
+    #endregion
+
+    #region Constructors
+
+    public <#=className #>()
+      : this(string.Empty, EmptyValue)
+    { }
+
+    public <#=className #>(string name)
+      : this(name, EmptyValue)
+    { }
+
+    public <#=className #>(<#=dataType #>[] value)
+      : this(string.Empty, value)
+    { }
+
+    public <#=className #>(string name, <#=dataType #>[] value)
+      : base(name)
+    {
+      _value = value;
+    }
+
+    #endregion
+
+    #region Properties
+
+    public override TagType Type
+    {
+      get { return TagType.<#=nbtTagName #>; }
+    }
+
+    [Category("Data")]
+    public <#=dataType #>[] Value
+    {
+      get { return _value; }
+      set { _value = value; }
+    }
+
+    #endregion
+
+    #region Methods
+
+    public override int GetHashCode()
+    {
+      // http://stackoverflow.com/a/263416/148962
+
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+
+        if(_value != null)
+        {
+          for(int i = 0; i < _value.Length; i++)
+          {
+            hash = hash * 23 + _value[i].GetHashCode();
+          }
+        }
+
+        return hash;
+      }
+    }
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      _value = (<#=dataType #>[])value;
+    }
+
+    public override string ToString()
+    {
+      int count;
+
+      count = _value?.Length ?? 0;
+
+      return string.Concat("[", this.Type, ": ", this.Name, "] (", count.ToString(CultureInfo.InvariantCulture), " items)");
+    }
+
+    #endregion
+
+    #region IEquatable<<#=className #>> Interface
+
+    public bool Equals(<#=className #> other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          <#=dataType #>[] dst;
+
+          dst = other.Value;
+
+          result = _value == null && dst == null || _value != null && dst != null && _value.Length == dst.Length;
+
+          if (result && _value != null && dst != null)
+          {
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            for (int i = 0; i < _value.Length; i++)
+            {
+              if (_value[i] != dst[i])
+              {
+                result = false;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      return result;
+    }
+
+    #endregion
+  }
+}

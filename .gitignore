@@ -12,3 +12,5 @@ testresults
 *.suo
 
 push.cmd
+
+BenchmarkDotNet.Artifacts/

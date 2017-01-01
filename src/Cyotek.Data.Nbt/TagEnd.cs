@@ -1,33 +1,66 @@
+using System;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagEnd : Tag
+  public sealed class TagEnd : Tag, IEquatable<TagEnd>
   {
-    #region Properties
+    #region Constants
 
-    public override string Name
-    {
-      get { return string.Empty; }
-      set { }
-    }
+    private const string _value = "[End]";
+
+    #endregion
+
+    #region Constructors
+
+    public TagEnd()
+      : base(string.Empty)
+    { }
+
+    #endregion
+
+    #region Properties
 
     public override TagType Type
     {
       get { return TagType.End; }
     }
 
-    public override object Value
-    {
-      get { return null; }
-      set { }
-    }
-
     #endregion
 
     #region Methods
 
-    public override string ToString(string indentString)
+    public override int GetHashCode()
     {
-      return $"{indentString}[End]";
+      return _value.GetHashCode();
+    }
+
+    public override object GetValue()
+    {
+      throw new NotSupportedException("Tag does not support values.");
+    }
+
+    public override void SetValue(object value)
+    {
+      throw new NotSupportedException("Tag does not support values.");
+    }
+
+    public override string ToString()
+    {
+      return _value;
+    }
+
+    public override string ToValueString()
+    {
+      return string.Empty;
+    }
+
+    #endregion
+
+    #region IEquatable<TagEnd> Interface
+
+    public bool Equals(TagEnd other)
+    {
+      return !ReferenceEquals(null, other);
     }
 
     #endregion

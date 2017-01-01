@@ -5,106 +5,154 @@ using System.Xml;
 
 namespace Cyotek.Data.Nbt.Serialization
 {
-  public class XmlTagWriter : ITagWriter
+  public sealed class XmlTagWriter : TagWriter
   {
+    #region Constants
+
+    private static readonly char[] _cDataTriggers =
+    {
+      '<',
+      '>',
+      '&'
+    };
+
+    private readonly TagState _state;
+
+    private readonly XmlWriter _writer;
+
+    #endregion
+
     #region Fields
 
-    private XmlWriter _writer;
+    private StringBuilder _arraySb;
 
     #endregion
 
     #region Constructors
 
-    public XmlTagWriter()
-    { }
-
+    /// <summary>
+    /// Constructor. <see cref="XmlWriter"/>
+    /// </summary>
+    /// <param name="writer">The writer.</param>
     public XmlTagWriter(XmlWriter writer)
-      : this()
     {
+      _state = new TagState(FileAccess.Write);
       _writer = writer;
+    }
+
+    public XmlTagWriter(Stream stream)
+    {
+      XmlWriterSettings settings;
+
+      settings = new XmlWriterSettings
+                 {
+                   Indent = true,
+                   Encoding = Encoding.UTF8
+                 };
+
+      _state = new TagState(FileAccess.Write);
+      _writer = XmlWriter.Create(stream, settings);
     }
 
     #endregion
 
     #region Methods
 
-    protected void WriteHeader(ITag value)
+    public override void Close()
     {
-      _writer.WriteAttributeString("type", value.Type.ToString());
+      base.Close();
+
+      _writer.Flush();
+      _writer.Close();
     }
 
-    protected virtual void WriteValue(TagCollection value)
+    public override void Flush()
     {
-      _writer.WriteAttributeString("limitType", value.LimitType.ToString());
+      _writer.Flush();
+    }
 
-      foreach (ITag item in value)
+    public override void WriteArrayValue(byte value)
+    {
+      if (_arraySb.Length != 0)
       {
-        this.WriteTag(item, WriteTagOptions.IgnoreName);
-      }
-    }
-
-    protected virtual void WriteValue(TagDictionary value)
-    {
-      foreach (ITag item in value)
-      {
-        this.WriteTag(item, WriteTagOptions.None);
-      }
-    }
-
-    #endregion
-
-    #region ITagWriter Interface
-
-    public virtual void WriteDocument(Stream stream, TagCompound tag)
-    {
-      this.WriteDocument(stream, tag, CompressionOption.Auto);
-    }
-
-    public virtual void WriteDocument(Stream stream, TagCompound tag, CompressionOption compression)
-    {
-      bool createWriter;
-
-      if (compression == CompressionOption.On)
-      {
-        throw new NotSupportedException("Compression is not supported.");
+        _arraySb.Append(' ');
       }
 
-      createWriter = _writer == null;
-
-      if (createWriter)
-      {
-        XmlWriterSettings settings;
-
-        settings = new XmlWriterSettings
-                   {
-                     Indent = true,
-                     Encoding = Encoding.UTF8
-                   };
-
-        _writer = XmlWriter.Create(stream, settings);
-        _writer.WriteStartDocument(true);
-      }
-
-      this.WriteTag(tag, WriteTagOptions.None);
-
-      if (createWriter)
-      {
-        _writer.WriteEndDocument();
-        _writer.Flush();
-        _writer = null;
-      }
+      _arraySb.Append(value);
     }
 
-    public virtual void WriteTag(ITag value)
+    public override void WriteArrayValue(int value)
     {
-      this.WriteTag(value, WriteTagOptions.None);
+      if (_arraySb.Length != 0)
+      {
+        _arraySb.Append(' ');
+      }
+
+      _arraySb.Append(value);
     }
 
-    public virtual void WriteTag(ITag value, WriteTagOptions options)
+    public override void WriteEndDocument()
     {
-      string name;
+      _state.SetComplete();
 
-      name = value.Name;
+      _writer.WriteEndDocument();
+      _writer.Flush();
+    }
+
+    public override void WriteEndTag()
+    {
+      TagType currentTag;
+
+      currentTag = _state.CurrentTag;
+
+      if ((currentTag == TagType.ByteArray || currentTag == TagType.IntArray) && _arraySb != null && _arraySb.Length != 0)
+      {
+        _writer.WriteValue(_arraySb.ToString());
+        _arraySb.Length = 0;
+      }
+
+      _state.EndTag();
+
+      _writer.WriteEndElement();
+    }
+
+    public override void WriteStartArray(string name, TagType type, int count)
+    {
+      // ReSharper disable once ConvertIfStatementToSwitchStatement
+      if (type == TagType.Byte)
+      {
+        type = TagType.ByteArray;
+      }
+      else if (type == TagType.Int)
+      {
+        type = TagType.IntArray;
+      }
+      else if (type != TagType.ByteArray && type != TagType.IntArray)
+      {
+        throw new ArgumentException("Only byte or integer types are supported.", nameof(type));
+      }
+
+      if (_arraySb == null)
+      {
+        _arraySb = new StringBuilder();
+      }
+
+      this.WriteStartTag(name, type);
+    }
+
+    public override void WriteStartDocument()
+    {
+      _state.Start();
+
+      _writer.WriteStartDocument(true);
+    }
+
+    public override void WriteStartTag(string name, TagType type)
+    {
+      TagContainerState currentState;
+
+      currentState = _state.StartTag(type);
+
       if (string.IsNullOrEmpty(name))
       {
         name = "tag";
@@ -120,73 +168,26 @@ namespace Cyotek.Data.Nbt.Serialization
         _writer.WriteAttributeString("name", name);
       }
 
-      if (value.Type != TagType.End && (options & WriteTagOptions.IgnoreName) == 0)
+      if (type != TagType.End && (currentState == null || currentState.ContainerType != TagType.List))
       {
-        this.WriteHeader(value);
+        _writer.WriteAttributeString("type", type.ToString());
       }
-
-      switch (value.Type)
-      {
-        case TagType.End:
-          // noop
-          break;
-
-        case TagType.Byte:
-          this.WriteValue((byte)value.Value);
-          break;
-
-        case TagType.Short:
-          this.WriteValue((short)value.Value);
-          break;
-
-        case TagType.Int:
-          this.WriteValue((int)value.Value);
-          break;
-
-        case TagType.Long:
-          this.WriteValue((long)value.Value);
-          break;
-
-        case TagType.Float:
-          this.WriteValue((float)value.Value);
-          break;
-
-        case TagType.Double:
-          this.WriteValue((double)value.Value);
-          break;
-
-        case TagType.ByteArray:
-          this.WriteValue((byte[])value.Value);
-          break;
-
-        case TagType.String:
-          this.WriteValue((string)value.Value);
-          break;
-
-        case TagType.List:
-          this.WriteValue((TagCollection)value.Value);
-          break;
-
-        case TagType.Compound:
-          this.WriteValue((TagDictionary)value.Value);
-          break;
-
-        case TagType.IntArray:
-          this.WriteValue((int[])value.Value);
-          break;
-
-        default:
-          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(value));
-      }
-
-      _writer.WriteEndElement();
     }
 
-    public virtual void WriteValue(string value)
+    public override void WriteStartTag(string name, TagType type, TagType listType, int count)
+    {
+      this.WriteStartTag(name, type);
+
+      _state.StartList(listType, count);
+
+      _writer.WriteAttributeString("limitType", listType.ToString());
+    }
+
+    protected override void WriteValue(string value)
     {
       if (value != null)
       {
-        if (value.Contains("<") || value.Contains(">") || value.Contains("&"))
+        if (value.IndexOfAny(_cDataTriggers) != -1)
         {
           _writer.WriteCData(value);
         }
@@ -197,17 +198,17 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    public virtual void WriteValue(short value)
+    protected override void WriteValue(short value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(long value)
+    protected override void WriteValue(long value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(int[] value)
+    protected override void WriteValue(int[] value)
     {
       StringBuilder output;
 
@@ -217,36 +218,36 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         if (output.Length != 0)
         {
-          output.Append(" ");
+          output.Append(' ');
         }
 
         output.Append(i);
       }
 
-      this.WriteValue(output.ToString());
+      _writer.WriteValue(output.ToString());
     }
 
-    public virtual void WriteValue(int value)
+    protected override void WriteValue(int value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(float value)
+    protected override void WriteValue(float value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(double value)
+    protected override void WriteValue(double value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(byte value)
+    protected override void WriteValue(byte value)
     {
       _writer.WriteValue(value);
     }
 
-    public virtual void WriteValue(byte[] value)
+    protected override void WriteValue(byte[] value)
     {
       StringBuilder output;
 
@@ -256,13 +257,33 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         if (output.Length != 0)
         {
-          output.Append(" ");
+          output.Append(' ');
         }
 
         output.Append(i);
       }
 
-      this.WriteValue(output.ToString());
+      _writer.WriteValue(output.ToString());
+    }
+
+    protected override void WriteValue(TagCollection value)
+    {
+      _state.StartList(value.LimitType, value.Count);
+
+      _writer.WriteAttributeString("limitType", value.LimitType.ToString());
+
+      foreach (Tag item in value)
+      {
+        this.WriteTag(item);
+      }
+    }
+
+    protected override void WriteValue(TagDictionary value)
+    {
+      foreach (Tag item in value)
+      {
+        this.WriteTag(item);
+      }
     }
 
     #endregion

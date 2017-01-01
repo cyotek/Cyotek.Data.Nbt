@@ -1,7 +1,17 @@
+using System;
+using System.ComponentModel;
+using System.Globalization;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagInt : Tag
+  public sealed class TagInt : Tag, IEquatable<TagInt>
   {
+    #region Fields
+
+    private int _value;
+
+    #endregion
+
     #region Constructors
 
     public TagInt()
@@ -17,9 +27,9 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagInt(string name, int value)
+      : base(name)
     {
-      this.Name = name;
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -31,19 +41,68 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Int; }
     }
 
-    public new int Value
+    [Category("Data")]
+    [DefaultValue(0)]
+    public int Value
     {
-      get { return (int)base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set { _value = value; }
     }
 
     #endregion
 
     #region Methods
 
-    public override string ToString(string indentString)
+    public override int GetHashCode()
     {
-      return $"{indentString}[Int: {this.Name}={this.Value}]";
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+        hash = hash * 23 + _value.GetHashCode();
+
+        return hash;
+      }
+    }
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      _value = Convert.ToInt32(value);
+    }
+
+    public override string ToValueString()
+    {
+      return _value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    #endregion
+
+    #region IEquatable<TagInt> Interface
+
+    public bool Equals(TagInt other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          result = _value == other.Value;
+        }
+      }
+
+      return result;
     }
 
     #endregion

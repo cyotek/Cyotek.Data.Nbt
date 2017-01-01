@@ -1,0 +1,341 @@
+﻿<#
+    string tagClassName = "Tag" + nbtName;
+    #>
+using NUnit.Framework;
+
+namespace Cyotek.Data.Nbt.Tests
+{
+  partial class <#=tagClassName #>Tests
+  {
+    [Test]
+    public void Constructor_sets_name()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      string expected;
+      string actual;
+
+      expected = "Alphatag";
+
+      // act
+      target = new <#=tagClassName #>(expected);
+
+      // assert
+      actual = target.Name;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Constructor_sets_default_name()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      string expected;
+      string actual;
+
+      expected = string.Empty;
+
+      // act
+      target = new <#=tagClassName #>();
+
+      // assert
+      actual = target.Name;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Constructor_sets_default_value()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=typeName #> expected;
+      <#=typeName #> actual;
+
+      expected = <#=defaultValue #>;
+
+      // act
+      target = new <#=tagClassName #>();
+
+      // assert
+      actual = target.Value;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Constructor_sets_value()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=typeName #> expected;
+      <#=typeName #> actual;
+
+      expected = <#=testValue #>;
+
+      // act
+      target = new <#=tagClassName #>(string.Empty, expected);
+
+      // assert
+      actual = target.Value;
+      Assert.AreEqual(expected, actual);
+    }
+
+<# if (nbtName != "String")
+    { #>
+    [Test]
+    public void Constructor_sets_value_without_name()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=typeName #> expected;
+      <#=typeName #> actual;
+
+      expected = <#=testValue #>;
+
+      // act
+      target = new <#=tagClassName #>(expected);
+
+      // assert
+      actual = target.Value;
+      Assert.AreEqual(expected, actual);
+    }
+<# } #>
+
+    [Test]
+    public void SetValue_updates_value()
+    {
+      // arrange
+      Tag target;
+      <#=typeName #> expected;
+      <#=typeName #> actual;
+
+      target = new <#=tagClassName #>();
+
+      expected = <#=testValue #>;
+
+      // act
+      target.SetValue(expected);
+
+      // assert
+      actual = ((<#=tagClassName #>)target).Value;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetValue_retrieves_value()
+    {
+      // arrange
+      Tag target;
+      <#=typeName #> expected;
+      object actual;
+
+      expected = <#=testValue #>;
+
+      target = TagFactory.CreateTag(expected);
+
+      // act
+      actual = target.GetValue();
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Equals_returns_true_for_matching_tag()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=tagClassName #> other;
+      bool actual;
+
+      target = new <#=tagClassName #>("alpha", <#=testValue #>);
+      other = new <#=tagClassName #>("alpha", <#=testValue #>);
+
+      // act
+      actual = target.Equals(other);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void Equals_returns_false_with_different_name()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=tagClassName #> other;
+      bool actual;
+
+      target = new <#=tagClassName #>("Alpha", <#=testValue #>);
+      other = new <#=tagClassName #>("Beta", <#=testValue #>);
+
+      // act
+      actual = target.Equals(other);
+
+      // assert
+      Assert.IsFalse(actual);
+    }
+
+    [Test]
+    public void Equals_returns_false_with_different_value()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=tagClassName #> other;
+      bool actual;
+
+      target = new <#=tagClassName #>(string.Empty, <#=testValue #>);
+      other = new <#=tagClassName #>(string.Empty, <#=altTestValue #>);
+
+      // act
+      actual = target.Equals(other);
+
+      // assert
+      Assert.IsFalse(actual);
+    }
+
+    [Test]
+    public void Type_returns_correct_value()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      TagType expected;
+      TagType actual;
+
+      target = new <#=tagClassName #>();
+
+      expected = TagType.<#=nbtName #>;
+
+      // act
+      actual = target.Type;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetHashCode_returns_same_value_for_matching_tags()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      int actual;
+      int expected;
+
+      target = new <#=tagClassName #>("beta", <#=testValue #>);
+
+      expected = new <#=tagClassName #>("beta", <#=testValue #>).GetHashCode();
+
+      // act
+      actual = target.GetHashCode();
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetHashCode_returns_different_values_with_different_name()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      int actual;
+      int notExpected;
+
+      target = new <#=tagClassName #>("Alpha", <#=testValue #>);
+
+      notExpected = new <#=tagClassName #>("Beta", <#=testValue #>).GetHashCode();
+
+      // act
+      actual = target.GetHashCode();
+
+      // assert
+      Assert.AreNotEqual(notExpected, actual);
+    }
+
+    [Test]
+    public void GetHashCode_returns_different_values_with_different_value()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      int actual;
+      int notExpected;
+
+      target = new <#=tagClassName #>(string.Empty, <#=testValue #>);
+
+      notExpected = new <#=tagClassName #>(string.Empty, <#=altTestValue #>).GetHashCode();
+
+      // act
+      actual = target.GetHashCode();
+
+      // assert
+      Assert.AreNotEqual(notExpected, actual);
+    }
+
+    [Test]
+    public void Value_can_be_set()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      <#=typeName #> expected;
+      <#=typeName #> actual;
+
+      expected = <#=testValue #>;
+
+      target = new <#=tagClassName #>();
+
+      // act
+      target.Value = expected;
+
+      // assert
+      actual = target.Value;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToValueString_returns_string_version_of_value()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      string expected;
+      string actual;
+
+      expected = "<#=valueString #>";
+
+      target = new <#=tagClassName #>(string.Empty, <#=testValue #>);
+
+      // act
+      actual = target.ToValueString();
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ToString_returns_string_version_of_tag()
+    {
+      // arrange
+      <#=tagClassName #> target;
+      string expected;
+      string actual;
+
+<# if (nbtName == "List" || nbtName == "Compound" || nbtName == "ByteArray" || nbtName == "IntArray")
+    { #>
+      expected = "[<#=nbtName #>: gamma] (<#=listCount #> items)";
+<# }
+    else if (nbtName == "String")
+    { #>
+      expected = "[<#=nbtName #>: gamma=\"<#=valueString #>\"]";
+<# }
+    else
+    { #>
+      expected = "[<#=nbtName #>: gamma=<#=valueString #>]";
+<# } #>
+
+      target = new <#=tagClassName #>("gamma", <#=testValue #>);
+
+      // act
+      actual = target.ToString();
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+  }
+}

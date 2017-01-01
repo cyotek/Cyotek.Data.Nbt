@@ -1,55 +1,61 @@
-using System;
+using System.Diagnostics;
 
 namespace Cyotek.Data.Nbt
 {
   internal static class BitHelper
   {
+    #region Constants
+
+    public const int DoubleSize = 8;
+
+    public const int FloatSize = 4;
+
+    public const int IntSize = 4;
+
+    public const int LongSize = 8;
+
+    public const int ShortSize = 2;
+
+    #endregion
+
     #region Static Methods
 
-    internal static void SwapBytes(byte[] buffer, int offset, int length)
+    public static void SwapBytes(byte[] buffer, int offset, int length)
     {
-      if (length < 1)
+#if DEBUG
+      Debug.Assert(offset + length <= buffer.Length, "offset + length is larger than buffer");
+#endif
+
+      if (length > 1)
       {
-        return;
-      }
+        byte temp;
+        int newIndex;
 
-      if (offset + length > buffer.Length)
-      {
-        throw new ArgumentException("offset + length is larger than buffer");
-      }
-
-      byte temp;
-
-      if (length == 2)
-      {
-        temp = buffer[offset];
-        buffer[offset] = buffer[offset + 1];
-        buffer[offset + 1] = temp;
-        return;
-      }
-
-      int i2;
-
-      if (offset == 0)
-      {
-        for (int i1 = (length + 1) / 2 - 1; i1 >= 0; i1--)
+        if (length == 2)
         {
-          i2 = length - i1 - 1;
-
-          temp = buffer[i1];
-          buffer[i1] = buffer[i2];
-          buffer[i2] = temp;
+          temp = buffer[offset];
+          buffer[offset] = buffer[offset + 1];
+          buffer[offset + 1] = temp;
         }
-      }
-      else
-      {
-        for (int i1 = (length + 1) / 2 - 1; i1 >= 0; i1--)
+        else if (offset == 0)
         {
-          i2 = length - i1 - 1;
-
-          temp = buffer[offset + i1];
-          buffer[offset + i1] = buffer[offset + i2];
-          buffer[offset + i2] = temp;
+          for (int index = (length + 1) / 2 - 1; index >= 0; index--)
+          {
+            newIndex = length - index - 1;
+            temp = buffer[index];
+            buffer[index] = buffer[newIndex];
+            buffer[newIndex] = temp;
+          }
+        }
+        else
+        {
+          for (int index = (length + 1) / 2 - 1; index >= 0; index--)
+          {
+            newIndex = length - index - 1;
+            temp = buffer[offset + index];
+            buffer[offset + index] = buffer[offset + newIndex];
+            buffer[offset + newIndex] = temp;
+          }
         }
       }
     }

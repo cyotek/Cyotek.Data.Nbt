@@ -15,10 +15,10 @@ namespace Cyotek.Data.Nbt
       // http://www.gzip.org/zlib/rfc-deflate.html#spec
 
       position = stream.Position;
-
       buffer = stream.ReadByte();
+      result = buffer != -1;
 
-      if (buffer != -1)
+      if (result)
       {
         bool bit1Set;
         bool bit2Set;
@@ -32,10 +32,6 @@ namespace Cyotek.Data.Nbt
         bit3Set = (header & (1 << 2)) != 0;
 
         result = bit1Set && (bit2Set || bit3Set) && !(bit2Set && bit3Set);
-      }
-      else
-      {
-        result = false;
       }
 
       stream.Position = position;
@@ -65,28 +61,6 @@ namespace Cyotek.Data.Nbt
       }
 
       stream.Position = position;
-
-      return result;
-    }
-
-    public static int PeekNextByte(this Stream stream)
-    {
-      int result;
-
-      if (stream.CanSeek)
-      {
-        long position;
-
-        position = stream.Position;
-
-        result = stream.ReadByte();
-
-        stream.Position = position;
-      }
-      else
-      {
-        result = stream.ReadByte();
-      }
 
       return result;
     }

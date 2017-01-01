@@ -1,86 +1,27 @@
-using System;
-
 namespace Cyotek.Data.Nbt
 {
-  public static class TagFactory
+  public static partial class TagFactory
   {
     #region Static Methods
 
-    public static ITag CreateTag(TagType tagType)
+    public static Tag CreateTag(TagType tagType)
     {
-      return CreateTag(tagType, null);
+      return CreateTag(string.Empty, tagType);
     }
 
-    public static ITag CreateTag(TagType tagType, object defaultValue)
+    public static Tag CreateTag(string name, TagType tagType)
     {
-      return CreateTag(tagType, string.Empty, defaultValue);
+      return CreateTag(name, tagType, TagType.None);
     }
 
-    public static ITag CreateTag(TagType tagType, string name, object defaultValue)
+    public static Tag CreateTag(TagType tagType, object value)
     {
-      ITag result;
+      return CreateTag(string.Empty, tagType, value);
+    }
 
-      switch (tagType)
-      {
-        case TagType.Byte:
-          result = new TagByte();
-          break;
-
-        case TagType.Short:
-          result = new TagShort();
-          break;
-
-        case TagType.Int:
-          result = new TagInt();
-          break;
-
-        case TagType.Long:
-          result = new TagLong();
-          break;
-
-        case TagType.Float:
-          result = new TagFloat();
-          break;
-
-        case TagType.Double:
-          result = new TagDouble();
-          break;
-
-        case TagType.ByteArray:
-          result = new TagByteArray();
-          break;
-
-        case TagType.String:
-          result = new TagString();
-          break;
-
-        case TagType.List:
-          result = new TagList();
-          break;
-
-        case TagType.Compound:
-          result = new TagCompound();
-          break;
-
-        case TagType.IntArray:
-          result = new TagIntArray();
-          break;
-
-        case TagType.End:
-          result = new TagEnd();
-          break;
-
-        default:
-          throw new ArgumentException($"Unrecognized tag type: {tagType}");
-      }
-
-      result.Name = name;
-      if (defaultValue != null)
-      {
-        result.Value = defaultValue;
-      }
-
-      return result;
+    public static TagList CreateTag(TagType tagType, TagType listType)
+    {
+      return (TagList)CreateTag(string.Empty, tagType, listType);
     }
 
     #endregion

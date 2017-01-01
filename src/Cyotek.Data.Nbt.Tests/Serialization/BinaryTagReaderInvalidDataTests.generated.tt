@@ -1,0 +1,103 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>using System;
+using System.IO;
+using NUnit.Framework;
+using Cyotek.Data.Nbt.Serialization;
+
+namespace Cyotek.Data.Nbt.Tests.Serialization
+{
+  partial class BinaryTagReaderTests
+  {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string nbtName;
+
+      nbtName = nbtTypeNames[i];
+
+      if (i != tagTypeEnd)
+      {
+        if (i == tagTypeString)
+        {
+          #>
+    [Test]
+    [ExpectedException(typeof(InvalidDataException))]
+    public void Read<#=nbtName #>_throws_exception_if_data_invalid()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+
+        reader = this.CreateReader(stream);
+        writer = new BinaryTagWriter(stream);
+
+        // TODO: WriteValue is currently protected
+        //writer.WriteValue((short)100);
+        this.WriteValue(stream, (short)100);
+
+        stream.Position = 0;
+
+        // act
+        reader.Read<#=nbtName #>();
+      }
+    }
+
+    <#
+        }
+        else if (!this.IsArrayType(i))
+        {
+          #>
+    [Test]
+    [ExpectedException(typeof(InvalidDataException))]
+    public void Read<#=nbtName #>_throws_exception_if_data_invalid()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+
+        reader = this.CreateReader(stream);
+
+        // act
+        reader.Read<#=nbtName #>();
+      }
+    }
+
+<#
+        }
+        else
+        {
+          #>
+    [Test]
+    [ExpectedException(typeof(InvalidDataException))]
+    public void Read<#=nbtName #>_throws_exception_if_data_invalid()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+
+        reader = this.CreateReader(stream);
+        writer = new BinaryTagWriter(stream);
+
+        // TODO: WriteValue is currently protected
+        //writer.WriteValue(100);
+        this.WriteValue(stream, 100);
+
+        stream.Position = 0;
+
+        // act
+        reader.Read<#=nbtName #>();
+      }
+    }
+
+    <#
+        }
+      }
+    }
+#>
+  }
+}

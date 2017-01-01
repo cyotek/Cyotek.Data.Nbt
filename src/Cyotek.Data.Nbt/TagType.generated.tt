@@ -1,0 +1,28 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".cs" #>
+<#@ include file="NbtGeneratorData.t4" #>namespace Cyotek.Data.Nbt
+{
+  /// <summary>
+  /// Values that represent tag types.
+  /// </summary>
+  public enum TagType
+  {
+    /// <summary>
+    /// Not set
+    /// </summary>
+    None = -1,
+
+<# for (int i = 0; i < nbtTypeNames.Length; i++)
+    {
+      #>
+    /// <summary>
+    /// <#=nbtTypeDescriptions[i] #>
+    /// </summary>
+    <#=nbtTypeNames[i] #> = <#=i #><# if (i < nbtTypeNames.Length - 1)
+      { #>,<# } #>
+
+
+<# } #>
+  }
+}

@@ -1,0 +1,13 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>
+<#
+    string nbtName = "Long";
+    string typeName = "long";
+    object testValue = tagTestData[tagTypeLong];
+    object altTestValue = altTagTestData[tagTypeLong];
+    object defaultValue = 0;
+    string valueString = "4611686018427387903";
+    int listCount = 0;
+    #>
+<#@ output extension=".cs" #>
+<#@ include file="TagTests.t4" #>

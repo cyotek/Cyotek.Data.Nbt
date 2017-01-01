@@ -1,225 +1,251 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Text;
-using Cyotek.Data.Nbt.Serialization;
 
 namespace Cyotek.Data.Nbt
 {
-  public abstract class Tag : ITag
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+  // Disabling 659 this as it's pointless overriding
+  // GetHashCode when each concrete instance already
+  // is, making a base version uncallable
+  public abstract class Tag : IEquatable<Tag>
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
   {
     #region Fields
 
     private string _name;
 
-    private ITag _parent;
+    private Tag _parent;
 
-    private object _value;
+    #endregion
+
+    #region Constructors
+
+    /// <summary>
+    /// Specialised constructor for use only by derived class.
+    /// </summary>
+    /// <param name="name">The name of the tag.</param>
+    protected Tag(string name)
+    {
+      _name = name ?? string.Empty;
+    }
 
     #endregion
 
     #region Properties
 
-    public virtual bool CanRemove
-    {
-      get { return this.Parent is ICollectionTag; }
-    }
-
-    public virtual string FullPath
+    [Browsable(false)]
+    public string FullPath
     {
       get
       {
-        StringBuilder results;
-        ICollectionTag list;
+        Tag[] ancestors;
+        StringBuilder sb;
 
-        results = new StringBuilder();
+        ancestors = this.GetAncestors();
+        sb = new StringBuilder();
 
-        if (this.Parent != null)
+        // ReSharper disable once ForCanBeConvertedToForeach
+        for (int i = 0; i < ancestors.Length; i++)
         {
-          results.Append(this.Parent.FullPath);
-          results.Append(@"\");
+          Tag ancestor;
+          ICollectionTag container;
+
+          ancestor = ancestors[i];
+          container = ancestor.Parent as ICollectionTag;
+
+          if (sb.Length != 0)
+          {
+            sb.Append('\\');
+          }
+
+          if (container == null || !container.IsList)
+          {
+            sb.Append(ancestor.Name);
+          }
+          else
+          {
+            sb.Append(container.Values.IndexOf(ancestor));
+          }
         }
 
-        list = this.Parent as ICollectionTag;
-        if (list != null && list.IsList)
+        if (sb.Length != 0)
         {
-          results.Append(list.Values.IndexOf(this));
-        }
-        else
-        {
-          results.Append(this.Name);
+          sb.Append('\\');
         }
 
-        return results.ToString();
+        sb.Append(_name);
+
+        return sb.ToString();
       }
     }
 
-    [Category("")]
+    /// <summary>
+    /// Gets or sets the tag name.
+    /// </summary>
+    /// <value>
+    /// The name of the tag.
+    /// </value>
+    [Category("Data")]
     [DefaultValue("")]
-    public virtual string Name
+    public string Name
     {
       get { return _name; }
       set
       {
+        if (value == null)
+        {
+          value = string.Empty;
+        }
+
         if (this.Name != value)
         {
           ICollectionTag collection;
           TagDictionary values;
 
-          collection = this.Parent as ICollectionTag;
+          collection = _parent as ICollectionTag;
           values = collection?.Values as TagDictionary;
 
           values?.ChangeKey(this, value);
 
           _name = value;
-
-          this.OnNameChanged(EventArgs.Empty);
         }
       }
     }
 
+    /// <summary>
+    /// Gets the parent <see cref="Tag"/>.
+    /// </summary>
+    /// <value>
+    /// The parent <see cref="Tag"/>.
+    /// </value>
     [Browsable(false)]
-    public virtual ITag Parent
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public Tag Parent
     {
       get { return _parent; }
-      set
-      {
-        if (this.Parent != value)
-        {
-          _parent = value;
-
-          this.OnParentChanged(EventArgs.Empty);
-        }
-      }
+      internal set { _parent = value; }
     }
 
+    /// <summary>
+    /// Gets the tag type.
+    /// </summary>
+    /// <value>
+    /// The tag type.
+    /// </value>
     public abstract TagType Type { get; }
-
-    [Category("")]
-    [DefaultValue(null)]
-    public virtual object Value
-    {
-      get { return _value; }
-      set
-      {
-        if (this.Value != value)
-        {
-          _value = value;
-
-          this.OnValueChanged(EventArgs.Empty);
-        }
-      }
-    }
 
     #endregion
 
     #region Methods
 
-    public ITag[] Flatten()
+#pragma warning disable 659
+
+    /// <summary>
+    /// Tests if this <see cref="Tag"/> is considered equal to another.
+    /// </summary>
+    /// <param name="obj">The object to compare to this object.</param>
+    /// <returns>
+    /// <c>true</c> if the objects are considered equal, <c>false</c> if they are not.
+    /// </returns>
+    /// <seealso cref="M:Cyotek.Data.Nbt.Tag.Equals(object)"/>
+    public override bool Equals(object obj)
+#pragma warning restore 659
     {
-      List<ITag> tags;
-
-      tags = new List<ITag>();
-
-      this.FlattenTag(this, tags);
-
-      return tags.ToArray();
+      return !ReferenceEquals(null, obj) && (ReferenceEquals(this, obj) || obj.GetType() == this.GetType() && this.Equals((Tag)obj));
     }
 
-    public ITag[] GetAncestors()
+    public Tag[] Flatten()
     {
-      List<ITag> tags;
-      ITag tag;
+      Tag[] results;
 
-      tags = new List<ITag>();
-      tag = this.Parent;
+      if (!(this is ICollectionTag))
+      {
+        // single value
+        results = new[]
+                  {
+                    this
+                  };
+      }
+      else
+      {
+        // multiple values;
+        List<Tag> tags;
+
+        tags = new List<Tag>();
+
+        this.FlattenTag(this, tags);
+
+        results = tags.ToArray();
+      }
+
+      return results;
+    }
+
+    public Tag[] GetAncestors()
+    {
+      Tag[] results;
+      List<Tag> tags;
+      Tag tag;
+      int arrayIndex;
+
+      tags = new List<Tag>();
+      tag = _parent;
 
       while (tag != null)
       {
-        tags.Insert(0, tag);
+        tags.Add(tag);
         tag = tag.Parent;
       }
 
-      return tags.ToArray();
-    }
+      results = new Tag[tags.Count];
+      arrayIndex = 0;
 
-    public virtual byte[] GetValue()
-    {
-      byte[] result;
-
-      using (MemoryStream stream = new MemoryStream())
+      for (int i = tags.Count; i > 0; i--)
       {
-        ITagWriter writer;
-
-        writer = new BinaryTagWriter(stream);
-        writer.WriteTag(this, WriteTagOptions.None);
-
-        result = stream.ToArray();
+        results[arrayIndex++] = tags[i - 1];
       }
 
-      return result;
+      return results;
     }
 
-    public virtual void Remove()
-    {
-      if (!this.CanRemove)
-      {
-        throw new TagException("Cannot remove this tag, parent not set or not supported.");
-      }
+    /// <summary>
+    /// Gets the value of a tag.
+    /// </summary>
+    /// <returns>
+    /// The tag's value.
+    /// </returns>
+    /// <remarks>Where possible, it is recommended the <c>Value</c> property of a tag is used to avoid boxing.</remarks>
+    public abstract object GetValue();
 
-      ((ICollectionTag)this.Parent).Values.Remove(this);
-    }
+    /// <summary>
+    /// Sets the value of the tag.
+    /// </summary>
+    /// <param name="value">The new value of the tag.</param>
+    /// <remarks>Where possible, it is recommended the <c>Value</c> property of a tag is used to avoid boxing.</remarks>
+    public abstract void SetValue(object value);
 
+    /// <summary>
+    /// Convert this object into a string representation.
+    /// </summary>
+    /// <returns>
+    /// A string that represents this object.
+    /// </returns>
     public override string ToString()
     {
-      return this.ToString(string.Empty);
+      return string.Concat("[", this.Type, ": ", this.Name, "=", this.ToValueString(), "]");
     }
 
-    public abstract string ToString(string indentString);
+    /// <summary>
+    /// Converts the value of this object to a string.
+    /// </summary>
+    /// <returns>
+    /// The value of this object as a string.
+    /// </returns>
+    public abstract string ToValueString();
 
-    public virtual string ToValueString()
-    {
-      return this.Value?.ToString() ?? string.Empty;
-    }
-
-    protected virtual void OnNameChanged(EventArgs e)
-    {
-      EventHandler handler;
-
-      handler = this.NameChanged;
-
-      if (handler != null)
-      {
-        handler(this, e);
-      }
-    }
-
-    protected virtual void OnParentChanged(EventArgs e)
-    {
-      EventHandler handler;
-
-      handler = this.ParentChanged;
-
-      if (handler != null)
-      {
-        handler(this, e);
-      }
-    }
-
-    protected virtual void OnValueChanged(EventArgs e)
-    {
-      EventHandler handler;
-
-      handler = this.ValueChanged;
-
-      if (handler != null)
-      {
-        handler(this, e);
-      }
-    }
-
-    private void FlattenTag(ITag tag, List<ITag> tags)
+    private void FlattenTag(Tag tag, ICollection<Tag> tags)
     {
       ICollectionTag collectionTag;
 
@@ -228,7 +254,7 @@ namespace Cyotek.Data.Nbt
       collectionTag = tag as ICollectionTag;
       if (collectionTag != null)
       {
-        foreach (ITag childTag in collectionTag.Values)
+        foreach (Tag childTag in collectionTag.Values)
         {
           this.FlattenTag(childTag, tags);
         }
@@ -237,83 +263,32 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region ITag Interface
+    #region IEquatable<Tag> Interface
 
-    [Category("Property Changed")]
-    public event EventHandler NameChanged;
-
-    [Category("Property Changed")]
-    public event EventHandler ParentChanged;
-
-    [Category("Property Changed")]
-    public event EventHandler ValueChanged;
-
-    ITag[] ITag.Flatten()
+    /// <summary>
+    /// Tests if this <see cref="Tag"/> is considered equal to another.
+    /// </summary>
+    /// <param name="other">The tag to compare to this object.</param>
+    /// <returns>
+    /// <c>true</c> if the objects are considered equal, <c>false</c> if they are not.
+    /// </returns>
+    public bool Equals(Tag other)
     {
-      return this.Flatten();
-    }
+      bool result;
 
-    ITag[] ITag.GetAncestors()
-    {
-      return this.GetAncestors();
-    }
+      result = !ReferenceEquals(null, other);
 
-    byte[] ITag.GetValue()
-    {
-      return this.GetValue();
-    }
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(_name, other.Name);
 
-    void ITag.Remove()
-    {
-      this.Remove();
-    }
+        if (result)
+        {
+          result = Equals(this.GetValue(), other.GetValue());
+        }
+      }
 
-    string ITag.ToString()
-    {
-      return this.ToString();
-    }
-
-    string ITag.ToString(string indent)
-    {
-      return this.ToString(indent);
-    }
-
-    string ITag.ToValueString()
-    {
-      return this.ToValueString();
-    }
-
-    bool ITag.CanRemove
-    {
-      get { return this.CanRemove; }
-    }
-
-    string ITag.FullPath
-    {
-      get { return this.FullPath; }
-    }
-
-    string ITag.Name
-    {
-      get { return this.Name; }
-      set { this.Name = value; }
-    }
-
-    ITag ITag.Parent
-    {
-      get { return this.Parent; }
-      set { this.Parent = value; }
-    }
-
-    TagType ITag.Type
-    {
-      get { return this.Type; }
-    }
-
-    object ITag.Value
-    {
-      get { return this.Value; }
-      set { this.Value = value; }
+      return result;
     }
 
     #endregion

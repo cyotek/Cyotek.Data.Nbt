@@ -5,193 +5,69 @@ using System.Text;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagDictionary : KeyedCollection<string, ITag>
+  public partial class TagDictionary : KeyedCollection<string, Tag>
   {
-    #region Constructors
+    #region Fields
 
-    public TagDictionary()
-    { }
-
-    public TagDictionary(ITag owner)
-      : this()
-    {
-      if (owner == null)
-      {
-        throw new ArgumentNullException(nameof(owner));
-      }
-
-      this.Owner = owner;
-    }
+    private Tag _owner;
 
     #endregion
 
     #region Properties
 
-    public ITag Owner { get; set; }
+    public Tag Owner
+    {
+      get { return _owner; }
+      set
+      {
+        _owner = value;
+
+        foreach (Tag child in this)
+        {
+          child.Parent = value;
+        }
+      }
+    }
 
     #endregion
 
     #region Methods
 
-    public ITag Add(string name, string value)
+    public TagByte Add(string name, bool value)
     {
-      ITag tag;
-
-      tag = new TagString(name, value);
-
-      this.Add(tag);
-
-      return tag;
+      return this.Add(name, (byte)(value ? 1 : 0));
     }
 
-    public ITag Add(string name, bool value)
-    {
-      ITag tag;
-
-      tag = new TagByte(name, (byte)(value ? 1 : 0));
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, float value)
-    {
-      ITag tag;
-
-      tag = new TagFloat(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, double value)
-    {
-      ITag tag;
-
-      tag = new TagDouble(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, long value)
-    {
-      ITag tag;
-
-      tag = new TagLong(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, short value)
-    {
-      ITag tag;
-
-      tag = new TagShort(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, byte value)
-    {
-      ITag tag;
-
-      tag = new TagByte(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, int value)
-    {
-      ITag tag;
-
-      tag = new TagInt(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, int[] value)
-    {
-      ITag tag;
-
-      tag = new TagIntArray(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, byte[] value)
-    {
-      ITag tag;
-
-      tag = new TagByteArray(name, value);
-
-      this.Add(tag);
-
-      return tag;
-    }
-
-    public ITag Add(string name, DateTime value)
+    public TagString Add(string name, DateTime value)
     {
       return this.Add(name, value.ToString("u"));
     }
 
-    public ITag Add(string name, Guid value)
+    public TagByteArray Add(string name, Guid value)
     {
       return this.Add(name, value.ToByteArray());
     }
 
-    public ITag Add(string name, TagType tagType)
+    public Tag Add(string name, TagType tagType)
     {
       return this.Add(name, tagType, TagType.None);
     }
 
-    public ITag Add(string name, TagType tagType, object value)
+    public Tag Add(string name, TagType tagType, TagType limitToType)
     {
-      ITag tag;
+      Tag tag;
 
-      tag = this.Add(name, tagType);
-      tag.Value = value;
-
-      return tag;
-    }
-
-    public ITag Add(string name, TagType tagType, TagType limitToType)
-    {
-      ITag tag;
-      ICollectionTag collectionTag;
-
-      tag = TagFactory.CreateTag(tagType);
-      tag.Name = name;
-
-      collectionTag = tag as ICollectionTag;
-      if (collectionTag != null)
-      {
-        collectionTag.LimitToType = limitToType;
-      }
+      tag = TagFactory.CreateTag(name, tagType, limitToType);
 
       this.Add(tag);
 
       return tag;
     }
 
-    public ITag Add(string name, object value)
+    public Tag Add(string name, object value)
     {
-      ITag result;
+      Tag result;
 
-      // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
       if (value is byte)
       {
         result = this.Add(name, (byte)value);
@@ -240,20 +116,55 @@ namespace Cyotek.Data.Nbt
       {
         result = this.Add(name, (bool)value);
       }
+      else if (value is TagDictionary)
+      {
+        result = this.Add(name, (TagDictionary)value);
+      }
+      else if (value is TagCollection)
+      {
+        result = this.Add(name, (TagCollection)value);
+      }
       else
       {
         throw new ArgumentException("Invalid value type.", nameof(value));
       }
-      // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
 
       return result;
     }
 
+    /// <summary>
+    /// Adds a range of existing <see cref="T:KeyValuePair{string,object}"/> objects to the <see cref="TagDictionary"/>.
+    /// </summary>
+    /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
     public void AddRange(IEnumerable<KeyValuePair<string, object>> values)
     {
       foreach (KeyValuePair<string, object> value in values)
       {
         this.Add(value.Key, value.Value);
+      }
+    }
+
+    /// <summary>
+    /// Adds the contents of an existing <see cref="T:IDictionary{string,object}"/> objects to the <see cref="TagDictionary"/>.
+    /// </summary>
+    /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
+    public void AddRange(IDictionary<string, object> values)
+    {
+      foreach (KeyValuePair<string, object> value in values)
+      {
+        this.Add(value.Key, value.Value);
+      }
+    }
+
+    /// <summary>
+    /// Adds a range of existing <see cref="Tag"/> objects to the <see cref="TagDictionary"/>.
+    /// </summary>
+    /// <param name="values">An IEnumerable&lt;Tag&gt; of items to append to the <see cref="TagDictionary"/>.</param>
+    public void AddRange(IEnumerable<Tag> values)
+    {
+      foreach (Tag value in values)
+      {
+        this.Add(value);
       }
     }
 
@@ -271,12 +182,11 @@ namespace Cyotek.Data.Nbt
 
       sb.Append('[');
 
-      foreach (ITag tag in this)
+      foreach (Tag tag in this)
       {
         if (sb.Length > 1)
         {
-          sb.Append(',').
-             Append(' ');
+          sb.Append(',').Append(' ');
         }
 
         sb.Append(tag.ToValueString());
@@ -287,7 +197,7 @@ namespace Cyotek.Data.Nbt
       return sb.ToString();
     }
 
-    public bool TryGetValue(string key, out ITag value)
+    public bool TryGetValue(string key, out Tag value)
     {
       bool result;
 
@@ -306,7 +216,7 @@ namespace Cyotek.Data.Nbt
 
     protected override void ClearItems()
     {
-      foreach (ITag item in this)
+      foreach (Tag item in this)
       {
         item.Parent = null;
       }
@@ -314,12 +224,12 @@ namespace Cyotek.Data.Nbt
       base.ClearItems();
     }
 
-    protected override string GetKeyForItem(ITag item)
+    protected override string GetKeyForItem(Tag item)
     {
       return item.Name;
     }
 
-    protected override void InsertItem(int index, ITag item)
+    protected override void InsertItem(int index, Tag item)
     {
       item.Parent = this.Owner;
 
@@ -328,7 +238,7 @@ namespace Cyotek.Data.Nbt
 
     protected override void RemoveItem(int index)
     {
-      ITag item;
+      Tag item;
 
       item = this[index];
       item.Parent = null;
@@ -336,16 +246,9 @@ namespace Cyotek.Data.Nbt
       base.RemoveItem(index);
     }
 
-    protected override void SetItem(int index, ITag item)
+    internal void ChangeKey(Tag item, string newKey)
     {
-      item.Parent = this.Owner;
-
-      base.SetItem(index, item);
-    }
-
-    internal void ChangeKey(ITag item, string newKey)
-    {
-      base.ChangeItemKey(item, newKey);
+      this.ChangeItemKey(item, newKey);
     }
 
     #endregion

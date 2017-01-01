@@ -1,7 +1,17 @@
+using System;
+using System.ComponentModel;
+using System.Globalization;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagFloat : Tag
+  public sealed class TagFloat : Tag, IEquatable<TagFloat>
   {
+    #region Fields
+
+    private float _value;
+
+    #endregion
+
     #region Constructors
 
     public TagFloat()
@@ -17,9 +27,9 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagFloat(string name, float value)
+      : base(name)
     {
-      this.Name = name;
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -31,19 +41,68 @@ namespace Cyotek.Data.Nbt
       get { return TagType.Float; }
     }
 
-    public new float Value
+    [Category("Data")]
+    [DefaultValue(0F)]
+    public float Value
     {
-      get { return (float)base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set { _value = value; }
     }
 
     #endregion
 
     #region Methods
 
-    public override string ToString(string indentString)
+    public override int GetHashCode()
     {
-      return $"{indentString}[Float: {this.Name}={this.Value}]";
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+        hash = hash * 23 + _value.GetHashCode();
+
+        return hash;
+      }
+    }
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      _value = Convert.ToSingle(value);
+    }
+
+    public override string ToValueString()
+    {
+      return _value.ToString(CultureInfo.InvariantCulture);
+    }
+
+    #endregion
+
+    #region IEquatable<TagFloat> Interface
+
+    public bool Equals(TagFloat other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          result = Math.Abs(_value - other.Value) < float.Epsilon;
+        }
+      }
+
+      return result;
     }
 
     #endregion

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  public class TagCompound : Tag, ICollectionTag
+  public sealed class TagCompound : Tag, ICollectionTag, IEquatable<TagCompound>
   {
     #region Constants
 
@@ -16,6 +17,12 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
+    #region Fields
+
+    private TagDictionary _value;
+
+    #endregion
+
     #region Constructors
 
     public TagCompound()
@@ -23,27 +30,78 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagCompound(string name)
+      : this(name, new TagDictionary())
+    { }
+
+    public TagCompound(TagDictionary value)
+      : this(string.Empty, value)
+    { }
+
+    public TagCompound(string name, TagDictionary value)
+      : base(name)
     {
-      this.Name = name;
-      this.Value = new TagDictionary(this);
+      this.Value = value;
     }
 
     #endregion
 
     #region Properties
 
-    public new TagDictionary Value
+    /// <summary>
+    /// Gets the number of child <see cref="Tag"/> objects actually contained in the <see cref="TagCompound"/>.
+    /// </summary>
+    public int Count
     {
-      get { return (TagDictionary)base.Value; }
+      get { return _value.Count; }
+    }
+
+    /// <summary>
+    /// Gets the <see cref="Tag"/> with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag to get.</param>
+    /// <returns>
+    /// The <see cref="Tag"/> with the specified name. If a tag with the specified name is not found, an exception is thrown.
+    /// </returns>
+    public Tag this[string name]
+    {
+      get { return _value[name]; }
+    }
+
+    /// <summary>
+    /// Gets the <see cref="Tag"/> at the specified index.
+    /// </summary>
+    /// <param name="index">Zero-based index of the entry to access.</param>
+    /// <returns>
+    /// The <see cref="Tag"/> at the specified index.
+    /// </returns>
+    public Tag this[int index]
+    {
+      get { return _value[index]; }
+    }
+
+    /// <inheritdoc cref="Tag.Type"/>
+    public override TagType Type
+    {
+      get { return TagType.Compound; }
+    }
+
+    [Category("Data")]
+    [DefaultValue(typeof(TagDictionary), null)]
+    public TagDictionary Value
+    {
+      get { return _value; }
       set
       {
-        if (value == null)
+        if (!ReferenceEquals(_value, value))
         {
-          throw new ArgumentNullException(nameof(value));
-        }
+          if (value == null)
+          {
+            throw new ArgumentNullException(nameof(value));
+          }
 
-        base.Value = value;
-        value.Owner = this;
+          _value = value;
+          value.Owner = this;
+        }
       }
     }
 
@@ -56,12 +114,12 @@ namespace Cyotek.Data.Nbt
       return this.Value.Contains(name);
     }
 
-    public bool GetBoolValue(string name)
+    public bool GetBooleanValue(string name)
     {
-      return this.GetBoolValue(name, false);
+      return this.GetBooleanValue(name, false);
     }
 
-    public bool GetBoolValue(string name, bool defaultValue)
+    public bool GetBooleanValue(string name, bool defaultValue)
     {
       TagByte value;
 
@@ -124,10 +182,7 @@ namespace Cyotek.Data.Nbt
 
       value = this.GetTag<TagString>(name);
 
-      return value != null
-               ? DateTime.Parse(value.Value, CultureInfo.InvariantCulture).
-                          ToUniversalTime()
-               : defaultValue;
+      return value != null ? DateTime.Parse(value.Value, CultureInfo.InvariantCulture).ToUniversalTime() : defaultValue;
     }
 
     public TagDouble GetDouble(string name)
@@ -147,20 +202,6 @@ namespace Cyotek.Data.Nbt
       value = this.GetTag<TagDouble>(name);
 
       return value?.Value ?? defaultValue;
-    }
-
-    public T GetEnumValue<T>(string name) where T : struct
-    {
-      return this.GetEnumValue(name, default(T));
-    }
-
-    public T GetEnumValue<T>(string name, T defaultValue) where T : struct
-    {
-      TagInt value;
-
-      value = this.GetTag<TagInt>(name);
-
-      return value != null ? (T)Enum.ToObject(typeof(T), value.Value) : defaultValue;
     }
 
     public TagFloat GetFloat(string name)
@@ -194,6 +235,32 @@ namespace Cyotek.Data.Nbt
       tag = this.GetByteArray(name);
 
       return tag != null ? new Guid(tag.Value) : defaultValue;
+    }
+
+    public override int GetHashCode()
+    {
+      // http://stackoverflow.com/a/263416/148962
+
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+        TagDictionary values;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+
+        values = this.Value;
+
+        if (values != null)
+        {
+          for (int i = 0; i < values.Count; i++)
+          {
+            hash = hash * 23 + _value[i].GetHashCode();
+          }
+        }
+
+        return hash;
+      }
     }
 
     public TagInt GetInt(string name)
@@ -296,32 +363,39 @@ namespace Cyotek.Data.Nbt
       return value != null ? value.Value : defaultValue;
     }
 
-    public T GetTag<T>(string name) where T : ITag
+    public T GetTag<T>(string name) where T : Tag
     {
-      ITag value;
+      Tag value;
 
       this.Value.TryGetValue(name, out value);
 
       return (T)value;
     }
 
-    public ITag GetTag(string name)
+    public Tag GetTag(string name)
     {
-      return this.GetTag<ITag>(name);
+      return this.GetTag<Tag>(name);
     }
 
-    public ITag Query(string query)
+    public override object GetValue()
     {
-      return this.Query<ITag>(query);
+      return _value;
     }
 
-    public T Query<T>(string query) where T : ITag
+    public Tag Query(string query)
+    {
+      return this.Query<Tag>(query);
+    }
+
+    public T Query<T>(string query) where T : Tag
     {
       string[] parts;
-      ITag element;
+      Tag element;
+      bool failed;
 
       parts = query.Split(_queryDelimiters);
       element = this;
+      failed = false;
 
       // HACK: This is all quickly thrown together
 
@@ -329,56 +403,88 @@ namespace Cyotek.Data.Nbt
       {
         if (part.IndexOf('[') != -1)
         {
-          string[] subParts;
-          string name;
-          string value;
+          int attributePosition;
           bool matchFound;
-          TagList list;
 
-          subParts = part.Substring(1, part.Length - 2).
-                          Split('=');
-          name = subParts[0];
-          value = subParts[1];
+          attributePosition = part.IndexOf('=');
           matchFound = false;
 
-          list = element as TagList;
-
-          if (list != null)
+          if (attributePosition != -1)
           {
-            // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach (ITag tag in list.Value)
+            string name;
+            string value;
+            TagList list;
+
+            name = part.Substring(1, attributePosition - 1);
+            value = part.Substring(attributePosition + 1, part.Length - (attributePosition + 2));
+            list = element as TagList;
+
+            if (list != null)
             {
-              TagCompound compound;
-
-              compound = tag as TagCompound;
-
-              if (compound != null && compound.GetStringValue(name) == value)
+              // ReSharper disable once LoopCanBePartlyConvertedToQuery
+              foreach (Tag tag in list.Value)
               {
-                element = tag;
-                matchFound = true;
-                break;
+                TagCompound compound;
+
+                compound = tag as TagCompound;
+
+                if (compound != null && compound.GetStringValue(name) == value)
+                {
+                  element = tag;
+                  matchFound = true;
+                  break;
+                }
               }
             }
           }
 
           if (!matchFound)
           {
-            throw new ArgumentException($"Could not find element matching pattern '{part}'", nameof(query));
+            // attribute not found or not set
+            failed = true;
+            break;
           }
-        }
-        else if (element is ICollectionTag && ((ICollectionTag)element).IsList)
-        {
-          // list entry
-          element = ((ICollectionTag)element).Values[Convert.ToInt32(part)];
         }
         else
         {
-          // standard item
-          element = ((TagCompound)element).Value[part];
+          ICollectionTag container;
+
+          container = element as ICollectionTag;
+
+          if (container != null && container.IsList)
+          {
+            // list entry
+            int index;
+
+            if (int.TryParse(part, out index) && index < container.Values.Count)
+            {
+              element = container.Values[Convert.ToInt32(part)];
+            }
+            else
+            {
+              // invalid index, or out of bounds
+              failed = true;
+              break;
+            }
+          }
+          else
+          {
+            // compoound
+            TagCompound compound;
+
+            compound = (TagCompound)element;
+
+            if (!compound.Value.TryGetValue(part, out element))
+            {
+              // didn't find a matching key
+              failed = true;
+              break;
+            }
+          }
         }
       }
 
-      return (T)element;
+      return !failed ? (T)element : null;
     }
 
     public T QueryValue<T>(string query)
@@ -388,41 +494,94 @@ namespace Cyotek.Data.Nbt
 
     public T QueryValue<T>(string query, T defaultValue)
     {
-      ITag tag;
+      Tag tag;
 
-      tag = this.Query<ITag>(query);
+      tag = this.Query<Tag>(query);
 
-      return tag != null ? (T)tag.Value : defaultValue;
+      return tag != null ? (T)tag.GetValue() : defaultValue;
+    }
+
+    public override void SetValue(object value)
+    {
+      this.Value = (TagDictionary)value;
+    }
+
+    public override string ToString()
+    {
+      int count;
+
+      count = _value?.Count ?? 0;
+
+      return string.Concat("[", this.Type, ": ", this.Name, "] (", count.ToString(CultureInfo.InvariantCulture), " items)");
+    }
+
+    public override string ToValueString()
+    {
+      return _value?.ToString() ?? string.Empty;
     }
 
     #endregion
 
     #region ICollectionTag Interface
 
-    public override string ToString(string indentString)
-    {
-      return $"{indentString}[Compound: {this.Name}] ({this.Value?.Count ?? 0} entries)";
-    }
-
-    public override TagType Type
-    {
-      get { return TagType.Compound; }
-    }
-
     bool ICollectionTag.IsList
     {
       get { return false; }
     }
 
-    TagType ICollectionTag.LimitToType
+    TagType ICollectionTag.ListType
     {
       get { return TagType.None; }
-      set { }
+      set { throw new NotSupportedException("Compounds cannot be restricted to a single type."); }
     }
 
-    IList<ITag> ICollectionTag.Values
+    IList<Tag> ICollectionTag.Values
     {
       get { return this.Value; }
+    }
+
+    #endregion
+
+    #region IEquatable<TagCompound> Interface
+
+    public bool Equals(TagCompound other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          IList<Tag> src;
+          IList<Tag> dst;
+
+          src = this.Value;
+          dst = other.Value;
+
+          result = src.Count == dst.Count;
+
+          for (int i = 0; i < src.Count; i++)
+          {
+            Tag srcTag;
+            Tag dstTag;
+
+            srcTag = src[i];
+            dstTag = dst[i];
+
+            if (!srcTag.Equals(dstTag))
+            {
+              result = false;
+              break;
+            }
+          }
+        }
+      }
+
+      return result;
     }
 
     #endregion

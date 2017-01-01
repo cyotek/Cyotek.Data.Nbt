@@ -1,0 +1,149 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".cs" #>
+<#@ include file="NbtGeneratorData.t4" #>using System;
+
+namespace Cyotek.Data.Nbt
+{
+  partial class TagFactory
+  {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string tagName;
+
+      name = netTypeNames[i];
+      tagName = nbtTagTypeNames[i];
+
+      if (name != null)
+      {
+        #>
+    /// <summary>
+    /// Creates a tag for a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="T:<#=name #>" /> value of the tag.</param>
+    /// <returns>
+    /// A new <see cref="<#=tagName #>" />.
+    /// </returns>
+    public static <#=tagName #> CreateTag(<#=name #> value)
+    {
+      return CreateTag(string.Empty, value);
+    }
+
+    /// <summary>
+    /// Creates a tag for a <see cref="T:<#=name #>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag create.</param>
+    /// <param name="value">The <see cref="T:<#=name #>" /> value of the tag.</param>
+    /// <returns>
+    /// A new <see cref="<#=tagName #>" />.
+    /// </returns>
+    public static <#=tagName #> CreateTag(string name, <#=name #> value)
+    {
+      return new <#=tagName #>(name, value);
+    }
+
+<#
+      }
+    }
+#>
+    /// <summary>
+    /// Creates a tag for the specified parameters.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="tagType"/> is not valid.</exception>
+    /// <param name="tagType">Type of the tag to create.</param>
+    /// <param name="name">The name of the tag create.</param>
+    /// <param name="listType">The type of items a list holds.</param>
+    /// <returns>
+    /// A new tag using the specified parameters.
+    /// </returns>
+    public static Tag CreateTag(string name, TagType tagType, TagType listType)
+    {
+      Tag result;
+
+      if (tagType != TagType.List)
+      {
+        if(listType != TagType.None)
+        {
+          throw new ArgumentException("Only lists can have a list type.", nameof(listType));
+        }
+
+        switch (tagType)
+        {
+  <# for (int i = 0; i < nbtTypeNames.Length; i++)
+    {
+      string tagName;
+      string nbtName;
+
+      nbtName = nbtTypeNames[i];
+      tagName = nbtTagTypeNames[i];
+
+      if (i != tagTypeEnd && !this.IsListType(i))
+      {
+        #>
+        case TagType.<#=nbtName #>:
+            result = new <#=tagName #>(name);
+            break;
+
+  <#
+      }
+    }
+  #>
+          case TagType.End:
+            result = new TagEnd();
+            break;
+
+          default:
+            throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tagType));
+        }
+      }
+      else
+      {
+        result = new TagList(name, listType);
+      }
+
+      return result;
+    }
+
+    /// <summary>
+    /// Creates a tag for the specified value.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="tagType"/> is not valid.</exception>
+    /// <param name="tagType">Type of the tag to create.</param>
+    /// <param name="name">The name of the tag create.</param>
+    /// <param name="value">The value of the tag.</param>
+    /// <returns>
+    /// A tag instance containing the specified value.
+    /// </returns>
+    public static Tag CreateTag(string name, TagType tagType, object value)
+    {
+      Tag result;
+
+      switch (tagType)
+      {
+<# for (int i = 0; i < nbtTypeNames.Length; i++)
+    {
+      string nbtName;
+
+      nbtName = nbtTypeNames[i];
+
+      if (i != tagTypeEnd)
+      {
+        #>
+        case TagType.<#=nbtName #>:
+          result = CreateTag(name, <#=objectConversions[i] #>);
+          break;
+
+<#
+      }
+    }
+#>
+        default:
+          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tagType));
+      }
+
+      return result;
+    }
+
+  }
+}

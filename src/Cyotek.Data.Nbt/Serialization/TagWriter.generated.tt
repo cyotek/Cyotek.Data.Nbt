@@ -1,0 +1,162 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\NbtGeneratorData.t4" #>using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Cyotek.Data.Nbt.Serialization
+{
+  partial class TagWriter
+  {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
+
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
+
+      if (i != tagTypeEnd)
+      {
+        #>
+    /// <summary>
+    /// Writes a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
+    protected abstract void WriteValue(<#=name #> value);
+
+<#
+if (this.IsArrayType(i))
+        {
+          #>
+
+    public abstract void WriteArrayValue(<#=name.Substring(0, name.Length - 2) #> value);
+<#
+        }
+ #>
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
+    public void WriteTag(string name, <#=name #> value)
+    {
+      this.WriteStartTag(name, TagType.<#=nbtName #>);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="T:<#=name #>" /> value to write.</param>
+    public void WriteTag(<#=name #> value)
+    {
+      this.WriteTag(string.Empty, value);
+    }
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+<#
+if (this.IsArrayType(i))
+        {
+          #>
+    [CLSCompliant(false)]
+<#
+        }
+ #>
+    public void WriteListTag(string name, <#=name #>[] values)
+    {
+      int length;
+
+      length = values.Length;
+
+      this.WriteStartTag(name, TagType.List, TagType.<#=nbtName #>, length);
+      for (int i = 0; i < length; i++)
+      {
+        this.WriteTag(values[i]);
+      }
+      this.WriteEndTag();
+    }
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:<#=name #>" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+    public void WriteListTag(string name, IEnumerable<<#=name #>> values)
+    {
+      this.WriteListTag(name, values.ToArray());
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+    public void WriteListTag(IEnumerable<<#=name #>> values)
+    {
+      this.WriteListTag(string.Empty, values.ToArray());
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:<#=name #>" /> value.
+    /// </summary>
+    /// <param name="values">The <see cref="T:<#=name #>" /> values to write.</param>
+<#
+if (name.EndsWith("[]"))
+        {
+          #>
+    [CLSCompliant(false)]
+<#
+        }
+ #>
+    public void WriteListTag(<#=name #>[] values)
+    {
+      this.WriteListTag(string.Empty, values);
+    }
+
+<#
+      }
+    }
+#>
+
+    /// <summary>
+    /// Writes a tag value.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the type of the tag is invalid.</exception>
+    /// <param name="tag">The <see cref="Tag"/> to write.</param>
+    public void WriteValue(Tag tag)
+    {
+      switch (tag.Type)
+      {
+<# for (int i = 0; i < nbtTypeNames.Length; i++)
+    {
+      string tagName;
+      string nbtName;
+
+      nbtName = nbtTypeNames[i];
+      tagName = nbtTagTypeNames[i];
+
+      if (i != tagTypeEnd)
+      {
+        #>
+        case TagType.<#=nbtName #>:
+          this.WriteValue(((<#=tagName #>)tag).Value);
+          break;
+
+<#
+      }
+    }
+#>
+
+        default:
+          throw new ArgumentException("Unrecognized or unsupported tag type.", nameof(tag));
+      }
+    }
+  }
+}

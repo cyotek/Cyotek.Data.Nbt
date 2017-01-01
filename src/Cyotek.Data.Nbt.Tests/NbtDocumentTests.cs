@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.IO.Compression;
+using System.Text;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -39,6 +41,17 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: document")]
+    public void Constructor_throws_exception_if_compound_is_null()
+    {
+      // arrange
+      NbtDocument target;
+
+      // act
+      target = new NbtDocument(null);
+    }
+
+    [Test]
     public void EmptyListXmlTest()
     {
       // arrange
@@ -67,7 +80,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       // this test is essentially ensuring that an infinite loop when reloading an XML document is no longer present
-      this.CompareTags(target.DocumentRoot, reloaded.DocumentRoot);
+      NbtAssert.AreEqual(target.DocumentRoot, reloaded.DocumentRoot);
     }
 
     [Test]
@@ -75,8 +88,8 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       NbtDocument source;
-      NbtDocument target1;
-      NbtDocument target2;
+      NbtDocument expected;
+      NbtDocument target;
       string fileName1;
       string fileName2;
       bool file1IsBinary;
@@ -94,11 +107,11 @@ namespace Cyotek.Data.Nbt.Tests
         source.Format = NbtFormat.Xml;
         source.Save(fileName2);
 
-        target1 = NbtDocument.LoadDocument(fileName1);
-        target2 = NbtDocument.LoadDocument(fileName2);
+        expected = NbtDocument.LoadDocument(fileName1);
+        target = NbtDocument.LoadDocument(fileName2);
 
-        file1IsBinary = (target1.Format == NbtFormat.Binary);
-        file2IsXml = (target2.Format == NbtFormat.Xml);
+        file1IsBinary = expected.Format == NbtFormat.Binary;
+        file2IsXml = target.Format == NbtFormat.Xml;
       }
       finally
       {
@@ -109,7 +122,7 @@ namespace Cyotek.Data.Nbt.Tests
       // assert
       Assert.IsTrue(file1IsBinary);
       Assert.IsTrue(file2IsXml);
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(expected, target);
     }
 
     [Test]
@@ -183,8 +196,7 @@ namespace Cyotek.Data.Nbt.Tests
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString();
+      fileName = Guid.NewGuid().ToString();
 
       // act
       NbtDocument.GetDocumentFormat(fileName);
@@ -217,14 +229,26 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Stream is not seekable.\r\nParameter name: stream")]
+    public void GetDocumentFormat_throws_exception_for_non_seekable_streams()
+    {
+      // arrange
+      Stream stream;
+
+      stream = new DeflateStream(Stream.Null, CompressionMode.Decompress);
+
+      // act
+      NbtDocument.GetDocumentFormat(stream);
+    }
+
+    [Test]
     [ExpectedException(typeof(FileNotFoundException))]
     public void GetDocumentName_should_throw_exception_if_file_not_found()
     {
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString("N");
+      fileName = Guid.NewGuid().ToString("N");
 
       // act
       NbtDocument.GetDocumentName(fileName);
@@ -525,8 +549,7 @@ namespace Cyotek.Data.Nbt.Tests
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString();
+      fileName = Guid.NewGuid().ToString();
 
       // act
       NbtDocument.IsNbtDocument(fileName);
@@ -558,8 +581,7 @@ namespace Cyotek.Data.Nbt.Tests
       NbtDocument target;
       string fileName;
 
-      fileName = Guid.NewGuid().
-                      ToString("N");
+      fileName = Guid.NewGuid().ToString("N");
 
       target = new NbtDocument();
 
@@ -594,61 +616,206 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void LoadTest()
+    public void Load_updates_filename_property()
     {
       // arrange
-      NbtDocument target1;
-      NbtDocument target2;
+      NbtDocument target;
+      string expected;
+      string actual;
+
+      expected = this.ComplexDataFileName;
+
+      target = new NbtDocument();
+
+      // act
+      target.Load(expected);
+
+      // assert
+      actual = target.FileName;
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void LoadDocument_loads_data_from_stream()
+    {
+      // arrange
+      NbtDocument expected;
+      NbtDocument actual;
       string fileName;
 
       fileName = this.ComplexDataFileName;
-      target1 = new NbtDocument(this.CreateComplexData());
-      target2 = new NbtDocument();
-      target2.FileName = fileName;
+      expected = new NbtDocument(this.CreateComplexData());
 
       // act
-      target2.Load();
+      using (Stream stream = File.OpenRead(fileName))
+      {
+        actual = NbtDocument.LoadDocument(stream);
+      }
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void LoadTest()
+    {
+      // arrange
+      NbtDocument expected;
+      NbtDocument target;
+      string fileName;
+
+      fileName = this.ComplexDataFileName;
+      expected = new NbtDocument(this.CreateComplexData());
+      target = new NbtDocument();
+      target.FileName = fileName;
+
+      // act
+      target.Load();
+
+      // assert
+      NbtAssert.AreEqual(expected, target);
     }
 
     [Test]
     public void LoadWithFileTest()
     {
       // arrange
-      NbtDocument target1;
-      NbtDocument target2;
+      NbtDocument expected;
+      NbtDocument target;
       string fileName;
 
       fileName = this.ComplexDataFileName;
-      target1 = new NbtDocument(this.CreateComplexData());
-      target2 = new NbtDocument();
+      expected = new NbtDocument(this.CreateComplexData());
+      target = new NbtDocument();
 
       // act
-      target2.Load(fileName);
+      target.Load(fileName);
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(expected, target);
+    }
+
+    [Test]
+    public void Query_returns_tag()
+    {
+      // arrange
+      NbtDocument target;
+      Tag expected;
+      Tag actual;
+
+      target = new NbtDocument(this.CreateComplexData());
+
+      expected = ((TagCompound)((TagList)target.DocumentRoot["listTest (compound)"]).Value[1])["created-on"];
+
+      // act
+      actual = target.Query(@"listTest (compound)\1\created-on");
+
+      // assert
+      Assert.AreSame(expected, actual);
+    }
+
+    [Test]
+    public void Query_returns_typed_tag()
+    {
+      // arrange
+      NbtDocument target;
+      TagLong expected;
+      TagLong actual;
+
+      target = new NbtDocument(this.CreateComplexData());
+
+      expected = (TagLong)((TagCompound)((TagList)target.DocumentRoot["listTest (compound)"]).Value[1])["created-on"];
+
+      // act
+      actual = target.Query<TagLong>(@"listTest (compound)\1\created-on");
+
+      // assert
+      Assert.AreSame(expected, actual);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: fileName")]
+    public void Save_throws_exception_if_filename_is_empty()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument();
+
+      // act
+      target.Save(string.Empty);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: fileName")]
+    public void Save_throws_exception_if_filename_is_null()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument();
+
+      // act
+      target.Save((string)null);
+    }
+
+    [Test]
+    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: stream")]
+    public void Save_throws_exception_if_stream_is_null()
+    {
+      // arrange
+      NbtDocument target;
+
+      target = new NbtDocument();
+
+      // act
+      target.Save((Stream)null);
+    }
+
+    [Test]
+    public void Save_updates_filename_property()
+    {
+      // arrange
+      NbtDocument target;
+      string expected;
+      string actual;
+
+      expected = this.GetWorkFile();
+
+      target = new NbtDocument(this.CreateComplexData());
+
+      // act
+      try
+      {
+        target.Save(expected);
+      }
+      finally
+      {
+        this.DeleteFile(expected);
+      }
+
+      // assert
+      actual = target.FileName;
+      Assert.AreEqual(expected, actual);
     }
 
     [Test]
     public void SaveTest()
     {
       // arrange
-      NbtDocument target1;
-      NbtDocument target2;
+      NbtDocument expected;
+      NbtDocument target;
       string fileName;
 
       fileName = this.GetWorkFile();
-      target1 = new NbtDocument(this.CreateComplexData());
-      target1.FileName = fileName;
+      expected = new NbtDocument(this.CreateComplexData());
+      expected.FileName = fileName;
 
       // act
       try
       {
-        target1.Save();
-        target2 = NbtDocument.LoadDocument(fileName);
+        expected.Save();
+        target = NbtDocument.LoadDocument(fileName);
       }
       finally
       {
@@ -656,25 +823,25 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(expected, target);
     }
 
     [Test]
     public void SaveWithFileTest()
     {
       // arrange
-      NbtDocument target1;
-      NbtDocument target2;
+      NbtDocument expected;
+      NbtDocument target;
       string fileName;
 
       fileName = this.GetWorkFile();
-      target1 = new NbtDocument(this.CreateComplexData());
+      expected = new NbtDocument(this.CreateComplexData());
 
       // act
       try
       {
-        target1.Save(fileName);
-        target2 = NbtDocument.LoadDocument(fileName);
+        expected.Save(fileName);
+        target = NbtDocument.LoadDocument(fileName);
       }
       finally
       {
@@ -682,7 +849,58 @@ namespace Cyotek.Data.Nbt.Tests
       }
 
       // assert
-      this.CompareTags(target1.DocumentRoot, target2.DocumentRoot);
+      NbtAssert.AreEqual(expected, target);
+    }
+
+    [Test]
+    public void ToString_returns_tag_hieararchy()
+    {
+      // arrange
+      NbtDocument target;
+      string expected;
+      string actual;
+      StringBuilder sb;
+
+      target = new NbtDocument(this.CreateComplexData());
+
+      sb = new StringBuilder();
+      sb.AppendLine("compound:Level");
+      sb.AppendLine("  long:longTest [9223372036854775807]");
+      sb.AppendLine("  short:shortTest [32767]");
+      sb.AppendLine("  string:stringTest [HELLO WORLD THIS IS A TEST STRING ÅÄÖ!]");
+      sb.AppendLine("  float:floatTest [0.4982315]");
+      sb.AppendLine("  int:intTest [2147483647]");
+      sb.AppendLine("  compound:nested compound test");
+      sb.AppendLine("    compound:ham");
+      sb.AppendLine("      string:name [Hampus]");
+      sb.AppendLine("      float:value [0.75]");
+      sb.AppendLine("    compound:egg");
+      sb.AppendLine("      string:name [Eggbert]");
+      sb.AppendLine("      float:value [0.5]");
+      sb.AppendLine("  list:listTest (long)");
+      sb.AppendLine("    long#0 [11]");
+      sb.AppendLine("    long#1 [12]");
+      sb.AppendLine("    long#2 [13]");
+      sb.AppendLine("    long#3 [14]");
+      sb.AppendLine("    long#4 [15]");
+      sb.AppendLine("  list:listTest (compound)");
+      sb.AppendLine("    compound#0");
+      sb.AppendLine("      string:name [Compound tag #0]");
+      sb.AppendLine("      long:created-on [1264099775885]");
+      sb.AppendLine("    compound#1");
+      sb.AppendLine("      string:name [Compound tag #1]");
+      sb.AppendLine("      long:created-on [1264099775885]");
+      sb.AppendLine("  byte:byteTest [127]");
+      sb.AppendLine("  bytearray:byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...)) [00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30, 00, 3E, 22, 10, 08, 0A, 16, 2C, 4C, 12, 46, 20, 04, 56, 4E, 50, 5C, 0E, 2E, 58, 28, 02, 4A, 38, 30, 32, 3E, 54, 10, 3A, 0A, 48, 2C, 1A, 12, 14, 20, 36, 56, 1C, 50, 2A, 0E, 60, 58, 5A, 02, 18, 38, 62, 32, 0C, 54, 42, 3A, 3C, 48, 5E, 1A, 44, 14, 52, 36, 24, 1C, 1E, 2A, 40, 60, 26, 5A, 34, 18, 06, 62, 00, 0C, 22, 42, 08, 3C, 16, 5E, 4C, 44, 46, 52, 04, 24, 4E, 1E, 5C, 40, 2E, 26, 28, 34, 4A, 06, 30]");
+      sb.AppendLine("  double:doubleTest [0.493128713218231]");
+
+      expected = sb.ToString();
+
+      // act
+      actual = target.ToString();
+
+      // assert
+      Assert.AreEqual(expected, actual);
     }
 
     #endregion

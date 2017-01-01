@@ -1,0 +1,37 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\NbtGeneratorData.t4" #>using System;
+using System.Collections.Generic;
+
+namespace Cyotek.Data.Nbt.Serialization
+{
+  partial class XmlTagReader
+  {
+    private static readonly IDictionary<string, TagType> _tagTypeEnumLookup;
+
+    static XmlTagReader()
+    {
+      // as the values shouldn't be in upper case anyway, hopefully the Turkish I won't trigger
+      _tagTypeEnumLookup = new Dictionary<string, TagType>(StringComparer.OrdinalIgnoreCase)
+      {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
+
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
+
+      if (name != null)
+      {
+        #>
+        { "<#=nbtName #>", TagType.<#=nbtName #> },
+<#
+      }
+    }
+#>
+      };
+    }
+  }
+}

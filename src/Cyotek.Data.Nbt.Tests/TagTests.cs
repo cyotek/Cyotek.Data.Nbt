@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -8,35 +7,81 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  public class TagTests : TestBase
+  public partial class TagTests : TestBase
   {
     #region  Tests
 
     [Test]
-    public void CanRemoveTest()
+    public void Attempting_to_set_name_to_null_sets_empty_string()
     {
       // arrange
-      TagCompound data;
-      bool actual1;
-      bool actual2;
+      Tag target;
 
-      data = this.CreateComplexData();
+      target = new TagByte("alpha");
 
       // act
-      actual1 = data.Value["listTest (compound)"].CanRemove;
-      actual2 = data.CanRemove;
+      target.Name = null;
 
       // assert
-      Assert.IsTrue(actual1);
-      Assert.IsFalse(actual2);
+      Assert.IsEmpty(target.Name);
     }
 
     [Test]
-    public void FlattenTest()
+    public void Equals_returns_false_for_null_object()
+    {
+      // arrange
+      Tag target;
+      bool actual;
+
+      target = new TagByte();
+
+      // act
+      actual = target.Equals((object)null);
+
+      // assert
+      Assert.IsFalse(actual);
+    }
+
+    [Test]
+    public void Equals_returns_true_for_same_reference()
+    {
+      // arrange
+      Tag target;
+      bool actual;
+
+      target = new TagByte();
+
+      // act
+      actual = target.Equals((object)target);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void Equals_returns_true_for_same_tag()
+    {
+      // arrange
+      Tag target;
+      Tag other;
+      bool actual;
+
+      target = new TagByte(127);
+      other = new TagByte(127);
+
+      // act
+      actual = target.Equals((object)other);
+
+      // assert
+      Assert.IsTrue(actual);
+    }
+
+    [Test]
+    public void Flatten_returns_tag_and_all_descendants()
     {
       // arrange
       TagCompound target;
-      ITag[] tags;
+      Tag[] tags;
       string[] expectedNames;
       string[] actualNames;
       int expectedCount;
@@ -69,9 +114,7 @@ namespace Cyotek.Data.Nbt.Tests
       // act
       tags = target.Flatten();
       actualCount = tags.Length;
-      actualNames = tags.Select(t => t.Name).
-                         Distinct().
-                         ToArray();
+      actualNames = tags.Select(t => t.Name).Distinct().ToArray();
 
       // assert
       Assert.AreEqual(expectedCount, actualCount);
@@ -79,11 +122,28 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
+    public void Flattern_returns_tab()
+    {
+      // arrange
+      Tag target;
+      Tag[] actual;
+
+      target = new TagByte();
+
+      // act
+      actual = target.Flatten();
+
+      // assert
+      Assert.AreEqual(1, actual.Length);
+      Assert.AreSame(target, actual[0]);
+    }
+
+    [Test]
     public void FullPathTest()
     {
       // arrange
       TagCompound data;
-      ITag target;
+      Tag target;
       string expected;
       string actual;
 
@@ -103,9 +163,9 @@ namespace Cyotek.Data.Nbt.Tests
     {
       // arrange
       TagCompound data;
-      ITag target;
-      ITag[] actual;
-      ITag[] expected;
+      Tag target;
+      Tag[] actual;
+      Tag[] expected;
 
       data = this.CreateComplexData();
       target = data.Query(@"listTest (compound)\0\name");
@@ -124,48 +184,12 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void GetValueTest()
-    {
-      // arrange
-      TagCompound target;
-      byte[] expected;
-      byte[] actual;
-
-      expected = File.ReadAllBytes(this.UncompressedComplexDataFileName);
-      target = this.CreateComplexData();
-
-      // act
-      actual = target.GetValue();
-
-      // assert
-      CollectionAssert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void NameChangedEventTest()
-    {
-      // arrange
-      Tag target;
-      bool eventRaised;
-
-      eventRaised = false;
-      target = new TagString();
-      target.NameChanged += delegate { eventRaised = true; };
-
-      // act
-      target.Name = "newvalue";
-
-      // assert
-      Assert.IsTrue(eventRaised);
-    }
-
-    [Test]
-    [ExpectedException(ExpectedException = typeof(ArgumentException), ExpectedMessage = "Unrecognized tag type: 255")]
+    [ExpectedException(ExpectedException = typeof(InvalidDataException), ExpectedMessage = "Unrecognized tag type: 255.")]
     public void ReadExceptionTest()
     {
       // arrange
       MemoryStream stream;
-      ITagReader reader;
+      TagReader reader;
 
       stream = new MemoryStream();
       stream.WriteByte(255);
@@ -179,44 +203,9 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(ExpectedException = typeof(TagException),
-      ExpectedMessage = "Cannot remove this tag, parent not set or not supported.")]
-    public void RemoveExceptionTest()
-    {
-      // arrange
-      TagCompound target;
-
-      target = this.CreateComplexData();
-
-      // act
-      target.Remove();
-
-      // assert
-    }
-
-    [Test]
-    public void RemoveTest()
-    {
-      // arrange
-      TagCompound data;
-      ITag target;
-      string key;
-
-      data = this.CreateComplexData();
-      key = "listTest (compound)";
-      target = data.Value[key];
-
-      // act
-      target.Remove();
-
-      // assert
-      Assert.IsFalse(data.Contains(key));
-    }
-
-    [Test]
     public void TestLoadComplexNbt()
     {
-      ITag tag;
+      Tag tag;
 
       tag = this.CreateComplexData();
 
@@ -330,13 +319,9 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual("created-on", listTest_compound_tag1_createdOn.Name);
       Assert.AreEqual(1264099775885, listTest_compound_tag1_createdOn.Value);
 
-      TagByteArray byteArrayTest =
-        level.GetByteArray(
-                           "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))");
+      TagByteArray byteArrayTest = level.GetByteArray("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))");
       Assert.IsNotNull(byteArrayTest);
-      Assert.AreEqual(
-                      "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
-                      byteArrayTest.Name);
+      Assert.AreEqual("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", byteArrayTest.Name);
       Assert.IsNotNull(byteArrayTest.Value);
       Assert.AreEqual(1000, byteArrayTest.Value.Length);
     }
@@ -344,7 +329,7 @@ namespace Cyotek.Data.Nbt.Tests
     [Test]
     public void TestLoadSimpleNbt()
     {
-      ITag tag;
+      Tag tag;
 
       tag = this.GetSimpleData();
 
@@ -364,7 +349,7 @@ namespace Cyotek.Data.Nbt.Tests
     {
       TagCompound newTag = new TagCompound();
 
-      ITag aTag = newTag.GetTag("nope");
+      Tag aTag = newTag.GetTag("nope");
 
       Assert.IsNull(aTag);
 
@@ -373,48 +358,6 @@ namespace Cyotek.Data.Nbt.Tests
       aTag = fileTag.GetTag("Entities");
 
       Assert.IsNull(aTag);
-    }
-
-    [Test]
-    public void ToValueStringTest()
-    {
-      // arrange
-      ITag target1;
-      ITag target2;
-      string expected1;
-      string actual1;
-      string actual2;
-
-      target1 = this.CreateComplexData().
-                     Query(@"nested compound test\ham\name");
-      target2 = new TagString(null, null);
-      expected1 = "Hampus";
-
-      // act
-      actual1 = target1.ToValueString();
-      actual2 = target2.ToValueString();
-
-      // assert
-      Assert.AreEqual(expected1, actual1);
-      Assert.IsEmpty(actual2);
-    }
-
-    [Test]
-    public void ValueChangedEventTest()
-    {
-      // arrange
-      Tag target;
-      bool eventRaised;
-
-      eventRaised = false;
-      target = new TagString();
-      target.ValueChanged += delegate { eventRaised = true; };
-
-      // act
-      target.Value = "newvalue";
-
-      // assert
-      Assert.IsTrue(eventRaised);
     }
 
     #endregion

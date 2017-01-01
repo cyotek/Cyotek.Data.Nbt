@@ -1,7 +1,16 @@
+using System;
+using System.ComponentModel;
+
 namespace Cyotek.Data.Nbt
 {
-  public class TagString : Tag
+  public sealed class TagString : Tag, IEquatable<TagString>
   {
+    #region Fields
+
+    private string _value;
+
+    #endregion
+
     #region Constructors
 
     public TagString()
@@ -13,9 +22,9 @@ namespace Cyotek.Data.Nbt
     { }
 
     public TagString(string name, string value)
+      : base(name)
     {
-      this.Name = name;
-      this.Value = value;
+      _value = value;
     }
 
     #endregion
@@ -27,19 +36,73 @@ namespace Cyotek.Data.Nbt
       get { return TagType.String; }
     }
 
-    public new string Value
+    [Category("Data")]
+    [DefaultValue("")]
+    public string Value
     {
-      get { return (string)base.Value; }
-      set { base.Value = value; }
+      get { return _value; }
+      set { _value = value; }
     }
 
     #endregion
 
     #region Methods
 
-    public override string ToString(string indentString)
+    public override int GetHashCode()
     {
-      return $"{indentString}[String: {this.Name}=\"{this.Value}\"]";
+      unchecked // Overflow is fine, just wrap
+      {
+        int hash;
+
+        hash = 17;
+        hash = hash * 23 + this.Name.GetHashCode();
+        hash = hash * 23 + this.ToString().GetHashCode();
+
+        return hash;
+      }
+    }
+
+    public override object GetValue()
+    {
+      return _value;
+    }
+
+    public override void SetValue(object value)
+    {
+      _value = Convert.ToString(value);
+    }
+
+    public override string ToString()
+    {
+      return string.Concat("[String: ", this.Name, "=\"", this.ToValueString(), "\"]");
+    }
+
+    public override string ToValueString()
+    {
+      return _value ?? string.Empty;
+    }
+
+    #endregion
+
+    #region IEquatable<TagString> Interface
+
+    public bool Equals(TagString other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          result = _value == other.Value;
+        }
+      }
+
+      return result;
     }
 
     #endregion
