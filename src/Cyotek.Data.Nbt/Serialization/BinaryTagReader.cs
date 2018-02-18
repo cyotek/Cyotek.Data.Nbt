@@ -53,6 +53,48 @@ namespace Cyotek.Data.Nbt.Serialization
 
     #endregion
 
+    #region Static Methods
+
+    private static bool FirstDecompressedByteIsTagCompound(Stream stream)
+    {
+      bool result;
+
+      try
+      {
+        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
+        {
+          result = decompressionStream.ReadByte() == (int)TagType.Compound;
+        }
+      }
+      catch (InvalidDataException)
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    private static bool FirstDeflatedByteIsTagCompound(Stream stream)
+    {
+      bool result;
+
+      try
+      {
+        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
+        {
+          result = decompressionStream.ReadByte() == (int)TagType.Compound;
+        }
+      }
+      catch (InvalidDataException)
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    #endregion
+
     #region Methods
 
     public override bool IsNbtDocument()
@@ -74,17 +116,11 @@ namespace Cyotek.Data.Nbt.Serialization
 
       if (stream.IsGzipCompressed())
       {
-        using (Stream decompressionStream = new GZipStream(stream, CompressionMode.Decompress, true))
-        {
-          result = decompressionStream.ReadByte() == (int)TagType.Compound;
-        }
+        result = FirstDecompressedByteIsTagCompound(stream);
       }
       else if (stream.IsDeflateCompressed())
       {
-        using (Stream decompressionStream = new DeflateStream(stream, CompressionMode.Decompress, true))
-        {
-          result = decompressionStream.ReadByte() == (int)TagType.Compound;
-        }
+        result = FirstDeflatedByteIsTagCompound(stream);
       }
       else if (stream.ReadByte() == (int)TagType.Compound)
       {

@@ -5,7 +5,7 @@ SETLOCAL
 CALL ..\..\..\build\set35vars.bat
 
 %msbuildexe% Cyotek.Data.Nbt.sln /p:Configuration=Release /verbosity:minimal /nologo /t:Clean,Build
-CALL signcmd src\Cyotek.Data.Nbt\bin\Release\Cyotek.Data.Nbt.dll
+CALL dualsigncmd src\Cyotek.Data.Nbt\bin\Release\Cyotek.Data.Nbt.dll
 
 PUSHD %CD%
 

@@ -1,6 +1,12 @@
 Cyotek.Data.Nbt Change Log
 ==========================
 
+[3.0.1]
+-------
+
+### Fixed
+* `BinaryTagReader.IsNbtDocument` now handles `InvalidDataOperationException`'s which can occur if compressed data is corrupt, or misidentified as being compressed
+
 [3.0.0-alpha] - 2016-12-27
 ------------------------
 
