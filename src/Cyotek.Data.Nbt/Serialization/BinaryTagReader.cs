@@ -284,14 +284,14 @@ namespace Cyotek.Data.Nbt.Serialization
       TagType listType;
 
       listType = (TagType)this.ReadByte();
+      length = this.ReadInt();
 
-      if (listType < TagType.Byte || listType > TagType.IntArray)
+      if (length > 0 && (listType < TagType.Byte || listType > TagType.IntArray))
       {
         throw new InvalidDataException($"Unexpected list type '{listType}' found.");
       }
 
       tags = new TagCollection(listType);
-      length = this.ReadInt();
 
       for (int i = 0; i < length; i++)
       {

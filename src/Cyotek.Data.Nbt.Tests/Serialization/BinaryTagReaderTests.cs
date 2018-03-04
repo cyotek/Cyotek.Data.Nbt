@@ -88,7 +88,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
     [Test]
     [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Unexpected list type '182' found.")]
-    public void ReadList_throws_exception_if_list_type_is_invalid()
+    public void ReadList_throws_exception_if_list_type_is_invalid_and_items_are_present()
     {
       using (MemoryStream stream = new MemoryStream())
       {
@@ -100,7 +100,9 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         writer = new BinaryTagWriter(stream);
 
         writer.WriteStartDocument();
-        writer.WriteStartTag("list", TagType.List, (TagType)182, 0);
+        writer.WriteStartTag("list", TagType.List, (TagType)182, 1);
+        writer.WriteStartTag((TagType)182);
+        writer.WriteEndTag();
         writer.WriteEndTag();
         writer.WriteEndDocument();
 
@@ -111,6 +113,40 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         // act
         reader.ReadList();
+      }
+    }
+
+    [Test]
+    public void ReadList_ignores_invalid_list_type_for_empty_list()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        TagCollection actual;
+        TagType expected;
+
+        expected = (TagType)182;
+
+        reader = this.CreateReader(stream);
+        writer = new BinaryTagWriter(stream);
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag("list", TagType.List, expected, 0);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader.ReadTagType();
+        reader.ReadTagName();
+
+        // act
+        actual = reader.ReadList();
+
+        // assert
+        Assert.AreEqual(expected, actual.LimitType);
       }
     }
 
@@ -157,5 +193,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     #endregion
+
   }
 }
