@@ -68,61 +68,65 @@ namespace Cyotek.Data.Nbt
     {
       Tag result;
 
-      if (value is byte)
+      if (value is byte byteValue)
       {
-        result = this.Add(name, (byte)value);
+        result = this.Add(name, byteValue);
       }
-      else if (value is byte[])
+      else if (value is int intValue)
       {
-        result = this.Add(name, (byte[])value);
+        result = this.Add(name, intValue);
       }
-      else if (value is int)
+      else if (value is string stringValue)
       {
-        result = this.Add(name, (int)value);
+        result = this.Add(name, stringValue);
       }
-      else if (value is int[])
+      else if (value is bool boolValue)
       {
-        result = this.Add(name, (int[])value);
+        result = this.Add(name, boolValue);
       }
-      else if (value is float)
+      else if (value is float floatValue)
       {
-        result = this.Add(name, (float)value);
+        result = this.Add(name, floatValue);
       }
-      else if (value is double)
+      else if (value is double doubleValue)
       {
-        result = this.Add(name, (double)value);
+        result = this.Add(name, doubleValue);
       }
-      else if (value is long)
+      else if (value is long longValue)
       {
-        result = this.Add(name, (long)value);
+        result = this.Add(name, longValue);
       }
-      else if (value is short)
+      else if (value is short shortValue)
       {
-        result = this.Add(name, (short)value);
+        result = this.Add(name, shortValue);
       }
-      else if (value is string)
+      else if (value is DateTime dateTimeValue)
       {
-        result = this.Add(name, (string)value);
+        result = this.Add(name, dateTimeValue);
       }
-      else if (value is DateTime)
+      else if (value is string[] stringArrayValue)
       {
-        result = this.Add(name, (DateTime)value);
+        result = this.Add(name, stringArrayValue);
       }
-      else if (value is Guid)
+      else if (value is byte[] byteArrayValue)
       {
-        result = this.Add(name, (Guid)value);
+        result = this.Add(name, byteArrayValue);
       }
-      else if (value is bool)
+      else if (value is int[] intArrayValue)
       {
-        result = this.Add(name, (bool)value);
+        result = this.Add(name, intArrayValue);
       }
-      else if (value is TagDictionary)
+      else if (value is Guid guidValue)
       {
-        result = this.Add(name, (TagDictionary)value);
+        result = this.Add(name, guidValue);
       }
-      else if (value is TagCollection)
+      else if (value is TagDictionary tagDictionaryValue)
       {
-        result = this.Add(name, (TagCollection)value);
+        result = this.Add(name, tagDictionaryValue);
+      }
+      else if (value is TagCollection tagCollectionValue)
+      {
+        result = this.Add(name, tagCollectionValue);
       }
       else
       {
