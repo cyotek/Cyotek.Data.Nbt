@@ -7,23 +7,25 @@ namespace Cyotek.Data.Nbt
 {
   public sealed class TagCompound : Tag, ICollectionTag, IEquatable<TagCompound>
   {
-    #region Constants
+    #region Private Fields
+
+    private static readonly byte[] _emptyByteArray = new byte[0];
+
+    private static readonly int[] _emptyIntArray = new int[0];
+
+    private static readonly string[] _emptyStringArray = new string[0];
 
     private static readonly char[] _queryDelimiters =
-    {
+                {
       '\\',
       '/'
     };
 
-    #endregion
-
-    #region Fields
-
     private TagDictionary _value;
 
-    #endregion
+    #endregion Private Fields
 
-    #region Constructors
+    #region Public Constructors
 
     public TagCompound()
       : this(string.Empty)
@@ -43,9 +45,9 @@ namespace Cyotek.Data.Nbt
       this.Value = value;
     }
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Properties
+    #region Public Properties
 
     /// <summary>
     /// Gets the number of child <see cref="Tag"/> objects actually contained in the <see cref="TagCompound"/>.
@@ -53,30 +55,6 @@ namespace Cyotek.Data.Nbt
     public int Count
     {
       get { return _value.Count; }
-    }
-
-    /// <summary>
-    /// Gets the <see cref="Tag"/> with the specified name.
-    /// </summary>
-    /// <param name="name">The name of the tag to get.</param>
-    /// <returns>
-    /// The <see cref="Tag"/> with the specified name. If a tag with the specified name is not found, an exception is thrown.
-    /// </returns>
-    public Tag this[string name]
-    {
-      get { return _value[name]; }
-    }
-
-    /// <summary>
-    /// Gets the <see cref="Tag"/> at the specified index.
-    /// </summary>
-    /// <param name="index">Zero-based index of the entry to access.</param>
-    /// <returns>
-    /// The <see cref="Tag"/> at the specified index.
-    /// </returns>
-    public Tag this[int index]
-    {
-      get { return _value[index]; }
     }
 
     /// <inheritdoc cref="Tag.Type"/>
@@ -105,13 +83,97 @@ namespace Cyotek.Data.Nbt
       }
     }
 
-    #endregion
+    bool ICollectionTag.IsList
+    {
+      get { return false; }
+    }
 
-    #region Methods
+    TagType ICollectionTag.ListType
+    {
+      get { return TagType.None; }
+      set { throw new NotSupportedException("Compounds cannot be restricted to a single type."); }
+    }
+
+    IList<Tag> ICollectionTag.Values
+    {
+      get { return this.Value; }
+    }
+
+    #endregion Public Properties
+
+    #region Public Indexers
+
+    /// <summary>
+    /// Gets the <see cref="Tag"/> with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag to get.</param>
+    /// <returns>
+    /// The <see cref="Tag"/> with the specified name. If a tag with the specified name is not found, an exception is thrown.
+    /// </returns>
+    public Tag this[string name]
+    {
+      get { return _value[name]; }
+    }
+
+    /// <summary>
+    /// Gets the <see cref="Tag"/> at the specified index.
+    /// </summary>
+    /// <param name="index">Zero-based index of the entry to access.</param>
+    /// <returns>
+    /// The <see cref="Tag"/> at the specified index.
+    /// </returns>
+    public Tag this[int index]
+    {
+      get { return _value[index]; }
+    }
+
+    #endregion Public Indexers
+
+    #region Public Methods
 
     public bool Contains(string name)
     {
       return this.Value.Contains(name);
+    }
+
+    public bool Equals(TagCompound other)
+    {
+      bool result;
+
+      result = !ReferenceEquals(null, other);
+
+      if (result && !ReferenceEquals(this, other))
+      {
+        result = string.Equals(this.Name, other.Name);
+
+        if (result)
+        {
+          IList<Tag> src;
+          IList<Tag> dst;
+
+          src = this.Value;
+          dst = other.Value;
+
+          result = src.Count == dst.Count;
+
+          for (int i = 0; i < src.Count; i++)
+          {
+            Tag srcTag;
+            Tag dstTag;
+
+            srcTag = src[i];
+            dstTag = dst[i];
+
+            if (!srcTag.Equals(dstTag))
+            {
+              result = false;
+              break;
+            }
+          }
+        }
+      }
+
+      return result;
     }
 
     public bool GetBooleanValue(string name)
@@ -140,7 +202,7 @@ namespace Cyotek.Data.Nbt
 
     public byte[] GetByteArrayValue(string name)
     {
-      return this.GetByteArrayValue(name, new byte[0]);
+      return this.GetByteArrayValue(name, _emptyByteArray);
     }
 
     public byte[] GetByteArrayValue(string name, byte[] defaultValue)
@@ -275,7 +337,7 @@ namespace Cyotek.Data.Nbt
 
     public int[] GetIntArrayValue(string name)
     {
-      return this.GetIntArrayValue(name, new int[0]);
+      return this.GetIntArrayValue(name, _emptyIntArray);
     }
 
     public int[] GetIntArrayValue(string name, int[] defaultValue)
@@ -347,6 +409,42 @@ namespace Cyotek.Data.Nbt
     public TagString GetString(string name)
     {
       return this.GetTag<TagString>(name);
+    }
+
+    public string[] GetStringArrayValue(string name)
+    {
+      return this.GetStringArrayValue(name, _emptyStringArray);
+    }
+
+    public string[] GetStringArrayValue(string name, string[] defaultValue)
+    {
+      TagList value;
+      string[] result;
+
+      value = this.GetTag<TagList>(name);
+
+      if (value != null)
+      {
+        if (value.Count == 0)
+        {
+          result = _emptyStringArray;
+        }
+        else
+        {
+          result = new string[value.Count];
+
+          for (int i = 0; i < result.Length; i++)
+          {
+            result[i] = ((TagString)value.Value[i]).Value;
+          }
+        }
+      }
+      else
+      {
+        result = defaultValue;
+      }
+
+      return result;
     }
 
     public string GetStringValue(string name)
@@ -520,70 +618,6 @@ namespace Cyotek.Data.Nbt
       return _value?.ToString() ?? string.Empty;
     }
 
-    #endregion
-
-    #region ICollectionTag Interface
-
-    bool ICollectionTag.IsList
-    {
-      get { return false; }
-    }
-
-    TagType ICollectionTag.ListType
-    {
-      get { return TagType.None; }
-      set { throw new NotSupportedException("Compounds cannot be restricted to a single type."); }
-    }
-
-    IList<Tag> ICollectionTag.Values
-    {
-      get { return this.Value; }
-    }
-
-    #endregion
-
-    #region IEquatable<TagCompound> Interface
-
-    public bool Equals(TagCompound other)
-    {
-      bool result;
-
-      result = !ReferenceEquals(null, other);
-
-      if (result && !ReferenceEquals(this, other))
-      {
-        result = string.Equals(this.Name, other.Name);
-
-        if (result)
-        {
-          IList<Tag> src;
-          IList<Tag> dst;
-
-          src = this.Value;
-          dst = other.Value;
-
-          result = src.Count == dst.Count;
-
-          for (int i = 0; i < src.Count; i++)
-          {
-            Tag srcTag;
-            Tag dstTag;
-
-            srcTag = src[i];
-            dstTag = dst[i];
-
-            if (!srcTag.Equals(dstTag))
-            {
-              result = false;
-              break;
-            }
-          }
-        }
-      }
-
-      return result;
-    }
-
-    #endregion
+    #endregion Public Methods
   }
 }

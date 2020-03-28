@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>
 <#@ output extension=".cs" #>using System;
 using NUnit.Framework;
@@ -20,7 +20,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       if (name != null)
       {
-        #>
+#>
     [Test]
     public void Add_adds_named_<#=nbtName.ToLower() #>()
     {
@@ -69,7 +69,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(expected, actual.GetValue());
     }
 
-    <#
+<#
       }
     }
 #>
@@ -88,9 +88,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       if (name != null)
       {
-        #>
+#>
     [Test]
-    public void Add_adds_named_<#=name.ToLower() #>()
+    public void Add_adds_named_<#=name.Replace("[]", "Array").ToLower() #>()
     {
       // arrange
       TagDictionary target;
@@ -116,7 +116,7 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    public void Add_adds_named_<#=name.ToLower() #>_object()
+    public void Add_adds_named_<#=name.Replace("[]", "Array").ToLower() #>_object()
     {
       // arrange
       TagDictionary target;
@@ -141,7 +141,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(expected, actual.GetValue());
     }
 
-    <#
+<#
       }
     }
 #>

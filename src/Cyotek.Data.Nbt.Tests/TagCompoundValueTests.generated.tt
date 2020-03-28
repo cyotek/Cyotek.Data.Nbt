@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ include file="..\Cyotek.Data.Nbt\NbtGeneratorData.t4" #>
 <#@ output extension=".cs" #>using System;
 using NUnit.Framework;
@@ -23,7 +23,7 @@ namespace Cyotek.Data.Nbt.Tests
       {
         if (!this.IsListType(i) && !this.IsCompoundType(i))
         {
-          #>
+#>
     [Test]
     public void Get<#=nbtName #>Value_returns_existing_value()
     {
@@ -67,10 +67,10 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(expected, actual);
     }
 
-    <#
+<#
         }
-    #>
-[Test]
+#>
+    [Test]
     public void Get<#=nbtName #>_returns_existing_tag()
     {
       // arrange
@@ -110,7 +110,7 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsNull(actual);
     }
 
-    <#
+<#
       }
     }
 #>
@@ -126,9 +126,9 @@ namespace Cyotek.Data.Nbt.Tests
       nbtName = secondaryDataTypeMappings[i];
       mappedType = secondaryDataTypeMappedTypes[i];
       testData = secondaryDataTypeTestData[i];
-      #>
+#>
     [Test]
-    public void Get<#=name #>Value_returns_existing_value()
+    public void Get<#=name.Replace("[]", "Array") #>Value_returns_existing_value()
     {
       // arrange
       TagCompound target;
@@ -143,13 +143,13 @@ namespace Cyotek.Data.Nbt.Tests
       target.Value.Add(name, expected);
 
       // act
-      actual = target.Get<#=name #>Value(name);
+      actual = target.Get<#=name.Replace("[]", "Array") #>Value(name);
 
       // assert
       Assert.AreEqual(expected, actual);
     }
 
-    <#
+<#
     }
 #>
   }

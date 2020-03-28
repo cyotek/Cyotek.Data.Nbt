@@ -48,6 +48,34 @@ namespace Cyotek.Data.Nbt
       return this.Add(name, value.ToByteArray());
     }
 
+    /// <summary>
+    /// Creates and adds a new <see cref="TagIntArray"/> with the specified name and value.
+    /// </summary>
+    /// <param name="name">The name of the tag to add.</param>
+    /// <param name="value">The value of the tag.</param>
+    /// <returns>
+    /// A <see cref="TagIntArray"/> containing the specified name and value.
+    /// </returns>
+    public TagList Add(string name, string[] value)
+    {
+      TagList tag;
+
+      tag = (TagList)TagFactory.CreateTag(name, TagType.List, TagType.String);
+
+      if (value?.Length > 0)
+      {
+        for (int i = 0; i < value.Length; i++)
+        {
+          tag.Value.Add(value[i]);
+        }
+      }
+
+      this.Add(tag);
+
+      return tag;
+    }
+
+
     public Tag Add(string name, TagType tagType)
     {
       return this.Add(name, tagType, TagType.None);

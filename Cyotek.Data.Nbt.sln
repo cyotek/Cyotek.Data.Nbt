@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.Data.Nbt", "src\Cyotek.Data.Nbt\Cyotek.Data.Nbt.csproj", "{14287AD3-9576-46E6-9DE3-B7731A496DA3}"
 EndProject
@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.Data.Nbt.Tests", "src\Cyotek.Data.Nbt.Tests\Cyotek.Data.Nbt.Tests.csproj", "{97730548-7E5A-4AD4-AFC1-6EE1A656C520}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "src\Benchmarks\Benchmarks.csproj", "{29762725-63B1-44E5-A3ED-B34F2C2E5E41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,20 +47,11 @@ Global
 		{97730548-7E5A-4AD4-AFC1-6EE1A656C520}.Release|Mixed Platforms.Build.0 = Release|x86
 		{97730548-7E5A-4AD4-AFC1-6EE1A656C520}.Release|x86.ActiveCfg = Release|x86
 		{97730548-7E5A-4AD4-AFC1-6EE1A656C520}.Release|x86.Build.0 = Release|x86
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Debug|x86.Build.0 = Debug|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Release|x86.ActiveCfg = Release|Any CPU
-		{29762725-63B1-44E5-A3ED-B34F2C2E5E41}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1691B897-7DF8-44B4-9A32-5BD2B3B1386A}
 	EndGlobalSection
 EndGlobal
