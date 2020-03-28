@@ -1,30 +1,43 @@
-Cyotek.Data.Nbt
-===============
+# Cyotek.Data.Nbt
 
 [![Build status](https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true)](https://ci.appveyor.com/project/cyotek/cyotek-data-nbt)
 
-NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data. This is currently the format that Minecraft uses for player and region data.
+NBT (Named Binary Tag) is a tag based binary format designed to
+carry large amounts of binary data with smaller amounts of
+additional data. This is currently the format that Minecraft
+uses for player and region data.
 
-Cyotek.Data.Nbt is a library for reading and writing NBT format files used by Minecraft. However, the format is versatile enough to use for many other applications and purposes.
+Cyotek.Data.Nbt is a library for reading and writing NBT format
+files used by Minecraft. However, the format is versatile enough
+to use for many other applications and purposes.
 
-It was originally based on [LibNBT](http://libnbt.codeplex.com/) found on CodePlex, but I've made a lot of changes to it. The API has substantially changed, although it should be easier to use than the original.
+It was originally based on [LibNBT](http://libnbt.codeplex.com/)
+found on CodePlex, but I've made a lot of changes to it. The API
+has substantially changed, although it should be easier to use
+than the original.
 
-In addition to support for the native binary NBT format, this library also offers the ability to read and write NBT tags to and from XML... not quite as "binary", but certainly more readable!
+In addition to support for the native binary NBT format, this
+library also offers the ability to read and write NBT tags to
+and from XML... not quite as "binary", but certainly more
+readable!
 
-Features
----------
+## Features
 
 * Support for all tags in the specification
-* Reads and writes binary files compatible with existing NBT libraries and tools
-* Supports reading and writing to XML based files for human readable output (deprecated)
+* Reads and writes binary files compatible with existing NBT
+  libraries and tools
+* Supports reading and writing to XML based files for human
+  readable output (deprecated)
 * Ability to provide custom readers/writers if required
 * Extended API for working with NBT documents
 * Query support
 
-Saving a document
------------------
+## Saving a document
 
-Similar to `XmlDocument` and `XmlWriter`, you can either directly write NBT documents, or you can construct a document then save it. The former approach is the fastest, the latter approach may be simpler.
+Similar to `XmlDocument` and `XmlWriter`, you can either
+directly write NBT documents, or you can construct a document
+then save it. The former approach is the fastest, the latter
+approach may be simpler.
 
 ### Using the BinaryTagWriter to create a document
 
@@ -116,7 +129,9 @@ Similar to `XmlDocument` and `XmlWriter`, you can either directly write NBT docu
       root.Value.Add("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
       root.Value.Add("doubleTest", 0.49312871321823148);
 
-Once you have a document or root `TagCompound`, you can either use the `NbtDocument` class to save the document, or use a `TagWriter` class directly.
+Once you have a document or root `TagCompound`, you can either
+use the `NbtDocument` class to save the document, or use a
+`TagWriter` class directly.
 
 #### Using a TagWriter class
 
@@ -131,16 +146,28 @@ Once you have a document or root `TagCompound`, you can either use the `NbtDocum
 
       document.Save(stream);
 
-See the Benchmarks project, or the test suite for examples of the different ways of serializing document.s
+See the Benchmarks project, or the test suite for examples of
+the different ways of serializing document.s
 
-Using Binary or XML Formats
----------------------------
+## Using Binary or XML Formats
 
-The library supports both the use of the binary NBT format, and a variant that uses XML. While the XML version is much more readable, it is also much slower to serialize and isn't really recommended for production use.
+The library supports both the use of the binary NBT format, and
+a variant that uses XML. While the XML version is much more
+readable, it is also much slower to serialize and isn't really
+recommended for production use.
 
-The `Load` methods of `NbtDocument` class will automatically detect if the source is binary or XML, allowing seamless use. However, if you use serialization classes directly you will need to perform your own detection and construct an `XmlTagReader` or `BinaryTagReader` object accordingly. The static `NbtDocument.GetDocumentFormat` method can help with format detection.
+The `Load` methods of `NbtDocument` class will automatically
+detect if the source is binary or XML, allowing seamless use.
+However, if you use serialization classes directly you will need
+to perform your own detection and construct an `XmlTagReader` or
+`BinaryTagReader` object accordingly. The static
+`NbtDocument.GetDocumentFormat` method can help with format
+detection.
 
-The following table was generated by running the write benchmarks using [BenchmarkDotNet ](http://benchmarkdotnet.org/) and clearly show the difference between writing XML and writing binary.
+The following table was generated by running the write
+benchmarks using [BenchmarkDotNet ](http://benchmarkdotnet.org/)
+and clearly show the difference between writing XML and writing
+binary.
 
 |                             Method |        Mean |    StdErr |     StdDev |      Median |   Gen 0 | Allocated |
 | ---------------------------------- |------------ |---------- |----------- |------------ |-------- |---------- |
@@ -153,9 +180,12 @@ The following table was generated by running the write benchmarks using [Benchma
 |                   WriteXmlDocument | 180.4061 us | 0.6515 us |  2.2568 us | 179.7206 us | 29.5038 |   53.8 kB |
 |     WriteXmlDocumentViaNbtDocument | 187.5790 us | 1.8653 us | 12.7877 us | 182.9234 us | 28.5127 |  53.82 kB |
 
-In closing, XML support will probably be removed in the next major version of the library and is deprecated in the current.
+In closing, XML support will probably be removed in the next
+major version of the library and is deprecated in the current.
 
-License
--------
+## License
 
-As per the original library, this source is licensed under the [GNU Lesser General Public License, version 2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html). For more information, see [COPYING.txt](COPYING.txt)
+As per the original library, this source is licensed under the
+[GNU Lesser General Public License, version
+2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).
+For more information, see [COPYING.txt](COPYING.txt)

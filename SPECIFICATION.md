@@ -1,29 +1,41 @@
 # Named Binary Tag specification
 
-[Original specification used to be [here](http://www.minecraft.net/docs/NBT.txt ) but has been removed. The version below also covers `TAG_IntArray` which the original didn't cover as it was added subsequently.]
+[Original specification used to be
+[here](http://www.minecraft.net/docs/NBT.txt ) but has been
+removed. The version below also covers `TAG_IntArray` which the
+original didn't cover as it was added subsequently.]
 
-NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data.
+NBT (Named Binary Tag) is a tag based binary format designed to
+carry large amounts of binary data with smaller amounts of
+additional data.
 
-A NBT file consists of a single GZIPped Named Tag of type `TAG_Compound`.
+A NBT file consists of a single GZIPped Named Tag of type
+`TAG_Compound`.
 
 A Named Tag has the following format:
 
     byte tagType
     TAG_String name
     [payload]
-    
-The tagType is a single byte defining the contents of the payload of the tag.
 
-The name is a descriptive name, and can be anything (eg "cat", "banana", "Hello World!"). It has nothing to do with the tagType.
+The tagType is a single byte defining the contents of the
+payload of the tag.
 
-The purpose for this name is to name tags so parsing is easier and can be made to only look for certain recognized tag names.
+The name is a descriptive name, and can be anything (eg "cat",
+"banana", "Hello World!"). It has nothing to do with the
+tagType.
 
-> **Exception**: If tagType is `TAG_End`, the name is skipped and assumed to be "".
+The purpose for this name is to name tags so parsing is easier
+and can be made to only look for certain recognized tag names.
+
+> **Exception**: If tagType is `TAG_End`, the name is skipped
+> and assumed to be "".
 
 The [payload] varies by tagType.
 
-Note that ONLY Named Tags carry the name and tagType data. Explicitly identified Tags (such as `TAG_String` above) only contains the payload. 
-
+Note that ONLY Named Tags carry the name and tagType data.
+Explicitly identified Tags (such as `TAG_String` above) only
+contains the payload.
 
 The tag types and respective payloads are:
 
@@ -127,17 +139,33 @@ An array of ints of unspecified format. The length of this array is *length* byt
 <table>
 
 ## Decoding example
-(Use http://www.minecraft.net/docs/test.nbt to test your implementation)
 
-First we start by reading a Named Tag. After unzipping the stream, the first byte is a `10`. That means the tag is a `TAG_Compound` (as expected by the specification).
+(Use http://www.minecraft.net/docs/test.nbt to test your
+implementation)
 
-The next two bytes are `0` and `11`, meaning the name string consists of 11 UTF-8 characters. In this case, they happen to be "hello world". That means our root tag is named "hello world". We can now move on to the payload.
+First we start by reading a Named Tag. After unzipping the
+stream, the first byte is a `10`. That means the tag is a
+`TAG_Compound` (as expected by the specification).
 
-From the specification, we see that `TAG_Compound` consists of a series of Named Tags, so we read another byte to find the tagType. It happens to be an `8`. The name is `4` letters long, and happens to be "name". Type `8` is `TAG_String`, meaning we read another two bytes to get the length, then read that many bytes to get the contents. In this case, it's "Bananrama".
+The next two bytes are `0` and `11`, meaning the name string
+consists of 11 UTF-8 characters. In this case, they happen to be
+"hello world". That means our root tag is named "hello world".
+We can now move on to the payload.
 
-So now we know the `TAG_Compound` contains a `TAG_String` named "name" with the content "Bananrama".
+From the specification, we see that `TAG_Compound` consists of a
+series of Named Tags, so we read another byte to find the
+tagType. It happens to be an `8`. The name is `4` letters long,
+and happens to be "name". Type `8` is `TAG_String`, meaning we
+read another two bytes to get the length, then read that many
+bytes to get the contents. In this case, it's "Bananrama".
 
-We move on to reading the next Named Tag, and get a `0`. This is `TAG_End`, which always has an implied name of "". That means that the list of entries in the `TAG_Compound` is over, and indeed all of the NBT file.
+So now we know the `TAG_Compound` contains a `TAG_String` named
+"name" with the content "Bananrama".
+
+We move on to reading the next Named Tag, and get a `0`. This is
+`TAG_End`, which always has an implied name of "". That means
+that the list of entries in the `TAG_Compound` is over, and
+indeed all of the NBT file.
 
 So we ended up with this:
 
@@ -146,8 +174,9 @@ So we ended up with this:
 	   TAG_String("name"): Bananrama
 	}
 
-For a slightly longer test, download http://www.minecraft.net/docs/bigtest.nbt
-You should end up with this:
+For a slightly longer test, download
+http://www.minecraft.net/docs/bigtest.nbt You should end up with
+this:
 
 	TAG_Compound("Level"): 11 entries
 	{
