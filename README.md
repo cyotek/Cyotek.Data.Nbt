@@ -1,6 +1,8 @@
 # Cyotek.Data.Nbt
 
-[![Build status](https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true)](https://ci.appveyor.com/project/cyotek/cyotek-data-nbt)
+[![Build status][1]][2]
+[![NuGet][3]][4]
+[![Donate][5]][6]
 
 NBT (Named Binary Tag) is a tag based binary format designed to
 carry large amounts of binary data with smaller amounts of
@@ -10,11 +12,6 @@ uses for player and region data.
 Cyotek.Data.Nbt is a library for reading and writing NBT format
 files used by Minecraft. However, the format is versatile enough
 to use for many other applications and purposes.
-
-It was originally based on [LibNBT](http://libnbt.codeplex.com/)
-found on CodePlex, but I've made a lot of changes to it. The API
-has substantially changed, although it should be easier to use
-than the original.
 
 In addition to support for the native binary NBT format, this
 library also offers the ability to read and write NBT tags to
@@ -41,93 +38,97 @@ approach may be simpler.
 
 ### Using the BinaryTagWriter to create a document
 
-      using (TagWriter writer = new BinaryTagWriter(stream))
-      {
-        writer.WriteStartDocument();
-        writer.WriteStartTag("Level", TagType.Compound);
-        writer.WriteTag("longTest", 9223372036854775807);
-        writer.WriteTag("shortTest", (short)32767);
-        writer.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
-        writer.WriteTag("floatTest", (float)0.498231471);
-        writer.WriteTag("intTest", 2147483647);
-        writer.WriteStartTag("nested compound test", TagType.Compound);
-        writer.WriteStartTag("ham", TagType.Compound);
-        writer.WriteTag("name", "Hampus");
-        writer.WriteTag("value", 0.75F);
-        writer.WriteEndTag();
-        writer.WriteStartTag("egg", TagType.Compound);
-        writer.WriteTag("name", "Eggbert");
-        writer.WriteTag("value", 0.5F);
-        writer.WriteEndTag();
-        writer.WriteEndTag();
-        writer.WriteStartTag("listTest (long)", TagType.List, TagType.Long, 5);
-        writer.WriteTag((long)11);
-        writer.WriteTag((long)12);
-        writer.WriteTag((long)13);
-        writer.WriteTag((long)14);
-        writer.WriteTag((long)15);
-        writer.WriteEndTag();
-        writer.WriteStartTag("listTest (compound)", TagType.List, TagType.Compound, 2);
-        writer.WriteStartTag(TagType.Compound);
-        writer.WriteTag("name", "Compound tag #0");
-        writer.WriteTag("created-on", 1264099775885);
-        writer.WriteEndTag();
-        writer.WriteStartTag(TagType.Compound);
-        writer.WriteTag("name", "Compound tag #1");
-        writer.WriteTag("created-on", 1264099775885);
-        writer.WriteEndTag();
-        writer.WriteEndTag();
-        writer.WriteTag("byteTest", (byte)127);
-        writer.WriteTag("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
-        writer.WriteTag("doubleTest", 0.49312871321823148);
-        writer.WriteEndTag();
-        writer.WriteEndDocument();
-      }
+```csharp
+    using (TagWriter writer = new BinaryTagWriter(stream))
+    {
+      writer.WriteStartDocument();
+      writer.WriteStartTag("Level", TagType.Compound);
+      writer.WriteTag("longTest", 9223372036854775807);
+      writer.WriteTag("shortTest", (short)32767);
+      writer.WriteTag("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+      writer.WriteTag("floatTest", (float)0.498231471);
+      writer.WriteTag("intTest", 2147483647);
+      writer.WriteStartTag("nested compound test", TagType.Compound);
+      writer.WriteStartTag("ham", TagType.Compound);
+      writer.WriteTag("name", "Hampus");
+      writer.WriteTag("value", 0.75F);
+      writer.WriteEndTag();
+      writer.WriteStartTag("egg", TagType.Compound);
+      writer.WriteTag("name", "Eggbert");
+      writer.WriteTag("value", 0.5F);
+      writer.WriteEndTag();
+      writer.WriteEndTag();
+      writer.WriteStartTag("listTest (long)", TagType.List, TagType.Long, 5);
+      writer.WriteTag((long)11);
+      writer.WriteTag((long)12);
+      writer.WriteTag((long)13);
+      writer.WriteTag((long)14);
+      writer.WriteTag((long)15);
+      writer.WriteEndTag();
+      writer.WriteStartTag("listTest (compound)", TagType.List, TagType.Compound, 2);
+      writer.WriteStartTag(TagType.Compound);
+      writer.WriteTag("name", "Compound tag #0");
+      writer.WriteTag("created-on", 1264099775885);
+      writer.WriteEndTag();
+      writer.WriteStartTag(TagType.Compound);
+      writer.WriteTag("name", "Compound tag #1");
+      writer.WriteTag("created-on", 1264099775885);
+      writer.WriteEndTag();
+      writer.WriteEndTag();
+      writer.WriteTag("byteTest", (byte)127);
+      writer.WriteTag("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
+      writer.WriteTag("doubleTest", 0.49312871321823148);
+      writer.WriteEndTag();
+      writer.WriteEndDocument();
+}
+```
 
 ### Using NbtDocument to construct and save a document
 
-      NbtDocument document;
-      TagCompound root;
-      TagCompound compound;
-      TagCompound child;
-      TagList list;
+```csharp
+    NbtDocument document;
+    TagCompound root;
+    TagCompound compound;
+    TagCompound child;
+    TagList list;
 
-      document = new NbtDocument();
+    document = new NbtDocument();
 
-      root = document.DocumentRoot;
-      root.Name = "Level";
-      root.Value.Add("longTest", 9223372036854775807);
-      root.Value.Add("shortTest", (short)32767);
-      root.Value.Add("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
-      root.Value.Add("floatTest", (float)0.498231471);
-      root.Value.Add("intTest", 2147483647);
+    root = document.DocumentRoot;
+    root.Name = "Level";
+    root.Value.Add("longTest", 9223372036854775807);
+    root.Value.Add("shortTest", (short)32767);
+    root.Value.Add("stringTest", "HELLO WORLD THIS IS A TEST STRING ÅÄÖ!");
+    root.Value.Add("floatTest", (float)0.498231471);
+    root.Value.Add("intTest", 2147483647);
 
-      compound = (TagCompound)root.Value.Add("nested compound test", TagType.Compound);
-      child = (TagCompound)compound.Value.Add("ham", TagType.Compound);
-      child.Value.Add("name", "Hampus");
-      child.Value.Add("value", (float)0.75);
-      child = (TagCompound)compound.Value.Add("egg", TagType.Compound);
-      child.Value.Add("name", "Eggbert");
-      child.Value.Add("value", (float)0.5);
+    compound = (TagCompound)root.Value.Add("nested compound test", TagType.Compound);
+    child = (TagCompound)compound.Value.Add("ham", TagType.Compound);
+    child.Value.Add("name", "Hampus");
+    child.Value.Add("value", (float)0.75);
+    child = (TagCompound)compound.Value.Add("egg", TagType.Compound);
+    child.Value.Add("name", "Eggbert");
+    child.Value.Add("value", (float)0.5);
 
-      list = (TagList)root.Value.Add("listTest (long)", TagType.List, TagType.Long);
-      list.Value.Add((long)11);
-      list.Value.Add((long)12);
-      list.Value.Add((long)13);
-      list.Value.Add((long)14);
-      list.Value.Add((long)15);
+    list = (TagList)root.Value.Add("listTest (long)", TagType.List, TagType.Long);
+    list.Value.Add((long)11);
+    list.Value.Add((long)12);
+    list.Value.Add((long)13);
+    list.Value.Add((long)14);
+    list.Value.Add((long)15);
 
-      list = (TagList)root.Value.Add("listTest (compound)", TagType.List, TagType.Compound);
-      child = (TagCompound)list.Value.Add(TagType.Compound);
-      child.Value.Add("name", "Compound tag #0");
-      child.Value.Add("created-on", 1264099775885);
-      child = (TagCompound)list.Value.Add(TagType.Compound);
-      child.Value.Add("name", "Compound tag #1");
-      child.Value.Add("created-on", 1264099775885);
+    list = (TagList)root.Value.Add("listTest (compound)", TagType.List, TagType.Compound);
+    child = (TagCompound)list.Value.Add(TagType.Compound);
+    child.Value.Add("name", "Compound tag #0");
+    child.Value.Add("created-on", 1264099775885);
+    child = (TagCompound)list.Value.Add(TagType.Compound);
+    child.Value.Add("name", "Compound tag #1");
+    child.Value.Add("created-on", 1264099775885);
 
-      root.Value.Add("byteTest", (byte)127);
-      root.Value.Add("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
-      root.Value.Add("doubleTest", 0.49312871321823148);
+    root.Value.Add("byteTest", (byte)127);
+    root.Value.Add("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))", SampleByteArray);
+    root.Value.Add("doubleTest", 0.49312871321823148);
+```
 
 Once you have a document or root `TagCompound`, you can either
 use the `NbtDocument` class to save the document, or use a
@@ -135,19 +136,23 @@ use the `NbtDocument` class to save the document, or use a
 
 #### Using a TagWriter class
 
-      using (BinaryTagWriter writer = new BinaryTagWriter(stream)) // Or XmlTagWriter
-      {
-        writer.WriteStartDocument();
-        writer.WriteTag(document.DocumentRoot);
-        writer.WriteEndDocument();
-      }
+```csharp
+    using (BinaryTagWriter writer = new BinaryTagWriter(stream)) // Or XmlTagWriter
+    {
+      writer.WriteStartDocument();
+      writer.WriteTag(document.DocumentRoot);
+      writer.WriteEndDocument();
+    }
+```
 
 #### Using NbtDocument
 
-      document.Save(stream);
+```csharp
+    document.Save(stream);
+```
 
 See the Benchmarks project, or the test suite for examples of
-the different ways of serializing document.s
+the different ways of serializing documents.
 
 ## Using Binary or XML Formats
 
@@ -165,9 +170,8 @@ to perform your own detection and construct an `XmlTagReader` or
 detection.
 
 The following table was generated by running the write
-benchmarks using [BenchmarkDotNet ](http://benchmarkdotnet.org/)
-and clearly show the difference between writing XML and writing
-binary.
+benchmarks using [BenchmarkDotNet][10] and clearly show the
+difference between writing XML and writing binary.
 
 |                             Method |        Mean |    StdErr |     StdDev |      Median |   Gen 0 | Allocated |
 | ---------------------------------- |------------ |---------- |----------- |------------ |-------- |---------- |
@@ -183,9 +187,54 @@ binary.
 In closing, XML support will probably be removed in the next
 major version of the library and is deprecated in the current.
 
+## Requirements
+
+.NET Framework 2.0 or later.
+
+Pre-built binaries are available via a signed [NuGet package][3]
+containing the following targets.
+
+* .NET 3.5
+* .NET 4.0
+* .NET 4.5.2
+* .NET 4.6.2
+* .NET 4.7.2
+* .NET 4.8
+* .NET Standard 2.0
+* .NET Standard 2.1
+* .NET Core 2.1
+* .NET Core 2.2
+* .NET Core 3.1
+
+Is there a target not on this list you'd like to see? Raise an
+[issue][7], or even better, a [pull request][8].
+
+## Acknowledgements
+
+This library was originally based on [LibNBT][13] found on
+CodePlex, but I've made a lot of changes to it. The API has
+substantially changed, although it should be easier to use than
+the original.
+
+The current WIP icon is simply the familiar Minecraft grass icon
+taken from the [Official Minecraft Wiki][11].
+
 ## License
 
 As per the original library, this source is licensed under the
-[GNU Lesser General Public License, version
-2.1](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).
-For more information, see [COPYING.txt](COPYING.txt)
+[GNU Lesser General Public License, version 2.1][9]. For more
+information, see [COPYING.txt](COPYING.txt)
+
+[1]: https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true
+[2]: https://ci.appveyor.com/project/cyotek/cyotek-data-nbt
+[3]: https://www.nuget.org/packages/Cyotek.Data.Nbt/
+[4]: https://img.shields.io/nuget/v/Cyotek.Data.Nbt.svg
+[5]: https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif
+[6]: https://paypal.me/cyotek
+[7]: https://github.com/cyotek/Cyotek.Data.Nbt/issues
+[8]: https://github.com/cyotek/Cyotek.Data.Nbt/pulls
+[9]: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+[10]: http://benchmarkdotnet.org/
+[11]: https://minecraft.gamepedia.com/File:Grass_Block_JE7_BE6.png
+[12]: http://libnbt.codeplex.com/
+[13]: https://github.com/headhunter45/LibNBT

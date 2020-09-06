@@ -4,16 +4,26 @@ SETLOCAL
 
 CALL ..\..\..\build\set35vars.bat
 
-%msbuildexe% Cyotek.Data.Nbt.sln /p:Configuration=Release /verbosity:minimal /nologo /t:Clean,Build
-CALL dualsigncmd src\Cyotek.Data.Nbt\bin\Release\Cyotek.Data.Nbt.dll
+SET RELDIR=src\bin\Release\
+SET PRJFILE=src\Cyotek.Data.Nbt.csproj
+SET DLLNAME=Cyotek.Data.Nbt.dll
 
-PUSHD %CD%
+IF EXIST %RELDIR%*.nupkg DEL /F %RELDIR%*.nupkg
+IF EXIST %RELDIR%*.snupkg DEL /F %RELDIR%*.snupkg
 
-MD nuget > NUL
-CD nuget
-
-%NUGETexe% pack ..\src\Cyotek.Data.Nbt\Cyotek.Data.Nbt.csproj -Prop Configuration=Release
-
-POPD
+dotnet build %PRJFILE% --configuration Release
+CALL signcmd %RELDIR%net40\%DLLNAME%
+CALL signcmd %RELDIR%net452\%DLLNAME%
+CALL signcmd %RELDIR%net462\%DLLNAME%
+CALL signcmd %RELDIR%net472\%DLLNAME%
+CALL signcmd %RELDIR%net48\%DLLNAME%
+CALL signcmd %RELDIR%netcoreapp2.1\%DLLNAME%
+CALL signcmd %RELDIR%netcoreapp2.2\%DLLNAME%
+CALL signcmd %RELDIR%netcoreapp3.1\%DLLNAME%
+CALL signcmd %RELDIR%netstandard2.0\%DLLNAME%
+CALL signcmd %RELDIR%netstandard2.1\%DLLNAME%
+dotnet pack %PRJFILE% --configuration Release --no-build
+CALL sign-package %RELDIR%*.nupkg
+CALL sign-package %RELDIR%*.snupkg
 
 ENDLOCAL

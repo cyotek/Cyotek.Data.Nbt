@@ -32,7 +32,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
     public void WriteEndDocument_throws_exception_if_document_is_not_open()
     {
       // arrange
@@ -40,12 +39,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       target = this.CreateWriter(new MemoryStream());
 
-      // act
-      target.WriteEndDocument();
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteEndDocument());
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
     public void End_throws_exception_if_document_is_not_open()
     {
       // arrange
@@ -53,12 +51,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       target = this.CreateWriter(new MemoryStream());
 
-      // act
-      target.WriteEndTag();
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteEndTag());
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No tag is currently open.")]
     public void End_throws_exception_if_tag_is_not_open()
     {
       // arrange
@@ -67,12 +64,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target = this.CreateWriter(new MemoryStream());
       target.WriteStartDocument();
 
-      // act
-      target.WriteEndTag();
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteEndTag());
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Expected 3 children, but 2 were written.")]
     public void End_throws_exception_if_child_count_does_not_match()
     {
       // arrange
@@ -84,12 +80,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target.WriteTag(1);
       target.WriteTag(2);
 
-      // act
-      target.WriteEndTag();
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteEndTag());
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Attempted to add tag of type 'Byte' to container that only accepts 'List'.")]
     public void WriteStartTag_throws_exception_if_invalid_list_item_specified()
     {
       // arrange
@@ -100,12 +95,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target.WriteStartDocument();
       target.WriteStartTag("alpha", TagType.List, TagType.List, 1);
 
-      // act
-      target.WriteStartTag(TagType.Byte);
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteStartTag(TagType.Byte));
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "No document is currently open.")]
     public void WriteStartTag_throws_exception_if_document_not_open()
     {
       // arrange
@@ -113,12 +107,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       target = this.CreateWriter(new MemoryStream());
 
-      // act
-      target.WriteStartTag(TagType.Compound);
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteStartTag(TagType.Compound));
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidOperationException), ExpectedMessage = "Document is already open.")]
     public void WriteDocumentStart_throws_exception_on_subsequent_call()
     {
       // arrange
@@ -127,8 +120,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target = this.CreateWriter(new MemoryStream());
       target.WriteStartDocument();
 
-      // act
-      target.WriteStartDocument();
+      // act & assert
+      Assert.Throws<InvalidOperationException>(() => target.WriteStartDocument());
     }
 
 
@@ -2896,7 +2889,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
     
     [Test]
-    [ExpectedException(typeof(ArgumentException),ExpectedMessage = "Unrecognized or unsupported tag type.\r\nParameter name: tag")]
     public void WriteTag_throws_exception_for_invalid_tag_type()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -2909,13 +2901,12 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         target.WriteStartDocument();
         target.WriteStartTag(TagType.Compound);
 
-        // act
-        target.WriteTag(new BadTag("bad"));
+        // act & assert
+      Assert.Throws<ArgumentException>(() => target.WriteTag(new BadTag("bad")));
       }
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException),ExpectedMessage = "Only byte or integer types are supported.\r\nParameter name: type")]
     public void WriteStartArray_throws_exception_for_invalid_tag_type()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -2925,8 +2916,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         target = this.CreateWriter(stream);
 
-        // act
-        target.WriteStartArray(TagType.Compound, 0);
+        // act & assert
+      Assert.Throws<ArgumentException>(() => target.WriteStartArray(TagType.Compound, 0));
       }
     }
 

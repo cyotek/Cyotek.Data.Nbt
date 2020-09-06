@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!--<PackageId>Cyotek.CircularBuffer</PackageId>-->
+    <Title>Cyotek Named Binary Tag Format Library</Title>
+    <Authors>Cyotek, headhunter45</Authors>
+    <Owners>Cyotek</Owners>
+    <VersionPrefix>3.1.1</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <Copyright>Copyright © 2012-2020 Cyotek Ltd. All Rights Reserved.</Copyright>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/cyotek/Cyotek.Data.Nbt</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/cyotek/Cyotek.Data.Nbt.git</RepositoryUrl>
+    <Description>NBT (Named Binary Tag) is a tag based binary format designed to carry large amounts of binary data with smaller amounts of additional data. This is currently the format that Minecraft uses for player and region data.
+
+      Cyotek.Data.Nbt is a library for reading and writing NBT format files used by Minecraft. However, the format is versatile enough to use for many other applications.</Description>
+    <PackageTags>cyotek;nbt;minecraft</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+</Project>

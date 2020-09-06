@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
@@ -87,7 +87,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Unexpected list type '182' found.")]
     public void ReadList_throws_exception_if_list_type_is_invalid_and_items_are_present()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -111,8 +110,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         reader.ReadTagType();
         reader.ReadTagName();
 
-        // act
-        reader.ReadList();
+        // act & assert
+        Assert.Throws<InvalidDataException>(() => reader.ReadList());
       }
     }
 

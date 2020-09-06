@@ -1,352 +1,265 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{97730548-7E5A-4AD4-AFC1-6EE1A656C520}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cyotek.Data.Nbt.Tests</RootNamespace>
-    <AssemblyName>Cyotek.Data.Nbt.Tests</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>net35;net45;net40;net452;net462;net472;net48</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\src\BitHelper.cs" Link="BitHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Cyotek.Data.Nbt.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
-    <StartupObject />
+    <!-- https://github.com/dotnet/msbuild/issues/1333#issuecomment-296346352 -->
+    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\res\Cyotek.Data.Nbt.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+ 
+
   <ItemGroup>
-    <Compile Include="..\src\BitHelper.cs">
-      <Link>BitHelper.cs</Link>
-    </Compile>
-    <Compile Include="AnvilRegionTests.cs" />
-    <Compile Include="BadTag.cs" />
-    <Compile Include="ComplexData.cs" />
-    <Compile Include="NbtAssert.cs" />
-    <Compile Include="NbtDocumentTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryTests.cs" />
-    <Compile Include="Serialization\BinaryTagReaderInvalidDataTests.generated.cs">
-      <DependentUpon>BinaryTagReaderInvalidDataTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="Serialization\BinaryTagReaderTests.cs" />
-    <Compile Include="Serialization\BinaryTagReaderTests.generated.cs">
-      <DependentUpon>BinaryTagReaderTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="Serialization\BinaryTagWriterTests.cs" />
-    <Compile Include="Serialization\BinaryTagWriterTests.generated.cs">
-      <DependentUpon>BinaryTagWriterTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="Serialization\NoSeekStream.cs" />
-    <Compile Include="Serialization\TagWriterTests.cs" />
-    <Compile Include="Serialization\XmlTagReaderTests.cs" />
-    <Compile Include="Serialization\XmlTagReaderTests.generated.cs">
-      <DependentUpon>XmlTagReaderTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="Serialization\XmlTagWriterTests.cs" />
-    <Compile Include="Serialization\XmlTagWriterTests.generated.cs">
-      <DependentUpon>XmlTagWriterTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagByteArrayTests.cs" />
-    <Compile Include="TagByteArrayTests.generated.cs">
-      <DependentUpon>TagByteArrayTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagByteTests.cs" />
-    <Compile Include="TagByteTests.generated.cs">
-      <DependentUpon>TagByteTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagCollectionTests.cs" />
-    <Compile Include="TagCollectionTests.generated.cs">
-      <DependentUpon>TagCollectionTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagCompoundTests,generated.cs">
-      <DependentUpon>TagCompoundTests,generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagCompoundTests.cs" />
-    <Compile Include="TagCompoundValueTests.generated.cs">
-      <DependentUpon>TagCompoundValueTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagDictionaryTests.cs" />
-    <Compile Include="TagDictionaryTests.generated.cs">
-      <DependentUpon>TagDictionaryTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagDoubleTests.cs" />
-    <Compile Include="TagDoubleTests.generated.cs">
-      <DependentUpon>TagDoubleTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagEndTests.cs" />
-    <Compile Include="TagFactoryTests.cs" />
-    <Compile Include="TagFactoryTests.generated.cs">
-      <DependentUpon>TagFactoryTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagFloatTests.cs" />
-    <Compile Include="TagFloatTests.generated.cs">
-      <DependentUpon>TagFloatTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagIntArrayTests.cs" />
-    <Compile Include="TagIntArrayTests.generated.cs">
-      <DependentUpon>TagIntArrayTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagIntTests.cs" />
-    <Compile Include="TagIntTests.generated.cs">
-      <DependentUpon>TagIntTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagListTests.cs" />
-    <Compile Include="TagListTests.generated.cs">
-      <DependentUpon>TagListTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagLongTests.cs" />
-    <Compile Include="TagLongTests.generated.cs">
-      <DependentUpon>TagLongTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagShortTests.cs" />
-    <Compile Include="TagShortTests.generated.cs">
-      <DependentUpon>TagShortTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagStringTests.cs" />
-    <Compile Include="TagStringTests.generated.cs">
-      <DependentUpon>TagStringTests.generated.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TagTests.cs" />
-    <Compile Include="TagTypeTests.cs" />
-    <Compile Include="TestBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\res\Cyotek.Data.Nbt.snk">
-      <Link>Cyotek.Data.Nbt.snk</Link>
-    </None>
-    <None Include="data\bigtest.nbt">
+    <None Update="data\badfile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="data\bigtest.raw">
+    <None Update="data\bigtest.nbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="data\r.0.0.mca">
+    <None Update="data\bigtest.raw">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="data\test.nbt">
+    <None Update="data\complextest-no-ws.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
-    <None Include="Serialization\BinaryTagWriterTests.generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BinaryTagWriterTests.generated.cs</LastGenOutput>
-      <DependentUpon>BinaryTagWriterTests.cs</DependentUpon>
-    </None>
-    <None Include="Serialization\TagReaderTests.t4" />
-    <None Include="Serialization\TagWriterTests.t4" />
-    <None Include="Serialization\XmlTagWriterTests.generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlTagWriterTests.generated.cs</LastGenOutput>
-      <DependentUpon>XmlTagWriterTests.cs</DependentUpon>
-    </None>
-    <None Include="TagTests.t4" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\src\Cyotek.Data.Nbt.csproj">
-      <Project>{14287AD3-9576-46E6-9DE3-B7731A496DA3}</Project>
-      <Name>Cyotek.Data.Nbt</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\complextest.xml">
+    <None Update="data\complextest.def">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\badfile.txt">
+    <None Update="data\complextest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\project.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\r.0.0.mca">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\test.nbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
   <ItemGroup>
-    <Content Include="data\complextest-no-ws.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\complextest.def">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\project.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="Serialization\BinaryTagReaderInvalidDataTests.generated.tt">
+    <None Update="Serialization\BinaryTagReaderInvalidDataTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryTagReaderInvalidDataTests.generated.cs</LastGenOutput>
-      <DependentUpon>BinaryTagReaderTests.cs</DependentUpon>
     </None>
-    <None Include="Serialization\BinaryTagReaderTests.generated.tt">
+    <None Update="Serialization\BinaryTagReaderTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryTagReaderTests.generated.cs</LastGenOutput>
-      <DependentUpon>BinaryTagReaderTests.cs</DependentUpon>
     </None>
-    <None Include="Serialization\XmlTagReaderTests.generated.tt">
+    <None Update="Serialization\BinaryTagWriterTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryTagWriterTests.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Serialization\XmlTagReaderTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>XmlTagReaderTests.generated.cs</LastGenOutput>
-      <DependentUpon>XmlTagReaderTests.cs</DependentUpon>
     </None>
-    <None Include="TagCollectionTests.generated.tt">
+    <None Update="Serialization\XmlTagWriterTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TagCollectionTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagCollectionTests.cs</DependentUpon>
+      <LastGenOutput>XmlTagWriterTests.generated.cs</LastGenOutput>
     </None>
-    <None Include="TagCompoundValueTests.generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TagCompoundValueTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagCompoundTests.cs</DependentUpon>
-    </None>
-    <None Include="TagDictionaryTests.generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TagDictionaryTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagDictionaryTests.cs</DependentUpon>
-    </None>
-    <None Include="TagByteArrayTests.generated.tt">
+    <None Update="TagByteArrayTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagByteArrayTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagByteArrayTests.cs</DependentUpon>
     </None>
-    <None Include="TagByteTests.generated.tt">
+    <None Update="TagByteTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagByteTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagByteTests.cs</DependentUpon>
     </None>
-    <None Include="TagCompoundTests,generated.tt">
+    <None Update="TagCollectionTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagCollectionTests.generated.cs</LastGenOutput>
+    </None>
+    <None Update="TagCompoundTests,generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagCompoundTests,generated.cs</LastGenOutput>
-      <DependentUpon>TagCompoundTests.cs</DependentUpon>
     </None>
-    <None Include="TagDoubleTests.generated.tt">
+    <None Update="TagCompoundValueTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagCompoundValueTests.generated.cs</LastGenOutput>
+    </None>
+    <None Update="TagDictionaryTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagDictionaryTests.generated.cs</LastGenOutput>
+    </None>
+    <None Update="TagDoubleTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagDoubleTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagDoubleTests.cs</DependentUpon>
     </None>
-    <None Include="TagFactoryTests.generated.tt">
+    <None Update="TagFactoryTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFactoryTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagFactoryTests.cs</DependentUpon>
     </None>
-    <None Include="TagFloatTests.generated.tt">
+    <None Update="TagFloatTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFloatTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagFloatTests.cs</DependentUpon>
     </None>
-    <None Include="TagIntArrayTests.generated.tt">
+    <None Update="TagIntArrayTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagIntArrayTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagIntArrayTests.cs</DependentUpon>
     </None>
-    <None Include="TagIntTests.generated.tt">
+    <None Update="TagIntTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagIntTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagIntTests.cs</DependentUpon>
     </None>
-    <None Include="TagListTests.generated.tt">
+    <None Update="TagListTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagListTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagListTests.cs</DependentUpon>
     </None>
-    <None Include="TagLongTests.generated.tt">
+    <None Update="TagLongTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagLongTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagLongTests.cs</DependentUpon>
     </None>
-    <None Include="TagShortTests.generated.tt">
+    <None Update="TagShortTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagShortTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagShortTests.cs</DependentUpon>
     </None>
-    <None Include="TagStringTests.generated.tt">
+    <None Update="TagStringTests.generated.tt">
+      <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagStringTests.generated.cs</LastGenOutput>
-      <DependentUpon>TagStringTests.cs</DependentUpon>
     </None>
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <Compile Update="Serialization\BinaryTagReaderInvalidDataTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BinaryTagReaderInvalidDataTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Serialization\BinaryTagReaderTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BinaryTagReaderTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Serialization\BinaryTagWriterTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BinaryTagWriterTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Serialization\XmlTagReaderTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlTagReaderTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Serialization\XmlTagWriterTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlTagWriterTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagByteArrayTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagByteArrayTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagByteTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagByteTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagCollectionTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagCollectionTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagCompoundTests,generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagCompoundTests,generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagCompoundValueTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagCompoundValueTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagDictionaryTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagDictionaryTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagDoubleTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagDoubleTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagFactoryTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagFactoryTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagFloatTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagFloatTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagIntArrayTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagIntArrayTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagIntTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagIntTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagListTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagListTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagLongTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagLongTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagShortTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagShortTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagStringTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagStringTests.generated.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -28,7 +28,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Unrecognized or unsupported tag type.\r\nParameter name: tagType")]
     public void CreateTag_throws_exception_for_invalid_type()
     {
       // arrange
@@ -36,12 +35,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = (TagType)(-1);
 
-      // act
-      TagFactory.CreateTag(type);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => TagFactory.CreateTag(type));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only lists can have a list type.\r\nParameter name: listType")]
     public void CreateTag_with_list_type_for_non_list_throws_exception()
     {
       // arrange
@@ -51,12 +49,11 @@ namespace Cyotek.Data.Nbt.Tests
       type = TagType.Byte;
       listType = TagType.ByteArray;
 
-      // act
-      TagFactory.CreateTag(string.Empty, type, listType);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => TagFactory.CreateTag(string.Empty, type, listType));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Unrecognized or unsupported tag type.\r\nParameter name: tagType")]
     public void CreateTag_with_value_throws_exception_for_invalid_type()
     {
       // arrange
@@ -64,8 +61,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       type = (TagType)(-1);
 
-      // act
-      TagFactory.CreateTag(string.Empty, type, 13);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => TagFactory.CreateTag(string.Empty, type, 13));
     }
 
     #endregion

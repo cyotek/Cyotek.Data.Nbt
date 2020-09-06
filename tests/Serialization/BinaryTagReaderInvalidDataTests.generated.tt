@@ -21,7 +21,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         {
           #>
     [Test]
-    [ExpectedException(typeof(InvalidDataException))]
     public void Read<#=nbtName #>_throws_exception_if_data_invalid()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -39,8 +38,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         stream.Position = 0;
 
-        // act
-        reader.Read<#=nbtName #>();
+        // act & assert
+        Assert.Throws<InvalidDataException>(() => reader.Read<#=nbtName #>());
       }
     }
 
@@ -50,7 +49,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         {
           #>
     [Test]
-    [ExpectedException(typeof(InvalidDataException))]
     public void Read<#=nbtName #>_throws_exception_if_data_invalid()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -60,8 +58,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         reader = this.CreateReader(stream);
 
-        // act
-        reader.Read<#=nbtName #>();
+        // act & assert
+        Assert.Throws<InvalidDataException>(() => reader.Read<#=nbtName #>());
       }
     }
 
@@ -71,7 +69,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
         {
           #>
     [Test]
-    [ExpectedException(typeof(InvalidDataException))]
     public void Read<#=nbtName #>_throws_exception_if_data_invalid()
     {
       using (MemoryStream stream = new MemoryStream())
@@ -89,8 +86,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
         stream.Position = 0;
 
-        // act
-        reader.Read<#=nbtName #>();
+        // act & assert
+        Assert.Throws<InvalidDataException>(() => reader.Read<#=nbtName #>());
       }
     }
 

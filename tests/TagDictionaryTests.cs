@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
@@ -29,7 +29,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Invalid value type.\r\nParameter name: value")]
     public void Add_throws_exception_for_unsupported_data_type()
     {
       // arrange
@@ -37,8 +36,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagDictionary();
 
-      // act
-      target.Add("alpha", TimeSpan.MinValue);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => target.Add("alpha", TimeSpan.MinValue));
     }
 
     [Test]

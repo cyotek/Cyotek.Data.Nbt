@@ -184,7 +184,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(ExpectedException = typeof(InvalidDataException), ExpectedMessage = "Unrecognized tag type: 255.")]
     public void ReadExceptionTest()
     {
       // arrange
@@ -196,10 +195,8 @@ namespace Cyotek.Data.Nbt.Tests
       stream.Seek(0, SeekOrigin.Begin);
       reader = new BinaryTagReader(stream);
 
-      // act
-      reader.ReadTag();
-
-      // assert
+      // act & assert
+      Assert.Throws<InvalidDataException>(() => reader.ReadTag());
     }
 
     [Test]
@@ -232,7 +229,7 @@ namespace Cyotek.Data.Nbt.Tests
       TagString stringTest = level.GetString("stringTest");
       Assert.IsNotNull(stringTest);
       Assert.AreEqual("stringTest", stringTest.Name);
-      Assert.AreEqual("HELLO WORLD THIS IS A TEST STRING ÅÄÖ!", stringTest.Value);
+      Assert.AreEqual("HELLO WORLD THIS IS A TEST STRING Ã…Ã„Ã–!", stringTest.Value);
 
       TagInt intTest = level.GetInt("intTest");
       Assert.IsNotNull(intTest);

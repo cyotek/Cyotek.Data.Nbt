@@ -229,6 +229,7 @@ namespace Cyotek.Data.Nbt
       return sb.ToString();
     }
 
+#if NET35 || NET40 || NET452 || NET462 || NET472 || NET48 || NETSTANDARD2_0
     public bool TryGetValue(string key, out Tag value)
     {
       bool result;
@@ -245,6 +246,7 @@ namespace Cyotek.Data.Nbt
 
       return result;
     }
+#endif
 
     protected override void ClearItems()
     {
@@ -283,6 +285,6 @@ namespace Cyotek.Data.Nbt
       this.ChangeItemKey(item, newKey);
     }
 
-    #endregion
+#endregion
   }
 }

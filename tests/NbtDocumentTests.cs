@@ -41,14 +41,10 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: document")]
     public void Constructor_throws_exception_if_compound_is_null()
     {
-      // arrange
-      NbtDocument target;
-
-      // act
-      target = new NbtDocument(null);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => new NbtDocument(null));
     }
 
     [Test]
@@ -61,9 +57,9 @@ namespace Cyotek.Data.Nbt.Tests
 
       fileName = this.GetWorkFile();
       target = new NbtDocument
-               {
-                 Format = NbtFormat.Xml
-               };
+      {
+        Format = NbtFormat.Xml
+      };
       target.DocumentRoot.Name = "Test";
       target.DocumentRoot.Value.Add("EmptyList", TagType.List, TagType.Compound);
 
@@ -190,46 +186,32 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(FileNotFoundException))]
     public void GetDocumentFormat_should_throw_exception_if_file_not_found()
     {
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().ToString();
+      fileName = "9A2763952B7A4627AAE8668F1631628F.nbt";
 
-      // act
-      NbtDocument.GetDocumentFormat(fileName);
-
-      // assert
+      // act & assert
+      Assert.Throws<FileNotFoundException>(() => NbtDocument.GetDocumentFormat(fileName));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void GetDocumentFormat_should_throw_exception_with_null_filename()
     {
-      // arrange
-
-      // act
-      NbtDocument.GetDocumentFormat((string)null);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => NbtDocument.GetDocumentFormat((string)null));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void GetDocumentFormat_should_throw_exception_with_null_stream()
     {
-      // arrange
-
-      // act
-      NbtDocument.GetDocumentFormat((Stream)null);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => NbtDocument.GetDocumentFormat((Stream)null));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Stream is not seekable.\r\nParameter name: stream")]
     public void GetDocumentFormat_throws_exception_for_non_seekable_streams()
     {
       // arrange
@@ -237,47 +219,34 @@ namespace Cyotek.Data.Nbt.Tests
 
       stream = new DeflateStream(Stream.Null, CompressionMode.Decompress);
 
-      // act
-      NbtDocument.GetDocumentFormat(stream);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => NbtDocument.GetDocumentFormat(stream));
     }
 
     [Test]
-    [ExpectedException(typeof(FileNotFoundException))]
     public void GetDocumentName_should_throw_exception_if_file_not_found()
     {
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().ToString("N");
+      fileName = "9A2763952B7A4627AAE8668F1631628F.nbt";
 
-      // act
-      NbtDocument.GetDocumentName(fileName);
-
-      // assert
+      // act & assert
+      Assert.Throws<FileNotFoundException>(() => NbtDocument.GetDocumentName(fileName));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void GetDocumentName_should_throw_exception_if_filename_is_empty()
     {
-      // arrange
-
-      // act
-      NbtDocument.GetDocumentName(string.Empty);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => NbtDocument.GetDocumentName(string.Empty));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void GetDocumentName_should_throw_exception_if_filename_is_null()
     {
-      // arrange
-
-      // act
-      NbtDocument.GetDocumentName(null);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => NbtDocument.GetDocumentName(null));
     }
 
     [Test]
@@ -405,7 +374,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void InvalidFormatTest()
     {
       // arrange
@@ -413,10 +381,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Format = (NbtFormat)(-1);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentOutOfRangeException>(() => target.Format = (NbtFormat)(-1));
     }
 
     [Test]
@@ -519,46 +485,34 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void IsNbtDocument_should_throw_exception_for_null_filename()
     {
-      // arrange
-
-      // act
-      NbtDocument.IsNbtDocument((string)null);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => NbtDocument.IsNbtDocument((string)null));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void IsNbtDocument_should_throw_exception_for_null_stream()
     {
-      // arrange
-
-      // act
-      NbtDocument.IsNbtDocument((string)null);
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => NbtDocument.IsNbtDocument((string)null));
     }
 
     [Test]
-    [ExpectedException(typeof(FileNotFoundException))]
     public void IsNbtDocument_should_throw_exception_if_file_is_missing()
     {
       // arrange
       string fileName;
 
-      fileName = Guid.NewGuid().ToString();
+      fileName = "9A2763952B7A4627AAE8668F1631628F.nbt";
 
-      // act
-      NbtDocument.IsNbtDocument(fileName);
+      // act & assert
+      Assert.Throws<FileNotFoundException>(() => NbtDocument.IsNbtDocument(fileName));
 
       // assert
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidDataException))]
     public void Load_should_throw_exception_for_invalid_file()
     {
       // arrange
@@ -569,28 +523,26 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Load(fileName);
+      // act & assert
+      Assert.Throws<InvalidDataException>(() => target.Load(fileName));
     }
 
     [Test]
-    [ExpectedException(typeof(FileNotFoundException))]
     public void Load_should_throw_exception_for_missing_file()
     {
       // arrange
       NbtDocument target;
       string fileName;
 
-      fileName = Guid.NewGuid().ToString("N");
+      fileName = "9A2763952B7A4627AAE8668F1631628F.nbt";
 
       target = new NbtDocument();
 
-      // act
-      target.Load(fileName);
+      // act & assert
+      Assert.Throws<FileNotFoundException>(() => target.Load(fileName));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Load_should_throw_exception_for_null_filename()
     {
       // arrange
@@ -598,12 +550,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Load((string)null);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Load((string)null));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Load_should_throw_exception_for_null_stream()
     {
       // arrange
@@ -611,8 +562,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Load((Stream)null);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Load((Stream)null));
     }
 
     [Test]
@@ -734,7 +685,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: fileName")]
     public void Save_throws_exception_if_filename_is_empty()
     {
       // arrange
@@ -742,12 +692,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Save(string.Empty);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Save(string.Empty));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: fileName")]
     public void Save_throws_exception_if_filename_is_null()
     {
       // arrange
@@ -755,12 +704,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Save((string)null);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Save((string)null));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: stream")]
     public void Save_throws_exception_if_stream_is_null()
     {
       // arrange
@@ -768,8 +716,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new NbtDocument();
 
-      // act
-      target.Save((Stream)null);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Save((Stream)null));
     }
 
     [Test]
@@ -867,7 +815,7 @@ namespace Cyotek.Data.Nbt.Tests
       sb.AppendLine("compound:Level");
       sb.AppendLine("  long:longTest [9223372036854775807]");
       sb.AppendLine("  short:shortTest [32767]");
-      sb.AppendLine("  string:stringTest [HELLO WORLD THIS IS A TEST STRING ÅÄÖ!]");
+      sb.AppendLine("  string:stringTest [HELLO WORLD THIS IS A TEST STRING Ã…Ã„Ã–!]");
       sb.AppendLine("  float:floatTest [0.4982315]");
       sb.AppendLine("  int:intTest [2147483647]");
       sb.AppendLine("  compound:nested compound test");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 
 namespace Cyotek.Data.Nbt.Tests
@@ -59,7 +59,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Tag does not support values.")]
     public void GetValue_throws_exception()
     {
       // arrange
@@ -67,12 +66,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagEnd();
 
-      // act
-      target.GetValue();
+      // act & assert
+      Assert.Throws<NotSupportedException>(() => target.GetValue());
     }
 
     [Test]
-    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Tag does not support values.")]
     public void SetValue_throws_exception()
     {
       // arrange
@@ -80,8 +78,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagEnd();
 
-      // act
-      target.SetValue("TEST");
+      // act & assert
+      Assert.Throws<NotSupportedException>(() => target.SetValue("TEST"));
     }
 
     [Test]

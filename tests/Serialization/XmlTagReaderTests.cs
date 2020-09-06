@@ -172,7 +172,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Missing limitType attribute, unable to determine list contents type.")]
     public void ReadList_throws_exception_if_list_type_not_set()
     {
       // arrange
@@ -193,12 +192,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       reader = XmlReader.Create(stream);
       target = new XmlTagReader(reader);
 
-      // act
-      target.ReadDocument();
+      // act & assert
+      Assert.Throws<InvalidDataException>(() => target.ReadDocument());
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Missing type attribute, unable to determine tag type.")]
     public void ReadTagType_throws_exception_if_list_type_not_set()
     {
       // arrange
@@ -219,12 +217,11 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       reader = XmlReader.Create(stream);
       target = new XmlTagReader(reader);
 
-      // act
-      target.ReadDocument();
+      // act & assert
+      Assert.Throws<InvalidDataException>(() => target.ReadDocument());
     }
 
     [Test]
-    [ExpectedException(typeof(InvalidDataException), ExpectedMessage = "Unrecognized or unsupported tag type 'NOTATAG'.")]
     public void ReadTagType_throws_exception_tag_type_is_unknown()
     {
       // arrange
@@ -245,8 +242,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       reader = XmlReader.Create(stream);
       target = new XmlTagReader(reader);
 
-      // act
-      target.ReadDocument();
+      // act & assert
+      Assert.Throws<InvalidDataException>(() => target.ReadDocument());
     }
 
     #endregion

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NUnit.Framework;
 
@@ -50,7 +50,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only unnamed tags are supported.\r\nParameter name: item")]
     public void Add_throws_exception_for_named_tags()
     {
       // arrange
@@ -58,12 +57,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagCollection(TagType.Byte);
 
-      // act
-      target.Add(new TagByte("alpha", 120));
+      // act & assert
+      Assert.Throws<ArgumentException>(() => target.Add(new TagByte("alpha", 120)));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only items of type Byte can be added to this collection.\r\nParameter name: item")]
     public void Add_throws_exception_for_tags_not_matching_list_type()
     {
       // arrange
@@ -71,12 +69,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagCollection(TagType.Byte);
 
-      // act
-      target.Add(int.MaxValue);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => target.Add(int.MaxValue));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Invalid value type.\r\nParameter name: value")]
     public void Add_throws_exception_for_unsupported_data_type()
     {
       // arrange
@@ -84,8 +81,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagCollection();
 
-      // act
-      target.Add(TimeSpan.MinValue);
+      // act & assert
+      Assert.Throws<ArgumentException>(() => target.Add(TimeSpan.MinValue));
     }
 
     [Test]
@@ -197,17 +194,18 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "Only items of type Byte can be added to this collection.\r\nParameter name: item")]
     public void Indexer_throws_exception_for_tags_not_matching_list_type()
     {
       // arrange
       TagCollection target;
 
-      target = new TagCollection(TagType.Byte);
-      target.Add(byte.MaxValue);
+      target = new TagCollection(TagType.Byte)
+      {
+        byte.MaxValue
+      };
 
-      // act
-      target[0] = new TagInt();
+      // act & assert
+      Assert.Throws<ArgumentException>(() => target[0] = new TagInt());
     }
 
     [Test]

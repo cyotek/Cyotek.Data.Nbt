@@ -11,7 +11,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     #region  Tests
 
     [Test]
-    [ExpectedException(typeof(ArgumentException), ExpectedMessage = "String data would be truncated.")]
     public void WriteValue_throws_exception_for_long_strings()
     {
       // arrange
@@ -24,8 +23,8 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       target.WriteStartDocument();
       target.WriteStartTag(TagType.Compound);
 
-      // act
-      target.WriteTag(new string(' ', short.MaxValue + 1));
+      // act & assert
+      Assert.Throws<ArgumentException>(() => target.WriteTag(new string(' ', short.MaxValue + 1)));
     }
 
     #endregion

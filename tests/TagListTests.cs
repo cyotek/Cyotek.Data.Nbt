@@ -31,7 +31,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void Value_throws_exception_if_set_to_null_value()
     {
       // arrange
@@ -39,10 +38,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagList();
 
-      // act
-      target.Value = null;
-
-      // assert
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Value = null);
     }
 
     #endregion

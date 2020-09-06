@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
@@ -37,19 +37,17 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: stream")]
     public void CreateWriter_throws_exception_for_null_stream()
     {
-      // act
-      TagWriter.CreateWriter(NbtFormat.Xml, null);
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => TagWriter.CreateWriter(NbtFormat.Xml, null));
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentOutOfRangeException), ExpectedMessage = "Invalid format.\r\nParameter name: format\r\nActual value was Unknown.")]
     public void CreateWriter_throws_exception_for_unknown_type()
     {
-      // act
-      TagWriter.CreateWriter(NbtFormat.Unknown, new MemoryStream());
+      // act & assert
+      Assert.Throws<ArgumentOutOfRangeException>(() => TagWriter.CreateWriter(NbtFormat.Unknown, new MemoryStream()));
     }
 
     #endregion

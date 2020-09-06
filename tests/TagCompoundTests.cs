@@ -135,7 +135,6 @@ namespace Cyotek.Data.Nbt.Tests
     }
 
     [Test]
-    [ExpectedException(typeof(NotSupportedException), ExpectedMessage = "Compounds cannot be restricted to a single type.")]
     public void ListType_throws_exception_if_set()
     {
       // arrange
@@ -143,12 +142,11 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagCompound();
 
-      // act
-      ((ICollectionTag)target).ListType = TagType.Byte;
+      // act & assert
+      Assert.Throws<NotSupportedException>(() => ((ICollectionTag)target).ListType = TagType.Byte);
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentNullException), ExpectedMessage = "Value cannot be null.\r\nParameter name: value")]
     public void Value_throws_exception_if_set_to_null_value()
     {
       // arrange
@@ -156,8 +154,8 @@ namespace Cyotek.Data.Nbt.Tests
 
       target = new TagCompound();
 
-      // act
-      target.Value = null;
+      // act & assert
+      Assert.Throws<ArgumentNullException>(() => target.Value = null);
     }
 
     #endregion
