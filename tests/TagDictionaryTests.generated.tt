@@ -1,0 +1,150 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="..\src\NbtGeneratorData.t4" #>
+<#@ output extension=".cs" #>using System;
+using NUnit.Framework;
+
+namespace Cyotek.Data.Nbt.Tests
+{
+  [TestFixture]
+  public partial class TagDictionaryTests : TestBase
+  {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
+      string tagName;
+
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
+      tagName = "Tag" + nbtName;
+
+      if (name != null)
+      {
+#>
+    [Test]
+    public void Add_adds_named_<#=nbtName.ToLower() #>()
+    {
+      // arrange
+      TagDictionary target;
+      <#=tagName #> actual;
+      <#=name #> expected;
+      string expectedName;
+
+      expectedName = "Alpha<#=nbtName #>";
+      expected = <#=tagTestData[i] #>;
+
+      target = new TagDictionary();
+
+      // act
+      actual = target.Add(expectedName, expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(expectedName));
+      Assert.AreEqual(expectedName, actual.Name);
+      Assert.AreEqual(expected, actual.Value);
+    }
+
+    [Test]
+    public void Add_adds_named_<#=nbtName.ToLower() #>_object()
+    {
+      // arrange
+      TagDictionary target;
+      Tag actual;
+      <#=name #> expected;
+      string expectedName;
+
+      expectedName = "Beta<#=nbtName #>";
+      expected = <#=tagTestData[i] #>;
+
+      target = new TagDictionary();
+
+      // act
+      actual = target.Add(expectedName, (object)expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(expectedName));
+      Assert.AreEqual(expectedName, actual.Name);
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+<#
+      }
+    }
+#>
+
+<# for (int i = 0; i < secondaryDataTypes.Length; i++)
+    {
+      string name;
+      string nbtName;
+      string tagName;
+      string mappedType;
+
+      name = secondaryDataTypes[i];
+      nbtName = secondaryDataTypeMappings[i];
+      tagName = "Tag" + nbtName;
+      mappedType = secondaryDataTypeMappedTypes[i];
+
+      if (name != null)
+      {
+#>
+    [Test]
+    public void Add_adds_named_<#=name.Replace("[]", "Array").ToLower() #>()
+    {
+      // arrange
+      TagDictionary target;
+      <#=tagName #> actual;
+      <#=mappedType #> expected;
+      <#=name #> value;
+      string expectedName;
+
+      expectedName = "Alpha<#=nbtName #>";
+      expected = <#=secondaryDataTypeTranslatedTestData[i] #>;
+      value = <#=secondaryDataTypeTestData[i] #>;
+
+      target = new TagDictionary();
+
+      // act
+      actual = target.Add(expectedName, value);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(expectedName));
+      Assert.AreEqual(expectedName, actual.Name);
+      Assert.AreEqual(expected, actual.Value);
+    }
+
+    [Test]
+    public void Add_adds_named_<#=name.Replace("[]", "Array").ToLower() #>_object()
+    {
+      // arrange
+      TagDictionary target;
+      Tag actual;
+      <#=mappedType #> expected;
+      string expectedName;
+      <#=name #> value;
+
+      expectedName = "Beta<#=nbtName #>";
+      expected = <#=secondaryDataTypeTranslatedTestData[i] #>;
+      value = <#=secondaryDataTypeTestData[i] #>;
+
+      target = new TagDictionary();
+
+      // act
+      actual = target.Add(expectedName, (object)value);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(expectedName));
+      Assert.AreEqual(expectedName, actual.Name);
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+<#
+      }
+    }
+#>
+  }
+}
+

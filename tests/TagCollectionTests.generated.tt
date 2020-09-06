@@ -1,0 +1,74 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="..\src\NbtGeneratorData.t4" #>
+<#@ output extension=".cs" #>using System;
+using NUnit.Framework;
+
+namespace Cyotek.Data.Nbt.Tests
+{
+  partial class TagCollectionTests
+  {
+<# for (int i = 0; i < netTypeNames.Length; i++)
+    {
+      string name;
+      string nbtName;
+      string tagName;
+      object testData;
+
+      name = netTypeNames[i];
+      nbtName = nbtTypeNames[i];
+      tagName = "Tag" + nbtName;
+      testData = tagTestData[i];
+
+      if (name != null)
+      {
+        #>
+    [Test]
+    public void Add_adds_unnamed_<#=nbtName.ToLower() #>()
+    {
+      // arrange
+      TagCollection target;
+      <#=tagName #> actual;
+      <#=name #> expected;
+
+      expected = <#=testData #>;
+
+      target = new TagCollection();
+
+      // act
+      actual = target.Add(expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(actual));
+      Assert.IsEmpty(actual.Name);
+      Assert.AreEqual(expected, actual.Value);
+    }
+
+    [Test]
+    public void Add_adds_unnamed_<#=nbtName.ToLower() #>_object()
+    {
+      // arrange
+      TagCollection target;
+      Tag actual;
+      object expected;
+
+      expected = <#=testData #>;
+
+      target = new TagCollection();
+
+      // act
+      actual = target.Add(expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(actual));
+      Assert.IsEmpty(actual.Name);
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+    <#
+      }
+    }
+#>
+  }
+}
