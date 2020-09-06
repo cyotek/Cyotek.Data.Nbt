@@ -29,6 +29,10 @@ readable!
 * Extended API for working with NBT documents
 * Query support
 
+## NBT Specification
+
+See [SPECIFICATION.md](SPECIFICATION.md) for the specification.
+
 ## Saving a document
 
 Similar to `XmlDocument` and `XmlWriter`, you can either
@@ -227,8 +231,8 @@ information, see [COPYING.txt](COPYING.txt)
 
 [1]: https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true
 [2]: https://ci.appveyor.com/project/cyotek/cyotek-data-nbt
-[3]: https://www.nuget.org/packages/Cyotek.Data.Nbt/
-[4]: https://img.shields.io/nuget/v/Cyotek.Data.Nbt.svg
+[3]: https://img.shields.io/nuget/v/Cyotek.Data.Nbt.svg
+[4]: https://www.nuget.org/packages/Cyotek.Data.Nbt/
 [5]: https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif
 [6]: https://paypal.me/cyotek
 [7]: https://github.com/cyotek/Cyotek.Data.Nbt/issues
