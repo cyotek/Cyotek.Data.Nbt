@@ -12,6 +12,7 @@ IF EXIST %RELDIR%*.nupkg DEL /F %RELDIR%*.nupkg
 IF EXIST %RELDIR%*.snupkg DEL /F %RELDIR%*.snupkg
 
 dotnet build %PRJFILE% --configuration Release
+CALL signcmd %RELDIR%net35\%DLLNAME%
 CALL signcmd %RELDIR%net40\%DLLNAME%
 CALL signcmd %RELDIR%net452\%DLLNAME%
 CALL signcmd %RELDIR%net462\%DLLNAME%
