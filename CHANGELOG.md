@@ -4,9 +4,9 @@
 
 ### Added
 
-* Added deployment targets for 4.0, 4.5.2, 4.6.2, 4.6.2, 4.8,
-  .NET Standard 2.0, .NET Standard 2.1, .NET Core 2.1, .NET Core
-  2.2, and .NET Core 3.0
+* Added deployment targets for 3.5, 4.0, 4.5.2, 4.6.2, 4.6.2,
+  4.8, .NET Standard 2.0, .NET Standard 2.1, .NET Core 2.1, .NET
+  Core 2.2, and .NET Core 3.0
 
 ## 3.1.0 - 2020-03-28
 
