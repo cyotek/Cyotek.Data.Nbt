@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net45;net40;net452;net462;net472;net48</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(Configuration)' != 'Debug' ">net48;net35;net40;net452;net462;net472;netcoreapp2.1;netcoreapp2.2;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks Condition=" '$(Configuration)' == 'Debug' ">net48</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,7 +28,6 @@
     <!-- https://github.com/dotnet/msbuild/issues/1333#issuecomment-296346352 -->
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
   </PropertyGroup>
- 
 
   <ItemGroup>
     <None Update="data\badfile.txt">
