@@ -1,6 +1,7 @@
 # Cyotek.Data.Nbt
 
 [![Build status][1]][2]
+![CodeQL][14]
 [![NuGet][3]][4]
 [![Donate][5]][6]
 
@@ -242,3 +243,4 @@ information, see [COPYING.txt](COPYING.txt)
 [11]: https://minecraft.gamepedia.com/File:Grass_Block_JE7_BE6.png
 [12]: http://libnbt.codeplex.com/
 [13]: https://github.com/headhunter45/LibNBT
+[14]: https://github.com/cyotek/Cyotek.Data.Nbt/workflows/CodeQL/badge.svg
