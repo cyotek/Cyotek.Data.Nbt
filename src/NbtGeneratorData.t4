@@ -25,6 +25,8 @@
 
   const int tagTypeIntArray = 11;
 
+  const int tagTypeLongArray = 12;
+
   string[] nbtTypeNames =
   {
     "End",
@@ -38,7 +40,8 @@
     "String",
     "List",
     "Compound",
-    "IntArray"
+    "IntArray",
+    "LongArray"
   };
 
   string[] secondaryDataTypes =
@@ -99,7 +102,8 @@
     "TagString",
     "TagList",
     "TagCompound",
-    "TagIntArray"
+    "TagIntArray",
+    "TagLongArray"
   };
 
   string[] netTypeNames =
@@ -115,7 +119,8 @@
     "string",
     "TagCollection",
     "TagDictionary",
-    "int[]"
+    "int[]",
+    "long[]"
   };
 
   object[] defaultValues =
@@ -131,7 +136,8 @@
     default(string),
     "new TagCollection()",
     "new TagDictionary()",
-    "new int[0]"
+    "new int[0]",
+    "new long[0]"
   };
 
   string[] objectConversions =
@@ -147,7 +153,8 @@
     "Convert.ToString(value)",
     "(TagCollection)value ?? new TagCollection()",
     "(TagDictionary)value ?? new TagDictionary()",
-    "(int[])value"
+    "(int[])value",
+    "(long[])value"
   };
 
   string[] nbtTypeDescriptions =
@@ -163,7 +170,8 @@
     "An array of bytes defining a string in UTF-8 format",
     "A sequential list of unnamed tags of a specific type",
     "A sequential list of named tags of variable types",
-    "An array of integers of unspecified format"
+    "An array of 32bit integers of unspecified format",
+    "An array of 64bit integers of unspecified format"
   };
 
   object[] tagTestData =
@@ -179,7 +187,8 @@
     "\"HELLO WORLD THIS IS A TEST STRING ÅÄÖ!\"",
     "new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 256 }",
     "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 8) }",
-    "new[] { 2190, 2994, 3248, 4294394 }"
+    "new[] { 2190, 2994, 3248, 4294394 }",
+    "new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 }"
   };
 
   object[] altTagTestData =
@@ -195,7 +204,8 @@
     "\"DIFFERENT\"",
     "new TagCollection(TagType.Int) { 2, 4, 8, 16, 32, 64, 128, 255 }",
     "new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4), new TagInt(\"C\", 16) }",
-    "new[] { 2190, 2994, 3248, 294394 }"
+    "new[] { 2190, 2994, 3248, 294394 }",
+    "new[] { long.MinValue / 3, 2994, long.MaxValue / 3, 4294394 }"
   };
 
   object[] tagListTestData =
@@ -211,12 +221,13 @@
     "new string[] { \"alpha\", \"beta\", \"gamma\"}",
     "new TagCollection[] { new TagCollection { 2, 4, 8, 16, 32 }, new TagCollection { 64, 128, 256 } }",
     "new TagDictionary[] { new TagDictionary { new TagByte(\"A\", 2), new TagShort(\"B\", 4) }, new TagDictionary { new TagInt(\"C\", 8) } }",
-    "new int[][] { new int[] { 2190, 2994 }, new int[] { 3248, 4294394 } }"
+    "new int[][] { new [] { 2190, 2994 }, new [] { 3248, 4294394 } }",
+    "new long[][] { new [] { long.MinValue / 2, 2994 }, new [] { long.MaxValue / 2, 4294394 } }"
   };
 
   private bool IsArrayType(int type)
   {
-    return type == tagTypeByteArray || type == tagTypeIntArray;
+    return type == tagTypeByteArray || type == tagTypeIntArray || type == tagTypeLongArray;
   }
 
   private bool IsListType(int type)

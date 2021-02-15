@@ -290,6 +290,31 @@ namespace Cyotek.Data.Nbt
     }
 
     /// <summary>
+    /// Creates a tag for a <see cref="T:long[]" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="T:long[]" /> value of the tag.</param>
+    /// <returns>
+    /// A new <see cref="TagLongArray" />.
+    /// </returns>
+    public static TagLongArray CreateTag(long[] value)
+    {
+      return CreateTag(string.Empty, value);
+    }
+
+    /// <summary>
+    /// Creates a tag for a <see cref="T:long[]" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag create.</param>
+    /// <param name="value">The <see cref="T:long[]" /> value of the tag.</param>
+    /// <returns>
+    /// A new <see cref="TagLongArray" />.
+    /// </returns>
+    public static TagLongArray CreateTag(string name, long[] value)
+    {
+      return new TagLongArray(name, value);
+    }
+
+    /// <summary>
     /// Creates a tag for the specified parameters.
     /// </summary>
     /// <exception cref="ArgumentException">Thrown if <paramref name="tagType"/> is not valid.</exception>
@@ -350,6 +375,10 @@ namespace Cyotek.Data.Nbt
 
           case TagType.IntArray:
             result = new TagIntArray(name);
+            break;
+
+          case TagType.LongArray:
+            result = new TagLongArray(name);
             break;
 
             case TagType.End:
@@ -426,6 +455,10 @@ namespace Cyotek.Data.Nbt
 
         case TagType.IntArray:
           result = CreateTag(name, (int[])value);
+          break;
+
+        case TagType.LongArray:
+          result = CreateTag(name, (long[])value);
           break;
 
         default:

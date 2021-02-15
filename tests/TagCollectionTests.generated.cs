@@ -500,5 +500,49 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(expected, actual.GetValue());
     }
 
+        [Test]
+    public void Add_adds_unnamed_longarray()
+    {
+      // arrange
+      TagCollection target;
+      TagLongArray actual;
+      long[] expected;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+      target = new TagCollection();
+
+      // act
+      actual = target.Add(expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(actual));
+      Assert.IsEmpty(actual.Name);
+      Assert.AreEqual(expected, actual.Value);
+    }
+
+    [Test]
+    public void Add_adds_unnamed_longarray_object()
+    {
+      // arrange
+      TagCollection target;
+      Tag actual;
+      object expected;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+      target = new TagCollection();
+
+      // act
+      actual = target.Add(expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsTrue(target.Contains(actual));
+      Assert.IsEmpty(actual.Name);
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
       }
 }

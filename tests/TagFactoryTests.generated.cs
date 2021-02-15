@@ -1219,5 +1219,113 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.AreEqual(expected, actual.Name);
     }
 
+    [Test]
+    public void Create_with_type_creates_longarray()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+
+      type = TagType.LongArray;
+
+      // act
+      actual = TagFactory.CreateTag(type);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagLongArray>(actual);
+    }
+
+    [Test]
+    public void Create_with_type_sets_longarray_name()
+    {
+      // arrange
+      Tag actual;
+      string expected;
+      long[] value;
+      TagType type;
+
+      type = TagType.LongArray;
+
+      expected = "Alpha_TagLongArray";
+      value = default(long[]);
+
+      // act
+      actual = TagFactory.CreateTag(expected, type, value);
+
+      // assert
+      Assert.AreEqual(expected, actual.Name);
+    }
+
+    [Test]
+    public void Create_with_type_sets_longarray_value()
+    {
+      // arrange
+      Tag actual;
+      TagType type;
+      object expected;
+
+      type = TagType.LongArray;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+      // act
+      actual = TagFactory.CreateTag(type, expected);
+
+      // assert
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+    [Test]
+    public void Create_with_value_creates_longarray_type()
+    {
+      // arrange
+      Tag actual;
+      long[] expected;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+      // act
+      actual = TagFactory.CreateTag(expected);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagLongArray>(actual);
+    }
+
+    [Test]
+    public void Create_with_value_sets_longarray_value()
+    {
+      // arrange
+      Tag actual;
+      long[] expected;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+      // act
+      actual = TagFactory.CreateTag(expected);
+
+      // assert
+      Assert.AreEqual(expected, actual.GetValue());
+    }
+
+    [Test]
+    public void Create_with_value_sets_longarray_name()
+    {
+      // arrange
+      Tag actual;
+      string expected;
+      long[] value;
+
+      expected = "Alpha_TagLongArray";
+      value = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+      // act
+      actual = TagFactory.CreateTag(expected, value);
+
+      // assert
+      Assert.AreEqual(expected, actual.Name);
+    }
+
   }
 }

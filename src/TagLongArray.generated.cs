@@ -14,35 +14,35 @@ using System.Globalization;
 
 namespace Cyotek.Data.Nbt
 {
-  public partial class TagIntArray : Tag, IEquatable<TagIntArray>
+  public partial class TagLongArray : Tag, IEquatable<TagLongArray>
   {
     #region Constants
 
-    internal static readonly int[] EmptyValue = new int[0];
+    internal static readonly long[] EmptyValue = new long[0];
 
     #endregion
 
     #region Fields
 
-    private int[] _value;
+    private long[] _value;
 
     #endregion
 
     #region Constructors
 
-    public TagIntArray()
+    public TagLongArray()
       : this(string.Empty, EmptyValue)
     { }
 
-    public TagIntArray(string name)
+    public TagLongArray(string name)
       : this(name, EmptyValue)
     { }
 
-    public TagIntArray(int[] value)
+    public TagLongArray(long[] value)
       : this(string.Empty, value)
     { }
 
-    public TagIntArray(string name, int[] value)
+    public TagLongArray(string name, long[] value)
       : base(name)
     {
       _value = value;
@@ -54,11 +54,11 @@ namespace Cyotek.Data.Nbt
 
     public override TagType Type
     {
-      get { return TagType.IntArray; }
+      get { return TagType.LongArray; }
     }
 
     [Category("Data")]
-    public int[] Value
+    public long[] Value
     {
       get { return _value; }
       set { _value = value; }
@@ -98,7 +98,7 @@ namespace Cyotek.Data.Nbt
 
     public override void SetValue(object value)
     {
-      _value = (int[])value;
+      _value = (long[])value;
     }
 
     public override string ToString()
@@ -112,9 +112,9 @@ namespace Cyotek.Data.Nbt
 
     #endregion
 
-    #region IEquatable<TagIntArray> Interface
+    #region IEquatable<TagLongArray> Interface
 
-    public bool Equals(TagIntArray other)
+    public bool Equals(TagLongArray other)
     {
       bool result;
 
@@ -126,7 +126,7 @@ namespace Cyotek.Data.Nbt
 
         if (result)
         {
-          int[] dst;
+          long[] dst;
 
           dst = other.Value;
 

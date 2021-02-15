@@ -1,5 +1,11 @@
 # Cyotek.Data.Nbt Change Log
 
+## 3.2 - 2021-02-09
+
+### Added
+
+* Added support for `TAG_Long_Array`
+
 ## 3.1.1 - 2020-09-06
 
 ### Added

@@ -67,6 +67,11 @@ namespace Cyotek.Data.Nbt.Serialization
     /// </summary>
     public abstract int[] ReadIntArray();
 
+    /// <summary>
+    /// Reads a <see cref="T:long[]" /> value.
+    /// </summary>
+    public abstract long[] ReadLongArray();
+
 
   }
 }

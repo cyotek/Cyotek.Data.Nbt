@@ -849,6 +849,85 @@ namespace Cyotek.Data.Nbt.Serialization
       this.WriteListTag(string.Empty, values);
     }
 
+    /// <summary>
+    /// Writes a <see cref="T:long[]" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="T:long[]" /> value to write.</param>
+    protected abstract void WriteValue(long[] value);
+
+
+    public abstract void WriteArrayValue(long value);
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:long[]" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="value">The <see cref="T:long[]" /> value to write.</param>
+    public void WriteTag(string name, long[] value)
+    {
+      this.WriteStartTag(name, TagType.LongArray);
+      this.WriteValue(value);
+      this.WriteEndTag();
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:long[]" /> value.
+    /// </summary>
+    /// <param name="value">The <see cref="T:long[]" /> value to write.</param>
+    public void WriteTag(long[] value)
+    {
+      this.WriteTag(string.Empty, value);
+    }
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:long[]" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="values">The <see cref="T:long[]" /> values to write.</param>
+    [CLSCompliant(false)]
+    public void WriteListTag(string name, long[][] values)
+    {
+      int length;
+
+      length = values.Length;
+
+      this.WriteStartTag(name, TagType.List, TagType.LongArray, length);
+      for (int i = 0; i < length; i++)
+      {
+        this.WriteTag(values[i]);
+      }
+      this.WriteEndTag();
+    }
+
+    /// <summary>
+    /// Writes a tag entry for a <see cref="T:long[]" /> value with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the tag entry to write.</param>
+    /// <param name="values">The <see cref="T:long[]" /> values to write.</param>
+    public void WriteListTag(string name, IEnumerable<long[]> values)
+    {
+      this.WriteListTag(name, values.ToArray());
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:long[]" /> value.
+    /// </summary>
+    /// <param name="values">The <see cref="T:long[]" /> values to write.</param>
+    public void WriteListTag(IEnumerable<long[]> values)
+    {
+      this.WriteListTag(string.Empty, values.ToArray());
+    }
+
+    /// <summary>
+    /// Writes an unnamed tag entry for a <see cref="T:long[]" /> value.
+    /// </summary>
+    /// <param name="values">The <see cref="T:long[]" /> values to write.</param>
+    [CLSCompliant(false)]
+    public void WriteListTag(long[][] values)
+    {
+      this.WriteListTag(string.Empty, values);
+    }
+
 
     /// <summary>
     /// Writes a tag value.
@@ -901,6 +980,10 @@ namespace Cyotek.Data.Nbt.Serialization
 
         case TagType.IntArray:
           this.WriteValue(((TagIntArray)tag).Value);
+          break;
+
+        case TagType.LongArray:
+          this.WriteValue(((TagLongArray)tag).Value);
           break;
 
 

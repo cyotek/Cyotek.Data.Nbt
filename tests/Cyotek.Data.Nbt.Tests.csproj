@@ -141,6 +141,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagListTests.generated.cs</LastGenOutput>
     </None>
+    <None Update="TagLongArrayTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagLongArrayTests.generated.cs</LastGenOutput>
+    </None>
     <None Update="TagLongTests.generated.tt">
       <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -243,6 +247,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TagListTests.generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TagLongArrayTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagLongArrayTests.generated.tt</DependentUpon>
     </Compile>
     <Compile Update="TagLongTests.generated.cs">
       <DesignTime>True</DesignTime>

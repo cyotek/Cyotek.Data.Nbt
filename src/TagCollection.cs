@@ -123,6 +123,10 @@ namespace Cyotek.Data.Nbt
       {
         result = this.Add(intArrayValue);
       }
+      else if (value is long[] longArrayValue)
+      {
+        result = this.Add(longArrayValue);
+      }
       else
       {
         throw new ArgumentException("Invalid value type.", nameof(value));

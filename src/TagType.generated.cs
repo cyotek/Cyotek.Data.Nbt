@@ -76,9 +76,14 @@ namespace Cyotek.Data.Nbt
     Compound = 10,
 
     /// <summary>
-    /// An array of integers of unspecified format
+    /// An array of 32bit integers of unspecified format
     /// </summary>
-    IntArray = 11
+    IntArray = 11,
+
+    /// <summary>
+    /// An array of 64bit integers of unspecified format
+    /// </summary>
+    LongArray = 12
 
   }
 }

@@ -1,16 +1,21 @@
 # Named Binary Tag specification
 
-[Original specification used to be
-[here](http://www.minecraft.net/docs/NBT.txt ) but has been
-removed. The version below also covers `TAG_IntArray` which the
-original didn't cover as it was added subsequently.]
+[Original specification used to be [here][1]) but has been
+removed (archived version [here][2]). The version below also
+covers the subsequently added `TAG_Int_Array` and
+`TAG_Long_Array` types.
+
+Note that this specification does not describe differences in
+the NBT format used by the original Java Minecraft and the
+Bedrock edition. This library does not support Bedrock files.
 
 NBT (Named Binary Tag) is a tag based binary format designed to
 carry large amounts of binary data with smaller amounts of
 additional data.
 
 A NBT file consists of a single GZIPped Named Tag of type
-`TAG_Compound`.
+`TAG_Compound`. [Editors note - the library supports
+uncompressed, GZip or Deflate files]
 
 A Named Tag has the following format:
 
@@ -123,16 +128,23 @@ A sequential list of Tags (not Named Tags), of type *typeId*. The length of this
       <td>A sequential list of Named Tags. This array keeps going until a `TAG_End` is found.
 `TAG_End` *end*</td>
       <td>If there's a nested `TAG_Compound` within this tag, that one will also have a `TAG_End`, so simply reading until the next `TAG_End` will not work.
-      
+
 The names of the named tags have to be unique within each `TAG_Compound`
-      
+
 The order of the tags is not guaranteed.</td>
     </tr>
     <tr>
       <td>11</td>
       <td>`TAG_Int_Array`</td>
       <td>`TAG_Int` *length*  
-An array of ints of unspecified format. The length of this array is *length* bytes</td>
+An array of 32bit integers of unspecified format. The length of this array is *length* bytes</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>`TAG_Long_Array`</td>
+      <td>`TAG_Long` *length*  
+An array of 64bit integers of unspecified format. The length of this array is *length* bytes</td>
       <td></td>
     </tr>
   </tbody>
@@ -140,7 +152,7 @@ An array of ints of unspecified format. The length of this array is *length* byt
 
 ## Decoding example
 
-(Use http://www.minecraft.net/docs/test.nbt to test your
+(Use <http://www.minecraft.net/docs/test.nbt> to test your
 implementation)
 
 First we start by reading a Named Tag. After unzipping the
@@ -175,8 +187,8 @@ So we ended up with this:
 	}
 
 For a slightly longer test, download
-http://www.minecraft.net/docs/bigtest.nbt You should end up with
-this:
+<http://www.minecraft.net/docs/bigtest.nbt> You should end up
+with this:
 
 	TAG_Compound("Level"): 11 entries
 	{
@@ -223,3 +235,6 @@ this:
 	   TAG_Byte_Array("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))"): [1000 bytes]
 	   TAG_Double("doubleTest"): 0.4931287132182315
 	}
+
+[1]: http://www.minecraft.net/docs/NBT.txt
+[2]: https://web.archive.org/web/20110903033423/http://www.minecraft.net/docs/NBT.txt

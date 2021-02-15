@@ -819,6 +819,79 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+    [Test]
+    public void ReadLongArray_test()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        long[] expected;
+        long[] actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+
+        writer.WriteStartDocument();
+        writer.WriteTag("value", expected);
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        reader.ReadTagType();
+        reader.ReadTagName();
+
+        // act
+        actual = reader.ReadLongArray();
+
+        // assert
+        Assert.AreEqual(expected, actual);
+      }
+    }
+
+    [Test]
+    public void ReadList_of_longarray_test()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+        long[] expected1;
+        long[] expected2;
+        TagCollection actual;
+
+        writer = this.CreateWriter(stream);
+
+        expected1 = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+        expected2 = new[] { long.MinValue / 3, 2994, long.MaxValue / 3, 4294394 };
+
+        writer.WriteStartDocument();
+        writer.WriteStartTag("list", TagType.List, TagType.LongArray, 2);
+        writer.WriteTag(expected1);
+        writer.WriteTag(expected2);
+        writer.WriteEndTag();
+        writer.WriteEndDocument();
+
+        stream.Position = 0;
+
+        reader = this.CreateReader(stream);
+        reader.ReadTagType();
+        reader.ReadTagName();
+
+        // act
+        actual = reader.ReadList();
+
+        // assert
+        Assert.AreEqual(2, actual.Count);
+        Assert.AreEqual(expected1, actual[0].GetValue());
+        Assert.AreEqual(expected2, actual[1].GetValue());
+      }
+    }
+
   }
 }
 
