@@ -1,5 +1,12 @@
 # Cyotek.Data.Nbt Change Log
 
+## 3.2.1 - 2021-05-15
+
+### Fixed
+
+* `XmlTagWriter.WriteStartTag` crashed if a name invalid under
+  XML was used
+
 ## 3.2 - 2021-02-09
 
 ### Added
