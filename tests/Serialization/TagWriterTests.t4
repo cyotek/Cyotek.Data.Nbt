@@ -137,6 +137,10 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
           {
             baseType = tagTypeByte;
           }
+          else if (i == tagTypeLongArray)
+          {
+            baseType = tagTypeLong;
+          }
           else
           {
             baseType = tagTypeInt;

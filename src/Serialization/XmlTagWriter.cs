@@ -7,7 +7,7 @@ namespace Cyotek.Data.Nbt.Serialization
 {
   public sealed class XmlTagWriter : TagWriter
   {
-    #region Constants
+    #region Private Fields
 
     private static readonly char[] _cDataTriggers =
     {
@@ -20,15 +20,11 @@ namespace Cyotek.Data.Nbt.Serialization
 
     private readonly XmlWriter _writer;
 
-    #endregion
-
-    #region Fields
-
     private StringBuilder _arraySb;
 
-    #endregion
+    #endregion Private Fields
 
-    #region Constructors
+    #region Public Constructors
 
     /// <summary>
     /// Constructor. <see cref="XmlWriter"/>
@@ -45,18 +41,18 @@ namespace Cyotek.Data.Nbt.Serialization
       XmlWriterSettings settings;
 
       settings = new XmlWriterSettings
-                 {
-                   Indent = true,
-                   Encoding = Encoding.UTF8
-                 };
+      {
+        Indent = true,
+        Encoding = Encoding.UTF8
+      };
 
       _state = new TagState(FileAccess.Write);
       _writer = XmlWriter.Create(stream, settings);
     }
 
-    #endregion
+    #endregion Public Constructors
 
-    #region Methods
+    #region Public Methods
 
     public override void Close()
     {
@@ -91,6 +87,16 @@ namespace Cyotek.Data.Nbt.Serialization
       _arraySb.Append(value);
     }
 
+    public override void WriteArrayValue(long value)
+    {
+      if (_arraySb.Length != 0)
+      {
+        _arraySb.Append(' ');
+      }
+
+      _arraySb.Append(value);
+    }
+
     public override void WriteEndDocument()
     {
       _state.SetComplete();
@@ -105,7 +111,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       currentTag = _state.CurrentTag;
 
-      if ((currentTag == TagType.ByteArray || currentTag == TagType.IntArray) && _arraySb != null && _arraySb.Length != 0)
+      if ((currentTag == TagType.ByteArray || currentTag == TagType.IntArray || currentTag == TagType.LongArray) && _arraySb != null && _arraySb.Length != 0)
       {
         _writer.WriteValue(_arraySb.ToString());
         _arraySb.Length = 0;
@@ -127,9 +133,13 @@ namespace Cyotek.Data.Nbt.Serialization
       {
         type = TagType.IntArray;
       }
-      else if (type != TagType.ByteArray && type != TagType.IntArray)
+      else if (type == TagType.Long)
       {
-        throw new ArgumentException("Only byte or integer types are supported.", nameof(type));
+        type = TagType.LongArray;
+      }
+      else if (type != TagType.ByteArray && type != TagType.IntArray && type != TagType.Long)
+      {
+        throw new ArgumentException("Only byte, 32bit integer or 64bit integer types are supported.", nameof(type));
       }
 
       if (_arraySb == null)
@@ -153,19 +163,18 @@ namespace Cyotek.Data.Nbt.Serialization
 
       currentState = _state.StartTag(type);
 
-      if (string.IsNullOrEmpty(name))
-      {
-        name = "tag";
-      }
-
-      if (XmlConvert.EncodeName(name) == name)
+      if (XmlTagWriter.IsValidName(name))
       {
         _writer.WriteStartElement(name);
       }
       else
       {
         _writer.WriteStartElement("tag");
-        _writer.WriteAttributeString("name", name);
+
+        if (!string.IsNullOrEmpty(name))
+        {
+          _writer.WriteAttributeString("name", name);
+        }
       }
 
       if (type != TagType.End && (currentState == null || currentState.ContainerType != TagType.List))
@@ -182,6 +191,10 @@ namespace Cyotek.Data.Nbt.Serialization
 
       _writer.WriteAttributeString("limitType", listType.ToString());
     }
+
+    #endregion Public Methods
+
+    #region Protected Methods
 
     protected override void WriteValue(string value)
     {
@@ -215,6 +228,25 @@ namespace Cyotek.Data.Nbt.Serialization
       output = new StringBuilder();
 
       foreach (int i in value)
+      {
+        if (output.Length != 0)
+        {
+          output.Append(' ');
+        }
+
+        output.Append(i);
+      }
+
+      _writer.WriteValue(output.ToString());
+    }
+
+    protected override void WriteValue(long[] value)
+    {
+      StringBuilder output;
+
+      output = new StringBuilder();
+
+      foreach (long i in value)
       {
         if (output.Length != 0)
         {
@@ -286,6 +318,48 @@ namespace Cyotek.Data.Nbt.Serialization
       }
     }
 
-    #endregion
+    #endregion Protected Methods
+
+    #region Private Methods
+
+    private static bool IsValidName(string name)
+    {
+      bool result;
+
+      if (!string.IsNullOrEmpty(name) && XmlTagWriter.IsValidNameStartingCharacter(name[0]))
+      {
+        result = true;
+
+        for (int i = 1; i < name.Length; i++)
+        {
+          if (!XmlTagWriter.IsValidNameCharacter(name[i]))
+          {
+            result = false;
+            break;
+          }
+        }
+      }
+      else
+      {
+        result = false;
+      }
+
+      return result;
+    }
+
+    private static bool IsValidNameCharacter(char c)
+    {
+      return XmlTagWriter.IsValidNameStartingCharacter(c) || c >= 48 && c <= 57 || c == '-' || c == '.';
+    }
+
+    private static bool IsValidNameStartingCharacter(char c)
+    {
+      // According to the spec (https://www.w3.org/TR/REC-xml/#NT-NameStartChar),
+      // : is a valid starting character but .NET throws an exception regardless
+      // also ignoring extended Unicode for now
+      return c >= 65 && c <= 90 || c >= 97 && c <= 122 || c == '_';
+    }
+
+    #endregion Private Methods
   }
 }

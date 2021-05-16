@@ -236,12 +236,17 @@ namespace Cyotek.Data.Nbt.Serialization
         throw new InvalidDataException();
       }
 
+      return BinaryTagReader.ReadInt(data,0);
+    }
+
+    private static int ReadInt(byte[] data, int offset)
+    {
       if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BitHelper.IntSize);
+        BitHelper.SwapBytes(data, offset, BitHelper.IntSize);
       }
 
-      return BitConverter.ToInt32(data, 0);
+      return BitConverter.ToInt32(data, offset);
     }
 
     public override int[] ReadIntArray()
@@ -266,12 +271,34 @@ namespace Cyotek.Data.Nbt.Serialization
 
       for (int i = 0; i < length; i++)
       {
-        if (isLittleEndian)
-        {
-          BitHelper.SwapBytes(buffer, i * 4, 4);
-        }
+        values[i] = BinaryTagReader.ReadInt(buffer, i * BitHelper.IntSize);
+      }
 
-        values[i] = BitConverter.ToInt32(buffer, i * 4);
+      return values;
+    }
+    public override long[] ReadLongArray()
+    {
+      int length;
+      int bufferLength;
+      byte[] buffer;
+      long[] values;
+      bool isLittleEndian;
+
+      isLittleEndian = TagWriter.IsLittleEndian;
+      length = this.ReadInt();
+      bufferLength = length * BitHelper.LongSize;
+      buffer = new byte[bufferLength];
+
+      if (bufferLength != _stream.Read(buffer, 0, bufferLength))
+      {
+        throw new InvalidDataException();
+      }
+
+      values = new long[length];
+
+      for (int i = 0; i < length; i++)
+      {
+        values[i] = BinaryTagReader.ReadLong(buffer, i * BitHelper.LongSize);
       }
 
       return values;
@@ -286,7 +313,7 @@ namespace Cyotek.Data.Nbt.Serialization
       listType = (TagType)this.ReadByte();
       length = this.ReadInt();
 
-      if (length > 0 && (listType < TagType.Byte || listType > TagType.IntArray))
+      if (length > 0 && (listType < TagType.Byte || listType > TagType.LongArray))
       {
         throw new InvalidDataException($"Unexpected list type '{listType}' found.");
       }
@@ -339,6 +366,10 @@ namespace Cyotek.Data.Nbt.Serialization
             tag = TagFactory.CreateTag(this.ReadLong());
             break;
 
+          case TagType.LongArray:
+            tag = TagFactory.CreateTag(this.ReadLongArray());
+            break;
+
           case TagType.Short:
             tag = TagFactory.CreateTag(this.ReadShort());
             break;
@@ -347,9 +378,9 @@ namespace Cyotek.Data.Nbt.Serialization
             tag = TagFactory.CreateTag(this.ReadString());
             break;
 
-          // Can never be hit due to the type check above
-          //default:
-          //  throw new InvalidDataException("Invalid list type.");
+            // Can never be hit due to the type check above
+            //default:
+            //  throw new InvalidDataException("Invalid list type.");
         }
 
         _state.EndTag();
@@ -371,12 +402,17 @@ namespace Cyotek.Data.Nbt.Serialization
         throw new InvalidDataException();
       }
 
+      return BinaryTagReader. ReadLong(data,0);
+    }
+
+    private static long ReadLong(byte[] data,int offset)
+    {
       if (TagWriter.IsLittleEndian)
       {
-        BitHelper.SwapBytes(data, 0, BitHelper.LongSize);
+        BitHelper.SwapBytes(data, offset, BitHelper.LongSize);
       }
 
-      return BitConverter.ToInt64(data, 0);
+      return BitConverter.ToInt64(data, offset);
     }
 
     public override short ReadShort()
@@ -423,7 +459,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
       type = this.ReadTagType();
 
-      if (type > TagType.IntArray)
+      if (type > TagType.LongArray)
       {
         throw new InvalidDataException($"Unrecognized tag type: {type}.");
       }
@@ -467,6 +503,10 @@ namespace Cyotek.Data.Nbt.Serialization
           result = TagFactory.CreateTag(name, this.ReadLong());
           break;
 
+        case TagType.LongArray:
+          result = TagFactory.CreateTag(name, this.ReadLongArray());
+          break;
+
         case TagType.Float:
           result = TagFactory.CreateTag(name, this.ReadFloat());
           break;
@@ -504,11 +544,7 @@ namespace Cyotek.Data.Nbt.Serialization
 
     public override TagType ReadTagType()
     {
-      int type;
-
-      type = _stream.ReadByte();
-
-      return (TagType)type;
+      return (TagType)_stream.ReadByte();
     }
 
     #endregion

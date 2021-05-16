@@ -843,6 +843,89 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsNull(actual);
     }
 
+    [Test]
+    public void GetLongArrayValue_returns_existing_value()
+    {
+      // arrange
+      TagCompound target;
+      long[] expected;
+      long[] actual;
+      string name;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+      name = "alpha";
+
+      target = new TagCompound();
+      target.Value.Add(name, expected);
+
+      // act
+      actual = target.GetLongArrayValue(name);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetLongArrayValue_returns_default_value()
+    {
+      // arrange
+      TagCompound target;
+      long[] expected;
+      long[] actual;
+      string name;
+
+      expected = new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 };
+      name = "alpha";
+
+      target = new TagCompound();
+
+      // act
+      actual = target.GetLongArrayValue(name, expected);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetLongArray_returns_existing_tag()
+    {
+      // arrange
+      TagCompound target;
+      Tag actual;
+      string name;
+
+      name = "alpha";
+
+      target = new TagCompound();
+      target.Value.Add(name, new[] { long.MinValue / 2, 2994, long.MaxValue / 2, 4294394 });
+
+      // act
+      actual = target.GetLongArray(name);
+
+      // assert
+      Assert.IsNotNull(actual);
+      Assert.IsInstanceOf<TagLongArray>(actual);
+    }
+
+    [Test]
+    public void GetLongArray_returns_null_item()
+    {
+      // arrange
+      TagCompound target;
+      Tag actual;
+      string name;
+
+      name = "alpha";
+
+      target = new TagCompound();
+
+      // act
+      actual = target.GetLongArray(name);
+
+      // assert
+      Assert.IsNull(actual);
+    }
+
 
     [Test]
     public void GetGuidValue_returns_existing_value()

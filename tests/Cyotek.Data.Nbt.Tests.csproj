@@ -1,11 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks Condition=" '$(Configuration)' != 'Debug' ">net48;net35;net40;net452;net462;net472;netcoreapp2.1;netcoreapp2.2;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TargetFrameworks Condition=" '$(Configuration)' == 'Debug' ">net48</TargetFrameworks>
+    <TargetFrameworks>net48;net35;net40;net452;net462;net472;netcoreapp2.1;netcoreapp2.2;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -145,6 +141,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagListTests.generated.cs</LastGenOutput>
     </None>
+    <None Update="TagLongArrayTests.generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TagLongArrayTests.generated.cs</LastGenOutput>
+    </None>
     <None Update="TagLongTests.generated.tt">
       <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -248,6 +248,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TagListTests.generated.tt</DependentUpon>
     </Compile>
+    <Compile Update="TagLongArrayTests.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagLongArrayTests.generated.tt</DependentUpon>
+    </Compile>
     <Compile Update="TagLongTests.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -263,6 +268,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TagStringTests.generated.tt</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

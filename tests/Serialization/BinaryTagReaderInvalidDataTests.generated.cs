@@ -206,5 +206,28 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       }
     }
 
+        [Test]
+    public void ReadLongArray_throws_exception_if_data_invalid()
+    {
+      using (MemoryStream stream = new MemoryStream())
+      {
+        // arrange
+        TagReader reader;
+        TagWriter writer;
+
+        reader = this.CreateReader(stream);
+        writer = new BinaryTagWriter(stream);
+
+        // TODO: WriteValue is currently protected
+        //writer.WriteValue(100);
+        this.WriteValue(stream, 100);
+
+        stream.Position = 0;
+
+        // act & assert
+        Assert.Throws<InvalidDataException>(() => reader.ReadLongArray());
+      }
+    }
+
       }
 }

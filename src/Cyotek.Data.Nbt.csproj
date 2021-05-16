@@ -1,11 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks Condition=" '$(Configuration)' != 'Debug' ">net48;net35;net40;net452;net462;net472;netcoreapp2.1;netcoreapp2.2;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TargetFrameworks Condition=" '$(Configuration)' == 'Debug' ">net48</TargetFrameworks>
+    <TargetFrameworks>net462;net48;net35;net40;net452;net472;netcoreapp2.1;netcoreapp2.2;netcoreapp3.1;netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -72,6 +68,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TagIntArray.generated.tt</DependentUpon>
     </Compile>
+    <Compile Update="TagLongArray.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TagLongArray.generated.tt</DependentUpon>
+    </Compile>
     <Compile Update="TagType.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -115,6 +116,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TagFactory.generated.cs</LastGenOutput>
     </None>
+    <None Update="TagLongArray.generated.tt">
+      <LastGenOutput>TagLongArray.generated.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
     <None Update="TagIntArray.generated.tt">
       <CustomToolNamespace></CustomToolNamespace>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -127,5 +132,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
 
 </Project>

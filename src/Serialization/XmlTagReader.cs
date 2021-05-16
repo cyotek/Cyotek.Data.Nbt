@@ -155,6 +155,32 @@ namespace Cyotek.Data.Nbt.Serialization
 
       return result;
     }
+    public override long[] ReadLongArray()
+    {
+      long[] result;
+      string value;
+
+      value = this.ReadString();
+
+      if (!string.IsNullOrEmpty(value))
+      {
+        string[] values;
+
+        values = value.Split(_arraySeparaters, StringSplitOptions.RemoveEmptyEntries);
+        result = new long[values.Length];
+
+        for (int i = 0; i < values.Length; i++)
+        {
+          result[i] = Convert.ToInt64(values[i]);
+        }
+      }
+      else
+      {
+        result = TagLongArray.EmptyValue;
+      }
+
+      return result;
+    }
 
     public override TagCollection ReadList()
     {
@@ -338,10 +364,14 @@ namespace Cyotek.Data.Nbt.Serialization
           result = TagFactory.CreateTag(name, this.ReadIntArray());
           break;
 
-        // Can't be hit as ReadTagType will throw
-        // an exception for unsupported types
-        // default:
-        //   throw new InvalidDataException($"Unrecognized tag type: {type}");
+        case TagType.LongArray:
+          result = TagFactory.CreateTag(name, this.ReadLongArray());
+          break;
+
+          // Can't be hit as ReadTagType will throw
+          // an exception for unsupported types
+          // default:
+          //   throw new InvalidDataException($"Unrecognized tag type: {type}");
       }
 
       _state.EndTag();

@@ -8,7 +8,7 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
   [TestFixture]
   public partial class XmlTagWriterTests : TestBase
   {
-    #region  Tests
+    #region Public Methods
 
     [Test]
     public void Close_should_close_writer()
@@ -47,9 +47,9 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       textWriter = new StringWriter();
       writer = XmlWriter.Create(textWriter, new XmlWriterSettings
-                                            {
-                                              Indent = true
-                                            });
+      {
+        Indent = true
+      });
 
       target = new XmlTagWriter(writer);
 
@@ -68,6 +68,37 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
 
       // assert
       NbtAssert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    [TestCase(":", TestName = "{m}InvalidStartCharacter")]
+    [TestCase("a:", TestName = "{m}InvalidPartialCharacter")]
+    public void WriteTag_HandlesInvalidNames(string name)
+    {
+      // arrange
+      XmlTagWriter target;
+      TextWriter writer;
+      XmlWriter xmlWriter;
+      string actual;
+      string expected;
+
+      writer = new StringWriter();
+      xmlWriter = XmlWriter.Create(writer);
+
+      expected = "<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><tag type=\"Compound\"><tag name=\"" + name + "\" type=\"String\">gamma</tag></tag>";
+
+      target = new XmlTagWriter(xmlWriter);
+      target.WriteStartDocument();
+      target.WriteStartTag(TagType.Compound);
+
+      // act
+      target.WriteTag(name, "gamma");
+
+      // assert
+      target.WriteEndTag();
+      target.WriteEndDocument();
+      actual = writer.ToString();
+      Assert.AreEqual(expected, actual);
     }
 
     [Test]
@@ -99,9 +130,9 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       Assert.AreEqual(expected, actual);
     }
 
-    #endregion
+    #endregion Public Methods
 
-    #region Test Helpers
+    #region Private Methods
 
     private TagReader CreateReader(Stream stream)
     {
@@ -113,6 +144,6 @@ namespace Cyotek.Data.Nbt.Tests.Serialization
       return new XmlTagWriter(stream);
     }
 
-    #endregion
+    #endregion Private Methods
   }
 }
