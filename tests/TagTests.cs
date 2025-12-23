@@ -1,5 +1,4 @@
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using Cyotek.Data.Nbt.Serialization;
 using NUnit.Framework;
@@ -7,9 +6,9 @@ using NUnit.Framework;
 namespace Cyotek.Data.Nbt.Tests
 {
   [TestFixture]
-  public partial class TagTests : TestBase
+  public class TagTests : TestBase
   {
-    #region  Tests
+    #region Tests
 
     [Test]
     public void Attempting_to_set_name_to_null_sets_empty_string()
@@ -90,26 +89,26 @@ namespace Cyotek.Data.Nbt.Tests
       target = this.CreateComplexData();
       expectedCount = 29;
       expectedNames = new[]
-                      {
-                        "Level",
-                        "longTest",
-                        "shortTest",
-                        "stringTest",
-                        "floatTest",
-                        "intTest",
-                        "nested compound test",
-                        "ham",
-                        "name",
-                        "value",
-                        "egg",
-                        "listTest (long)",
-                        "",
-                        "listTest (compound)",
-                        "created-on",
-                        "byteTest",
-                        "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
-                        "doubleTest"
-                      };
+      {
+        "Level",
+        "longTest",
+        "shortTest",
+        "stringTest",
+        "floatTest",
+        "intTest",
+        "nested compound test",
+        "ham",
+        "name",
+        "value",
+        "egg",
+        "listTest (long)",
+        "",
+        "listTest (compound)",
+        "created-on",
+        "byteTest",
+        "byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))",
+        "doubleTest"
+      };
 
       // act
       tags = target.Flatten();
@@ -170,11 +169,11 @@ namespace Cyotek.Data.Nbt.Tests
       data = this.CreateComplexData();
       target = data.Query(@"listTest (compound)\0\name");
       expected = new[]
-                 {
-                   data,
-                   data.Value["listTest (compound)"],
-                   data.Query(@"listTest (compound)\0")
-                 };
+      {
+        data,
+        data.Value["listTest (compound)"],
+        data.Query(@"listTest (compound)\0")
+      };
 
       // act
       actual = target.GetAncestors();
