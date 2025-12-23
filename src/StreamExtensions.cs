@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 
 namespace Cyotek.Data.Nbt
 {
@@ -41,23 +41,23 @@ namespace Cyotek.Data.Nbt
 
     public static bool IsGzipCompressed(this Stream stream)
     {
-      int bytesRead;
       long position;
-      byte[] buffer;
       bool result;
 
       // http://www.gzip.org/zlib/rfc-gzip.html#file-format
 
       position = stream.Position;
 
-      buffer = new byte[4];
+      int b0 = stream.ReadByte();
+      int b1 = stream.ReadByte();
+      int b2 = stream.ReadByte();
+      int b3 = stream.ReadByte();
 
-      bytesRead = stream.Read(buffer, 0, 4);
-      result = bytesRead == 4;
+      result = b3 != -1;
 
       if (result)
       {
-        result = buffer[0] == 31 && buffer[1] == 139 && buffer[2] == 8;
+        result = b0 == 31 && b1 == 139 && b2 == 8;
       }
 
       stream.Position = position;
