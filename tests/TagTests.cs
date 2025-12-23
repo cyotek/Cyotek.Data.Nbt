@@ -356,6 +356,272 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsNull(aTag);
     }
 
+    [Test]
+    public void ChildCount_returns_zero_for_primitive_tag()
+    {
+      // arrange
+      Tag target;
+      int expected;
+      int actual;
+
+      target = new TagByte(127);
+      expected = 0;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_zero_for_empty_compound()
+    {
+      // arrange
+      TagCompound target;
+      int expected;
+      int actual;
+
+      target = new TagCompound("empty");
+      expected = 0;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_zero_for_empty_list()
+    {
+      // arrange
+      TagList target;
+      int expected;
+      int actual;
+
+      target = new TagList("empty", TagType.Int);
+      expected = 0;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_child_count_for_flat_compound()
+    {
+      // arrange
+      TagCompound target;
+      int expected;
+      int actual;
+
+      target = new TagCompound("test");
+      target.Value.Add("a", 1);
+      target.Value.Add("b", 2);
+      target.Value.Add("c", 3);
+      expected = 3;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_child_count_for_flat_list()
+    {
+      // arrange
+      TagList target;
+      int expected;
+      int actual;
+
+      target = new TagList("test", TagType.Int);
+      target.Value.Add(1);
+      target.Value.Add(2);
+      target.Value.Add(3);
+      target.Value.Add(4);
+      target.Value.Add(5);
+      expected = 5;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_total_descendants_for_nested_compound()
+    {
+      // arrange
+      TagCompound target;
+      TagCompound child;
+      int expected;
+      int actual;
+
+      target = new TagCompound("root");
+      child = (TagCompound)target.Value.Add("child", TagType.Compound);
+      child.Value.Add("a", 1);
+      child.Value.Add("b", 2);
+      // Structure: root -> child -> (a, b)
+      // ChildCount = 3 (child + a + b)
+      expected = 3;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_total_descendants_for_nested_list()
+    {
+      // arrange
+      TagList target;
+      TagCompound child;
+      int expected;
+      int actual;
+
+      target = new TagList("root", TagType.Compound);
+      child = (TagCompound)target.Value.Add(TagType.Compound);
+      child.Value.Add("x", 10);
+      child = (TagCompound)target.Value.Add(TagType.Compound);
+      child.Value.Add("y", 20);
+      child.Value.Add("z", 30);
+      // Structure: root -> (compound1 -> x), (compound2 -> y, z)
+      // ChildCount = 5 (compound1 + x + compound2 + y + z)
+      expected = 5;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_correct_count_for_complex_data()
+    {
+      // arrange
+      TagCompound target;
+      int expected;
+      int actual;
+
+      target = this.CreateComplexData();
+      // Flatten returns 29 tags including self, so ChildCount should be 28
+      expected = 28;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_correct_count_for_deeply_nested_structure()
+    {
+      // arrange
+      TagCompound target;
+      TagCompound current;
+      int depth;
+      int expected;
+      int actual;
+
+      depth = 10;
+      target = new TagCompound("level0");
+      current = target;
+
+      for (int i = 1; i <= depth; i++)
+      {
+        current = (TagCompound)current.Value.Add("level" + i, TagType.Compound);
+      }
+
+      // Structure: level0 -> level1 -> level2 -> ... -> level10
+      // ChildCount = 10 (not counting self)
+      expected = depth;
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ChildCount_is_consistent_with_Flatten()
+    {
+      // arrange
+      TagCompound target;
+      int ChildCountResult;
+      int flattenCount;
+
+      target = this.CreateComplexData();
+
+      // act
+      ChildCountResult = target.ChildCount;
+      flattenCount = target.Flatten().Length - 1; // Flatten includes self
+
+      // assert
+      Assert.AreEqual(flattenCount, ChildCountResult);
+    }
+
+    [Test]
+    public void ChildCount_returns_zero_for_string_tag()
+    {
+      // arrange
+      Tag target;
+      int actual;
+
+      target = new TagString("test", "value");
+
+      // act
+      actual = target.ChildCount;
+
+      // assert
+      Assert.AreEqual(0, actual);
+    }
+
+    [Test]
+    public void ChildCount_returns_zero_for_array_tags()
+    {
+      // arrange
+      TagByteArray byteArrayTag;
+      TagIntArray intArrayTag;
+      TagLongArray longArrayTag;
+
+      byteArrayTag = new TagByteArray("bytes", new byte[] { 1, 2, 3 });
+      intArrayTag = new TagIntArray("ints", new int[] { 1, 2, 3 });
+      longArrayTag = new TagLongArray("longs", new long[] { 1, 2, 3 });
+
+      // act & assert
+      Assert.AreEqual(0, byteArrayTag.ChildCount);
+      Assert.AreEqual(0, intArrayTag.ChildCount);
+      Assert.AreEqual(0, longArrayTag.ChildCount);
+    }
+
+    [Test]
+    public void Depth_returns_zero_for_root_tag()
+    {
+      // arrange
+      Tag target;
+      int expected;
+      int actual;
+
+      target = new TagCompound("root");
+      expected = 0;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
 
     [Test]
     public void Depth_returns_zero_for_standalone_primitive_tag()
@@ -578,45 +844,6 @@ namespace Cyotek.Data.Nbt.Tests
 
       // assert
       Assert.AreEqual(expected, actual);
-    }
-    #endregion
-
-    #region Test Helpers
-
-    /// <summary>
-    ///   Decompresses the specified stream.
-    /// </summary>
-    /// <param name="stream">The stream.</param>
-    /// <returns></returns>
-    private byte[] Decompress(Stream stream)
-    {
-      byte[] result;
-
-      using (GZipStream decompressStream = new GZipStream(stream, CompressionMode.Decompress))
-      {
-        int bufferSize;
-        byte[] buffer;
-
-        bufferSize = 4096;
-        buffer = new byte[bufferSize];
-
-        using (MemoryStream memory = new MemoryStream())
-        {
-          int count;
-          do
-          {
-            count = decompressStream.Read(buffer, 0, bufferSize);
-            if (count > 0)
-            {
-              memory.Write(buffer, 0, count);
-            }
-          } while (count > 0);
-
-          result = memory.ToArray();
-        }
-      }
-
-      return result;
     }
 
     #endregion

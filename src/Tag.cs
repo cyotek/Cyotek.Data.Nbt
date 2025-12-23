@@ -36,6 +36,15 @@ namespace Cyotek.Data.Nbt
     #region Properties
 
     [Browsable(false)]
+    public int ChildCount
+    {
+      get
+      {
+        return CountTags(this) - 1; // don't include self
+      }
+    }
+
+    [Browsable(false)]
     public int Depth
     {
       get
@@ -178,26 +187,48 @@ namespace Cyotek.Data.Nbt
 
     public Tag[] Flatten()
     {
-      Tag[] results;
-
       if (!(this is ICollectionTag))
       {
-        // single value
-        results = new[]
-                  {
-                    this
-                  };
+        return new[] { this };
       }
-      else
+
+      int count = CountTags(this);
+      Tag[] results = new Tag[count];
+      int index = 0;
+
+      Stack<IEnumerator<Tag>> stack = new Stack<IEnumerator<Tag>>();
+      results[index++] = this;
+
+      ICollectionTag collection = (ICollectionTag)this;
+      IEnumerator<Tag> enumerator = collection.Values.GetEnumerator();
+
+      while (true)
       {
-        // multiple values;
-        List<Tag> tags;
+        if (enumerator.MoveNext())
+        {
+          Tag current = enumerator.Current;
+          results[index++] = current;
 
-        tags = new List<Tag>();
+          ICollectionTag childCollection = current as ICollectionTag;
+          if (childCollection != null)
+          {
+            stack.Push(enumerator);
+            enumerator = childCollection.Values.GetEnumerator();
+          }
+        }
+        else
+        {
+          enumerator.Dispose();
 
-        this.FlattenTag(this, tags);
-
-        results = tags.ToArray();
+          if (stack.Count > 0)
+          {
+            enumerator = stack.Pop();
+          }
+          else
+          {
+            break;
+          }
+        }
       }
 
       return results;
@@ -257,22 +288,6 @@ namespace Cyotek.Data.Nbt
     /// </returns>
     public abstract string ToValueString();
 
-    private void FlattenTag(Tag tag, ICollection<Tag> tags)
-    {
-      ICollectionTag collectionTag;
-
-      tags.Add(tag);
-
-      collectionTag = tag as ICollectionTag;
-      if (collectionTag != null)
-      {
-        foreach (Tag childTag in collectionTag.Values)
-        {
-          this.FlattenTag(childTag, tags);
-        }
-      }
-    }
-
     #endregion
 
     #region IEquatable<Tag> Interface
@@ -304,5 +319,29 @@ namespace Cyotek.Data.Nbt
     }
 
     #endregion
+
+    private static int CountTags(Tag tag)
+    {
+      int count = 0;
+      Stack<Tag> stack = new Stack<Tag>();
+      stack.Push(tag);
+
+      while (stack.Count > 0)
+      {
+        Tag current = stack.Pop();
+        count++;
+
+        ICollectionTag collection = current as ICollectionTag;
+        if (collection != null)
+        {
+          foreach (Tag child in collection.Values)
+          {
+            stack.Push(child);
+          }
+        }
+      }
+
+      return count;
+    }
   }
 }
