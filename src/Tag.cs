@@ -36,6 +36,26 @@ namespace Cyotek.Data.Nbt
     #region Properties
 
     [Browsable(false)]
+    public int Depth
+    {
+      get
+      {
+        int depth;
+        Tag tag;
+        depth = 0;
+        tag = _parent;
+
+        while (tag != null)
+        {
+          depth++;
+          tag = tag.Parent;
+        }
+
+        return depth;
+      }
+    }
+
+    [Browsable(false)]
     public string FullPath
     {
       get
@@ -186,25 +206,17 @@ namespace Cyotek.Data.Nbt
     public Tag[] GetAncestors()
     {
       Tag[] results;
-      List<Tag> tags;
       Tag tag;
-      int arrayIndex;
+      int depth;
 
-      tags = new List<Tag>();
+      depth = Depth;
+      results = new Tag[depth];
       tag = _parent;
 
-      while (tag != null)
+      for (int i = depth - 1; i >= 0; i--)
       {
-        tags.Add(tag);
+        results[i] = tag;
         tag = tag.Parent;
-      }
-
-      results = new Tag[tags.Count];
-      arrayIndex = 0;
-
-      for (int i = tags.Count; i > 0; i--)
-      {
-        results[arrayIndex++] = tags[i - 1];
       }
 
       return results;

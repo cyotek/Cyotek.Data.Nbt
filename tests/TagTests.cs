@@ -357,6 +357,229 @@ namespace Cyotek.Data.Nbt.Tests
       Assert.IsNull(aTag);
     }
 
+
+    [Test]
+    public void Depth_returns_zero_for_standalone_primitive_tag()
+    {
+      // arrange
+      Tag target;
+      int expected;
+      int actual;
+
+      target = new TagByte(127);
+      expected = 0;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_one_for_direct_child()
+    {
+      // arrange
+      TagCompound root;
+      Tag target;
+      int expected;
+      int actual;
+
+      root = new TagCompound("root");
+      root.Value.Add("child", 42);
+      target = root.Value["child"];
+      expected = 1;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_two_for_grandchild()
+    {
+      // arrange
+      TagCompound root;
+      TagCompound child;
+      Tag target;
+      int expected;
+      int actual;
+
+      root = new TagCompound("root");
+      child = (TagCompound)root.Value.Add("child", TagType.Compound);
+      child.Value.Add("grandchild", 42);
+      target = child.Value["grandchild"];
+      expected = 2;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_correct_value_for_deeply_nested_tag()
+    {
+      // arrange
+      TagCompound root;
+      TagCompound current;
+      Tag target;
+      int depth;
+      int expected;
+      int actual;
+
+      depth = 10;
+      root = new TagCompound("level0");
+      current = root;
+
+      for (int i = 1; i <= depth; i++)
+      {
+        current = (TagCompound)current.Value.Add("level" + i, TagType.Compound);
+      }
+
+      target = current; // level10
+      expected = depth;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_correct_value_for_tag_in_list()
+    {
+      // arrange
+      TagCompound root;
+      TagList list;
+      Tag target;
+      int expected;
+      int actual;
+
+      root = new TagCompound("root");
+      list = (TagList)root.Value.Add("list", TagType.List, TagType.Int);
+      list.Value.Add(1);
+      list.Value.Add(2);
+      list.Value.Add(3);
+      target = list.Value[1]; // second item in list
+      expected = 2; // root -> list -> item
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_correct_value_for_complex_data()
+    {
+      // arrange
+      TagCompound data;
+      Tag target;
+      int expected;
+      int actual;
+
+      data = this.CreateComplexData();
+      target = data.Query(@"listTest (compound)\0\name");
+      // Level -> listTest (compound) -> [0] -> name
+      expected = 3;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_is_consistent_with_GetAncestors_length()
+    {
+      // arrange
+      TagCompound data;
+      Tag target;
+      int depthResult;
+      int ancestorsLength;
+
+      data = this.CreateComplexData();
+      target = data.Query(@"nested compound test\ham\name");
+
+      // act
+      depthResult = target.Depth;
+      ancestorsLength = target.GetAncestors().Length;
+
+      // assert
+      Assert.AreEqual(ancestorsLength, depthResult);
+    }
+
+    [Test]
+    public void Depth_returns_correct_value_for_nested_compound_in_list()
+    {
+      // arrange
+      TagCompound root;
+      TagList list;
+      TagCompound compound;
+      Tag target;
+      int expected;
+      int actual;
+
+      root = new TagCompound("root");
+      list = (TagList)root.Value.Add("compounds", TagType.List, TagType.Compound);
+      compound = (TagCompound)list.Value.Add(TagType.Compound);
+      compound.Value.Add("value", 123);
+      target = compound.Value["value"];
+      // root -> compounds -> [0] -> value
+      expected = 3;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_one_for_list_child()
+    {
+      // arrange
+      TagCompound root;
+      TagList target;
+      int expected;
+      int actual;
+
+      root = new TagCompound("root");
+      target = (TagList)root.Value.Add("list", TagType.List, TagType.Int);
+      expected = 1;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void Depth_returns_zero_for_orphaned_tag()
+    {
+      // arrange
+      TagInt target;
+      int expected;
+      int actual;
+
+      // Create a tag that was never added to a parent
+      target = new TagInt("orphan", 42);
+      expected = 0;
+
+      // act
+      actual = target.Depth;
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
     #endregion
 
     #region Test Helpers
