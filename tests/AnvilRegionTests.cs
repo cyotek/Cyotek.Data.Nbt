@@ -18,20 +18,20 @@ namespace Cyotek.Data.Nbt.Tests
       FileStream input = File.OpenRead(filename);
       int[] locations = new int[1024];
       byte[] buffer = new byte[4096];
-      input.Read(buffer, 0, 4096);
+      _ = input.Read(buffer, 0, 4096);
       for (int i = 0; i < 1024; i++)
       {
         locations[i] = BitConverter.ToInt32(buffer, i * 4);
       }
 
       int[] timestamps = new int[1024];
-      input.Read(buffer, 0, 4096);
+      _ = input.Read(buffer, 0, 4096);
       for (int i = 0; i < 1024; i++)
       {
         timestamps[i] = BitConverter.ToInt32(buffer, i * 4);
       }
 
-      input.Read(buffer, 0, 4);
+      _ = input.Read(buffer, 0, 4);
       if (BitConverter.IsLittleEndian)
       {
         BitHelper.SwapBytes(buffer, 0, 4);
@@ -40,7 +40,7 @@ namespace Cyotek.Data.Nbt.Tests
 
       int compressionType = input.ReadByte();
       buffer = new byte[sizeOfChunkData];
-      input.Read(buffer, 0, sizeOfChunkData);
+      _ = input.Read(buffer, 0, sizeOfChunkData);
 
       Stream inputStream = null;
 

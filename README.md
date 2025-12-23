@@ -207,9 +207,7 @@ containing the following targets.
 * .NET 4.8
 * .NET Standard 2.0
 * .NET Standard 2.1
-* .NET Core 2.1
-* .NET Core 2.2
-* .NET Core 3.1
+* .NET 10.0
 
 Is there a target not on this list you'd like to see? Raise an
 [issue][7], or even better, a [pull request][8].
@@ -230,7 +228,8 @@ As per the original library, this source is licensed under the
 [GNU Lesser General Public License, version 2.1][9]. For more
 information, see [COPYING.txt](COPYING.txt)
 
-[1]: https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true
+[1]:
+    https://ci.appveyor.com/api/projects/status/d2l6xj7mbv5rkc92?svg=true
 [2]: https://ci.appveyor.com/project/cyotek/cyotek-data-nbt
 [3]: https://img.shields.io/nuget/v/Cyotek.Data.Nbt.svg
 [4]: https://www.nuget.org/packages/Cyotek.Data.Nbt/
@@ -240,7 +239,9 @@ information, see [COPYING.txt](COPYING.txt)
 [8]: https://github.com/cyotek/Cyotek.Data.Nbt/pulls
 [9]: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 [10]: http://benchmarkdotnet.org/
-[11]: https://minecraft.gamepedia.com/File:Grass_Block_JE7_BE6.png
+[11]:
+    https://minecraft.gamepedia.com/File:Grass_Block_JE7_BE6.png
 [12]: http://libnbt.codeplex.com/
 [13]: https://github.com/headhunter45/LibNBT
-[14]: https://github.com/cyotek/Cyotek.Data.Nbt/workflows/CodeQL/badge.svg
+[14]:
+    https://github.com/cyotek/Cyotek.Data.Nbt/workflows/CodeQL/badge.svg
