@@ -1,5 +1,16 @@
 # Cyotek.Data.Nbt Change Log
 
+## 4.0.0 - 2025-12-23
+
+### Added
+
+* Added `net10.0` target
+
+### Removed
+
+* Removed `netcoreapp2.1`, `netcoreapp2.2` and `netcoreapp3.1`
+  targets
+
 ## 3.2.1 - 2021-05-15
 
 ### Fixed
