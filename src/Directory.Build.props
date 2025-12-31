@@ -4,8 +4,8 @@
     <Title>Cyotek Named Binary Tag Format Library</Title>
     <Authors>Cyotek, headhunter45</Authors>
     <Owners>Cyotek</Owners>
-    <VersionPrefix>4.0.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionPrefix>4.1.0</VersionPrefix>
+    <VersionSuffix>beta</VersionSuffix>
     <Copyright>Copyright © 2012-2025 Cyotek Ltd. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/cyotek/Cyotek.Data.Nbt</PackageProjectUrl>

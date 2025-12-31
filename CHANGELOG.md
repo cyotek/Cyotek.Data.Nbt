@@ -1,5 +1,15 @@
 # Cyotek.Data.Nbt Change Log
 
+## 4.1.0-beta - 2025-12-23
+
+### Added
+
+* Added `Depth` and `ChildCount` properties to `Tag`
+
+### Changed
+
+* Misc performance improvements to reduce allocations
+
 ## 4.0.0 - 2025-12-23
 
 ### Added
