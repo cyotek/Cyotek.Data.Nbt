@@ -17,12 +17,6 @@ namespace Cyotek.Data.Nbt
 
     private static readonly string[] _emptyStringArray = new string[0];
 
-    private static readonly char[] _queryDelimiters =
-                {
-      '\\',
-      '/'
-    };
-
     private TagDictionary _value;
 
     #endregion Private Fields
@@ -508,99 +502,133 @@ namespace Cyotek.Data.Nbt
 
     public T Query<T>(string query) where T : Tag
     {
-      string[] parts;
       Tag element;
       bool failed;
+      int startIndex;
+      int length;
 
-      parts = query.Split(_queryDelimiters);
       element = this;
       failed = false;
+      startIndex = 0;
+      length = query.Length;
 
-      // HACK: This is all quickly thrown together
-
-      foreach (string part in parts)
+      while (startIndex < length && !failed)
       {
-        if (part.IndexOf('[') != -1)
+        // Find the next delimiter
+        int endIndex = startIndex;
+        while (endIndex < length && query[endIndex] != '\\' && query[endIndex] != '/')
         {
-          int attributePosition;
-          bool matchFound;
+          endIndex++;
+        }
 
-          attributePosition = part.IndexOf('=');
-          matchFound = false;
+        int partStart = startIndex;
+        int partLength = endIndex - startIndex;
 
-          if (attributePosition != -1)
+        if (partLength > 0)
+        {
+          // Check for attribute syntax [name=value]
+          int bracketIndex = -1;
+          for (int i = partStart; i < partStart + partLength; i++)
           {
-            string name;
-            string value;
-            TagList list;
-
-            name = part.Substring(1, attributePosition - 1);
-            value = part.Substring(attributePosition + 1, part.Length - (attributePosition + 2));
-            list = element as TagList;
-
-            if (list != null)
+            if (query[i] == '[')
             {
-              // ReSharper disable once LoopCanBePartlyConvertedToQuery
-              foreach (Tag tag in list.Value)
+              bracketIndex = i - partStart;
+              break;
+            }
+          }
+
+          if (bracketIndex != -1)
+          {
+            int absoluteBracketIndex = partStart + bracketIndex;
+            bool matchFound = false;
+
+            // Find '=' position
+            int equalsIndex = -1;
+            for (int i = absoluteBracketIndex; i < partStart + partLength; i++)
+            {
+              if (query[i] == '=')
               {
-                TagCompound compound;
+                equalsIndex = i;
+                break;
+              }
+            }
 
-                compound = tag as TagCompound;
+            if (equalsIndex != -1)
+            {
+              string name = query.Substring(absoluteBracketIndex + 1, equalsIndex - absoluteBracketIndex - 1);
+              int valueStart = equalsIndex + 1;
+              int valueEnd = partStart + partLength - 1;
+              string value = query.Substring(valueStart, valueEnd - valueStart);
 
-                if (compound != null && compound.GetStringValue(name) == value)
+              TagList list = element as TagList;
+
+              if (list != null)
+              {
+                foreach (Tag tag in list.Value)
                 {
-                  element = tag;
-                  matchFound = true;
-                  break;
+                  TagCompound compound = tag as TagCompound;
+
+                  if (compound != null && compound.GetStringValue(name) == value)
+                  {
+                    element = tag;
+                    matchFound = true;
+                    break;
+                  }
                 }
               }
             }
-          }
 
-          if (!matchFound)
-          {
-            // attribute not found or not set
-            failed = true;
-            break;
-          }
-        }
-        else
-        {
-          ICollectionTag container;
-
-          container = element as ICollectionTag;
-
-          if (container != null && container.IsList)
-          {
-            // list entry
-            int index;
-
-            if (int.TryParse(part, out index) && index < container.Values.Count)
+            if (!matchFound)
             {
-              element = container.Values[index];
-            }
-            else
-            {
-              // invalid index, or out of bounds
               failed = true;
-              break;
             }
           }
           else
           {
-            // compound
-            TagCompound compound;
+            ICollectionTag container = element as ICollectionTag;
 
-            compound = (TagCompound)element;
-
-            if (!compound.Value.TryGetValue(part, out element))
+            if (container != null && container.IsList)
             {
-              // didn't find a matching key
-              failed = true;
-              break;
+              int index = 0;
+              bool validIndex = true;
+
+              for (int i = partStart; i < partStart + partLength; i++)
+              {
+                char c = query[i];
+                if (c >= '0' && c <= '9')
+                {
+                  index = index * 10 + (c - '0');
+                }
+                else
+                {
+                  validIndex = false;
+                  break;
+                }
+              }
+
+              if (validIndex && index < container.Values.Count)
+              {
+                element = container.Values[index];
+              }
+              else
+              {
+                failed = true;
+              }
+            }
+            else
+            {
+              string part = query.Substring(partStart, partLength);
+              TagCompound compound = (TagCompound)element;
+
+              if (!compound.Value.TryGetValue(part, out element))
+              {
+                failed = true;
+              }
             }
           }
         }
+
+        startIndex = endIndex + 1;
       }
 
       return !failed ? (T)element : null;
